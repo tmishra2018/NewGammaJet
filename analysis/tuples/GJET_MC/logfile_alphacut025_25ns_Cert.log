@@ -1,0 +1,176 @@
+Sender: LSF System <lsfadmin@cmsrm-wn065>
+Subject: Job 613118: <source /cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut025.src> Done
+
+Job <source /cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut025.src> was submitted from host <cmsrm-ui04> by user <fpreiato> in cluster <t2rm>.
+Job was executed on host(s) <cmsrm-wn065>, in queue <cmslong>, as user <fpreiato> in cluster <t2rm>.
+</cmshome/fpreiato> was used as the home directory.
+</cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC> was used as the working directory.
+Started at Sat Sep 26 00:39:39 2015
+Results reported at Sat Sep 26 04:22:25 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+source /cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut025.src
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :  12595.22 sec.
+    Max Memory :      1135 MB
+    Max Swap   :      1353 MB
+
+    Max Processes  :         3
+    Max Threads    :         4
+
+The output (if any) follows:
+
+Parsing triggers_mc.xml ...
+done.
+triggers mapping:
+Pt range: [40, 8000]
+.* -> 1
+Opening files ...
+done.
+
+##########
+# [34mRunning on [31mMC[m
+##########
+
+Processing...
+Processing event #1 of 4010010 (0%) - 0 ms
+Processing event #50001 of 4010010 (1.24688%) - 166367 ms
+Processing event #100001 of 4010010 (2.49376%) - 169079 ms
+Processing event #150001 of 4010010 (3.74064%) - 168307 ms
+Processing event #200001 of 4010010 (4.98752%) - 172569 ms
+Processing event #250001 of 4010010 (6.2344%) - 173096 ms
+Processing event #300001 of 4010010 (7.48128%) - 170207 ms
+Processing event #350001 of 4010010 (8.72816%) - 167986 ms
+Processing event #400001 of 4010010 (9.97504%) - 168169 ms
+Processing event #450001 of 4010010 (11.2219%) - 172749 ms
+Processing event #500001 of 4010010 (12.4688%) - 169977 ms
+Processing event #550001 of 4010010 (13.7157%) - 169283 ms
+Processing event #600001 of 4010010 (14.9626%) - 168898 ms
+Processing event #650001 of 4010010 (16.2094%) - 162130 ms
+Processing event #700001 of 4010010 (17.4563%) - 153143 ms
+Processing event #750001 of 4010010 (18.7032%) - 155261 ms
+Processing event #800001 of 4010010 (19.9501%) - 153427 ms
+Processing event #850001 of 4010010 (21.197%) - 152262 ms
+Processing event #900001 of 4010010 (22.4438%) - 154156 ms
+Processing event #950001 of 4010010 (23.6907%) - 153187 ms
+Processing event #1000001 of 4010010 (24.9376%) - 153855 ms
+Processing event #1050001 of 4010010 (26.1845%) - 154038 ms
+Processing event #1100001 of 4010010 (27.4314%) - 154266 ms
+Processing event #1150001 of 4010010 (28.6782%) - 153603 ms
+Processing event #1200001 of 4010010 (29.9251%) - 156107 ms
+Processing event #1250001 of 4010010 (31.172%) - 155641 ms
+Processing event #1300001 of 4010010 (32.4189%) - 156420 ms
+Processing event #1350001 of 4010010 (33.6658%) - 154554 ms
+Processing event #1400001 of 4010010 (34.9126%) - 154531 ms
+Processing event #1450001 of 4010010 (36.1595%) - 157466 ms
+Processing event #1500001 of 4010010 (37.4064%) - 155522 ms
+Processing event #1550001 of 4010010 (38.6533%) - 172569 ms
+Processing event #1600001 of 4010010 (39.9002%) - 157333 ms
+Processing event #1650001 of 4010010 (41.147%) - 156056 ms
+Processing event #1700001 of 4010010 (42.3939%) - 154844 ms
+Processing event #1750001 of 4010010 (43.6408%) - 155553 ms
+Processing event #1800001 of 4010010 (44.8877%) - 156550 ms
+Processing event #1850001 of 4010010 (46.1345%) - 156430 ms
+Processing event #1900001 of 4010010 (47.3814%) - 159617 ms
+Processing event #1950001 of 4010010 (48.6283%) - 157876 ms
+Processing event #2000001 of 4010010 (49.8752%) - 168852 ms
+Processing event #2050001 of 4010010 (51.1221%) - 160925 ms
+Processing event #2100001 of 4010010 (52.3689%) - 165058 ms
+Processing event #2150001 of 4010010 (53.6158%) - 161588 ms
+Processing event #2200001 of 4010010 (54.8627%) - 163749 ms
+Processing event #2250001 of 4010010 (56.1096%) - 160545 ms
+Processing event #2300001 of 4010010 (57.3565%) - 163542 ms
+Processing event #2350001 of 4010010 (58.6033%) - 163124 ms
+Processing event #2400001 of 4010010 (59.8502%) - 163185 ms
+Processing event #2450001 of 4010010 (61.0971%) - 162826 ms
+Processing event #2500001 of 4010010 (62.344%) - 164567 ms
+Processing event #2550001 of 4010010 (63.5909%) - 166180 ms
+Processing event #2600001 of 4010010 (64.8377%) - 165284 ms
+Processing event #2650001 of 4010010 (66.0846%) - 166120 ms
+Processing event #2700001 of 4010010 (67.3315%) - 165604 ms
+Processing event #2750001 of 4010010 (68.5784%) - 165335 ms
+Processing event #2800001 of 4010010 (69.8253%) - 165337 ms
+Processing event #2850001 of 4010010 (71.0721%) - 165748 ms
+Processing event #2900001 of 4010010 (72.319%) - 167562 ms
+Processing event #2950001 of 4010010 (73.5659%) - 172546 ms
+Processing event #3000001 of 4010010 (74.8128%) - 173400 ms
+Processing event #3050001 of 4010010 (76.0597%) - 169152 ms
+Processing event #3100001 of 4010010 (77.3065%) - 192766 ms
+Processing event #3150001 of 4010010 (78.5534%) - 173554 ms
+Processing event #3200001 of 4010010 (79.8003%) - 171762 ms
+Processing event #3250001 of 4010010 (81.0472%) - 174591 ms
+Processing event #3300001 of 4010010 (82.2941%) - 173658 ms
+Processing event #3350001 of 4010010 (83.5409%) - 171556 ms
+Processing event #3400001 of 4010010 (84.7878%) - 173197 ms
+Processing event #3450001 of 4010010 (86.0347%) - 174537 ms
+Processing event #3500001 of 4010010 (87.2816%) - 173365 ms
+Processing event #3550001 of 4010010 (88.5285%) - 175516 ms
+Processing event #3600001 of 4010010 (89.7753%) - 172902 ms
+Processing event #3650001 of 4010010 (91.0222%) - 173897 ms
+Processing event #3700001 of 4010010 (92.2691%) - 244237 ms
+Processing event #3750001 of 4010010 (93.516%) - 173785 ms
+Processing event #3800001 of 4010010 (94.7629%) - 174831 ms
+Processing event #3850001 of 4010010 (96.0097%) - 175302 ms
+Processing event #3900001 of 4010010 (97.2566%) - 176866 ms
+Processing event #3950001 of 4010010 (98.5035%) - 183829 ms
+Processing event #4000001 of 4010010 (99.7504%) - 180657 ms
+
+Absolute efficiency : related to initial number of event =  4010010
+Efficiency for photon/jet cut: [31m99.1536%[m
+Selection efficiency for trigger selection: [31m98.0547%[m
+Efficiency for Δφ cut: [31m87.1875%[m
+Efficiency for pixel seed veto cut: [31m84.2578%[m
+Efficiency for muons cut: [31m78.8137%[m
+Efficiency for electrons cut: [31m77.0762%[m
+Efficiency for pT(j1) cut: [31m77.0747%[m
+Efficiency for α cut: [31m63.5482%[m
+Selection efficiency: [31m62.8076%[m
+
+Relative efficiency --- Initial events : 4010010
+Efficiency for photon/jet cut: [31m99.1536%[m
+Selection efficiency for trigger selection: [31m98.8917%[m
+Efficiency for Δφ cut: [31m88.9173%[m
+Efficiency for pixel seed veto cut: [31m96.6397%[m
+Efficiency for muons cut: [31m93.5388%[m
+Efficiency for electrons cut: [31m97.7955%[m
+Efficiency for pT(j1) cut: [31m99.998%[m
+Efficiency for α cut: [31m82.4502%[m
+Selection efficiency: [31m98.8345%[m
+ passedJetPtCut -> Entries degli isto senza passedID -->    3090703
+ passedEvents -> Entries degli isto con passedID -->    2518590
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <ROOT::Fit::FillData>: fit range is outside histogram range, no fit data for xaxis
+Warning in <Fit>: Fit data is empty 
+Warning in <ROOT::Fit::FillData>: fit range is outside histogram range, no fit data for xaxis
+Warning in <Fit>: Fit data is empty 
+Warning in <ROOT::Fit::FillData>: fit range is outside histogram range, no fit data for xaxis
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 

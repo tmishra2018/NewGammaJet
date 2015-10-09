@@ -1,0 +1,309 @@
+
+// To compile, simply run 'asciidoc manual.txt'
+= Gamma + jets analysis
+Sébastien Brochet <s.brochet@ipnl.in2p3.fr>
+02 May 2013
+:toc2:
+:data-uri:
+:latexmath:
+:icons:
+:theme: flask
+:html5:
+:iconsdir: /gridgroup/cms/brochet/.local/etc/asciidoc/images/icons
+
+== Presentation
+
+This is a documentation for the gamma + jets framework.
+
+== New instructions (13 TeV)
+
+=== Get a working area
+
+[source,bash]
+----
+
+export SCRAM_ARCH=slc6_amd64_gcc491
+cmsrel CMSSW_7_4_12_patch4
+cd CMSSW_7_4_12_patch4/src
+git clone https://github.com/FPreiato/GammaJet.git JetMETCorrections/GammaJetFilter/
+cd ..
+scram b -j 9
+
+----
+
+The new analysis code starts from MINIAOD format instead of AOD. MINIAOD contains PAT objets: this allow to use basically the old structure skipping Step 1.
+There is a flag in the code for data that allows to run on AOD and produce MiniAODs on-the-fly.
+
+=== General notes (work in progress)
+
+- At the moment the FootPrint removal of the photon for the MET calculation is *NOT* implemented. 
+  The following package have to be downloaded and adapted:  https://github.com/peruzzim/SCFootprintRemoval.git V01-07
+- Energy regression for the photon is now directly implemented in the `photon->energy()`(to be understood if this is propagated to PAT MET)
+- For flavor studies, QG-tagging, b-tagging,  reclustering is needed and have to be implemented. Now ak4 PAT jets stored in the MINIAOD are used directly, changing on-the-fly the JEC for jets and MET.
+- Since data are coming we need to redo
+  ** pileup reweighting for MC  
+  ** adapt lumicalc part to compute the luminosity collected by the triggers in data (with new luminosity tools)
+  
+- When following the old instructions replace `AK5`, `ak5` with `AK4`, `ak4` and `AK7`, `ak7` with `AK8`, `ak8`, since ak4 and ak8 are the new supported jet alogs.
+
+=== Step 1
+
+Follow Step 2 of old instructions.
+
+==== Merge and add weight for total normalization (only MC)
+
+If you're using "flat" MC samples you need to add a branch with the total event weight
+evtWeightTot = total_xsec / sum_of_generatorWeights
+This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights. In the output of Step 1 we store an histogram filled using generator weights, in order to extract the sum of weights at the end with Integral().
+
+Create a list of the files to be merged (the output files of Step 1) and then run the script mergeAndAddWeights.py 
+passing the list, the corresponding total cross section in pb and the total luminosity in /pb.
+
+Example command:
+
+[source,bash]
+-----
+
+python scripts/mergeAndAddWeights.py --inputList lists/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8__RunIISpring15DR74-Asympt50nsRaw_MCRUN2_74_V9A-v3__MINIAODSIM.txt -o analysis/tuples/toFinalize --xsec 2022100000 --lumi_tot 0.150
+
+-----
+
+This will update the tree "analysis" with a new branch called "evtWeightTot" and the TParameter "total_luminosity". Those number are used in the following steps to fill histograms and to draw plots. 
+
+=== Step 2
+
+Follow Step 3 of old instructions. 
+
+
+In order to keep the structure of the macros used in the following step, you have to run over a "fake" data sample. 
+In any case, for the moment, data are not drawn in the final plots, so you can run the finalizer over whatever rootfile without the option `--mc`.
+
+=== Step 3
+Follow step 4 of old instructions +
+*BUT* +
+the Makefile doesn't compile in CMSSW_7_3_2. 
+The temporary solution is to download a CMSSW_5_3_14 release, download the repository there, and do plots in this release.
+
+
+
+== Old instructions (8 TeV)
+
+
+== Step 2 - Convert MiniAOD to plain root trees
+
+This step will convert MiniAOD tuples to plain root trees, performing a simple selection :
+
+- Select events with only one good photon : the photon ID is done at this step
+- Choose the first and second jet of the event, with a loose delta phi cut
+- Additionnaly, if requested, the JEC can be redone at this step, as well as the TypeI MET corrections. More details about that later.
+
+Otherwise, all it's done is to convert PAT object to root trees. The CMSSW python configuration files can be found in 'analysis/2ndLevel/', and are named 'runFilter_MC.py' and 'runFilter.py'. All they do is to run the +GammaJetFilter+ responsible of the miniAOD -> trees conversion.
+
+.runFilter[_MC].py
+****
+Theses config. files are really simple. They just configure the +GammaJetFilter+. A list of options with their meaning is available below.
+
+- +isMC+: If +True+, indicates we are running on MC.
+- +photons+: The input tag of the photons collection.
+- +json+ (only for data): Indicates where the script can find the JSON file of valid run and lumi.
+- +csv+ (only for data): Indicates where the script can find the CSV file produced by lumiCalc2, containing the luminosity corresponding for each lumisection. You should not need to tweak this option.
+- +filterData+ (only for data): If +True+, the +json+ parameter file will be used to filter run and lumisection according to the content of the file.
+
+- +runOn[Non]CHS+: If +True+, run the filter on (Non) CHS collection.
+- +runPFAK4+: If +True+, run the filter on PF AK4 jets.
+- +runPFAK8+: If +True+, run the filter on PF AK8 jets.
+- +runCaloAK4+: If +True+, run the filter on calo AK4 jets. Not saved in miniAOD, need to run on AOD.
+- +runCaloAK8+: If +True+, run the filter on calo AK8 jets. Not saved in miniAOD, need to run on AOD.
+
+- +doJetCorrection+: If +True+, redo the jet correction from scratch. The jet correction factors will be read from global tag (by default), or from an external database if configured correctly.
+- +correctJecFromRaw+: If +True+, the new JEC factory is computed taking the raw jet. Turn off *only* if you know what you are doing.
+- +correctorLabel+: The corrector label to use for computing the new JEC. The default should be fine for PF AK4 CHS jets.
+- +redoTypeIMETCorrection+: If +True+, TypeI MET is recomputed. Automatically +True+ if +doJetCorrection+ is +True+.
+
+****
+
+You can find the code for the +GammaJetFilter+ in 'src/GammaJetFilter.cc'. If an event does not pass the preselection, it's dumped. Resulting root trees contains only potential gamma + jets events, with exactly one good photon.
+
+.Running crab (to update)
+****
+Like for step 1, you'll need to run crab for step 2 too. In the 'analysis/2ndLevel/' folder, you'll find the same +createAndRun+ scripts as for step 1. You'll need to edit both files to add the dataset path you have obtained from step 1. Don't forget to also edit the template files, 'crab_data.cfg.template.ipnl' and 'crab_MC.cfg.template.ipnl' to change your storage element.
+
+.createAndRunMCCrab.py
+This file is very simalar to the one for step 1. It has just been extended to include informations about the cross-section, the number of processed events, and the generated pt hat. The cross-section can be obtained on PREP for exemple.
+
+.createAndRunDataCrab.py
+This file is very similar to the one for step 1. The format is the same, only things removed are the JSON file and the run range, no longer needed for this step.
+
+[IMPORTANT]
+====
+In order to automatically compute luminosity, you need to do the following things.
+
+- First, you need to create a folder for each dataset in your python configuration. These folder must have the same name as the dataset name defined in your configuration. For exemple, let's assume you have the following configuration :
+[source,python]
+----
+datasets = [ 
+
+    ["/Photon/sbrochet-Photon_Run2012A-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "Photon_Run2012A-22Jan2013", "FT_53_V21_AN3"],
+    ["/SinglePhoton/sbrochet-SinglePhoton_Run2012B-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "SinglePhoton_Run2012B-22Jan2013", "FT_53_V21_AN3"],
+    ["/SinglePhoton/sbrochet-SinglePhoton_Run2012C-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "SinglePhoton_Run2012C-22Jan2013", "FT_53_V21_AN3" ],
+
+    
+    ]
+----
+
+You'll need to create *three* folders, named 'Photon_Run2012A-22Jan2013', 'SinglePhoton_Run2012B-22Jan2013', and 'SinglePhoton_Run2012C-22Jan2013'.
+
+- Second, inside of each of these new folder, there must be *two files* : 'lumiSummary.json', and 'lumibyls.csv'. The first file is produced by crab at the end of the first step, using the command +crab -report+. You simply need to copy the file in the right folder. The second file is produced by lumiCalc2 using the following command :
+----
+lumiCalc2.py -i lumiSummary.json -o lumibyls.csv lumibyls
+----
+
+*This step is mandatory, don't forget it*
+====
+
+
+****
+
+Once crab is done, the only remaining step is to merge the output in order to have one file per dataset. For that, you have the 'mergeMC.py' and the 'mergeData.py'. Those two files rely on a script called 'crabOutputList.py', which read a crab task and list the output files. Unfortunately, this script heavily rely on the knowledge of Lyon infrascructure and utilities like +rfdir+. You'll probably need to change +rfdir+ to the tool you use you, like for exemple +eos ls+ on lxplus for exemple. You'll also need to edit line 48 to adapt to your own storage element.
+
+So now, let's assume you have been able to merge the output file. You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+. Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'. I usually create a folder with the date of the day to put the root tuples inside.
+
+You can now go to step 3
+
+== Step 3 - finalization
+
+For this step, I'll assume you have the following folder structure
+
+----
++ analysis
+|- tuples
+ |- <date>
+  |- toFinalize (containing root files produced at step 2, with prefix PhotonJet_2ndLevel_)
+  |- finalized (containing root files we will produce at this step)
+----
+
+The main utility here is the executable named 'gammaJetFinalized'. It'll produce root files containing a set of histograms for important variable like balancing or MPF. You can find its sources in the folder 'bin/', in the file 'gammaJetFinalizer.cc'. Let's have a look at the possible options :
+
+----
+gammaJetFinalizer  {-i <string> ... |--input-list <string>}
+                      [--chs] [--alpha <float>]
+                      [--mc-comp] [--mc] --algo <ak5|ak7> --type <pf|calo>
+                      -d <string>
+----
+
+Here's a brief description of each option :
+
+- +-i+ (multiple times): the input root files
+- +--input-list+: A text file containing a list of input root files
+
+- +--mc+: Tell the finalizer you run an MC sample
+- +--alpha+: The alpha cut to apply. 0.2 by default
+- +--chs+: Tell the finalizer you ran on a CHS sample
+- +--mc-comp+: Apply a cut on pt_gamma > 200 to get rid of trigger prescale. Useful for doing data/MC comparison
+- +--algo, ak5 or ak7+: Tell the finalizer if we run on AK5 or AK7 jets
+- +--type, pf or calo+: Tell the finalizer if we run on PF or Calo jets
+- +-d+: The output dataset name. This will create an output file named 'PhotonJet_<name>.root'
+
+An exemple of command line could be :
+
+----
+gammaJetFinalizer -i PhotonJet_2ndLevel_Photon_Run2012.root -d Photon_Run2012 --type pf --algo ak5 --chs --alpha 0.20
+----
+
+This will process the input file 'PhotonJet_2ndLevel_Photon_Run2012.root', looking for PF AK5chs jets, using alpha=0.20, and producing an output file named 'PhotonJet_Photon_Run2012.root'.
+
+[NOTE]
+====
+When you have multiple input file (+G+ MC for exemple), the easiest way is to create an input list and then use the +--input-list+ option of the finalizer. For exemple, suppose you have some files named 'PhotonJet_2ndLevel_G_Pt-30to50.root', 'PhotonJet_2ndLevel_G_Pt-50to80.root', 'PhotonJet_2ndLevel_G_Pt-80to120.root', ... You can create an input file list doing
+
+----
+ls PhotonJet_2ndLevel_G_* > mc_G.list
+----
+
+And them pass the 'mc_G.list' file to the option +--input-list+.
+====
+
+[NOTE]
+====
+You cannot use the +--input-list+ option when running on data, for file structure reasons. If you have multiple data files, you'll need first to merge them with +hadd+ in a single file, and them use the +-i+ option.
+====
+
+There're *two* things you need to be aware before running the finalizer : the pileup reweighting, and the trigger selection. Each of them is explained in details below.
+
+.Per-HLT pileup reweighting
+****
+The MC is reweighting according to data, based on the number of vertices in the event, in order to take into account differences between simulation and data scenario wrt PU. In this analysis, the pileup profile for the data is generated for each HLT used during 2012, in order to take into account possible bias du to the prescale of such trigger.
+
+All the utilities to do that are already available in the folder 'analysis/PUReweighting'. The relevant script is 'generatePUProfileForData.py'. As always, all you need to edit is at the beginning of the file.
+
+The trigger list shoud be fine if you run on 2012 data. Otherwise, you'll need to build it yourself. For the json file list, just add all the one provided and certified. You can provide only one for the whole run range, but beware it'll take a very long time. It's better to split in more json files to speed things up.
+
+To run the script, you'll also need to get the latest pileup json file available. Running something like this should work:
+
+----
+wget --no-check-certificate https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/PileUp/pileup_latest.txt
+----
+
+Execute the script using
+
+----
+./generatePUProfileForData.py pileup_latest.txt
+----
+
+Once it's done, you should have a PU profile for each HLT of the analysis.
+****
+
+.Trigger selection
+****
+To avoid any bias in the selection, we explicitely require that, for each bin in pt_gamma, only one trigger was active. For that, we use an XML description of the trigger of the analysis, as you can find in the 'bin/' folder. The description is file named 'triggers.xml'.
+
+The format should be straightforward: you have a separation in run ranges, as well as in triggers. This trigger selection should be fine for 2012, but you'll need to come with your own one for other datas.
+
+The weight of each HLT is used to reweight various distribution for the prescale. In order to compute it, you need to have the total luminosity of the run range :
+
+----
+lumiCalc2.py -i <myjsonfile.json> --begin lowrun --end highrun overview
+----
+
+And the recorded luminosity for the trigger. For that, use
+
+----
+lumiCalc2.py -i <myjsonfile.json> --begin lowrun --end highrun --hlt "my_hlt_path_*" recorded
+----
+
+Sum all the luminosities for all HLT (only if they don't overap in time), and divide by the total luminosity to have the weight.
+
+You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have no run range, only a list of HLT path. This list is used in order to know with HLT the event should have fired if it was data, in order to perform the PU reweighting. You can also specify multiple HLT path for one pt bin if there were multiple active triggers during the data taking period. In this case, you'll need to provide a weight for each trigger (of course, the sum of the weight must be 1). Each trigger will be choose randolmy in order to respect the probabilities.
+****
+
+If you try this documentation on 2012 data, you should now have at least two files (three if you have run on QCD): 'PhotonJet_Photon_Run2012_PFlowAK5chs.root', 'PhotonJet_G_PFlowAK5chs.root', and optionnaly 'PhotonJet_QCD_PFlowAK5chs.root'. You are now ready to produce some plots!
+
+== Step 4 - The plots
+
+First of all, you need to build the drawing utilities. For that, go into 'analysis/draw' and run +make+. You should now have everything built.
+
+In order to produce the full set of plots, you'll have to run 3 differents utility. You need to be in the same folder where the files produced at step 3 are.
+
+- First, +drawPhotonJet_2bkg+, like that:
+----
+../../../draw/drawPhotonJet_2bkg Photon_Run2012 G QCD pf ak5 LUMI
+----
+
+- Then, you need to perform the 2nd jet extrapolation using +drawPhotonJetExtrap+, like this
+----
+../../../draw/drawPhotonJetExtrap --type pf --algo ak5 Photon_Run2012 G QCD
+----
+
+- Finally, to produce the final plot, one last utility, +draw_ratios_vs_pt+, like this
+----
+../../../draw/draw_ratios_vs_pt Photon_Run2012 G QCD pf ak5
+../../../draw/draw_all_methods_vs_pt Photon_Run2012 G QCD pf ak5
+----
+
+The names to pass to the script depends on what you use for the +-d+ option in step 3. You can find what you used from the name of the root file.
+
+If everything went fine, you should now have a *lot* of plots in the folder 'PhotonJetPlots_Photon_Run2012_vs_G_plus_QCD_PFlowAK5_LUMI', and some more useful in the folder 'PhotonJetPlots_Photon_Run2012_vs_G_plus_QCD_PFlowAK5_LUMI/vs_pt'.
+
+Have fun!
+
+// vim: set syntax=asciidoc:

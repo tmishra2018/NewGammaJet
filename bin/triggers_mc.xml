@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<triggers>
+  <path>
+    <name weight="1">HLT_Photon30_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="40" to="60" />
+  </path>
+  <path>
+    <name weight="1">HLT_Photon50_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="60" to="100" />
+  </path>
+  <path>
+    <name weight="1">HLT_Photon90_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="100" to="130" />
+  </path>
+  <path>
+    <name weight="1">HLT_Photon120_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="130" to="175" />
+  </path>
+  <path>
+    <name weight="1">HLT_Photon165_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="175" to="8000" />
+  </path>
+</triggers>
