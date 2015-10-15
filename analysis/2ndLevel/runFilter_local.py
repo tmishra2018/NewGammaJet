@@ -34,7 +34,7 @@ process.source = cms.Source("PoolSource",
 #    'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/AOD/PromptReco-v1/000/246/865/00000/E69D98C7-150B-E511-9118-02163E014206.root' #AOD
       #'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/865/00000/3296E66B-160B-E511-AD26-02163E013395.root' #RECO
 #    'file:Express_AOD_1.root' # AOD
-   'file:../tuples/Data/SinglePhoton_Run2015D.root'  #Express_miniAOD.root' # miniAOD
+   'file:../tuples/Data/SinglePhoton_Run2015D_file3.root'  #Express_miniAOD.root' # miniAOD
 #      THISINPUTFILE
       )
     )
@@ -290,10 +290,10 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
 
     #json = cms.string(os.path.join(fullPath, "lumiSummary.json")),
     #csv = cms.string(os.path.join(fullPath, "lumibyls.csv")),
-    json = cms.string( "file:lumiSummary.json"),
-    csv = cms.string( "file:lumibyls.csv"),
-    #filterData = cms.untracked.bool(True),
-    filterData = cms.untracked.bool(False),
+     json = cms.string( "file:lumiSummary.json"),
+     csv = cms.string( "file:lumibyls.csv"),
+   
+     filterData = cms.untracked.bool(False),
 
     runOnNonCHS   = cms.untracked.bool(False),
     runOnCHS      = cms.untracked.bool(True),
@@ -322,6 +322,8 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
 
     # MET
     redoTypeIMETCorrection = cms.untracked.bool(True)
+
+
     )
 
 

@@ -103,7 +103,8 @@ class PtBinning {
       mPtBins.push_back(std::make_pair(175., 250.));
       mPtBins.push_back(std::make_pair(250., 300.));
       mPtBins.push_back(std::make_pair(300., 400.));
-      mPtBins.push_back(std::make_pair(400., 1100.));
+      mPtBins.push_back(std::make_pair(400., 500.));
+      mPtBins.push_back(std::make_pair(500., 1200.));
       
       
     } 

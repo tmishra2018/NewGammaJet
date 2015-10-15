@@ -1,0 +1,50 @@
+DEBUG 2015-10-15 13:31:41,908: 	 Executing command: 'submit'
+DEBUG 2015-10-15 13:31:41,911: 	 Found CRAB cache file /cmshome/fpreiato/.crab3
+DEBUG 2015-10-15 13:31:41,949: 	 Checking credentials
+DEBUG 2015-10-15 13:31:41,949: 	 Found proxy file /tmp/x509up_u10109
+DEBUG 2015-10-15 13:31:41,949: 	 Getting proxy life time left
+DEBUG 2015-10-15 13:31:42,453: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u10109 -timeleft
+ output : 0
+
+ error: 
+ retcode : 0
+DEBUG 2015-10-15 13:31:42,453: 	 Proxy valid for 00:00:00 hours
+DEBUG 2015-10-15 13:31:42,453: 	 Creating new proxy for 24:00 hours with VO group '' and VO role 'NULL'.
+ERROR 2015-10-15 13:31:43,955: 	 Keyboard Interrupted
+ERROR 2015-10-15 13:31:43,961: 	 Unhandled Exception!
+ERROR 2015-10-15 13:31:43,961: 	 'NoneType' object has no attribute 'terminate'
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc481/cms/crabclient/3.3.1510/bin/crab", line 213, in <module>
+    client.cmd.terminate( exitcode )
+AttributeError: 'NoneType' object has no attribute 'terminate'
+ERROR 2015-10-15 13:31:43,962: 	 ERROR: AttributeError: 'NoneType' object has no attribute 'terminate'
+ERROR 2015-10-15 13:31:43,962: 	 
+	Please email hn-cms-computing-tools@cern.ch for support with the crab.log file or crab.log URL.
+ERROR 2015-10-15 13:31:43,962: 	 	Client Version: 3.3.1510
+ERROR 2015-10-15 13:31:43,962: 	 	Please use 'crab uploadlog' to upload the log file /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/2ndLevel/submitJobsWithCrab3/crab.log to the CRAB cache.
+DEBUG 2015-10-15 13:31:44,352: 	 Executing command: 'submit'
+DEBUG 2015-10-15 13:31:44,352: 	 Found CRAB cache file /cmshome/fpreiato/.crab3
+DEBUG 2015-10-15 13:31:44,363: 	 Checking credentials
+DEBUG 2015-10-15 13:31:44,363: 	 Found proxy file /tmp/x509up_u10109
+DEBUG 2015-10-15 13:31:44,363: 	 Getting proxy life time left
+DEBUG 2015-10-15 13:31:44,766: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u10109 -timeleft
+ output : 0
+
+ error: 
+ retcode : 0
+DEBUG 2015-10-15 13:31:44,766: 	 Proxy valid for 00:00:00 hours
+DEBUG 2015-10-15 13:31:44,766: 	 Creating new proxy for 24:00 hours with VO group '' and VO role 'NULL'.
+ERROR 2015-10-15 13:31:45,353: 	 Keyboard Interrupted
+ERROR 2015-10-15 13:31:45,359: 	 Unhandled Exception!
+ERROR 2015-10-15 13:31:45,359: 	 'NoneType' object has no attribute 'terminate'
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc481/cms/crabclient/3.3.1510/bin/crab", line 213, in <module>
+    client.cmd.terminate( exitcode )
+AttributeError: 'NoneType' object has no attribute 'terminate'
+ERROR 2015-10-15 13:31:45,359: 	 ERROR: AttributeError: 'NoneType' object has no attribute 'terminate'
+ERROR 2015-10-15 13:31:45,360: 	 
+	Please email hn-cms-computing-tools@cern.ch for support with the crab.log file or crab.log URL.
+ERROR 2015-10-15 13:31:45,360: 	 	Client Version: 3.3.1510
+ERROR 2015-10-15 13:31:45,360: 	 	Please use 'crab uploadlog' to upload the log file /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/2ndLevel/submitJobsWithCrab3/crab.log to the CRAB cache.

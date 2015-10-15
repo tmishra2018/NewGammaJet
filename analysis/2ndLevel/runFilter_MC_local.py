@@ -57,8 +57,8 @@ process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
       #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
-#          'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJet_file_2.root' #GJet
-        'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_25ns_file1.root' #QCD
+        #'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJet_file_2.root' #GJet
+        'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_25ns_file1.root'
       )
     )
 
@@ -95,11 +95,6 @@ processedEvents = int(options.processedEvents) if isinstance(options.processedEv
 crossSection = float(options.crossSection) if isinstance(options.crossSection, float) and float(options.crossSection) != 0 else 1
 ptHatMin = options.lowPtHat if isinstance(options.lowPtHat, float) else -1
 ptHatMax = options.highPtHat if isinstance(options.highPtHat, float) else -1
-
-processedEvents = 10328623
-crossSection = 2281
-ptHatMin = 200
-ptHatMax = 400
 
 print("Running on sample with:")
 print("\tNumber of processed events: %d" % processedEvents)

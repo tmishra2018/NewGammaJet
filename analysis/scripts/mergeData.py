@@ -46,10 +46,12 @@ for line in ins:
 
 #filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+".root" 
 #change name
-filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D_CertJson_V5_L2ResOnly.root" 
+filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015-v2.root" 
 os.system("hadd -f "+filename_out+"  "+files )
 
+# f.
 inputFile = TFile(filename_out,"UPDATE")
+
 #h_sumOfWeights = inputFile.Get("gammaJet/h_sumW")
 #sumOfWeights = h_sumOfWeights.Integral()
 

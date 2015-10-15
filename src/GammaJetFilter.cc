@@ -145,6 +145,8 @@ class GammaJetFilter : public edm::EDFilter {
     void readCSVFile();
     void updateLuminosity(const edm::LuminosityBlock& lumiBlock);
 
+
+
     // ----------member data ---------------------------
     bool mIsMC;
     bool mFilterData;
@@ -180,6 +182,7 @@ class GammaJetFilter : public edm::EDFilter {
   edm::InputTag mJetsAK8PFlowIT;
   edm::InputTag mJetsAK4CaloIT;
   edm::InputTag mJetsAK8CaloIT;
+
   
   // federico -- Photon variables computed upstream in a special producer
   //    edm::EDGetTokenT<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMapToken_; // from rel73 ok in photon class
@@ -376,20 +379,20 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV5ch1pv_DATA_L1RC_AK4PFchs.txt").fullPath());
 
     // Residual corrections for the closure test --- only for data   ---- L2L3Res_V3M3 == L2L3Res_V5
-    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV3M3_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
+    //    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV3M3_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
     
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     
     vPar.push_back(*L1JetPar);
     vPar.push_back(*L2JetPar);
     vPar.push_back(*L3JetPar);
-    vPar.push_back(*ResJetPar); //comment if you dont want residuals
+    //vPar.push_back(*ResJetPar); //comment if you dont want residuals
     jetCorrector = new FactorizedJetCorrector(vPar);
     //FAKE vPar for typeI fix
     vParTypeI.push_back(*L1JetParForTypeI);
     vParTypeI.push_back(*L2JetPar);
     vParTypeI.push_back(*L3JetPar);
-    vParTypeI.push_back(*ResJetPar); //comment if you dont want residuals
+    //vParTypeI.push_back(*ResJetPar); //comment if you dont want residuals
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
     //FAKE vPar for typeI fix only L1
     vParTypeIL1.push_back(*L1JetParForTypeI);
@@ -398,7 +401,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     delete L3JetPar;
     delete L2JetPar;
     delete L1JetPar;
-    delete ResJetPar;
+    //delete ResJetPar;
     delete L1JetParForTypeI;
   } else {  // JEC for MC
     // Create the JetCorrectorParameter objects, the order does not matter.
@@ -409,7 +412,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV5_MC_L2Relative_AK4PFchs.txt").fullPath());
     JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV5_MC_L1FastJet_AK4PFchs.txt").fullPath());
     // For Type-I --- To use RC instead FastJet
-    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV5_MC_L1RC_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV5ch1pv_MC_L1RC_AK4PFchs.txt").fullPath());
 
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vPar.push_back(*L1JetPar);
@@ -714,10 +717,21 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     return false;
   
   const reco::Vertex& primaryVertex = vertices->at(0);
-  
+
   EventCounter -> AddBinContent(3, generatorWeight );
   Event_VtxCut++;
+
+  int nPVGood =0;
+ 
+  reco::VertexCollection::const_iterator i_pv, endpv = vertices->end();
+  for (i_pv = vertices->begin();  i_pv != endpv;  ++i_pv) {
+    
+    if ( !i_pv->isFake() && i_pv->ndof() > 4){
+      nPVGood++;
+    }
+  }
   
+ 
   edm::Handle<double> pFlowRho;
   iEvent.getByLabel(edm::InputTag("offlineSlimmedPrimaryVertices"), pFlowRho); // For photon ID
   
@@ -865,6 +879,8 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	 }
        }
      }
+
+     cout<<"met.et()   " << met.et() <<std::endl;
       
      if (rawMetsHandle.isValid())
        metsToTree(met, rawMet, mMETTrees[*it]);
@@ -903,29 +919,39 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
    RunNumber_t run = eventId.run();
    LuminosityBlockNumber_t lumiBlock = eventId.luminosityBlock();
    
+   //    if(met.et() > 20000) cout << "lumi  "<< lumi_block<< "   met.et()   " << met.et() <<std::endl;
+   cout << "lumi  "<< lumiBlock<< endl;
+
+
    if (mIsMC) {
+     /* // old stuff
      for (std::vector<PileupSummaryInfo>::const_iterator it = puInfos->begin(); it != puInfos->end();
-	  ++it) {
+    	  ++it) {
        
        int BX = it->getBunchCrossing();
        if (BX == 0) {
-	 nPUVertex = it->getPU_NumInteractions();
-	 nTrueInteractions = it->getTrueNumInteractions();
-	 break;
+     	 nPUVertex = it->getPU_NumInteractions();
+     	 nTrueInteractions = it->getTrueNumInteractions();
+    	 break;
        }
-     }
-     
+     }     
      if (nPUVertex < 0) {
        throw cms::Exception("PUReweighting") << "No in-time beam crossing found!" << std::endl;
-     }
+       }*/
+     nTrueInteractions = puInfos->at(1).getTrueNumInteractions();
    } else {
-     nTrueInteractions = mCurrentTruePU;
+     //     nTrueInteractions = mCurrentTruePU;
+     //     std::cout<< "run "<<run<< "    ls       "<<lumiBlock<< std::endl;
+     nTrueInteractions = -1;
+     // read and save in the 2nd step (from file)
+     //     std::cout<< nTrueInteractions<< std::endl;
    }
    
    updateBranch(mAnalysisTree, &run, "run", "i");
    updateBranch(mAnalysisTree, &lumiBlock, "lumi_block", "i");
    updateBranch(mAnalysisTree, &event, "event", "i");
    updateBranch(mAnalysisTree, &nVertex, "nvertex", "i");
+   updateBranch(mAnalysisTree, &nPVGood, "nvertexGood", "i");
    updateBranch(mAnalysisTree, &nTrueInteractions, "ntrue_interactions");
    updateBranch(mAnalysisTree, &nPUVertex, "pu_nvertex", "I");
    updateBranch(mAnalysisTree, &mEventsWeight, "event_weight"); // Only valid for binned samples
@@ -1169,6 +1195,8 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   double correctedMetPt = sqrt(correctedMetPx * correctedMetPx + correctedMetPy * correctedMetPy);
   
   met.setP4(reco::Candidate::LorentzVector(correctedMetPx, correctedMetPy, 0., correctedMetPt));
+
+
 }
 
 //giulia --- comment footprint stuff

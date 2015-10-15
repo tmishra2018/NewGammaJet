@@ -1,0 +1,88 @@
+Sender: LSF System <lsfadmin@cmsrm-wn138>
+Subject: Job 976837: <source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_Test.src> Exited
+
+Job <source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_Test.src> was submitted from host <cmsrm-ui04> by user <fpreiato> in cluster <t2rm>.
+Job was executed on host(s) <cmsrm-wn138>, in queue <cmslong>, as user <fpreiato> in cluster <t2rm>.
+</cmshome/fpreiato> was used as the home directory.
+</cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC> was used as the working directory.
+Started at Thu Oct 15 16:55:28 2015
+Results reported at Thu Oct 15 17:18:06 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_Test.src
+------------------------------------------------------------
+
+Exited with exit code 139.
+
+Resource usage summary:
+
+    CPU time   :    736.06 sec.
+    Max Memory :       518 MB
+    Max Swap   :       931 MB
+
+    Max Processes  :         8
+    Max Threads    :         9
+
+The output (if any) follows:
+
+Parsing triggers_mc.xml ...
+done.
+triggers mapping:
+Pt range: [40, 8000]
+.* -> 1
+Opening files ...
+done.
+
+##########
+# [34mRunning on [31mMC[m
+##########
+
+Error in <TTree::SetBranchStatus>: unknown branch -> nvertexGood
+Processing...
+Processing event #1 of 4010010 (0%) - 0 s
+Processing event #50001 of 4010010 (1.24688%) - 83 s
+Processing event #100001 of 4010010 (2.49376%) - 93 s
+Processing event #150001 of 4010010 (3.74064%) - 68 s
+Processing event #200001 of 4010010 (4.98752%) - 63 s
+Processing event #250001 of 4010010 (6.2344%) - 62 s
+Processing event #300001 of 4010010 (7.48128%) - 63 s
+Processing event #350001 of 4010010 (8.72816%) - 63 s
+Processing event #400001 of 4010010 (9.97504%) - 63 s
+Processing event #450001 of 4010010 (11.2219%) - 63 s
+Processing event #500001 of 4010010 (12.4688%) - 63 s
+Processing event #550001 of 4010010 (13.7157%) - 63 s
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00000038f90ac68e in waitpid () from /lib64/libc.so.6
+#1  0x00000038f903e609 in do_system () from /lib64/libc.so.6
+#2  0x00002b1ad62a7fc7 in TUnixSystem::StackTrace() () from /cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw-patch/CMSSW_7_4_12_patch4/external/slc6_amd64_gcc491/lib/libCore.so
+#3  0x00002b1ad62a9f5c in TUnixSystem::DispatchSignals(ESignals) () from /cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw-patch/CMSSW_7_4_12_patch4/external/slc6_amd64_gcc491/lib/libCore.so
+#4  <signal handler called>
+#5  0x000000000041a029 in LeptonTree::GetEntry(long long) ()
+#6  0x000000000042a54a in GammaJetFinalizer::runAnalysis() ()
+#7  0x00000000004188c7 in main ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash.
+If they do not help you then please submit a bug report at
+http://root.cern.ch/bugs. Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#5  0x000000000041a029 in LeptonTree::GetEntry(long long) ()
+#6  0x000000000042a54a in GammaJetFinalizer::runAnalysis() ()
+#7  0x00000000004188c7 in main ()
+===========================================================
+
+

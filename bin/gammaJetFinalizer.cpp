@@ -38,6 +38,7 @@
 #include "gammaJetFinalizer.h"
 #include "PUReweighter.h"
 #include "JECReader.h"
+#include "parsePileUpJSON2.h"
 
 #include <boost/regex.hpp>
 
@@ -101,6 +102,8 @@ void GammaJetFinalizer::runAnalysis() {
   } else {
     mTriggers      = new Triggers("/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/bin/triggers_Allpass.xml");
   }
+
+  if(!mIsMC)  parsePileUpJSON2();
 
   // Initialization
   mExtrapBinning.initialize(mPtBinning, (mJetType == PF) ? "PFlow" : "Calo");
@@ -384,6 +387,14 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_METResolution_passedID = analysisDir.make<TH1F>("METResolution_passedID", "MET", 100, 0., 600.);
   TH1F* h_MET_perp_passedID = analysisDir.make<TH1F>("MET_perp_passedID", "MET", 200, -600., 600.);
   TH1F* h_MET_par_passedID = analysisDir.make<TH1F>("MET_par_passedID", "MET", 200, -600., 600.);
+
+  TH1F* h_mu = analysisDir.make<TH1F>("mu", "mu", 50, 0, 50);
+  //  TH1F* h_rho = analysisDir.make<TH1F>("rho", "rho", 100, 0, 50); // lo fa gia
+  TH1F* h_npvGood = analysisDir.make<TH1F>("npvGood", "npvGood", 50, 0, 50);
+  TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 100, 0, 50, 50, 0, 50);
+  TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
+
+
 ////resolution plots for mc only
 ////  if (mIsMC) {
 ////photon eergy resolution
@@ -554,15 +565,25 @@ void GammaJetFinalizer::runAnalysis() {
 
   /////////////////////////////////////////////////////// Federico
   // vs run number     //added analysis vs run_number -- time dependence
-  TFileDirectory runDir = analysisDir.mkdir("run");
-  std::vector<std::vector<TH1F*>> run_responseBalancing = buildEtaRunVector<TH1F>(runDir, "resp_balancing", 150, 0., 2.);
-  std::vector<std::vector<TH1F*>> run_responseBalancingRaw = buildEtaRunVector<TH1F>(runDir, "resp_balancing_raw", 150, 0., 2.);
-  std::vector<TH1F*> run_responseBalancingEta013 = buildRunVector<TH1F>(runDir, "resp_balancing", "eta0013", 150, 0., 2.);
-  std::vector<TH1F*> run_responseBalancingRawEta013 = buildRunVector<TH1F>(runDir, "resp_balancing_raw", "eta0013", 150, 0., 2.);
-  std::vector<std::vector<TH1F*>> run_responseMPF = buildEtaRunVector<TH1F>(runDir, "resp_mpf", 150, 0., 2.);
-  std::vector<std::vector<TH1F*>> run_responseMPFRaw = buildEtaRunVector<TH1F>(runDir, "resp_mpf_raw", 150, 0., 2.);
-  std::vector<TH1F*> run_responseMPFEta013 = buildRunVector<TH1F>(runDir, "resp_mpf", "eta0013", 150, 0., 2.);
-  std::vector<TH1F*> run_responseMPFRawEta013 = buildRunVector<TH1F>(runDir, "resp_mpf_raw", "eta0013", 150, 0., 2.);
+  TFileDirectory runDir;
+  std::vector<std::vector<TH1F*>> run_responseBalancing ;
+  std::vector<TH1F*> run_responseBalancingEta013 ;
+  std::vector<std::vector<TH1F*>> run_responseMPF ;
+  std::vector<TH1F*> run_responseMPFEta013 ;
+
+  if(!mIsMC){
+  runDir = analysisDir.mkdir("run");
+  run_responseBalancing = buildEtaRunVector<TH1F>(runDir, "resp_balancing", 150, 0., 2.);
+  run_responseBalancingEta013 = buildRunVector<TH1F>(runDir, "resp_balancing", "eta0013", 150, 0., 2.);
+  run_responseMPF = buildEtaRunVector<TH1F>(runDir, "resp_mpf", 150, 0., 2.);
+  run_responseMPFEta013 = buildRunVector<TH1F>(runDir, "resp_mpf", "eta0013", 150, 0., 2.);
+  }
+
+
+
+
+
+
   /////////////////////////////////////////////////////////////
 
 
@@ -679,15 +700,15 @@ void GammaJetFinalizer::runAnalysis() {
 
     if ((i - from) % 50000 == 0) { //federico 50000
       clock::time_point end = clock::now();
-      double elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+      double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
       start = end;
-      std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " ms" << std::endl;
+      std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
     }
 
     //bug in crab outputs -- skip events with bugs on 50/25 ns
-    //    if( mIsMC ){
-    //      if ( i == 561642 || i == 1335103 || i == 2437147 || i == 2705307 || i == 3072312 ) continue;
-    //    }
+        if( mIsMC ){
+	  if ( i == 59092 || i == 351000 || i == 1544360 || i == 2723215 || i == 3101724 || i == 3479770  ) continue;
+        }
     
     if (EXIT) {
       break;
@@ -734,7 +755,7 @@ void GammaJetFinalizer::runAnalysis() {
 
     //federico test veloce -- skippa tutti gli eventi
     //    if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)
-    //  continue;
+    //	  continue;
 
     if (! photon.is_present || ! firstJet.is_present)
       continue;
@@ -828,7 +849,6 @@ void GammaJetFinalizer::runAnalysis() {
     
     if
  (mIsMC) {
-
       int run_period=0;
       if (analysis.run>190456 && analysis.run<196531) run_period=1;
       if (analysis.run>198022 && analysis.run<203742) run_period=2;
@@ -1002,7 +1022,16 @@ void GammaJetFinalizer::runAnalysis() {
    
     //    std::cout << " secondJetOK "<< std::endl; 
 
- 
+    double mu;
+
+    //federico
+    if(mIsMC){
+      mu = analysis.ntrue_interactions ;
+    } else {
+      mu = getAvgPU( analysis.run, analysis.lumi_block );
+      //      std::cout<< analysis.run << "  " << analysis.lumi_block << "  " << mu<<endl;
+    }
+    
 #if ADD_TREES
     h_nvertex->Fill(analysis.nvertex, oldAnalysisWeight);
     h_ntrue_interactions->Fill(analysis.ntrue_interactions, oldAnalysisWeight);
@@ -1091,6 +1120,7 @@ void GammaJetFinalizer::runAnalysis() {
     if ( mIsMC)    respGenGamma = firstGenJet.pt / genPhoton.pt;
     if ( mIsMC)    respPhotonGamma = photon.pt / genPhoton.pt;
 
+
     //    std::cout << " Calcolate balancing "<< std::endl; 
 
     int ptBin = mPtBinning.getPtBin(photon.pt);
@@ -1104,11 +1134,14 @@ void GammaJetFinalizer::runAnalysis() {
     h_ptPhotonBinned[ptBin]->Fill(photon.pt, eventWeight);
 
 
+
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(genPhoton.pt);
     int etaBin = mEtaBinning.getBin(firstJet.eta);
     if ( mIsMC)   etaBinGen = mEtaBinning.getBin(firstGenJet.eta);
     int vertexBin = mVertexBinning.getVertexBin(analysis.nvertex);
-    int runBin = mRunBinning.getRunBin(analysis.run);
+
+    int runBin = -1;
+    if(!mIsMC)  runBin = mRunBinning.getRunBin(analysis.run);
 
     float jetcalcen=0;
     float jetcalcenraw=0;
@@ -1312,6 +1345,13 @@ void GammaJetFinalizer::runAnalysis() {
         h_chargedHadronsIsolation_passedID     ->Fill(photon.chargedHadronsIsolation, eventWeight);
         h_neutralHadronsIsolation_passedID      ->Fill(photon.neutralHadronsIsolation, eventWeight);
         h_photonIsolation_passedID                    ->Fill(photon.photonIsolation, eventWeight);
+
+	//	cout<< mu << " " << analysis.nvertexGood << " " << photon.rho << " " << eventWeight << endl;
+	h_mu -> Fill(mu, eventWeight);
+	h_npvGood -> Fill(analysis.nvertexGood, eventWeight);
+	h_rho_vs_mu -> Fill(photon.rho, mu, eventWeight);
+	h_npvGood_vs_mu -> Fill(analysis.nvertexGood, mu, eventWeight);
+
 //
         vpar=(MET.px*photon.px + MET.py*photon.py)/photon.pt;
         h_METResolution_passedID             ->Fill(sqrt(pow(MET.px-genMET.px,2)+pow(MET.py-genMET.py,2)), eventWeight);
@@ -1347,10 +1387,11 @@ void GammaJetFinalizer::runAnalysis() {
 	  responseBalancingRawEta013[ptBin]->Fill(respBalancingRaw, eventWeight);
 	  responseMPFEta013[ptBin]->Fill(respMPF, eventWeight);
 	  responseMPFRawEta013[ptBin]->Fill(respMPFRaw, eventWeight);
-	  run_responseBalancingEta013[runBin]->Fill(respBalancing, eventWeight);
-	  run_responseBalancingRawEta013[runBin]->Fill(respBalancingRaw, eventWeight);
-	  run_responseMPFEta013[runBin]->Fill(respMPF, eventWeight);
-	  run_responseMPFRawEta013[runBin]->Fill(respMPF, eventWeight);
+
+	  if(!mIsMC){
+	    run_responseBalancingEta013[runBin]->Fill(respBalancing, eventWeight);
+	    run_responseMPFEta013[runBin]->Fill(respMPF, eventWeight);
+	  }
 
           if (vertexBin >= 0) {
             vertex_responseBalancingEta013[vertexBin]->Fill(respBalancing, eventWeight);
@@ -1469,10 +1510,10 @@ void GammaJetFinalizer::runAnalysis() {
         responseMPF[etaBin][ptBin]->Fill(respMPF, eventWeight);
         responseMPFRaw[etaBin][ptBin]->Fill(respMPFRaw, eventWeight);
 
-	run_responseBalancing[etaBin][runBin]->Fill(respBalancing, eventWeight);
-	run_responseBalancingRaw[etaBin][runBin]->Fill(respBalancingRaw, eventWeight);
-	run_responseMPF[etaBin][runBin]->Fill(respMPF, eventWeight);
-	run_responseMPFRaw[etaBin][runBin]->Fill(respMPF, eventWeight);
+	if(!mIsMC){
+	  run_responseBalancing[etaBin][runBin]->Fill(respBalancing, eventWeight);
+	  run_responseMPF[etaBin][runBin]->Fill(respMPF, eventWeight);
+	}
 
         if (vertexBin >= 0) {
           vertex_responseBalancing[etaBin][vertexBin]->Fill(respBalancing, eventWeight);
@@ -1849,7 +1890,7 @@ void GammaJetFinalizer::computePUWeight_Fede(double ptPhot, int nvertex) {
 
   //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_Run2015D_CertJson.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_Run2015D_09Oct.root"); 
   TH1D *h_ratio=0;
   if(ptPhot >= 40 && ptPhot < 60)          h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_40_60");  
   if(ptPhot >= 60 && ptPhot < 85)          h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_60_85");  
@@ -1873,7 +1914,7 @@ void GammaJetFinalizer::computeTriggerWeight(double ptPhot, float& weight) {
 
   //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/Prescale_alphacut030_Run2015D_V5_ClosureTest.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/Prescale_Run2015D_09Oct_alphacut030.root"); 
   TH1D *h_ratio = (TH1D*)f1.Get("h_ratio");  
   int bin;
 

@@ -7,7 +7,7 @@ import math
 from ROOT import *
 from array import array
 
-usage = "usage:  python mergeAndAddWeights.py --inputList list_of_files_to_merge.txt -o ./ --xsec 2022100000 [in pb]  --lumi_tot 1000. [in /pb]"
+usage = "usage:  python mergeAndAddWeights.py --inputList list_of_files_to_merge.txt -o ./ --xsec 2022100000 [in pb]  --lumi_tot 1. [in /pb]"
 
 parser = argparse.ArgumentParser(description='Process options.')
 
@@ -45,7 +45,7 @@ for line in ins:
   
 #print files  
 
-filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+"25nsSample_25nsV2.root" 
+filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+"25nsSample_25nsV5.root" 
 os.system("hadd -f "+filename_out+"  "+files )
 
 inputFile = TFile(filename_out,"UPDATE")

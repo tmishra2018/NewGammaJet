@@ -1,0 +1,160 @@
+Sender: LSF System <lsfadmin@cmsrm-wn108>
+Subject: Job 953388: <source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut015.src> Done
+
+Job <source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut015.src> was submitted from host <cmsrm-ui04> by user <fpreiato> in cluster <t2rm>.
+Job was executed on host(s) <cmsrm-wn108>, in queue <cmslong>, as user <fpreiato> in cluster <t2rm>.
+</cmshome/fpreiato> was used as the home directory.
+</cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC> was used as the working directory.
+Started at Wed Oct 14 17:19:13 2015
+Results reported at Wed Oct 14 19:50:31 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+source /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_alphacut015.src
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :   8428.46 sec.
+    Max Memory :      1102 MB
+    Max Swap   :      1366 MB
+
+    Max Processes  :         3
+    Max Threads    :         4
+
+The output (if any) follows:
+
+Parsing triggers_mc.xml ...
+done.
+triggers mapping:
+Pt range: [40, 8000]
+.* -> 1
+Opening files ...
+done.
+
+##########
+# [34mRunning on [31mMC[m
+##########
+
+Processing...
+Processing event #1 of 4121490 (0%) - 0 s
+Processing event #50001 of 4121490 (1.21315%) - 102 s
+Processing event #100001 of 4121490 (2.42631%) - 95 s
+Processing event #150001 of 4121490 (3.63946%) - 95 s
+Processing event #200001 of 4121490 (4.85261%) - 98 s
+Processing event #250001 of 4121490 (6.06577%) - 100 s
+Processing event #300001 of 4121490 (7.27892%) - 97 s
+Processing event #350001 of 4121490 (8.49207%) - 95 s
+Processing event #400001 of 4121490 (9.70523%) - 105 s
+Processing event #450001 of 4121490 (10.9184%) - 110 s
+Processing event #500001 of 4121490 (12.1315%) - 106 s
+Processing event #550001 of 4121490 (13.3447%) - 97 s
+Processing event #600001 of 4121490 (14.5578%) - 106 s
+Processing event #650001 of 4121490 (15.771%) - 107 s
+Processing event #700001 of 4121490 (16.9841%) - 100 s
+Processing event #750001 of 4121490 (18.1973%) - 97 s
+Processing event #800001 of 4121490 (19.4105%) - 106 s
+Processing event #850001 of 4121490 (20.6236%) - 106 s
+Processing event #900001 of 4121490 (21.8368%) - 101 s
+Processing event #950001 of 4121490 (23.0499%) - 101 s
+Processing event #1000001 of 4121490 (24.2631%) - 108 s
+Processing event #1050001 of 4121490 (25.4762%) - 105 s
+Processing event #1100001 of 4121490 (26.6894%) - 107 s
+Processing event #1150001 of 4121490 (27.9025%) - 105 s
+Processing event #1200001 of 4121490 (29.1157%) - 99 s
+Processing event #1250001 of 4121490 (30.3288%) - 96 s
+Processing event #1300001 of 4121490 (31.542%) - 113 s
+Processing event #1350001 of 4121490 (32.7551%) - 118 s
+Processing event #1400001 of 4121490 (33.9683%) - 99 s
+Processing event #1450001 of 4121490 (35.1814%) - 98 s
+Processing event #1500001 of 4121490 (36.3946%) - 100 s
+Processing event #1550001 of 4121490 (37.6078%) - 97 s
+Processing event #1600001 of 4121490 (38.8209%) - 90 s
+Processing event #1650001 of 4121490 (40.0341%) - 91 s
+Processing event #1700001 of 4121490 (41.2472%) - 97 s
+Processing event #1750001 of 4121490 (42.4604%) - 98 s
+Processing event #1800001 of 4121490 (43.6735%) - 104 s
+Processing event #1850001 of 4121490 (44.8867%) - 88 s
+Processing event #1900001 of 4121490 (46.0998%) - 94 s
+Processing event #1950001 of 4121490 (47.313%) - 107 s
+Processing event #2000001 of 4121490 (48.5261%) - 102 s
+Processing event #2050001 of 4121490 (49.7393%) - 90 s
+Processing event #2100001 of 4121490 (50.9524%) - 91 s
+Processing event #2150001 of 4121490 (52.1656%) - 92 s
+Processing event #2200001 of 4121490 (53.3788%) - 92 s
+Processing event #2250001 of 4121490 (54.5919%) - 93 s
+Processing event #2300001 of 4121490 (55.8051%) - 92 s
+Processing event #2350001 of 4121490 (57.0182%) - 94 s
+Processing event #2400001 of 4121490 (58.2314%) - 94 s
+Processing event #2450001 of 4121490 (59.4445%) - 94 s
+Processing event #2500001 of 4121490 (60.6577%) - 96 s
+Processing event #2550001 of 4121490 (61.8708%) - 94 s
+Processing event #2600001 of 4121490 (63.084%) - 93 s
+Processing event #2650001 of 4121490 (64.2971%) - 94 s
+Processing event #2700001 of 4121490 (65.5103%) - 100 s
+Processing event #2750001 of 4121490 (66.7234%) - 103 s
+Processing event #2800001 of 4121490 (67.9366%) - 107 s
+Processing event #2850001 of 4121490 (69.1497%) - 109 s
+Processing event #2900001 of 4121490 (70.3629%) - 108 s
+Processing event #2950001 of 4121490 (71.5761%) - 125 s
+Processing event #3000001 of 4121490 (72.7892%) - 145 s
+Processing event #3050001 of 4121490 (74.0024%) - 143 s
+Processing event #3100001 of 4121490 (75.2155%) - 125 s
+Processing event #3150001 of 4121490 (76.4287%) - 115 s
+Processing event #3200001 of 4121490 (77.6418%) - 116 s
+Processing event #3250001 of 4121490 (78.855%) - 123 s
+Processing event #3300001 of 4121490 (80.0681%) - 167 s
+Processing event #3350001 of 4121490 (81.2813%) - 144 s
+Processing event #3400001 of 4121490 (82.4944%) - 133 s
+Processing event #3450001 of 4121490 (83.7076%) - 148 s
+Processing event #3500001 of 4121490 (84.9207%) - 116 s
+Processing event #3550001 of 4121490 (86.1339%) - 119 s
+Processing event #3600001 of 4121490 (87.3471%) - 122 s
+Processing event #3650001 of 4121490 (88.5602%) - 129 s
+Processing event #3700001 of 4121490 (89.7734%) - 117 s
+Processing event #3750001 of 4121490 (90.9865%) - 135 s
+Processing event #3800001 of 4121490 (92.1997%) - 118 s
+Processing event #3850001 of 4121490 (93.4128%) - 118 s
+Processing event #3900001 of 4121490 (94.626%) - 124 s
+Processing event #3950001 of 4121490 (95.8391%) - 136 s
+Processing event #4000001 of 4121490 (97.0523%) - 146 s
+Processing event #4050001 of 4121490 (98.2654%) - 162 s
+Processing event #4100001 of 4121490 (99.4786%) - 154 s
+
+Absolute efficiency : related to initial number of event =  4121490
+Efficiency for photon/jet cut: [31m99.2427%[m
+Selection efficiency for trigger selection: [31m98.272%[m
+Efficiency for Δφ cut: [31m87.6083%[m
+Efficiency for pixel seed veto cut: [31m84.7204%[m
+Efficiency for muons cut: [31m79.1574%[m
+Efficiency for electrons cut: [31m77.4536%[m
+Efficiency for pT(j1) cut: [31m77.4522%[m
+Efficiency for α cut: [31m50.9433%[m
+Selection efficiency: [31m44.3189%[m
+
+Relative efficiency --- Initial events : 4121490
+Efficiency for photon/jet cut: [31m99.2427%[m
+Selection efficiency for trigger selection: [31m99.0219%[m
+Efficiency for Δφ cut: [31m89.1488%[m
+Efficiency for pixel seed veto cut: [31m96.7036%[m
+Efficiency for muons cut: [31m93.4337%[m
+Efficiency for electrons cut: [31m97.8475%[m
+Efficiency for pT(j1) cut: [31m99.9982%[m
+Efficiency for α cut: [31m65.7739%[m
+
+Entries degli isto senza passedID -->    3192184
+Entries degli isto con passedID -->    1826598
+
+Rejected events because trigger was not found: [31m0%[m
+Rejected events because pT was out of range: [31m100%[m
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Warning in <Fit>: Fit data is empty 
+Info in ROOT::Math::ParameterSettings>: lower/upper bounds outside current parameter value. The value will be set to (low+up)/2 

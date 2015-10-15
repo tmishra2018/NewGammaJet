@@ -54,6 +54,7 @@ class RunBinning {
       mRunBins.push_back(std::make_pair(256728, 256730));
       mRunBins.push_back(std::make_pair(256734, 256844));
       mRunBins.push_back(std::make_pair(256866, 257600));
+      mRunBins.push_back(std::make_pair(257600, 300000));
     }
 
 };

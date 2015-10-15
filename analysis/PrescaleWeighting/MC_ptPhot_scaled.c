@@ -28,13 +28,13 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_GJet_AlphaCut030_25ns_Run2015D_CertJson_V5_PFlowAK4chs.root");
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_GJet_AlphaCut030_25ns_Run2015D_09Oct_PFlowAK4chs.root");
   TTree* Misc_mc = (TTree*) f1.Get("misc");
   TTree* PhotonTree_mc = (TTree*) f1.Get("photon");
   uint64_t totalEvents_mc = PhotonTree_mc->GetEntries();
   cout<< totalEvents_mc << endl;
 
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton_25ns_Run2015D_CertJson_V5_ClosureTest_NoPrescale_alphacut030_PFlowAK4chs.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton_25ns_Run2015D_09Oct_NoPrescale_alphacut030_PFlowAK4chs.root");
   
   double lumi = -1;
   TParameter<double>* dLumi = static_cast<TParameter<double>*>(f2.Get("analysis/luminosity"));

@@ -27,12 +27,12 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25nsSample_25nsV3.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25nsSample_25nsV5.root"); 
   TTree* AnalysisTree_mc = (TTree*) f1.Get("gammaJet/analysis");
   TTree* PhotonTree_mc = (TTree*) f1.Get("gammaJet/photon");
   uint64_t totalEvents_mc = AnalysisTree_mc->GetEntries();
   
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_5_3/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D_CertJson.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015.root");
   TTree* AnalysisTree_data = (TTree*) f2.Get("gammaJet/analysis");
   TTree* PhotonTree_data = (TTree*) f2.Get("gammaJet/photon");
   uint64_t totalEvents_data = AnalysisTree_data->GetEntries();
@@ -218,7 +218,7 @@ int main(int argc, char* argv[]) {
     c3-> SaveAs("Nvtx_reweighted_ptPhot_60_85.png");
     
     
-    TFile f_new("NvertexPU_Run2015D_CertJson.root", "recreate");          
+    TFile f_new("NvertexPU_Run2015D_09Oct.root", "recreate");          
     
     //    h_nvertex_mc->Write();
     h_nvertex_mc_ptPhot_40_60  -> Write();      
