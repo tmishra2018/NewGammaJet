@@ -324,7 +324,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseBALANCING_vs_pt->SetMarkerStyle(21);
   gr_responseBALANCING_vs_pt->SetMarkerSize(markerSize);
   gr_responseBALANCING_vs_pt->SetMarkerColor(kGray + 2);
-  gr_responseBALANCING_vs_pt->SetName(TString::Format("PtBalchs_DATA_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseBALANCING_vs_pt->SetName(TString::Format("%s_PtBalchs_DATA_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   std::string responseBALANCINGMC_name = responseBALANCING_name;
   boost::replace_all(responseBALANCINGMC_name, "data", "mc");
@@ -333,7 +333,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseBALANCINGMC_vs_pt->SetMarkerStyle(25);
   gr_responseBALANCINGMC_vs_pt->SetMarkerSize(markerSize);
   gr_responseBALANCINGMC_vs_pt->SetMarkerColor(kGray + 2);
-  gr_responseBALANCINGMC_vs_pt->SetName(TString::Format("PtBalchs_MC_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseBALANCINGMC_vs_pt->SetName(TString::Format("%s_PtBalchs_MC_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   TGraphErrors* gr_responseMPF_vs_pt = NULL;
   TGraphErrors* gr_responseMPFMC_vs_pt = NULL;
@@ -353,7 +353,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseMPF_vs_pt->SetMarkerStyle(20);
   gr_responseMPF_vs_pt->SetMarkerSize(markerSize);
   gr_responseMPF_vs_pt->SetMarkerColor(38);
-  gr_responseMPF_vs_pt->SetName(TString::Format("MPFchs_DATA_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseMPF_vs_pt->SetName(TString::Format("%s_MPFchs_DATA_%sa%s_%s", prefix.c_str(),  rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   std::string responseMPFMC_name = responseMPF_name;
   boost::replace_all(responseMPFMC_name, "data", "mc");
@@ -362,7 +362,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseMPFMC_vs_pt->SetMarkerStyle(24);
   gr_responseMPFMC_vs_pt->SetMarkerSize(markerSize);
   gr_responseMPFMC_vs_pt->SetMarkerColor(38);
-  gr_responseMPFMC_vs_pt->SetName(TString::Format("MPFchs_MC_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseMPFMC_vs_pt->SetName(TString::Format("%s_MPFchs_MC_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   /*} else {
     std::string mpf_name = resp_reso + "MPF_TypeICor";
     if (etaRegion != "")
@@ -404,7 +404,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   //if( (db->get_recoType()=="calo")||(db->get_recoType()=="jpt") )
   if (db->get_recoType() == "calo")
     gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove also third point for calo
-  gr_responseEXTRAP_vs_pt->SetName(TString::Format("PtBalchs_extrap_DATA_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseEXTRAP_vs_pt->SetName(TString::Format("%s_PtBalchs_extrap_DATA_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   //std::string responseEXTRAPMC_name = (correctedPt) ? "gr_extrap"+resp_reso_short+"L2L3_vs_pt" : "gr_extrap"+resp_reso_short+"_vs_pt";
   std::string responseEXTRAPMC_name = "gr_extrap" + resp_reso_short + "_vs_pt";
@@ -417,7 +417,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   //if( (db->get_recoType()=="calo")||(db->get_recoType()=="jpt") )
   if (db->get_recoType() == "calo")
     gr_responseEXTRAPMC_vs_pt->RemovePoint(0); //remove also second point for calo
-  gr_responseEXTRAPMC_vs_pt->SetName(TString::Format("PtBalchs_extrap_MC_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseEXTRAPMC_vs_pt->SetName(TString::Format("%s_PtBalchs_extrap_MC_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
 
   // MPF Extrap (only for response)
@@ -429,7 +429,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseMPFExtrap_vs_pt->SetMarkerSize(markerSize);
   gr_responseMPFExtrap_vs_pt->SetMarkerColor(49);
   //  gr_responseMPFExtrap_vs_pt->RemovePoint(0);
-  gr_responseMPFExtrap_vs_pt->SetName(TString::Format("MPFchs_extrap_DATA_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseMPFExtrap_vs_pt->SetName(TString::Format("%s_MPFchs_extrap_DATA_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   //}
 
   TGraphErrors* gr_responseMPFExtrapMC_vs_pt = (TGraphErrors*) file_extrap->Get(std::string("gr_extrap" + resp_reso_short + "MPF_vs_pt").c_str());
@@ -438,7 +438,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseMPFExtrapMC_vs_pt->SetMarkerSize(markerSize);
   gr_responseMPFExtrapMC_vs_pt->SetMarkerColor(49);
   //  gr_responseMPFExtrapMC_vs_pt->RemovePoint(0);
-  gr_responseMPFExtrapMC_vs_pt->SetName(TString::Format("MPFchs_extrap_MC_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseMPFExtrapMC_vs_pt->SetName(TString::Format("%s_MPFchs_extrap_MC_%sa%s_%s", prefix.c_str(),  rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   //}
 
   /*TGraphErrors* gr_responseMPFExtrap_TypeICor_vs_pt = (TGraphErrors*) file_extrap->Get(std::string("gr_DATA" + resp_reso_short + "MPF_TypeICor_vs_pt").c_str());
@@ -797,7 +797,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_dataMC_BALANCING->SetMarkerStyle(21);
   gr_dataMC_BALANCING->SetMarkerSize(markerSize);
   gr_dataMC_BALANCING->SetMarkerColor(kGray + 2);
-  gr_dataMC_BALANCING->SetName(TString::Format("PtBalchs_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_dataMC_BALANCING->SetName(TString::Format("%s_PtBalchs_%sa%s_%s", prefix.c_str(),  rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   TGraphErrors* gr_dataMC_MPF = NULL;
   //TGraphErrors* gr_dataMC_MPF_TypeICor = NULL;
@@ -807,7 +807,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_dataMC_MPF->SetMarkerStyle(20);
   gr_dataMC_MPF->SetMarkerSize(markerSize);
   gr_dataMC_MPF->SetMarkerColor(38);
-  gr_dataMC_MPF->SetName(TString::Format("MPFchs_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_dataMC_MPF->SetName(TString::Format("%s_MPFchs_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   /*} else {
     gr_dataMC_MPF_TypeICor = fitTools::get_graphRatio(gr_responseMPF_TypeICor_vs_pt, gr_responseMPFMC_TypeICor_vs_pt);
@@ -825,7 +825,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_dataMC_EXTRAP->SetMarkerStyle(22);
   gr_dataMC_EXTRAP->SetMarkerSize(markerSize);
   gr_dataMC_EXTRAP->SetMarkerColor(46);
-  gr_dataMC_EXTRAP->SetName(TString::Format("PtBalchs_extrap_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_dataMC_EXTRAP->SetName(TString::Format("%s_PtBalchs_extrap_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   //MPF Extrap
   TGraphErrors* gr_dataMC_MPF_EXTRAP = NULL;
@@ -836,7 +836,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_dataMC_MPF_EXTRAP->SetMarkerStyle(23);
   gr_dataMC_MPF_EXTRAP->SetMarkerSize(markerSize);
   gr_dataMC_MPF_EXTRAP->SetMarkerColor(49);
-  gr_dataMC_MPF_EXTRAP->SetName(TString::Format("MPFchs_extrap_%sa%s_%s", rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_dataMC_MPF_EXTRAP->SetName(TString::Format("%s_MPFchs_extrap_%sa%s_%s", prefix.c_str(), rawSuffix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   /*} else if (recoGen != "RecoRelRaw") {
     gr_dataMC_MPF_EXTRAP_TypeICor = fitTools::get_graphRatio(gr_responseMPFExtrap_TypeICor_vs_pt, gr_responseMPFExtrapMC_TypeICor_vs_pt);
     gr_dataMC_MPF_EXTRAP_TypeICor->SetMarkerStyle(23);
@@ -849,7 +849,8 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     gr_dataMC_MPF_EXTRAP_TypeIpIICor->SetMarkerColor(49);
     }*/
 
-  if (outputFile && resp_reso == "response") {
+  //  if (outputFile && resp_reso == "response") {
+  if (outputFile) {
     outputFile->cd();
     gr_dataMC_BALANCING->Write();
     gr_dataMC_MPF->Write();
