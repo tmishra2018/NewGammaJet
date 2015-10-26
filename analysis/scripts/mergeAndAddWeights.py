@@ -45,7 +45,7 @@ for line in ins:
   
 #print files  
 
-filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+"25nsSample_25nsV5.root" 
+filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+"25ns_ReReco.root" 
 os.system("hadd -f "+filename_out+"  "+files )
 
 inputFile = TFile(filename_out,"UPDATE")

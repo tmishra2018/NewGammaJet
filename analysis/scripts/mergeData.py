@@ -6,6 +6,7 @@ import argparse
 import math
 from ROOT import *
 from array import array
+import datetime
 
 usage = "usage:  python mergeData.py --inputList list_of_files_to_merge.txt -o ./  --lumi_tot 1000. [in /pb]"
 
@@ -38,15 +39,18 @@ files = " "
 for line in ins:
   file = line.strip()
   files += str(" "+file)
-#  pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-#  fullname = os.path.split(pathT2)[1]
-#  name = fullname.split("_")
-  
-#print files  
+  pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
+  fullname = os.path.split(pathT2)[1]
+  name = fullname.split("_")
 
-#filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+".root" 
+
+today = datetime.date.today()
+today.strftime('%d-%m-%Y')
+
+filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_Dataset05Oct_"+str(today)+".root" 
+print filename_out
 #change name
-filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015-v2.root" 
+#filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015-v2.root" 
 os.system("hadd -f "+filename_out+"  "+files )
 
 # f.

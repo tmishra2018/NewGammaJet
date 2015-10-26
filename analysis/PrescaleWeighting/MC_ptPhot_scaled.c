@@ -20,7 +20,6 @@
 #include <TMath.h>
 #include <TStyle.h>
 #include "TPaveText.h"
-#include "../../bin/triggers.h" 
 
 #define LIGHT_RED TColor::GetColor(0xcf, 0xa0, 0xa1)
 
@@ -28,19 +27,14 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_GJet_AlphaCut030_25ns_Run2015D_09Oct_PFlowAK4chs.root");
+  cout<<"Running MC_ptPhot_scaled.c"<<endl;
+
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_GJet_Pt15To6000_ReReco_Finalized_alphacut030_PFlowAK4chs.root");
   TTree* Misc_mc = (TTree*) f1.Get("misc");
   TTree* PhotonTree_mc = (TTree*) f1.Get("photon");
   uint64_t totalEvents_mc = PhotonTree_mc->GetEntries();
   cout<< totalEvents_mc << endl;
 
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton_25ns_Run2015D_09Oct_NoPrescale_alphacut030_PFlowAK4chs.root");
-  
-  double lumi = -1;
-  TParameter<double>* dLumi = static_cast<TParameter<double>*>(f2.Get("analysis/luminosity"));
-  lumi = dLumi->GetVal();
-  cout<< "lumi  " << lumi<< endl;  
-  
   ///////////////////////////////////////////////////////////////////
   
   double arraybins[7] = {40, 60, 85,100,130,175,5000};
@@ -77,7 +71,7 @@ int main(int argc, char* argv[]) {
     
 	if(ptPhot < 40 || ptPhot >5000) continue;
 
-    TFile f_PU("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_Run2015D_CertJson.root");                                  
+    TFile f_PU("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_ReReco_23Oct2015.root");                                  
     TH1D *h_PU;  
     
     if(ptPhot >= 40 && ptPhot < 60)          h_PU = (TH1D*)f_PU.Get("h_ratio_ptPhot_40_60");                                                                        
@@ -87,8 +81,8 @@ int main(int argc, char* argv[]) {
     if(ptPhot >= 130 && ptPhot < 175)      h_PU = (TH1D*)f_PU.Get("h_ratio_ptPhot_130_175");                                                                        
     if(ptPhot >= 175 && ptPhot <= 5000)    h_PU = (TH1D*)f_PU.Get("h_ratio_ptPhot_175_5000");  
     
-    int bin = nvertex_mc+1;                                                                                                                                         
-    double PUWeight = h_PU->GetBinContent(bin); ;
+    int bin = h_PU -> FindBin(nvertex_mc);                                                                                                                                         
+    double PUWeight = h_PU->GetBinContent(bin);
     
     //    cout<< "PU_weight   "<< PUWeight <<endl;
     
@@ -98,13 +92,12 @@ int main(int argc, char* argv[]) {
     
   }
   
-    h_mc->Scale(lumi);
-
-    
     TFile f_new("MC_ptPhot_scaled.root", "recreate");          
     
     h_mc  -> Write();      
     f_new.Close();
+
+    cout<<"MC_ptPhot_scaled.root produced"<<endl;
     
 }//main
 
