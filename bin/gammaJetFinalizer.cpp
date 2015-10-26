@@ -98,9 +98,9 @@ void GammaJetFinalizer::runAnalysis() {
   typedef std::chrono::high_resolution_clock clock;
   //federico -> trigger modified
   if (mIsMC) {
-    mMCTriggers = new MCTriggers("/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc_Allpass.xml");
+    mMCTriggers = new MCTriggers("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc_Allpass.xml");
   } else {
-    mTriggers      = new Triggers("/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/bin/triggers_Allpass.xml");
+    mTriggers      = new Triggers("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/bin/triggers_Allpass.xml");
   }
 
   if(!mIsMC)  parsePileUpJSON2();
@@ -697,7 +697,7 @@ void GammaJetFinalizer::runAnalysis() {
 #endif
 
   for (uint64_t i = from; i < to; i++) { //loop on events: from = 0, to = totalEvents
-
+    
     if ((i - from) % 50000 == 0) { //federico 50000
       clock::time_point end = clock::now();
       double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
@@ -707,7 +707,7 @@ void GammaJetFinalizer::runAnalysis() {
 
     //bug in crab outputs -- skip events with bugs on 50/25 ns
         if( mIsMC ){
-	  if ( i == 59092 || i == 351000 || i == 1544360 || i == 2723215 || i == 3101724 || i == 3479770  ) continue;
+	  if ( i == 151632 || i == 706836 || i == 1883227 || i == 2332275 || i == 3537796 || i == 3612323 || i == 3755834  ) continue;
         }
     
     if (EXIT) {
@@ -754,8 +754,7 @@ void GammaJetFinalizer::runAnalysis() {
 #endif
 
     //federico test veloce -- skippa tutti gli eventi
-    //    if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)
-    //	  continue;
+    //    if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
 
     if (! photon.is_present || ! firstJet.is_present)
       continue;
@@ -866,11 +865,16 @@ void GammaJetFinalizer::runAnalysis() {
       triggerWeight = 1.; //non dovrebbe servire qua
     } else {      // if IsData
       //federico
-      computeTriggerWeight( photon.pt, triggerWeight);
+      bool siprescale = true;
+      if(siprescale){
+	computeTriggerWeight( photon.pt, triggerWeight);
+      }else{
+	triggerWeight = 1;
+      }
       //      triggerWeight = 1. / triggerWeight; // in the xml file there were the inverse of prescale
       // get trigger prescale from ntupla
       //      std::cout<< triggerWeight << std::endl;
-     }
+    }
     
 #if PROFILE
     fooB = clock::now();
@@ -903,7 +907,7 @@ void GammaJetFinalizer::runAnalysis() {
     //si prescale
     double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : triggerWeight;
     // no prescale
-    // double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : 1;
+    //    double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : 1;
 
     //    std::cout << "eventWeight used "<< eventWeight << std::endl; // federico
 
@@ -1091,7 +1095,7 @@ void GammaJetFinalizer::runAnalysis() {
     respMPF = 1. + MET.et * photon.pt * cos(deltaPhi_Photon_MET) / (photon.pt * photon.pt);
 
     //    std::cout << " deltaPhi PhotonMET "<< deltaPhi_Photon_MET << std::endl; 
-    //    std::cout << " respMPF "<< respMPF << std::endl; 
+    std::cout << " respMPF "<< respMPF << std::endl; 
 
     if ( mIsMC){
     deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
@@ -1890,13 +1894,13 @@ void GammaJetFinalizer::computePUWeight_Fede(double ptPhot, int nvertex) {
 
   //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_Run2015D_09Oct.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_ReReco_23Oct2015.root"); 
   TH1D *h_ratio=0;
-  if(ptPhot >= 40 && ptPhot < 60)          h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_40_60");  
-  if(ptPhot >= 60 && ptPhot < 85)          h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_60_85");  
-  if(ptPhot >= 85 && ptPhot < 100)        h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_85_100");  
-  if(ptPhot >= 100 && ptPhot < 130)      h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_100_130");  
-  if(ptPhot >= 130 && ptPhot < 175)      h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_130_175");  
+  if(ptPhot >= 40 && ptPhot < 60)             h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_40_60");  
+  if(ptPhot >= 60 && ptPhot < 85)             h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_60_85");  
+  if(ptPhot >= 85 && ptPhot < 100)           h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_85_100");  
+  if(ptPhot >= 100 && ptPhot < 130)         h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_100_130");  
+  if(ptPhot >= 130 && ptPhot < 175)         h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_130_175");  
   if(ptPhot >= 175 && ptPhot <= 5000)    h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_175_5000");  
 
   //  int bin = nvertex+1;
@@ -1914,7 +1918,7 @@ void GammaJetFinalizer::computeTriggerWeight(double ptPhot, float& weight) {
 
   //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/Prescale_Run2015D_09Oct_alphacut030.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/Prescale_ReReco_alphacut030.root"); 
   TH1D *h_ratio = (TH1D*)f1.Get("h_ratio");  
   int bin;
 
