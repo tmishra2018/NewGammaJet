@@ -1232,7 +1232,7 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
 //void GammaJetFilter::correctMETWithFootprintAndTypeI(const pat::PackedCandidateCollection& pfCandidatesHandle, pat::MET& met, const pat::JetCollection& jets, edm::Event& event, pat::Photon& photon) {
 void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets, edm::Event& event, pat::Photon& photon) {
 
-  std::cout<< " Correct MET With FootPrint "<< std::endl; 
+  //  std::cout<< " Correct MET With FootPrint "<< std::endl; 
   
   edm::Handle<pat::PackedCandidateCollection> pfs;
   event.getByToken(pfToken_, pfs);
@@ -1242,7 +1242,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   // std::cout<< " Inizializzazione "<< std::endl; 
   // std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
   // std::cout<< " FootprintMEy "<< FootprintMEy << std::endl; 
-  std::cout<< " NPF Candidate To Remove "<< photon.numberOfSourceCandidatePtrs() << std::endl; 
+  // std::cout<< " NPF Candidate To Remove "<< photon.numberOfSourceCandidatePtrs() << std::endl; 
   
   std::vector<reco::CandidatePtr> footprint;
   for (unsigned int i = 0, n = photon.numberOfSourceCandidatePtrs(); i < n; ++i) {
@@ -1253,13 +1253,13 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   for (unsigned int i = 0, n = pfs->size(); i < n; ++i) {
     const pat::PackedCandidate &pf = (*pfs)[i];
     // pfcandidate-based footprint removal
-    //    if (std::find(footprint.begin(), footprint.end(), reco::CandidatePtr(pfs,i)) != footprint.end()) {
-    //  std::cout<< "pfCandidate ESCLUSE # "<< i << std::endl; 
+    if (std::find(footprint.begin(), footprint.end(), reco::CandidatePtr(pfs,i)) != footprint.end()) {
+    //   std::cout<< "pfCandidate ESCLUSE # "<< i << std::endl; 
     //   std::cout<< " pf.px "<< pf.px() << std::endl; 
     //   std::cout<< " pf.py "<< pf.py() << std::endl; 
-    //	  std::cout<< " pf.pt "<< pf.pt() << std::endl; 
-    //continue;
-    //}
+    //   std::cout<< " pf.pt "<< pf.pt() << std::endl; 
+    continue;
+    }
     
     FootprintMEx += -1.* pf.px();
     FootprintMEy += -1.* pf.py();
@@ -1269,9 +1269,9 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     // std::cout<< " pf.py "<< pf.py() << std::endl; 
   }
   
-  std::cout<< "MEx MEy Finale corretta con Footprint "<< std::endl; 
-  std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
-  std::cout<< " FootprintMEy "<< FootprintMEy << std::endl; 
+  //  std::cout<< "MEx MEy Finale corretta con Footprint "<< std::endl; 
+  //  std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
+  //  std::cout<< " FootprintMEy "<< FootprintMEy << std::endl; 
   
   double FootprintMEPt = sqrt(FootprintMEx * FootprintMEx + FootprintMEy * FootprintMEy);   
   
@@ -1338,7 +1338,8 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   
   met.setP4(reco::Candidate::LorentzVector(correctedMetPx, correctedMetPy, 0., correctedMetPt));
   
-  // std::cout<< " Met.et "<< met.et() << std::endl;   
+  std::cout<< " Met.pt "<< met.pt() << std::endl;   
+   std::cout<< " Met.et "<< met.et() << std::endl;   
 } 
 
 
