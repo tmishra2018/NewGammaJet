@@ -47,7 +47,7 @@ for line in ins:
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
-filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_Dataset05Oct_"+str(today)+".root" 
+filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
 print filename_out
 #change name
 #filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015-v2.root" 

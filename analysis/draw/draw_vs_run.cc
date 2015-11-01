@@ -6,9 +6,9 @@
 #include "drawBase.h"
 #include "fitTools.h"
 
-#include "../../bin/etaBinning.h"
-#include "../../bin/ptBinning.h"
-#include "../../bin/runBinning.h"
+#include "etaBinning.h"
+#include "ptBinning.h"
+#include "runBinning.h"
 
 #include <TColor.h>
 
@@ -100,6 +100,9 @@ int main(int argc, char* argv[]) {
   
   // methods: Bal or MPF
   for (size_t kk = 0; kk < 2; kk++) {
+
+    if(kk == 0)   std::cout<<"Balancing method "<< std::endl;
+    if(kk == 1)   std::cout<<"MPF method "<< std::endl;
     
     c->cd();
     
@@ -120,10 +123,13 @@ int main(int argc, char* argv[]) {
 
       gr_response_vs_run[jj] = new TGraphErrors(0);
       
-      std::cout<<" Bin run numero "<< jj+1 << std::endl;
+
+      std::cout<<"Bin run number "<< jj+1 << std::endl;
       
       int run_low  = runBin.first ;
       int run_high = runBin.second ;
+
+      std::cout<<"Run range "<< run_low <<"-"<< run_high << std::endl;
       
       for (size_t i = 0; i < etaBinningSize; i++) {
 	
@@ -140,17 +146,21 @@ int main(int argc, char* argv[]) {
 	double Mean = h->GetMean();
 	double MeanError = h->GetMeanError();
 	
-	std::cout<< "Costruisco grafico:   "<< i << "   "<< etaMean << "  " << Mean<< std::endl;      
+	std::cout<< "Set point "<< i << " :   "<< etaMean << "  " << Mean<< std::endl;      
 	
 	gr_response_vs_run[jj]-> SetPoint(i, etaMean, Mean);
 	gr_response_vs_run[jj]-> SetPointError(i, etaBinsError.at(i), MeanError);
 	
       }//for eta
       
-      std::cout<< "Disegno grafico"<< std::endl; 
+      std::cout<< "Drawing graph"<< std::endl; 
+      if(jj < 4){
       gr_response_vs_run[jj] -> SetLineColor(jj+1);
       gr_response_vs_run[jj] -> SetMarkerColor(jj+1);
-      
+      }else{
+      gr_response_vs_run[jj] -> SetLineColor(jj+2);
+      gr_response_vs_run[jj] -> SetMarkerColor(jj+2);
+      }
       
       leg->AddEntry(gr_response_vs_run[jj] ,Form("Run %d - %d", run_low, run_high) ,"l");
       
@@ -166,10 +176,6 @@ int main(int argc, char* argv[]) {
 	gr_response_vs_run[jj] -> GetXaxis()->SetRangeUser(0., 5.2);  
 	gr_response_vs_run[jj] -> Draw("ZAP");
       }else{
-	if( jj == 4){
-	  gr_response_vs_run[jj] -> SetLineColor(jj+2);
-	  gr_response_vs_run[jj] -> SetMarkerColor(jj+2);
-	}
 	gr_response_vs_run[jj] ->Draw("PSAME");
     }  
       
@@ -181,62 +187,6 @@ int main(int argc, char* argv[]) {
     if(kk == 0)  c->SaveAs("vs_run/Balancing_vs_run.png");
     if(kk == 1)  c->SaveAs("vs_run/MPF_vs_run.png");
   }
-
-  // MPF
-  for (size_t jj = 0; jj < runBinningSize; jj++) {
-    const std::pair<int, int>  runBin = runBinning.getBinValue(jj);
-
-    if(jj == runBinningSize -1 ) continue;
-
-    gr_response_vs_run[jj] = new TGraphErrors(0);
-    
-    std::cout<<" Bin run numero "<< jj+1 << std::endl;
-
-    int run_low  = runBin.first ;
-    int run_high = runBin.second ;
-    
-    for (size_t i = 0; i < etaBinningSize; i++) {
-      
-      std::pair<float, float> currentBin =etaBinning.getBinValue(i) ;
-      float etaMean = (currentBin.first + currentBin.second) / 2.;
-   
-      TString responseName = TString::Format("resp_mpf_%s_run_%i_%i", etaBinning.getBinName(i).c_str(), run_low, run_high );
-      TH1F *h = (TH1F*)dataFile->Get("analysis/run/"+responseName);
-      
-      double Mean = h->GetMean();
-      double MeanError = h->GetMeanError();
-
-      std::cout<< "Costruisco grafico:   "<< i << "   "<< etaMean << "  " << Mean<< std::endl;      
-
-      gr_response_vs_run[jj]-> SetPoint(i, etaMean, Mean);
-      gr_response_vs_run[jj]-> SetPointError(i, etaBinsError.at(i), MeanError);
-      
-    }//for eta
- 
-    std::cout<< "Disegno grafico"<< std::endl; 
-    gr_response_vs_run[jj] -> SetLineColor(jj);
-    gr_response_vs_run[jj] -> SetMarkerColor(jj);
-
-
-    if(jj == 0){
-      gr_response_vs_run[jj] ->GetHistogram()-> SetXTitle("#eta (jet)");  
-      gr_response_vs_run[jj] ->GetHistogram()-> SetYTitle("MPF Response");  
-      gr_response_vs_run[jj] -> GetYaxis()-> SetTitleOffset(1.4);  
-      gr_response_vs_run[jj] -> GetYaxis()->SetRangeUser(0.3, 1.2);  
-      gr_response_vs_run[jj] -> GetXaxis()->SetRangeUser(0., 5.2);  
-      gr_response_vs_run[jj] ->Draw("ZAP");
-    }else{
-      gr_response_vs_run[jj] ->Draw("PSAME");
-    }  
-    
-  }// for run
-
-  leg -> Draw() ;
-
-  //  c->SaveAs("vs_run/MPF_vs_run.png");
-  c->SaveAs("Test_2.png");
-
-
 
 
 }

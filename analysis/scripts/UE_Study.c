@@ -29,7 +29,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/");
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2015-10-28/AlphaCut030/PhotonJet_GJet_Pt15To6000_ReReco_Finalized_alphacut030_PFlowAK4chs.root");
   TH1F* MC_rho = (TH1F*) f1.Get("analysis/rho_passedID");
   TH1F* MC_mu = (TH1F*) f1.Get("analysis/mu");
   TH1F* MC_npvGood = (TH1F*) f1.Get("analysis/npvGood");
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   TH2F* MC_npvGood_vs_mu = (TH2F*) f1.Get("analysis/npvGood_vs_mu");
   
 
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton_25ns_Run2015D_09Oct_NoPrescale_alphacut030_PFlowAK4chs.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2015-10-28/AlphaCut030/PhotonJet_SinglePhoton__Run2015D_2015-10-28_alphacut030_PFlowAK4chs.root");
   TH1F* Data_rho = (TH1F*) f2.Get("analysis/rho_passedID");
   TH1F* Data_mu = (TH1F*) f2.Get("analysis/mu");
   TH1F* Data_npvGood = (TH1F*) f2.Get("analysis/npvGood");
@@ -62,7 +62,6 @@ int main(int argc, char* argv[]) {
   MC_rho -> SetLineColor(kRed);
   MC_rho -> Draw("same"); 
   c1->SaveAs("Test.png");
-  
 
   TFile * f_new = new TFile("UE_Study.root", "RECREATE");
   f_new->cd();

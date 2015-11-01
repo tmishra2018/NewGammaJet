@@ -391,7 +391,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_mu = analysisDir.make<TH1F>("mu", "mu", 50, 0, 50);
   //  TH1F* h_rho = analysisDir.make<TH1F>("rho", "rho", 100, 0, 50); // lo fa gia
   TH1F* h_npvGood = analysisDir.make<TH1F>("npvGood", "npvGood", 50, 0, 50);
-  TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 100, 0, 50, 50, 0, 50);
+  TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 50, 0, 50, 100, 0, 50);
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
 
 
@@ -1033,7 +1033,7 @@ void GammaJetFinalizer::runAnalysis() {
       mu = analysis.ntrue_interactions ;
     } else {
       mu = getAvgPU( analysis.run, analysis.lumi_block );
-      //      std::cout<< analysis.run << "  " << analysis.lumi_block << "  " << mu<<endl;
+      // std::cout<< analysis.run << "  " << analysis.lumi_block << "  " << mu<<endl;
     }
     
 #if ADD_TREES
@@ -1095,7 +1095,7 @@ void GammaJetFinalizer::runAnalysis() {
     respMPF = 1. + MET.et * photon.pt * cos(deltaPhi_Photon_MET) / (photon.pt * photon.pt);
 
     //    std::cout << " deltaPhi PhotonMET "<< deltaPhi_Photon_MET << std::endl; 
-    std::cout << " respMPF "<< respMPF << std::endl; 
+    //    std::cout << " respMPF "<< respMPF << std::endl; 
 
     if ( mIsMC){
     deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
@@ -1353,8 +1353,8 @@ void GammaJetFinalizer::runAnalysis() {
 	//	cout<< mu << " " << analysis.nvertexGood << " " << photon.rho << " " << eventWeight << endl;
 	h_mu -> Fill(mu, eventWeight);
 	h_npvGood -> Fill(analysis.nvertexGood, eventWeight);
-	h_rho_vs_mu -> Fill(photon.rho, mu, eventWeight);
-	h_npvGood_vs_mu -> Fill(analysis.nvertexGood, mu, eventWeight);
+	h_rho_vs_mu -> Fill(mu, photon.rho, eventWeight);
+	h_npvGood_vs_mu -> Fill(mu, analysis.nvertexGood, eventWeight);
 
 //
         vpar=(MET.px*photon.px + MET.py*photon.py)/photon.pt;
@@ -1842,21 +1842,19 @@ void GammaJetFinalizer::cleanTriggerName(std::string& trigger) {
 void GammaJetFinalizer::computePUWeight(const std::string& passedTrigger, int run_period) {
 
   //  if (mNoPUReweighting) std::cout<< "Using my PU Reweighting"<<std::endl;
-
+  
   if (mNoPUReweighting)
     return;
-
-
-
+  
   static std::string cmsswBase = getenv("CMSSW_BASE");
   static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
-//  static std::string puMC = TString::Format("%s/summer12_computed_mc_%s_pu_truth_75bins.root", puPrefix.c_str(), mDatasetName.c_str()).Data();
+  //  static std::string puMC = TString::Format("%s/summer12_computed_mc_%s_pu_truth_75bins.root", puPrefix.c_str(), mDatasetName.c_str()).Data();
   std::string puData = TString::Format("%s/pu_truth_data_photon_2012_true_%s_75bins.root", puPrefix.c_str(), passedTrigger.c_str()).Data();
   std::string puMC = TString::Format("%s/", puPrefix.c_str()).Data();
- if (run_period==1) { puMC = TString::Format("%s/PURDMCRun2012AB.root", puPrefix.c_str()).Data();}
- if (run_period==2) { puMC = TString::Format("%s/PURDMCRun2012C.root", puPrefix.c_str()).Data();}
- if (run_period==3) { puMC = TString::Format("%s/PURDMCRun2012D.root", puPrefix.c_str()).Data();}
-
+  if (run_period==1) { puMC = TString::Format("%s/PURDMCRun2012AB.root", puPrefix.c_str()).Data();}
+  if (run_period==2) { puMC = TString::Format("%s/PURDMCRun2012C.root", puPrefix.c_str()).Data();}
+  if (run_period==3) { puMC = TString::Format("%s/PURDMCRun2012D.root", puPrefix.c_str()).Data();}
+  
   //std::string puData = TString::Format("%s/pu_truth_data_photon_2012_true_75bins.root", puPrefix.c_str()).Data();
 
  // if (mNoPUReweighting) cout << "No PU Reweighting --- PUWeight"<<mPUWeight << endl;
@@ -1894,7 +1892,7 @@ void GammaJetFinalizer::computePUWeight_Fede(double ptPhot, int nvertex) {
 
   //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_ReReco_23Oct2015.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting/NvertexPU_ReReco_27Oct2015.root"); 
   TH1D *h_ratio=0;
   if(ptPhot >= 40 && ptPhot < 60)             h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_40_60");  
   if(ptPhot >= 60 && ptPhot < 85)             h_ratio = (TH1D*)f1.Get("h_ratio_ptPhot_60_85");  

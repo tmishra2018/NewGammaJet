@@ -27,12 +27,12 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25nsSample_25nsV5.root"); 
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_ReReco.root"); 
   TTree* AnalysisTree_mc = (TTree*) f1.Get("gammaJet/analysis");
   TTree* PhotonTree_mc = (TTree*) f1.Get("gammaJet/photon");
   uint64_t totalEvents_mc = AnalysisTree_mc->GetEntries();
   
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_2ndLevel_SinglePhoton__Run2015D-2015-10-27.root");
   TTree* AnalysisTree_data = (TTree*) f2.Get("gammaJet/analysis");
   TTree* PhotonTree_data = (TTree*) f2.Get("gammaJet/photon");
   uint64_t totalEvents_data = AnalysisTree_data->GetEntries();
@@ -191,8 +191,9 @@ int main(int argc, char* argv[]) {
       
       if(ptPhot>=60 && ptPhot<85){
 	
-	int bin = nvertex_mc +1;
-	float PUweight = h_ratio_ptPhot_60_85->GetBinContent(bin);
+	//	int bin = nvertex_mc +1;
+	int bin = h_ratio_ptPhot_60_85 -> FindBin(nvertex_mc);
+	float PUweight = h_ratio_ptPhot_60_85 -> GetBinContent(bin);
 	
 	double generator_weight;
 	AnalysisTree_mc->SetBranchAddress("generator_weight", &generator_weight);   
@@ -218,7 +219,7 @@ int main(int argc, char* argv[]) {
     c3-> SaveAs("Nvtx_reweighted_ptPhot_60_85.png");
     
     
-    TFile f_new("NvertexPU_Run2015D_09Oct.root", "recreate");          
+    TFile f_new("NvertexPU_ReReco_27Oct2015.root", "recreate");          
     
     //    h_nvertex_mc->Write();
     h_nvertex_mc_ptPhot_40_60  -> Write();      

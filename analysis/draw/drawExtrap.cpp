@@ -27,7 +27,7 @@ drawExtrap::drawExtrap(const std::string& analysisType, const std::string& recoT
 
 
 
-void drawExtrap::drawResponseExtrap(const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
+void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
 
   int recoPhot_color = MPF_COLOR;
   int recoGen_color = TColor::GetColor("#542437");
@@ -321,7 +321,9 @@ void drawExtrap::drawResponseExtrap(const std::string& etaRegion, const std::str
     //TH1D* h1_proj = h2_ptPhotReco_vs_pt->ProjectionY(projName, iPtBin + 1, iPtBin + 1);
     //float ptPhotReco_thisBin = h1_proj->GetMean();
     //float ptPhotReco_err_thisBin = (h1_proj->GetEntries() > 1.) ? h1_proj->GetRMS() / sqrt(h1_proj->GetEntries()) : h1_proj->GetRMS();
-    float ptPhotReco_thisBin =  (currentBin.first + currentBin.second) / 2.;
+
+    //    float ptPhotReco_thisBin =  (currentBin.first + currentBin.second) / 2.;
+    float ptPhotReco_thisBin =  ptMeanVec.at(iPtBin); // weighted mean
     float ptPhotReco_err_thisBin = 0;
 
     /*TH1D* h1_projDATA = h2_ptPhotReco_vs_ptDATA->ProjectionY(projName, iPtBin + 1, iPtBin + 1);

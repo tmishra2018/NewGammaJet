@@ -23,6 +23,7 @@ class AnalysisTree {
     UInt_t                      run;
     UInt_t                      lumi_block;
     UInt_t                      event;
+    //Double_t                      crossSection;
     Float_t                     ntrue_interactions;
     UInt_t                      nvertex;
     UInt_t                      nvertexGood;
@@ -35,6 +36,7 @@ class AnalysisTree {
     std::vector<double>*          trigger_prescale;
 
     // List of branches
+    // TBranch        *b_crossSection;   //!
     TBranch        *b_ntrue_interactions;   //!
     TBranch        *b_nvertex;   //!
     TBranch        *b_nvertexGood;   //!
@@ -84,6 +86,7 @@ void AnalysisTree::Init(TTree *tree)
   fChain->SetBranchAddress("run", &run, NULL);
   fChain->SetBranchAddress("lumi_block", &lumi_block, NULL);
   fChain->SetBranchAddress("event", &event, NULL);
+  //  fChain->SetBranchAddress("crossSection", &crossSection, &b_crossSection);
   fChain->SetBranchAddress("ntrue_interactions", &ntrue_interactions, &b_ntrue_interactions);
   fChain->SetBranchAddress("nvertex", &nvertex, &b_nvertex);
   fChain->SetBranchAddress("nvertexGood", &nvertexGood, &b_nvertexGood);

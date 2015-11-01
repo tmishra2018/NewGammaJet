@@ -149,7 +149,10 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 #correctorLabel = cms.untracked.string("ak4PFResidual")
                                 
                                 # MET
-                                redoTypeIMETCorrection = cms.untracked.bool(False)
+                                #federico
+                                pfCands = cms.InputTag("packedPFCandidates"),
+                                redoTypeIMETCorrection = cms.untracked.bool(True),
+                                doFootprintMETCorrection = cms.untracked.bool(True)
                                 )
 
 process.p = cms.Path(

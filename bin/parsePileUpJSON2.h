@@ -16,7 +16,7 @@ double getAvgPU(int run, int ls) {
   return m_PU[run][ls];
 }
 
-int parsePileUpJSON2(string filename="/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/bin/pileup_25ns_12Oct.txt") {
+int parsePileUpJSON2(string filename="/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/bin/jsonByls_19Oct2015.txt") {
 
   cout << "Opening " << filename << "...";
 

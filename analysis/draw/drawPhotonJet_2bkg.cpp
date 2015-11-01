@@ -4,6 +4,10 @@
 #include "TError.h"
 #include "drawBase.h"
 #include "fitTools.h"
+#include "TH1D.h"
+#include "TH1F.h"
+#include "TAxis.h"
+
 
 #include "etaBinning.h"
 #include "ptBinning.h"
@@ -202,13 +206,31 @@ int main(int argc, char* argv[]) {
   db->drawHisto("neutralHadronsIsolation_passedID", "Neutral hadrons isolation", "", "Events", log);
   db->drawHisto("photonIsolation_passedID", "Photon isolation", "", "Events", log);
 
-
   db->set_rebin(5);
-
   db->setOutputGraphs(OUTPUT_GRAPHS);
 
+  //federico: correct pT Mean --- everything work fine
+  TH1D *ptPhot = (TH1D*)dataFile->Get("analysis/ptPhoton_passedID");
   PtBinning ptBinning;
+  size_t ptBinningSize = ptBinning.size();
   std::vector<std::pair<float, float> > ptBins = ptBinning.getBinning();
+  // federico
+  std::vector<float> ptMean;
+  for( size_t i = 0 ; i< ptBinningSize ; i++){ 
+    std::pair<float, float> currentBin = ptBinning.getBinValue(i);
+    //    std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second <<std::endl; 
+    ptPhot ->GetXaxis()->SetRangeUser(currentBin.first, currentBin.second);
+    double Mean = ptPhot->GetMean();
+    //federico --> debugging
+    std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second<<" -> Mean  "<< Mean << std::endl; 
+    ptMean.push_back(Mean);
+  }
+  //federico debug
+  //  for(int i = 0 ; i<10 ; i++){
+  //   std::cout<<"Vector check: Mean # " <<i << " : "<<ptMean.at(i)<<std::endl;
+  // }
+
+
 
   EtaBinning etaBinning;
   size_t etaBinningSize = etaBinning.size();
@@ -253,11 +275,11 @@ int main(int argc, char* argv[]) {
     //cout << "after set_legendTitle" << endl << endl;
   
     TString responseName = TString::Format("resp_balancing_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, responseName.Data(), "Balancing Response", "", "Events", log);
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response", "", "Events", log);
 
     // Raw jets
     responseName = TString::Format("resp_balancing_raw_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, responseName.Data(), "Balancing Response (raw jets)", "", "Events", log);
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response (raw jets)", "", "Events", log);
     
     //  -- federico    
     //Balancing Reco - Gen JET
@@ -273,8 +295,8 @@ int main(int argc, char* argv[]) {
   // Special case eta < 1.3
 
   db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(ptBins, "resp_balancing_eta0013", "Balancing Response", "", "Events", log);
-  db->drawHisto_vs_pt(ptBins, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", log);
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_eta0013", "Balancing Response", "", "Events", log);
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", log);
 
   // MPF
   db->setFolder("analysis/mpf");
@@ -282,18 +304,18 @@ int main(int argc, char* argv[]) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
     
     TString responseName = TString::Format("resp_mpf_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, responseName.Data(), "MPF Response", "", "Events", log);
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response", "", "Events", log);
 
     // Raw jets
     responseName = TString::Format("resp_mpf_raw_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, responseName.Data(), "MPF Response (raw ME_{T})", "", "Events", log);
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response (raw ME_{T})", "", "Events", log);
 
   }
   // Special case eta < 1.3
 
   db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(ptBins, "resp_mpf_eta0013", "MPF Response", "", "Events", log);
-  db->drawHisto_vs_pt(ptBins, "resp_mpf_raw_eta0013", "MPF Response (raw ME_{T})", "", "Events", log);
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", log);
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw ME_{T})", "", "Events", log);
 
   delete db;
   db = NULL;

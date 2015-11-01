@@ -14,7 +14,7 @@ class RunBinning {
       std::vector<std::pair<int, int> >::const_iterator it = mRunBins.begin();
       for (; it != mRunBins.end(); ++it) {
         std::pair<int, int> bin = *it;
-        if (n >= bin.first && n < bin.second) {
+        if (n >= bin.first && n <= bin.second) {
           return it - mRunBins.begin();
         }
       }
@@ -50,11 +50,13 @@ class RunBinning {
 
     void fillRunBins() {
       // bins read: >= && <
-      mRunBins.push_back(std::make_pair(256630, 256678));
-      mRunBins.push_back(std::make_pair(256728, 256730));
-      mRunBins.push_back(std::make_pair(256734, 256844));
-      mRunBins.push_back(std::make_pair(256866, 257600));
-      mRunBins.push_back(std::make_pair(257600, 300000));
+      mRunBins.push_back(std::make_pair(256630, 257613));
+      mRunBins.push_back(std::make_pair(257614, 257969));
+      mRunBins.push_back(std::make_pair(258129, 258177));
+      mRunBins.push_back(std::make_pair(258211, 258448));
+      mRunBins.push_back(std::make_pair(258655, 258713));
+      mRunBins.push_back(std::make_pair(258714, 258750));
+      mRunBins.push_back(std::make_pair(258751, 300000)); //bin fuffa 
     }
 
 };

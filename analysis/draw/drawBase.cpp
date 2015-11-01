@@ -286,10 +286,10 @@ void drawBase::drawHisto_vs_pt(int nBinsPt, float* ptBins, const std::string& na
 
 
 
-void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
+void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
 
   
-  bool isEComp = TString(name).Contains("Energy", TString::kIgnoreCase);
+  //  bool isEComp = TString(name).Contains("Energy", TString::kIgnoreCase);
 
   bool isMPF = TString(name).Contains("mpf", TString::kIgnoreCase);
   // Ignore bin between 3500 - 7000
@@ -351,9 +351,10 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, con
   for (int iplot = 0; iplot < number_of_plots; ++iplot) {
 
     //if( flags!="" ) histoName = histoName + "_" + flags;
-    //
+    //devo cambiare questo pezzo --> non media matematica ma media pesata
     std::pair<float, float> currentBin = ptBins[iplot];
-    float ptMean = (currentBin.first + currentBin.second) / 2.;
+    //    float ptMean = (currentBin.first + currentBin.second) / 2.; //media aritmetica
+    float ptMean = ptMeanVec.at(iplot); // weighted mean
 
     TString ptRange = TString::Format("ptPhot_%d_%d", (int) currentBin.first, (int) currentBin.second);
 
@@ -434,11 +435,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, con
     if (hasMC) {
 
       std::cout << "debug: set points on the graph" << std::endl;
-      std::cout << ptMean << "  " << mcResponse << std::endl;
+      std::cout << ptMean << "  Data Response  " << dataResponse << std::endl;
+      std::cout << ptMean << "  MC Response  " << mcResponse << std::endl;
       gr_responseMC_vs_pt->SetPoint(iplot, ptMean, mcResponse);
       gr_responseMC_vs_pt->SetPointError(iplot, 0., mcResponseErr);
 
-      std::cout << ptMean << "  " << mcResolution << std::endl;
+      //      std::cout << ptMean << "  MC Resolution  " << mcResolution << std::endl;
       gr_resolutionMC_vs_pt->SetPoint(iplot, ptMean, mcResolution);
       gr_resolutionMC_vs_pt->SetPointError(iplot, 0., mcResolutionErr);
 
@@ -458,42 +460,42 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, con
       gr_purity_vs_pt->SetPoint(iplot, ptMean, purity);
       gr_purity_vs_pt->SetPointError(iplot, 0., purityErr);
 
-      std::cout << "debug : get gen information" << std::endl;
+      //      std::cout << "debug : get gen information" << std::endl;
       
       ////giulia debug
       //// Get gen informations. To do that, we need to transform
       //// resp_balancing_eta* in resp_balancing_gen_eta*
-      //std::string responseGenName = std::string(name + "_" + ptRange);
-      //boost::replace_all(responseGenName, "eta", "gen_eta");
+      //      std::string responseGenName = std::string(name + "_" + ptRange);
+      // boost::replace_all(responseGenName, "eta", "gen_eta");
       //if (isMPF) {
       //  // For MPF, we don't have raw_gen
-      //  boost::replace_all(responseGenName, "_raw", "");
-      //}
+      // boost::replace_all(responseGenName, "_raw", "");
+      // }
       //std::cout << "debug : " << responseGenName << std::endl; 
 
       //TH1* responseGEN = static_cast<TH1*>(mcGet(0, responseGenName));
-      //for (unsigned i = 1; i < mcFiles_.size(); ++i) {
-      //  TH1* responseGEN2 = static_cast<TH1*>(mcGet(i, responseGenName));
-      //  responseGEN->Add(responseGEN2);
-      //}
+      // for (unsigned i = 1; i < mcFiles_.size(); ++i) {
+      //   TH1* responseGEN2 = static_cast<TH1*>(mcGet(i, responseGenName));
+      // responseGEN->Add(responseGEN2);
+      // }
 
       //responseGEN->Scale(scaleFactor_);
       //responseGEN->SetLineWidth(3);
 
-      Float_t genResponse = 0.;
-      Float_t genResponseErr = 0.;
-      Float_t genRMS = 0.;
-      Float_t genRMSErr = 0.;
-
+      //Float_t genResponse = 0.;
+      //Float_t genResponseErr = 0.;
+      //Float_t genRMS = 0.;
+      //Float_t genRMSErr = 0.;
+      
       //giulia
       //std::cout << "do fitTools::getTruncatedMeanAndRMS for gen" << std::endl;  
       //fitTools::getTruncatedMeanAndRMS(responseGEN, genResponse, genResponseErr, genRMS, genRMSErr, meanTruncFraction, rmsTruncFraction);
-
+      
       //Float_t genResolution = genRMS / genResponse;
       //Float_t genResolutionErr = sqrt(genRMSErr * genRMSErr / (genResponse * genResponse) + genResolution * genResolution * genResponseErr * genResponseErr / (genResponse * genResponse * genResponse * genResponse));
-      Float_t genResolution = 0.; 
-      Float_t genResolutionErr = 0.;
-
+      // Float_t genResolution = 0.; 
+      //  Float_t genResolutionErr = 0.;
+      
       //TH1D* h1_thisPtJetGen = (TH1D*)h2_ptJetGen_mc->ProjectionY("thisPtJetGen", iplot + 1, iplot + 1);
 
       //Float_t ptMeanGEN = h1_thisPtJetGen->GetMean();
@@ -1129,7 +1131,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
   float etaMin =  etaBins[0].first;
 
   TGraphErrors* gr_resp_ratio = 0;
-  Float_t scale_uncert = (recoType_ == "Calo") ? 0.1 : 0.1;
+  //  Float_t scale_uncert = (recoType_ == "Calo") ? 0.1 : 0.1;
 
   TH2* h2_axes_lo_resp = NULL;
 
@@ -1186,9 +1188,9 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
 
-    //federico
-    double fitValue_m = ratioFit->GetParameter(1);
-    double fitError_m = ratioFit->GetParError(1);
+    //federico -- per un possibile fit non costante al rapporto
+    //    double fitValue_m = ratioFit->GetParameter(1);
+    // double fitError_m = ratioFit->GetParError(1);
 
     //TBox* errors = new TBox(ptPhotMin, fitValue - fitError, ptPhotMax, fitValue + fitError);
     //errors->SetFillColor(kBlue - 10);
@@ -1237,7 +1239,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
   h2_axes->Draw();
 
-  Float_t labelTextSize = 0.035;
+  //  Float_t labelTextSize = 0.035;
   TPaveText* label_algo = get_labelAlgo(2);
 
   TLegend* legend = new TLegend(0.55, 0.15, 0.92, 0.38, legendTitle_.c_str());

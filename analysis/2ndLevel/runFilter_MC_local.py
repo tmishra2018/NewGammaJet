@@ -22,7 +22,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 #process.GlobalTag.globaltag = cms.string("PHYS14_25_V2::All")
 # federico
-process.GlobalTag.globaltag = cms.string("MCRUN2_74_V9") # run in local
+process.GlobalTag.globaltag = cms.string("74X_mcRun2_asymptotic_v2") # run in local
 #process.GlobalTag.globaltag = cms.string(THISGLOBALTAG) #run with crab
 
 
@@ -57,8 +57,7 @@ process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
       #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
-        #'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_5/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJet_file_2.root' #GJet
-        'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_25ns_file1.root'
+        'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_file1_ReReco.root'
       )
     )
 
@@ -125,8 +124,9 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 #    full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"), # from rel73 ok in photon class
                                 phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
                                 phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
-                                phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),                                                                                prescales = cms.InputTag("patTrigger"),  
-
+                                phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"), 
+                                prescales = cms.InputTag("patTrigger"),  
+                                                               
                                 runOnNonCHS   = cms.untracked.bool(False),
                                 runOnCHS      = cms.untracked.bool(True),
                                 
@@ -143,8 +143,11 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 #correctorLabel = cms.untracked.string("ak4PFResidual")
                                 
                                 # MET
-                                redoTypeIMETCorrection = cms.untracked.bool(False)
-                                )
+                                #federico
+                                pfCands = cms.InputTag("packedPFCandidates"),
+                                redoTypeIMETCorrection = cms.untracked.bool(False),
+                                doFootprintMETCorrection = cms.untracked.bool(True)                             
+               )
 
 process.p = cms.Path(
     process.chs *

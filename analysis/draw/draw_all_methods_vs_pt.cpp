@@ -120,7 +120,9 @@ int main(int argc, char* argv[]) {
     //    db->set_lumi(lumi->GetVal() * 1e-6);
     db->set_lumi(lumi->GetVal());
     db->set_lumiNormalization();
+    dLumi = lumi->GetVal() ;
 
+    std::cout<<"Lumi "<< dLumi << std::endl;
 
   double alpha_cut = static_cast<TParameter<double>*>(dataFile->Get("analysis/alpha_cut"))->GetVal();
   std::stringstream ss;

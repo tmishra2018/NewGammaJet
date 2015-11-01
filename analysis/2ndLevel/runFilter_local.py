@@ -34,7 +34,7 @@ process.source = cms.Source("PoolSource",
 #    'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/AOD/PromptReco-v1/000/246/865/00000/E69D98C7-150B-E511-9118-02163E014206.root' #AOD
       #'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/865/00000/3296E66B-160B-E511-AD26-02163E013395.root' #RECO
 #    'file:Express_AOD_1.root' # AOD
-   'file:../tuples/Data/SinglePhoton_Run2015D_file3.root'  #Express_miniAOD.root' # miniAOD
+   'file:../tuples/Data/SinglePhoton_file1_ReReco.root'  #Express_miniAOD.root' # miniAOD
 #      THISINPUTFILE
       )
     )
@@ -312,7 +312,7 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
      phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
      phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
      prescales = cms.InputTag("patTrigger"),
-
+   
     # JEC
     doJetCorrection = cms.untracked.bool(True),
     correctJecFromRaw = cms.untracked.bool(True),
@@ -321,8 +321,10 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
     #correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3Residual"),
 
     # MET
-    redoTypeIMETCorrection = cms.untracked.bool(True)
-
+     #federico
+     pfCands = cms.InputTag("packedPFCandidates"),
+    redoTypeIMETCorrection = cms.untracked.bool(True),
+    doFootprintMETCorrection = cms.untracked.bool(True)
 
     )
 

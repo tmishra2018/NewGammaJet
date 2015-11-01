@@ -5,13 +5,13 @@ DllSuf        = so
 OutPutOpt     = -o
 HeadSuf       = h
 
-include /cvmfs/cms.cern.ch/slc6_amd64_gcc472/cms/cmssw/CMSSW_5_3_14/.SCRAM/slc6_amd64_gcc472/MakeData/Tools/boost_header.mk
+include $(CMSSW_RELEASE_BASE)/.SCRAM/$(SCRAM_ARCH)/MakeData/Tools/boost_header.mk
 
 ROOFIT_INCLUDE := $(shell cd $(CMSSW_BASE); scram tool info roofitcore | grep INCLUDE= | sed 's|INCLUDE=||')
 
 ROOFIT_LIBDIR := $(shell cd $(CMSSW_BASE); scram tool info roofitcore | grep LIBDIR= | sed 's|LIBDIR=||')
 
-INCLUDES = -I$(ROOFIT_INCLUDE)/ -I$(CMSSW_BASE)/src/JetMETCorrections/GammaJetFilter/bin/ -I$(boost_header_LOC_INCLUDE)
+INCLUDES = -I$(ROOFIT_INCLUDE)/ -I$(CMSSW_BASE)/src/JetMETCorrections/GammaJetFilter/bin/ -I$(boost_header_EX_INCLUDE)
 
 ROOTSYS  ?= ERROR_RootSysIsNotDefined
 
@@ -42,7 +42,7 @@ SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 ###
 
 #all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_all_methods_vs_npv draw_crosschecks
-all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_new_extrap draw_vs_npv drawEnergyFractions
+all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_new_extrap draw_vs_npv drawEnergyFractions draw_vs_run
 
 clean:
 	@rm *.o;
@@ -77,8 +77,15 @@ drawSystPhotonJetExtrap: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBas
 drawEnergyFractions: drawBase.o fitTools.o drawEnergyFractions.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
+draw_vs_run: drawBase.o fitTools.o draw_vs_run.o
+	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+#draw_vs_run: draw_vs_run.cc
+#		 g++ -o $@ $< `root-config --glibs --cflags`	
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 
 # Make the dependencies
 %.d: %.cpp

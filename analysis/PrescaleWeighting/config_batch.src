@@ -2,7 +2,7 @@
                                                                                                                         
 export SCRAM_ARCH=slc6_amd64_gcc491                                                                                     
                                                                                                                         
-cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/                     
+cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/                     
                                                                                                                         
 eval `scramv1 runtime -sh`                                                                                              
  

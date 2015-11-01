@@ -29,10 +29,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
 
-  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/MC_ptPhot_scaled.root");
+  TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/MC_ptPhot_scaled.root");
   TH1D *h_mc = (TH1D*)f1.Get("h_mc");
 
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_12_patch4/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton_25ns_Run2015D_09Oct_NoPrescale_alphacut030_PFlowAK4chs.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton__Run2015D_2015-10-23_NoPrescale_alphacut030_PFlowAK4chs.root");
   TTree* PhotonTree_data = (TTree*) f2.Get("photon");
   uint64_t totalEvents_data = PhotonTree_data->GetEntries();
   
@@ -42,7 +42,9 @@ int main(int argc, char* argv[]) {
   TParameter<double>* dLumi = static_cast<TParameter<double>*>(f2.Get("analysis/luminosity"));
   lumi = dLumi->GetVal();
   cout<< "lumi  " << lumi<< endl;  
-  
+ 
+  h_mc->Scale(lumi);
+ 
   ///////////////////////////////////////////////////////////////////
   
   double arraybins[7] = {40, 60, 85,100,130,175,5000};
@@ -119,7 +121,7 @@ int main(int argc, char* argv[]) {
   c3-> SaveAs("Data_reweighted.png");
   
   
-  TFile f_new("Prescale_Run2015D_09Oct_alphacut030.root", "recreate");          
+  TFile f_new("Prescale_ReReco_alphacut030.root", "recreate");          
   
   h_mc  -> Write();      
   h_data->Write();

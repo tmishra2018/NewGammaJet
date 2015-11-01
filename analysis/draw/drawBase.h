@@ -76,7 +76,7 @@ public:
   void drawHisto_vs_pt
 (int nBinsPt, float* ptBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, std::string flags = "", const std::string& labelText = "");
   void drawHisto_vs_vertex(std::vector<std::pair<int, int> > vertexBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
-  void drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
+  void drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
 
     void drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
     // void drawHisto_vs_eta( bool draw=true);

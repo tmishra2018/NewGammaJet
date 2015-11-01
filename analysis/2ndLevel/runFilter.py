@@ -316,7 +316,9 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
     #correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3Residual"),
 
     # MET
-    redoTypeIMETCorrection = cms.untracked.bool(True)
+    pfCands = cms.InputTag("packedPFCandidates"),
+    redoTypeIMETCorrection = cms.untracked.bool(True),
+    doFootprintMETCorrection = cms.untracked.bool(True)
     )
 
 

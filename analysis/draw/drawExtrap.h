@@ -34,7 +34,7 @@ public:
     EXCLUDE_FIRST_POINT_ = exclfirstpoint;
   };
 
-  void drawResponseExtrap(const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
+  void drawResponseExtrap(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
 
 
 private:

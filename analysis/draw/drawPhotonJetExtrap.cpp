@@ -162,20 +162,43 @@ int main(int argc, char* argv[]) {
     db->set_FIXM(FIXM);
     db->set_EXCLUDEFIRSTPOINT(EXCLUDE_FIRST_POINT);
 
+    //federico: correct pT Mean --- everything work fine
+    TH1D *ptPhot = (TH1D*)dataFile->Get("analysis/ptPhoton_passedID");
+    PtBinning ptBinning;
+    size_t ptBinningSize = ptBinning.size();
+    std::vector<std::pair<float, float> > ptBins = ptBinning.getBinning();
+    // federico
+    std::vector<float> ptMean;
+    for( size_t i = 0 ; i< ptBinningSize ; i++){ 
+      std::pair<float, float> currentBin = ptBinning.getBinValue(i);
+      //    std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second <<std::endl; 
+      ptPhot ->GetXaxis()->SetRangeUser(currentBin.first, currentBin.second);
+      double Mean = ptPhot->GetMean();
+      //federico --> debugging
+      std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second<<" -> Mean  "<< Mean << std::endl; 
+      ptMean.push_back(Mean);
+    }
+    //federico debug
+    //  for(int i = 0 ; i<10 ; i++){
+    //   std::cout<<"Vector check: Mean # " <<i << " : "<<ptMean.at(i)<<std::endl;
+    // }
+    
+
+
     EtaBinning etaBinning;
     size_t etaBinningSize = etaBinning.size();
 
     for (size_t i = 0; i < etaBinningSize; i++) {
       db->set_legendTitle(etaBinning.getBinTitle(i)); 
 
-      db->drawResponseExtrap(etaBinning.getBinName(i), etaBinning.getBinTitle(i), false);
-      db->drawResponseExtrap(etaBinning.getBinName(i), etaBinning.getBinTitle(i), true);
+      db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), false);
+      db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), true);
     }
 
     //special case
     db->set_legendTitle("|#eta| < 1.3");
-    db->drawResponseExtrap("eta0013", "|#eta| < 1.3", false);
-    db->drawResponseExtrap("eta0013", "|#eta| < 1.3", true);
+    db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
+    db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", true);
 
     delete db;
   } catch (TCLAP::ArgException &e) {
