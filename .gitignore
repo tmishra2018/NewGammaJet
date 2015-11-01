@@ -33,3 +33,6 @@
 *.png
 *~
 *.log
+
+# directory used by crab
+Output_Run2/
