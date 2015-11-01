@@ -1,1 +1,0 @@
-./SinglePhoton__Run2015D-PromptReco-v4__MINIAOD.txt
