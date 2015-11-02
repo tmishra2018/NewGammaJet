@@ -82,10 +82,13 @@ In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you'll find the scripts +c
 ----
 /SinglePhoton/Run2015D-PromptReco-v4/MINIAOD -1 300 74X_dataRun2_Prompt_v2
 ----
+
 [MC] dataset_DASformat processed_events cross_section ptHatMin ptHatMax files_per_job GlobalTag
------
+
+----
 /GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
 ----
+
 Don't forget to also edit the template files in the directory 'Inputs', 'crab3_template_data.py' and 'crab3_template_mc.py' to change your storage element and for data JSON file and run range.
 
 [IMPORTANT]
