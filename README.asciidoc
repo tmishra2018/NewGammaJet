@@ -1,5 +1,5 @@
 
-// To compile, simply run 'asciidoc manual.txt'
+a// To compile, simply run 'asciidoc manual.txt'
 = Gamma + jets analysis
 Sébastien Brochet <s.brochet@ipnl.in2p3.fr>
 02 May 2013
@@ -148,17 +148,15 @@ brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineN
 You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+. Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'.
 
 
-=== Step 2
-== Step 3 - finalization
+=== Step 2 - finalization
 
 For this step, I'll assume you have the following folder structure
 
 ----
 + analysis
 |- tuples
- |- <date>
-  |- toFinalize (containing root files produced at step 2, with prefix PhotonJet_2ndLevel_)
-  |- finalized (containing root files we will produce at this step)
+ |- toFinalize (containing root files produced at step 1, with prefix PhotonJet_2ndLevel_)
+ |- finalized (containing root files we will produce at this step)
 ----
 
 The main utility here is the executable named 'gammaJetFinalized'. It'll produce root files containing a set of histograms for important variable like balancing or MPF. You can find its sources in the folder 'bin/', in the file 'gammaJetFinalizer.cc'. Let's have a look at the possible options :
@@ -166,7 +164,7 @@ The main utility here is the executable named 'gammaJetFinalized'. It'll produce
 ----
 gammaJetFinalizer  {-i <string> ... |--input-list <string>}
                       [--chs] [--alpha <float>]
-                      [--mc-comp] [--mc] --algo <ak5|ak7> --type <pf|calo>
+                      [--mc-comp] [--mc] --algo <ak4|ak8> --type <pf|calo>
                       -d <string>
 ----
 
@@ -176,30 +174,30 @@ Here's a brief description of each option :
 - +--input-list+: A text file containing a list of input root files
 
 - +--mc+: Tell the finalizer you run an MC sample
+- +--mc-comp+: Apply a cut on pt_gamma > 165 to get rid of trigger prescale. Useful for doing data/MC comparison
 - +--alpha+: The alpha cut to apply. 0.2 by default
 - +--chs+: Tell the finalizer you ran on a CHS sample
-- +--mc-comp+: Apply a cut on pt_gamma > 200 to get rid of trigger prescale. Useful for doing data/MC comparison
-- +--algo, ak5 or ak7+: Tell the finalizer if we run on AK5 or AK7 jets
-- +--type, pf or calo+: Tell the finalizer if we run on PF or Calo jets
+- +--algo ak4 or ak8+: Tell the finalizer if we run on AK4 or AK8 jets
+- +--type pf or calo+: Tell the finalizer if we run on PF or Calo jets
 - +-d+: The output dataset name. This will create an output file named 'PhotonJet_<name>.root'
 
 An exemple of command line could be :
 
 ----
-gammaJetFinalizer -i PhotonJet_2ndLevel_Photon_Run2012.root -d Photon_Run2012 --type pf --algo ak5 --chs --alpha 0.20
+gammaJetFinalizer -i PhotonJet_2ndLevel_Data_file.root -d SinglePhoton_Run2015 --type pf --algo ak4 --chs --alpha 0.30
 ----
 
-This will process the input file 'PhotonJet_2ndLevel_Photon_Run2012.root', looking for PF AK5chs jets, using alpha=0.20, and producing an output file named 'PhotonJet_Photon_Run2012.root'.
+This will process the input file 'PhotonJet_2ndLevel_Data_file.root', looking for PF AK4chs jets, using alpha=0.30, and producing an output file named 'PhotonJet_SinglePhoton_Run2015.root'.
 
 [NOTE]
 ====
-When you have multiple input file (+G+ MC for exemple), the easiest way is to create an input list and then use the +--input-list+ option of the finalizer. For exemple, suppose you have some files named 'PhotonJet_2ndLevel_G_Pt-30to50.root', 'PhotonJet_2ndLevel_G_Pt-50to80.root', 'PhotonJet_2ndLevel_G_Pt-80to120.root', ... You can create an input file list doing
+When you have multiple input file (+GJet+ MC for example), the easiest way is to create an input list and then use the +--input-list+ option of the finalizer. For exemple, suppose you have some files named 'PhotonJet_2ndLevel_GJet_Pt-30to50.root', 'PhotonJet_2ndLevel_GJet_Pt50to80.root', 'PhotonJet_2ndLevel_GJet_Pt-80to120.root', ... You can create an input file list doing
 
 ----
-ls PhotonJet_2ndLevel_G_* > mc_G.list
+ls PhotonJet_2ndLevel_GJet_* > mc_GJet.list
 ----
 
-And them pass the 'mc_G.list' file to the option +--input-list+.
+And them pass the 'mc_GJet.list' file to the option +--input-list+.
 ====
 
 [NOTE]
@@ -209,7 +207,7 @@ You cannot use the +--input-list+ option when running on data, for file structur
 
 There're *two* things you need to be aware before running the finalizer : the pileup reweighting, and the trigger selection. Each of them is explained in details below.
 
-.Per-HLT pileup reweighting
+.Per-HLT pileup reweighting --- Work in progress
 ****
 The MC is reweighting according to data, based on the number of vertices in the event, in order to take into account differences between simulation and data scenario wrt PU. In this analysis, the pileup profile for the data is generated for each HLT used during 2012, in order to take into account possible bias du to the prescale of such trigger.
 
@@ -255,8 +253,7 @@ Sum all the luminosities for all HLT (only if they don't overap in time), and di
 You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have no run range, only a list of HLT path. This list is used in order to know with HLT the event should have fired if it was data, in order to perform the PU reweighting. You can also specify multiple HLT path for one pt bin if there were multiple active triggers during the data taking period. In this case, you'll need to provide a weight for each trigger (of course, the sum of the weight must be 1). Each trigger will be choose randolmy in order to respect the probabilities.
 ****
 
-If you try this documentation on 2012 data, you should now have at least two files (three if you have run on QCD): 'PhotonJet_Photon_Run2012_PFlowAK5chs.root', 'PhotonJet_G_PFlowAK5chs.root', and optionnaly 'PhotonJet_QCD_PFlowAK5chs.root'. You are now ready to produce some plots!
-
+You should now have at least two files (three if you have run on QCD): 'PhotonJet_Photon_Run2015_PFlowAK4chs.root', 'PhotonJet_GJet_PFlowAK4chs.root', and optionnaly 'PhotonJet_QCD_PFlowAK4chs.root'. You are now ready to produce some plots!
 
 === Step 3 - The plots
 
