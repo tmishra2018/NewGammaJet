@@ -131,7 +131,6 @@ The merging will update the tree "analysis" with a new branch called "evtWeightT
 [mergeData] python mergeData.py -i SinglePhoton.txt -o ./ --lumi_tot ##
 
 
-
 To calculate the integrated luminosity, follow the BrilCalc recipe:
 http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
 
@@ -150,18 +149,6 @@ You should now have a root file for each MC dataset and one for each data datase
 
 
 === Step 2
-
-Follow Step 3 of old instructions. 
-
-
-=== Step 3
-Follow step 4 of old instructions
-
-
-++++++++++++++++++++++== Old instructions (8 TeV)
-
-
-
 == Step 3 - finalization
 
 For this step, I'll assume you have the following folder structure
@@ -270,31 +257,36 @@ You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have 
 
 If you try this documentation on 2012 data, you should now have at least two files (three if you have run on QCD): 'PhotonJet_Photon_Run2012_PFlowAK5chs.root', 'PhotonJet_G_PFlowAK5chs.root', and optionnaly 'PhotonJet_QCD_PFlowAK5chs.root'. You are now ready to produce some plots!
 
-== Step 4 - The plots
 
-First of all, you need to build the drawing utilities. For that, go into 'analysis/draw' and run +make+. You should now have everything built.
+=== Step 3 - The plots
 
-In order to produce the full set of plots, you'll have to run 3 differents utility. You need to be in the same folder where the files produced at step 3 are.
+First of all, you need to build the drawing utilities. For that, go into 'analysis/draw' and run +make all+. You should now have everything built.
+
+In order to produce the full set of plots, you'll have to run 3 differents utility. You need to be in the same folder where the files produced at step 2 are.
 
 - First, +drawPhotonJet_2bkg+, like that:
 ----
-../../../draw/drawPhotonJet_2bkg Photon_Run2012 G QCD pf ak5 LUMI
+../../draw/drawPhotonJet_2bkg Data_file GJet_file QCD_file pf ak4 LUMI
 ----
 
 - Then, you need to perform the 2nd jet extrapolation using +drawPhotonJetExtrap+, like this
 ----
-../../../draw/drawPhotonJetExtrap --type pf --algo ak5 Photon_Run2012 G QCD
+../../draw/drawPhotonJetExtrap --type pf --algo ak4 Data_file GJet_file QCD_file
 ----
 
 - Finally, to produce the final plot, one last utility, +draw_ratios_vs_pt+, like this
 ----
-../../../draw/draw_ratios_vs_pt Photon_Run2012 G QCD pf ak5
-../../../draw/draw_all_methods_vs_pt Photon_Run2012 G QCD pf ak5
+../../draw/draw_ratios_vs_pt data_file GJet_file QCD_file pf ak4
+../../draw/draw_all_methods_vs_pt Data_file GJet_file QCD_file pf ak4
 ----
 
-The names to pass to the script depends on what you use for the +-d+ option in step 3. You can find what you used from the name of the root file.
+If everything went fine, you should now have a *lot* of plots in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI', and some more useful in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI/vs_pt'.
 
-If everything went fine, you should now have a *lot* of plots in the folder 'PhotonJetPlots_Photon_Run2012_vs_G_plus_QCD_PFlowAK5_LUMI', and some more useful in the folder 'PhotonJetPlots_Photon_Run2012_vs_G_plus_QCD_PFlowAK5_LUMI/vs_pt'.
+Others drawer could be useful. For example +draw_vs_run+ which draw the time dependence study --> response vs run number (only for Data).
+----
+../../draw/draw_vs_run Data_file pf ak4
+----
+
 
 Have fun!
 
