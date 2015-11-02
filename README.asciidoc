@@ -76,17 +76,20 @@ You can find the code for the +GammaJetFilter+ in 'src/GammaJetFilter.cc'. If an
 
 .Running crab
 ****
-In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you'll find the scripts +createAndSubmit[Data][MC]+. These script read a txt file with the sample to use {example}.
+In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you'll find the scripts +createAndSubmit[Data][MC]+. These script read a txt file with the sample to use.
 
 [Data] dataset_DASformat processed_events files_per_job GlobalTag
-i.e. /SinglePhoton/Run2015D-PromptReco-v4/MINIAOD -1 300 74X_dataRun2_Prompt_v2
+----
+/SinglePhoton/Run2015D-PromptReco-v4/MINIAOD -1 300 74X_dataRun2_Prompt_v2
+----
 [MC] dataset_DASformat processed_events cross_section ptHatMin ptHatMax files_per_job GlobalTag
-i.e. /GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
-
+-----
+/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
+----
 Don't forget to also edit the template files in the directory 'Inputs', 'crab3_template_data.py' and 'crab3_template_mc.py' to change your storage element and for data JSON file and run range.
 
 [IMPORTANT]
-==== Old -- to update
+==== Old -- to update. 
 In order to automatically compute luminosity, you need to do the following things.
 
 - First, you need to create a folder for each dataset in your python configuration. These folder must have the same name as the dataset name defined in your configuration. For exemple, let's assume you have the following configuration :
@@ -110,6 +113,7 @@ Once crab is done, the only remaining step is to merge the output in order to ha
 You can create the list with the files to merge with the script 'createList_T2.py', passing the path of crab output.
 
 [createList_T2.py] python createList_T2.py -i [pnfs path] -o .
+
 [mergeAndAddWeight] python mergeAndAddWeights.py -i GJet.txt -o ./ --xsec ##
 
 ==== Merge and add weight for total normalization (only MC)
@@ -129,13 +133,15 @@ To calculate the integrated luminosity, follow the BrilCalc recipe:
 http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
 
 1) Produce lumi_summary.json from crab
+-----
 crab report -d crab_folder
-
+-----
 2) Execute brilcalc
 
 Command:
+----
 brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -u /pb -i lumi_summary.json
-
+----
 
 You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+. Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'.
 
