@@ -23,8 +23,8 @@ This is a documentation for the gamma + jets framework.
 ----
 
 export SCRAM_ARCH=slc6_amd64_gcc491
-cmsrel CMSSW_7_4_12_patch4
-cd CMSSW_7_4_12_patch4/src
+cmsrel CMSSW_7_4_14
+cd CMSSW_7_4_14/src
 git clone https://github.com/FPreiato/GammaJet.git JetMETCorrections/GammaJetFilter/
 cd ..
 scram b -j 9
@@ -36,60 +36,10 @@ There is a flag in the code for data that allows to run on AOD and produce MiniA
 
 === General notes (work in progress)
 
-- At the moment the FootPrint removal of the photon for the MET calculation is *NOT* implemented. 
-  The following package have to be downloaded and adapted:  https://github.com/peruzzim/SCFootprintRemoval.git V01-07
 - Energy regression for the photon is now directly implemented in the `photon->energy()`(to be understood if this is propagated to PAT MET)
 - For flavor studies, QG-tagging, b-tagging,  reclustering is needed and have to be implemented. Now ak4 PAT jets stored in the MINIAOD are used directly, changing on-the-fly the JEC for jets and MET.
-- Since data are coming we need to redo
-  ** pileup reweighting for MC  
-  ** adapt lumicalc part to compute the luminosity collected by the triggers in data (with new luminosity tools)
   
-- When following the old instructions replace `AK5`, `ak5` with `AK4`, `ak4` and `AK7`, `ak7` with `AK8`, `ak8`, since ak4 and ak8 are the new supported jet alogs.
-
 === Step 1
-
-Follow Step 2 of old instructions.
-
-==== Merge and add weight for total normalization (only MC)
-
-If you're using "flat" MC samples you need to add a branch with the total event weight
-evtWeightTot = total_xsec / sum_of_generatorWeights
-This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights. In the output of Step 1 we store an histogram filled using generator weights, in order to extract the sum of weights at the end with Integral().
-
-Create a list of the files to be merged (the output files of Step 1) and then run the script mergeAndAddWeights.py 
-passing the list, the corresponding total cross section in pb and the total luminosity in /pb.
-
-Example command:
-
-[source,bash]
------
-
-python scripts/mergeAndAddWeights.py --inputList lists/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8__RunIISpring15DR74-Asympt50nsRaw_MCRUN2_74_V9A-v3__MINIAODSIM.txt -o analysis/tuples/toFinalize --xsec 2022100000 --lumi_tot 0.150
-
------
-
-This will update the tree "analysis" with a new branch called "evtWeightTot" and the TParameter "total_luminosity". Those number are used in the following steps to fill histograms and to draw plots. 
-
-=== Step 2
-
-Follow Step 3 of old instructions. 
-
-
-In order to keep the structure of the macros used in the following step, you have to run over a "fake" data sample. 
-In any case, for the moment, data are not drawn in the final plots, so you can run the finalizer over whatever rootfile without the option `--mc`.
-
-=== Step 3
-Follow step 4 of old instructions +
-*BUT* +
-the Makefile doesn't compile in CMSSW_7_3_2. 
-The temporary solution is to download a CMSSW_5_3_14 release, download the repository there, and do plots in this release.
-
-
-
-== Old instructions (8 TeV)
-
-
-== Step 2 - Convert MiniAOD to plain root trees
 
 This step will convert MiniAOD tuples to plain root trees, performing a simple selection :
 
@@ -119,56 +69,89 @@ Theses config. files are really simple. They just configure the +GammaJetFilter+
 - +correctJecFromRaw+: If +True+, the new JEC factory is computed taking the raw jet. Turn off *only* if you know what you are doing.
 - +correctorLabel+: The corrector label to use for computing the new JEC. The default should be fine for PF AK4 CHS jets.
 - +redoTypeIMETCorrection+: If +True+, TypeI MET is recomputed. Automatically +True+ if +doJetCorrection+ is +True+.
-
+- +doFootprintMETCorrection+: If +True+, MET is calculated from pf Candidate removing the pfCand(photon) and adding the reco photon
 ****
 
 You can find the code for the +GammaJetFilter+ in 'src/GammaJetFilter.cc'. If an event does not pass the preselection, it's dumped. Resulting root trees contains only potential gamma + jets events, with exactly one good photon.
 
-.Running crab (to update)
+.Running crab
 ****
-Like for step 1, you'll need to run crab for step 2 too. In the 'analysis/2ndLevel/' folder, you'll find the same +createAndRun+ scripts as for step 1. You'll need to edit both files to add the dataset path you have obtained from step 1. Don't forget to also edit the template files, 'crab_data.cfg.template.ipnl' and 'crab_MC.cfg.template.ipnl' to change your storage element.
+In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you'll find the scripts +createAndSubmit[Data][MC]+. These script read a txt file with the sample to use {example}.
 
-.createAndRunMCCrab.py
-This file is very simalar to the one for step 1. It has just been extended to include informations about the cross-section, the number of processed events, and the generated pt hat. The cross-section can be obtained on PREP for exemple.
+[Data] dataset_DASformat processed_events files_per_job GlobalTag
+i.e. /SinglePhoton/Run2015D-PromptReco-v4/MINIAOD -1 300 74X_dataRun2_Prompt_v2
+[MC] dataset_DASformat processed_events cross_section ptHatMin ptHatMax files_per_job GlobalTag
+i.e. /GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
 
-.createAndRunDataCrab.py
-This file is very similar to the one for step 1. The format is the same, only things removed are the JSON file and the run range, no longer needed for this step.
+Don't forget to also edit the template files in the directory 'Inputs', 'crab3_template_data.py' and 'crab3_template_mc.py' to change your storage element and for data JSON file and run range.
 
 [IMPORTANT]
-====
+==== Old -- to update
 In order to automatically compute luminosity, you need to do the following things.
 
 - First, you need to create a folder for each dataset in your python configuration. These folder must have the same name as the dataset name defined in your configuration. For exemple, let's assume you have the following configuration :
 [source,python]
 ----
 datasets = [ 
-
     ["/Photon/sbrochet-Photon_Run2012A-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "Photon_Run2012A-22Jan2013", "FT_53_V21_AN3"],
     ["/SinglePhoton/sbrochet-SinglePhoton_Run2012B-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "SinglePhoton_Run2012B-22Jan2013", "FT_53_V21_AN3"],
-    ["/SinglePhoton/sbrochet-SinglePhoton_Run2012C-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "SinglePhoton_Run2012C-22Jan2013", "FT_53_V21_AN3" ],
-
-    
+    ["/SinglePhoton/sbrochet-SinglePhoton_Run2012C-22Jan2013_24Apr13-v1-37e3bf2409397e623ffd52beab84a202/USER", "SinglePhoton_Run2012C-22Jan2013", "FT_53_V21_AN3" ],    
     ]
 ----
-
 You'll need to create *three* folders, named 'Photon_Run2012A-22Jan2013', 'SinglePhoton_Run2012B-22Jan2013', and 'SinglePhoton_Run2012C-22Jan2013'.
-
 - Second, inside of each of these new folder, there must be *two files* : 'lumiSummary.json', and 'lumibyls.csv'. The first file is produced by crab at the end of the first step, using the command +crab -report+. You simply need to copy the file in the right folder. The second file is produced by lumiCalc2 using the following command :
 ----
 lumiCalc2.py -i lumiSummary.json -o lumibyls.csv lumibyls
 ----
-
-*This step is mandatory, don't forget it*
 ====
-
-
 ****
 
-Once crab is done, the only remaining step is to merge the output in order to have one file per dataset. For that, you have the 'mergeMC.py' and the 'mergeData.py'. Those two files rely on a script called 'crabOutputList.py', which read a crab task and list the output files. Unfortunately, this script heavily rely on the knowledge of Lyon infrascructure and utilities like +rfdir+. You'll probably need to change +rfdir+ to the tool you use you, like for exemple +eos ls+ on lxplus for exemple. You'll also need to edit line 48 to adapt to your own storage element.
+Once crab is done, the only remaining step is to merge the output in order to have one file per dataset. For that, you have in the folder 'scripts' the 'mergeAndAddWeight.py' and the 'mergeData.py'.
+You can create the list with the files to merge with the script 'createList_T2.py', passing the path of crab output.
 
-So now, let's assume you have been able to merge the output file. You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+. Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'. I usually create a folder with the date of the day to put the root tuples inside.
+[createList_T2.py] python createList_T2.py -i [pnfs path] -o .
+[mergeAndAddWeight] python mergeAndAddWeights.py -i GJet.txt -o ./ --xsec ##
 
-You can now go to step 3
+==== Merge and add weight for total normalization (only MC)
+
+If you're using "flat" MC samples you need to add a branch with the total event weight
+evtWeightTot = total_xsec / sum_of_generatorWeights
+This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights. In the output of Step 1 we store an histogram filled using generator weights, in order to extract the sum of weights at the end with Integral().
+The merging will update the tree "analysis" with a new branch called "evtWeightTot" and the TParameter "total_luminosity". Those number are used in the following steps to fill histograms and to draw plots. 
+
+====
+
+[mergeData] python mergeData.py -i SinglePhoton.txt -o ./ --lumi_tot ##
+
+
+
+To calculate the integrated luminosity, follow the BrilCalc recipe:
+http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
+
+1) Produce lumi_summary.json from crab
+crab report -d crab_folder
+
+2) Execute brilcalc
+
+Command:
+brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -u /pb -i lumi_summary.json
+
+
+You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+. Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'.
+
+
+=== Step 2
+
+Follow Step 3 of old instructions. 
+
+
+=== Step 3
+Follow step 4 of old instructions
+
+
+++++++++++++++++++++++== Old instructions (8 TeV)
+
+
 
 == Step 3 - finalization
 
