@@ -279,7 +279,7 @@ In order to produce the full set of plots, you'll have to run 3 differents utili
 
 If everything went fine, you should now have a *lot* of plots in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI', and some more useful in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI/vs_pt'.
 
-Others drawer could be useful. For example +draw_vs_run+ which draw the time dependence study --> response vs run number (only for Data).
+Other drawer could be useful. For example +draw_vs_run+ which draw the time dependence study --> response vs run number (only for Data).
 ----
 ../../draw/draw_vs_run Data_file pf ak4
 ----

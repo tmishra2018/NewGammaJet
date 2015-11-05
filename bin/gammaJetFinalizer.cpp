@@ -1014,12 +1014,11 @@ void GammaJetFinalizer::runAnalysis() {
     //bool secondJetOK = !secondJet.is_present || (secondJet.pt < mAlphaCut * photon.pt);    
     bool secondJetOK = !secondJet.is_present || (secondJet.pt < 10 || secondJet.pt < mAlphaCut * photon.pt);
     
-    // federico -> now false
-    //    if (mDoMCComparison) { 
-    // Lowest unprescaled trigger for 2012 if at 150 GeV
-    //      if (photon.pt < 200.)
-    //        continue;
-    //    }
+    if (mDoMCComparison) { 
+      // Lowest unprescaled trigger@ 165 Gev -- to check
+      if (photon.pt < 165.)
+	continue;
+    }
     
     if (secondJetOK)    
       passedAlphaCut++;
