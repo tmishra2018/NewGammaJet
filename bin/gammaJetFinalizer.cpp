@@ -1927,6 +1927,8 @@ void GammaJetFinalizer::computeTriggerWeight(double ptPhot, float& weight) {
   if(ptPhot >=175 && ptPhot <=5000) bin =6;  
 
   weight = h_ratio->GetBinContent(bin);     
+
+  if(weight<1) weight =1 ;
  
 }
 
