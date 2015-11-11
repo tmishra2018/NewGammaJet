@@ -31,6 +31,7 @@
 *.root
 *.exe
 *.png
+*.pdf
 *~
 *.log
 
