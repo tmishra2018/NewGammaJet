@@ -1,3 +1,8 @@
-drawPhotonJetExtrap
 drawPhotonJet_2bkg
+drawPhotonJetExtrap
+draw_ratios_vs_pt
 draw_all_methods_vs_pt
+draw_vs_run
+draw_vs_npv
+draw_new_extrap
+drawEnergyFractions
