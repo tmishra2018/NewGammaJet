@@ -100,27 +100,6 @@ Implementation:
 // class declaration
 //
 
-// This template function finds whether theCandidate is in thefootprint 
-// collection. It is templated to be able to handle both reco and pat
-// photons (from AOD and miniAOD, respectively).
-template <class T, class U>
-bool isInFootprint(const T& thefootprint, const U& theCandidate) {
-  for ( auto itr = thefootprint.begin(); itr != thefootprint.end(); ++itr ) {
-    if( itr->key() == theCandidate.key() ) return true;
-  }
-  return false;
-}
-
-
-template <class T>
-bool StampInFootprint(const T& thefootprint) {
-  for ( auto itr = thefootprint.begin(); itr != thefootprint.end(); ++itr ) {
-    std::cout<< "Stampa di prova  "<< itr->key() << std::endl;;
-  }
-  return 0;
-}
-
-
 enum JetAlgorithm {
   AK4,
   AK8
@@ -151,6 +130,9 @@ private:
   virtual bool endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
   //giulia--- correct photon not necessary until we have data @13 TeV 
   void correctPhoton(pat::Photon& photon, edm::Event& iEvent, int isData, int nPV);
+  //federico
+  void photonStudy(pat::Photon* photon, edm::Event& iEvent);
+
   void correctJets(pat::JetCollection& jets, edm::Event& iEvent, const edm::EventSetup& iSetup);
   void extractRawJets(pat::JetCollection& jets);
   //giulia --- comment qg tagging stuff
@@ -248,7 +230,22 @@ private:
   
   double mPtHatMin;
   double mPtHatMax;
-  
+
+  std::vector<double>  NEvent_vec;
+  std::vector<double>  R_min_vec;
+  std::vector<double>  R_max_vec;
+  std::vector<double>  SumE_vec;
+  std::vector<double>  SumPt_vec;
+  std::vector<double>  KL1FastJet_vec;
+  std::vector<double>  KL1RC_vec;
+  int NEvent_array[20]={0};
+  double SumE_array[20]={0};
+  double R_min_array[20]={0};
+  double R_max_array[20]={0};
+  double SumPt_array[20]={0};
+  double KL1FastJet_array[20]={0};
+  double KL1RC_array[20]={0};
+
   // Trees
   void createTrees(const std::string& rootName, TFileService& fs);
   TTree* mGenParticlesTree;
@@ -257,6 +254,7 @@ private:
   TTree* mAnalysisTree;
   TTree* mElectronsTree;
   TTree* mMuonsTree;
+  TTree* mPhotonStudy;
   TParameter<double>*    mTotalLuminosity;
   float                  mEventsWeight;
   double               crossSection;
@@ -343,6 +341,12 @@ private:
   std::vector<JetCorrectorParameters> vParTypeI;
   std::vector<JetCorrectorParameters> vParTypeIL1;
 
+  //photon study
+  FactorizedJetCorrector *jetCorrectorForL1FastJet;
+  FactorizedJetCorrector *jetCorrectorForL1RC;
+  std::vector<JetCorrectorParameters> vParL1FastJet;
+  std::vector<JetCorrectorParameters> vParL1RC;
+
   //giulia ---- regression no more necessary in 73X
   //define (once for all) corrector for regression
   //EnergyScaleCorrection_class *RegressionCorrector;
@@ -414,6 +418,14 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     //FAKE vPar for typeI fix only L1
     vParTypeIL1.push_back(*L1JetParForTypeI);
     jetCorrectorForTypeIL1 = new FactorizedJetCorrector(vParTypeIL1);
+
+    //photon study
+    vParL1FastJet.push_back(*L1JetPar);
+    jetCorrectorForL1FastJet = new FactorizedJetCorrector(vParL1FastJet);
+    vParL1RC.push_back(*L1JetParForTypeI);
+    jetCorrectorForL1RC = new FactorizedJetCorrector(vParL1RC);
+
+
     
     delete L3JetPar;
     delete L2JetPar;
@@ -442,6 +454,13 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     //FAKE vPar for typeI fix only L1
     vParTypeIL1.push_back(*L1JetParForTypeI);
     jetCorrectorForTypeIL1 = new FactorizedJetCorrector(vParTypeIL1);
+
+    //photon study
+    vParL1FastJet.push_back(*L1JetPar);
+    jetCorrectorForL1FastJet = new FactorizedJetCorrector(vParL1FastJet);
+    vParL1RC.push_back(*L1JetParForTypeI);
+    jetCorrectorForL1RC = new FactorizedJetCorrector(vParL1RC);
+
     //
     delete L3JetPar;
     delete L2JetPar;
@@ -496,7 +515,9 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   mAnalysisTree = fs->make<TTree>("analysis", "analysis tree");
   mMuonsTree = fs->make<TTree>("muons", "muons tree");
   mElectronsTree = fs->make<TTree>("electrons", "electrons tree");
-  
+  //federico
+  mPhotonStudy = fs->make<TTree>("photonStudy", "photon Study tree");
+
   mTotalLuminosity = fs->make<TParameter<double> >("total_luminosity", 0.);
   
   crossSection = 1.;
@@ -564,6 +585,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     mFirstJetThresholdParameter = fs->make<TParameter<double> >("cut_on_first_jet_treshold", mFirstJetThreshold);
   }
   
+
   if (mIsMC){
     // to store the sum of weights
     h_sumW = fs->make<TH1F>("h_sumW", "h_sumW", 1, -0.5, 5.5);
@@ -998,6 +1020,9 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   photonToTree(GoodphotonRef, photon, iEvent);
   
+  photonStudy(&photon, iEvent);
+
+
   // Electrons
   edm::Handle<pat::ElectronCollection> electrons;
   iEvent.getByLabel("slimmedElectrons", electrons);
@@ -1037,8 +1062,100 @@ void GammaJetFilter::correctPhoton(pat::Photon& photon, edm::Event& iEvent, int 
   //    photon.setP4(photon.p4()*smearcorr);
   //  }
 }
+//////////////////////////
+//federico -- 
+void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
 
+  bool verbose = true;
 
+  edm::Handle<pat::PackedCandidateCollection> pfs;
+  iEvent.getByToken(pfToken_, pfs);
+
+  std::vector<reco::CandidatePtr> footprint;
+  for (unsigned int i = 0, n = photon->numberOfSourceCandidatePtrs(); i < n; ++i) {
+    // pfCandidate associated with the photon
+    footprint.push_back(photon->sourceCandidatePtr(i) );
+  }
+
+  for(int ii=0;  ii<11;  ii++){  //loop on annulus
+
+    double R_min = ii / 10.; //radius min of annulus
+    double R_max = R_min + 0.1; // radius max 
+    float SumE_PFCandidate = 0;
+    float SumPt_PFCandidate = 0;
+
+    if(verbose) std::cout<< "pT Photon  "<< photon->pt() << std::endl;    
+    if(verbose) std::cout<<"Range radius: "<< R_min <<" e "<<R_max<<std::endl; 
+
+    // first method -- Energy density by hand: sum of pf candidate energy in an annulus of R_min and R_max       
+    for (unsigned int i = 0, n = pfs->size(); i < n; ++i) { //loop on of candidate
+      const pat::PackedCandidate &pf = (*pfs)[i];
+
+      double deltaR = reco::deltaR(pf, *photon);
+
+      if ( deltaR > R_min && deltaR<=R_max ) {
+	if(verbose) std::cout<< "DeltaR " << deltaR <<std::endl;
+	// don't use the photon pfCandidate  (important only in the first bin)
+	if (std::find(footprint.begin(), footprint.end(), reco::CandidatePtr(pfs,i)) != footprint.end()){
+	  if(verbose) std::cout<<"Skip photon  pfCandidate"<< std::endl;
+	  if(verbose) std::cout<<"Energy NOT in the sum: "<<pf.energy()  <<std::endl;
+	  continue;
+	}      
+	if(verbose) std::cout<<"Energy to sum:  "<< pf.energy()<< std::endl;
+	SumE_PFCandidate += pf.energy();
+	SumPt_PFCandidate += pf.pt();
+      }// range deltaR      
+    }// loop over pfCand
+     
+    if(verbose) std::cout<<"Final Energy:  "<< SumE_PFCandidate<< std::endl;
+    if(verbose) std::cout<<"Final Pt:  "<< SumPt_PFCandidate<< std::endl;
+    
+    // other methods used the area of annulus -- calculated:
+    double Area = M_PI * ( R_max*R_max - R_min*R_min );
+    if(verbose) std::cout<< "Area  "<< Area << std::endl;    
+
+    edm::Handle<double> rho_;
+    iEvent.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
+    
+    // second method -- corrector factor using L1FastJet
+    double correctionsL1FastJet =1.;
+    jetCorrectorForL1FastJet->setJetEta(photon->eta());
+    jetCorrectorForL1FastJet->setJetPt(photon->pt());
+    jetCorrectorForL1FastJet->setJetA(Area);
+    jetCorrectorForL1FastJet->setRho(*rho_);
+    correctionsL1FastJet = jetCorrectorForL1FastJet->getCorrection();        
+    if(verbose) std::cout<< "Correction L1FastJet  "<< correctionsL1FastJet << std::endl;
+    // K = energy density * Area (?) = pt(phot) - Corr * pt(phot)
+    double K_L1FastJet = photon->pt() -  (correctionsL1FastJet * photon->pt() ) ;
+    if(verbose) std::cout<< "K L1FastJet  "<< K_L1FastJet << std::endl;
+
+    // third method -- corrector factor using L1RC
+    double correctionsL1RC =1.;
+    jetCorrectorForL1RC->setJetEta(photon->eta());
+    jetCorrectorForL1RC->setJetPt(photon->pt());
+    jetCorrectorForL1RC->setJetA(Area);
+    jetCorrectorForL1RC->setRho(*rho_);
+    correctionsL1RC = jetCorrectorForL1RC->getCorrection();         
+    if(verbose) std::cout<< "CorrectionL1RC  "<< correctionsL1RC << std::endl;   
+    double K_L1RC =photon->pt() - (correctionsL1RC * photon->pt()) ;
+    if(verbose) std::cout<< "K L1RC  "<< K_L1RC << std::endl;
+
+    //////////// sum over all events -- Mean will be done in a second step
+
+    if(verbose) std::cout << "ii "<< ii << std::endl;
+    R_min_array[ii] = R_min;
+    R_max_array[ii] = R_max;
+    NEvent_array[ii]++;
+    SumE_array[ii] +=SumE_PFCandidate;
+    SumPt_array[ii] +=SumPt_PFCandidate;
+    KL1FastJet_array[ii] +=K_L1FastJet;
+    KL1RC_array[ii] +=K_L1RC;
+
+   }// for on radius
+ 
+
+}// end method "photonStudy"
+/////////////////////////////
 void GammaJetFilter::correctJets(pat::JetCollection& jets, edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // Get Jet corrector
   //  const JetCorrector* corrector = JetCorrector::getJetCorrector(mCorrectorLabel, iSetup);
@@ -1529,6 +1646,36 @@ void GammaJetFilter::endJob() {
   // std::cout<< "NoGoodPhotons = " << NoGoodPhotons << std::endl ;
   std::cout<< "OnlyOneGoodPhotons = " << OnlyOneGoodPhotons << std::endl ;
   // std::cout<< "MoreGoodPhotons = " << MoreGoodPhotons << std::endl ;
+
+  for(int ii =0; ii<11; ii++){
+    NEvent_vec.push_back(NEvent_array[ii]);
+    R_min_vec.push_back(R_min_array[ii]);
+    R_max_vec.push_back(R_max_array[ii]);
+    SumE_vec.push_back(SumE_array[ii]);
+    SumPt_vec.push_back(SumPt_array[ii]);
+    KL1FastJet_vec.push_back(KL1FastJet_array[ii]);
+    KL1RC_vec.push_back(KL1RC_array[ii]);
+    std::cout<<"NEvent_array["<<ii<<"] = "<< NEvent_array[ii]<<std::endl;
+    std::cout<<"R_min_array["<<ii<<"] = "<< R_min_array[ii]<<std::endl;
+    std::cout<<"R_max_array["<<ii<<"] = "<< R_max_array[ii]<<std::endl;
+    std::cout<<"SumE_array["<<ii<<"] = "<< SumE_array[ii]<<std::endl;
+    std::cout<<"SumPt_array["<<ii<<"] = "<< SumPt_array[ii]<<std::endl;
+    std::cout<<"KL1FastJet_array["<<ii<<"] = "<< KL1FastJet_array[ii]<<std::endl;
+    std::cout<<"KL1RC_array["<<ii<<"] = "<< KL1RC_array[ii]<<std::endl;
+  }
+
+  mPhotonStudy -> Branch("NEvents", "vector<double>", &NEvent_vec);             
+  mPhotonStudy -> Branch("R_min", "vector<double>", &R_min_vec);                                                                                                                    
+  mPhotonStudy -> Branch("R_max", "vector<double>", &R_max_vec);                                                                                                                    
+  mPhotonStudy -> Branch("SumE_pfCandidate", "vector<double>", &SumE_vec);                                                                                                                    
+  mPhotonStudy -> Branch("SumPt_pfCandidate", "vector<double>", &SumPt_vec);
+  mPhotonStudy -> Branch("K_L1FastJet", "vector<double>", &KL1FastJet_vec);          
+  mPhotonStudy -> Branch("K_L1RC", "vector<double>", &KL1RC_vec);          
+
+   mPhotonStudy->Fill();
+
+
+
 }
 
 // ------------ method called when starting to processes a run  ------------
