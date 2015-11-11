@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
   //bool sameEvents = false; //until njets histos have no overflows... or maybe use GetEntries instead of integral?
 
   drawBase* db = new drawBase("PhotonJet", recoType, jetAlgo, OUTPUT_GRAPHS);
-  db->set_pdf_aussi((bool)false);
+  db->set_pdf_aussi((bool)true);
   db->set_flags(flags);
   db->set_isCMSArticle(false);
 

@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     //std::string mcFlags = (useGenJets) ? "GENJETS_" + flags : flags;
 
     drawExtrap* db = new drawExtrap("PhotonJet", recoType, jetAlgo, true);
-    db->set_pdf_aussi(false);
+    db->set_pdf_aussi(true);
     db->set_isCMSArticle(false);
 
     db->set_FITRMS(resoArg.getValue());

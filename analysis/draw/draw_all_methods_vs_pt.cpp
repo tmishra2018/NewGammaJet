@@ -25,12 +25,12 @@ void setGraphStyle(TGraphErrors* graph, int markerStyle, int markerColor, int ma
   graph->SetMarkerSize(markerSize);
 }
 
-bool SAVE_EPS = false;
+bool SAVE_PDF = true;
 bool SAVE_PNG = true;
 bool SAVE_ROOT = false;
 void saveCanvas(TCanvas* canvas, const std::string& name) {
-  if (SAVE_EPS)
-    canvas->SaveAs((name + ".eps").c_str());
+  if (SAVE_PDF)
+    canvas->SaveAs((name + ".pdf").c_str());
   if (SAVE_PNG)
     canvas->SaveAs((name + ".png").c_str());
   if (SAVE_ROOT)
