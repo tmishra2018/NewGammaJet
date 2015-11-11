@@ -234,6 +234,7 @@ private:
   std::vector<double>  NEvent_vec;
   std::vector<double>  R_min_vec;
   std::vector<double>  R_max_vec;
+  std::vector<double>  Area_vec;
   std::vector<double>  SumE_vec;
   std::vector<double>  SumPt_vec;
   std::vector<double>  KL1FastJet_vec;
@@ -242,6 +243,7 @@ private:
   double SumE_array[20]={0};
   double R_min_array[20]={0};
   double R_max_array[20]={0};
+  double Area_array[20]={0};
   double SumPt_array[20]={0};
   double KL1FastJet_array[20]={0};
   double KL1RC_array[20]={0};
@@ -1063,7 +1065,7 @@ void GammaJetFilter::correctPhoton(pat::Photon& photon, edm::Event& iEvent, int 
   //  }
 }
 //////////////////////////
-//federico -- 
+//federico
 void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
 
   bool verbose = true;
@@ -1084,8 +1086,9 @@ void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
     float SumE_PFCandidate = 0;
     float SumPt_PFCandidate = 0;
 
-    if(verbose) std::cout<< "pT Photon  "<< photon->pt() << std::endl;    
-    if(verbose) std::cout<<"Range radius: "<< R_min <<" e "<<R_max<<std::endl; 
+    if(verbose) std::cout<< "pT Photon =  "<< photon->pt() << std::endl;    
+    if(verbose) std::cout<< "Energy Photon =  "<< photon->energy() << std::endl;    
+    if(verbose) std::cout<< "Range radius: "<< R_min <<" - "<<R_max<<std::endl; 
 
     // first method -- Energy density by hand: sum of pf candidate energy in an annulus of R_min and R_max       
     for (unsigned int i = 0, n = pfs->size(); i < n; ++i) { //loop on of candidate
@@ -1101,7 +1104,7 @@ void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
 	  if(verbose) std::cout<<"Energy NOT in the sum: "<<pf.energy()  <<std::endl;
 	  continue;
 	}      
-	if(verbose) std::cout<<"Energy to sum:  "<< pf.energy()<< std::endl;
+	if(verbose) std::cout<<"Energy to sum up:  "<< pf.energy()<< std::endl;
 	SumE_PFCandidate += pf.energy();
 	SumPt_PFCandidate += pf.pt();
       }// range deltaR      
@@ -1110,9 +1113,9 @@ void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
     if(verbose) std::cout<<"Final Energy:  "<< SumE_PFCandidate<< std::endl;
     if(verbose) std::cout<<"Final Pt:  "<< SumPt_PFCandidate<< std::endl;
     
-    // other methods used the area of annulus -- calculated:
+    // other methods used the area of annulus -- calculate:
     double Area = M_PI * ( R_max*R_max - R_min*R_min );
-    if(verbose) std::cout<< "Area  "<< Area << std::endl;    
+    if(verbose) std::cout<< "Area =  "<< Area << std::endl;    
 
     edm::Handle<double> rho_;
     iEvent.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
@@ -1125,7 +1128,7 @@ void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
     jetCorrectorForL1FastJet->setRho(*rho_);
     correctionsL1FastJet = jetCorrectorForL1FastJet->getCorrection();        
     if(verbose) std::cout<< "Correction L1FastJet  "<< correctionsL1FastJet << std::endl;
-    // K = energy density * Area (?) = pt(phot) - Corr * pt(phot)
+    // K = energy density * Area = pt(phot) - Corr * pt(phot)
     double K_L1FastJet = photon->pt() -  (correctionsL1FastJet * photon->pt() ) ;
     if(verbose) std::cout<< "K L1FastJet  "<< K_L1FastJet << std::endl;
 
@@ -1145,6 +1148,7 @@ void GammaJetFilter::photonStudy(pat::Photon* photon, edm::Event& iEvent) {
     if(verbose) std::cout << "ii "<< ii << std::endl;
     R_min_array[ii] = R_min;
     R_max_array[ii] = R_max;
+    Area_array[ii] = Area;
     NEvent_array[ii]++;
     SumE_array[ii] +=SumE_PFCandidate;
     SumPt_array[ii] +=SumPt_PFCandidate;
@@ -1651,6 +1655,7 @@ void GammaJetFilter::endJob() {
     NEvent_vec.push_back(NEvent_array[ii]);
     R_min_vec.push_back(R_min_array[ii]);
     R_max_vec.push_back(R_max_array[ii]);
+    Area_vec.push_back(Area_array[ii]);
     SumE_vec.push_back(SumE_array[ii]);
     SumPt_vec.push_back(SumPt_array[ii]);
     KL1FastJet_vec.push_back(KL1FastJet_array[ii]);
@@ -1658,6 +1663,7 @@ void GammaJetFilter::endJob() {
     std::cout<<"NEvent_array["<<ii<<"] = "<< NEvent_array[ii]<<std::endl;
     std::cout<<"R_min_array["<<ii<<"] = "<< R_min_array[ii]<<std::endl;
     std::cout<<"R_max_array["<<ii<<"] = "<< R_max_array[ii]<<std::endl;
+    std::cout<<"Area_array["<<ii<<"] = "<< Area_array[ii]<<std::endl;
     std::cout<<"SumE_array["<<ii<<"] = "<< SumE_array[ii]<<std::endl;
     std::cout<<"SumPt_array["<<ii<<"] = "<< SumPt_array[ii]<<std::endl;
     std::cout<<"KL1FastJet_array["<<ii<<"] = "<< KL1FastJet_array[ii]<<std::endl;
@@ -1667,6 +1673,7 @@ void GammaJetFilter::endJob() {
   mPhotonStudy -> Branch("NEvents", "vector<double>", &NEvent_vec);             
   mPhotonStudy -> Branch("R_min", "vector<double>", &R_min_vec);                                                                                                                    
   mPhotonStudy -> Branch("R_max", "vector<double>", &R_max_vec);                                                                                                                    
+  mPhotonStudy -> Branch("Area", "vector<double>", &Area_vec);                       
   mPhotonStudy -> Branch("SumE_pfCandidate", "vector<double>", &SumE_vec);                                                                                                                    
   mPhotonStudy -> Branch("SumPt_pfCandidate", "vector<double>", &SumPt_vec);
   mPhotonStudy -> Branch("K_L1FastJet", "vector<double>", &KL1FastJet_vec);          
