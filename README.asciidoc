@@ -1,5 +1,4 @@
-
-a// To compile, simply run 'asciidoc manual.txt'
+// To compile, simply run 'asciidoc manual.txt'
 = Gamma + jets analysis
 Sébastien Brochet <s.brochet@ipnl.in2p3.fr>
 02 May 2013
