@@ -1397,15 +1397,17 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
       pat::Jet jet = *rawJet;
       jet.scaleEnergy(corrs); // L1L2L3
 
-    if (jet.pt() > 10) {
-     
-      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-      if (emEnergyFraction > 0.90)
-        continue;
-      
-      deltaPx += (jet.px() - jetRC.px());
-      deltaPy += (jet.py() - jetRC.py());
-    } // jet.pt() > 10
+      //      double dR = reco::deltaR(photon, jet);
+      if (jet.pt() > 10) {
+      //      if (jet.pt() > 10 && dR > 0.25) { // va bene     
+	
+	//	double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+	//	if (emEnergyFraction > 0.90)
+	//	  continue;
+	
+	deltaPx += (jet.px() - jetRC.px());
+	deltaPy += (jet.py() - jetRC.py());
+      } // jet.pt() > 10
   }//loop over jets
   
   double correctedMetPx = rawMet.px() - deltaPx;
@@ -1498,14 +1500,11 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     jet.scaleEnergy(corrs); //L1L2L3
 
     double dR = reco::deltaR(photon, jet);
-
-    //      std::cout<<"deltaR photon jet = "<< dR <<"  EM EnergyFraction =  "<<emEnergyFraction<<std::endl;
-    //    if ( dR<0.25 ) std::cout<<"excluded"<<std::endl;
+    // if(dR < 0.25 ) std::cout<<"deltaR photon jet = "<< dR <<"  EM EnergyFraction =  "<<emEnergyFraction<<std::endl;
     
-    if (jet.pt() > 10 && dR > 0.25) {
-      
+    if (jet.pt()>10 && dR>0.25) {
+
       //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-      //      if (emEnergyFraction > 0.90) std::cout<<"Questa la escluderei"<<std::endl;
       //	 continue;
        
        deltaPx += (jet.px() - jetRC.px());
@@ -1560,11 +1559,13 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
     
     pat::Jet jet = *rawJet;
     jet.scaleEnergy(corrs); // L1L2L3
-    
-    if (jet.pt() > 10) {
+
+    double dR = reco::deltaR(photon, jet);    
+    //    if (jet.pt() > 10) {
+    if (jet.pt() > 10 && dR > 0.25) {
       
-      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-      if (emEnergyFraction > 0.90) continue;
+      //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      //      if (emEnergyFraction > 0.90) continue;
       
       deltaPx += (jet.px() - jetRC.px());
       deltaPy += (jet.py() - jetRC.py());
