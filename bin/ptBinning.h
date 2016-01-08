@@ -49,7 +49,7 @@ class PtBinning {
     std::vector<std::pair<float, float> > mPtBins;
 /*
 //for pfjet composition studies
-  void fillPtBins() {
+  void fillPtBins() { // 2012
       mPtBins.push_back(std::make_pair(28, 37));
       mPtBins.push_back(std::make_pair(37, 49));
       mPtBins.push_back(std::make_pair(49, 64));
@@ -70,31 +70,9 @@ class PtBinning {
     }
 */
  //for nominal g+j analysis
-    void fillPtBins() {
+    void fillPtBins() { //2015
       
-      //federico --> changed binning for first data
-      /*
-      mPtBins.push_back(std::make_pair(40., 50.));
-      mPtBins.push_back(std::make_pair(50., 60.));
-      mPtBins.push_back(std::make_pair(60., 75.));
-      mPtBins.push_back(std::make_pair(75., 100.));
-      mPtBins.push_back(std::make_pair(100., 125.));
-      mPtBins.push_back(std::make_pair(125., 155.));
-      mPtBins.push_back(std::make_pair(155., 180.));
-      mPtBins.push_back(std::make_pair(180., 210.));
-      mPtBins.push_back(std::make_pair(210., 250.));
-      mPtBins.push_back(std::make_pair(250., 300.));
-      mPtBins.push_back(std::make_pair(300., 350.));
-      mPtBins.push_back(std::make_pair(350., 400.));
-      mPtBins.push_back(std::make_pair(400., 500.));
-      mPtBins.push_back(std::make_pair(500., 600.));
-      mPtBins.push_back(std::make_pair(600., 800.));
-      mPtBins.push_back(std::make_pair(800., 5000.));
-      */      
-
-
-      // bin giusti
-      
+      // "official"      
       mPtBins.push_back(std::make_pair(40., 60.));
       mPtBins.push_back(std::make_pair(60., 85.));
       mPtBins.push_back(std::make_pair(85., 100.));
@@ -104,9 +82,16 @@ class PtBinning {
       mPtBins.push_back(std::make_pair(250., 300.));
       mPtBins.push_back(std::make_pair(300., 400.));
       mPtBins.push_back(std::make_pair(400., 500.));
-      mPtBins.push_back(std::make_pair(500., 1500.));
-      
-      
+      mPtBins.push_back(std::make_pair(500., 700.));
+      mPtBins.push_back(std::make_pair(700., 1000.));
+      mPtBins.push_back(std::make_pair(1000.,1500.));      
+      //mPtBins.push_back(std::make_pair(500., 1500.));      
+
+      // Mikko's test
+      // mPtBins.push_back(std::make_pair(40. , 180.));
+      // mPtBins.push_back(std::make_pair(180. , 300.));
+      // mPtBins.push_back(std::make_pair(300. , 1000.));
+
     } 
 // //for nominal g+j analysis
 //   void fillPtBins() {

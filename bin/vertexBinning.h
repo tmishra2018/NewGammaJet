@@ -49,15 +49,20 @@ class VertexBinning {
     std::vector<std::pair<int, int> > mVertexBins;
 
     void fillVertexBins() {
-      mVertexBins.push_back(std::make_pair(0, 5));
-      mVertexBins.push_back(std::make_pair(5, 8));
-      mVertexBins.push_back(std::make_pair(8, 11));
-      mVertexBins.push_back(std::make_pair(11, 13));
-      mVertexBins.push_back(std::make_pair(13, 15));
-      mVertexBins.push_back(std::make_pair(15, 18));
-      mVertexBins.push_back(std::make_pair(18, 21));
-      mVertexBins.push_back(std::make_pair(21, 23));
-      mVertexBins.push_back(std::make_pair(23, 35));
+      // mVertexBins.push_back(std::make_pair(0, 5));
+      // mVertexBins.push_back(std::make_pair(5, 8));
+      // mVertexBins.push_back(std::make_pair(8, 11));
+      // mVertexBins.push_back(std::make_pair(11, 13));
+      // mVertexBins.push_back(std::make_pair(13, 15));
+      // mVertexBins.push_back(std::make_pair(15, 18));
+      // mVertexBins.push_back(std::make_pair(18, 21));
+      // mVertexBins.push_back(std::make_pair(21, 23));
+      // mVertexBins.push_back(std::make_pair(23, 35));
+
+      //federico
+      mVertexBins.push_back(std::make_pair(0, 6)); // 6 escluso = Npv minore = 5
+      mVertexBins.push_back(std::make_pair(6, 13));
+      mVertexBins.push_back(std::make_pair(13, 35));
     }
 
 };

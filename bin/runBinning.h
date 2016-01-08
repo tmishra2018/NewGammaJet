@@ -49,14 +49,17 @@ class RunBinning {
     std::vector<std::pair<int, int> > mRunBins;
 
     void fillRunBins() {
-      // bins read: >= && <
-      mRunBins.push_back(std::make_pair(256630, 257613));
-      mRunBins.push_back(std::make_pair(257614, 257969));
-      mRunBins.push_back(std::make_pair(258129, 258177));
-      mRunBins.push_back(std::make_pair(258211, 258448));
-      mRunBins.push_back(std::make_pair(258655, 258713));
-      mRunBins.push_back(std::make_pair(258714, 258750));
-      mRunBins.push_back(std::make_pair(258751, 300000)); //bin fuffa 
+      // bins reader: >= && <
+      mRunBins.push_back(std::make_pair(256630, 257613)); // 210.285 pb-1
+      mRunBins.push_back(std::make_pair(257614, 257969)); // 223.401 pb-1
+      mRunBins.push_back(std::make_pair(258129, 258177)); // 246.562 pb-1
+      mRunBins.push_back(std::make_pair(258211, 258448)); // 229.871 pb-1
+      mRunBins.push_back(std::make_pair(258655, 258713)); // 205.806 pb-1
+      mRunBins.push_back(std::make_pair(258714, 259685)); // 234.228 pb-1
+      mRunBins.push_back(std::make_pair(259686, 259891)); // 208.717 pb-1
+      mRunBins.push_back(std::make_pair(260373, 260532)); // 246.805 pb-1
+      mRunBins.push_back(std::make_pair(260533, 260627)); // 287.615 pb-1
+      // end of pp collision 2015
     }
 
 };
