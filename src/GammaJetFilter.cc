@@ -341,10 +341,8 @@ private:
   //FactorizedJetCorrector
   FactorizedJetCorrector *jetCorrector;
   FactorizedJetCorrector *jetCorrectorForTypeI;
-  FactorizedJetCorrector *jetCorrectorForTypeIL1;
   std::vector<JetCorrectorParameters> vPar;
   std::vector<JetCorrectorParameters> vParTypeI;
-  std::vector<JetCorrectorParameters> vParTypeIL1;
 
   // For photon study
   FactorizedJetCorrector *jetCorrectorForL1FastJet;
@@ -418,16 +416,9 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     vPar.push_back(*L2ResJetPar);
     //vPar.push_back(*ResJetPar); //comment if you dont want residuals
     jetCorrector = new FactorizedJetCorrector(vPar);
-    //FAKE vPar for typeI fix
+    //vPar for typeI -- only RC
     vParTypeI.push_back(*L1JetParForTypeI);
-    vParTypeI.push_back(*L2JetPar);
-    vParTypeI.push_back(*L3JetPar);
-    vParTypeI.push_back(*L2ResJetPar); 
-   //vParTypeI.push_back(*ResJetPar); //comment if you dont want residuals
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
-    //FAKE vPar for typeI fix only L1
-    vParTypeIL1.push_back(*L1JetParForTypeI);
-    jetCorrectorForTypeIL1 = new FactorizedJetCorrector(vParTypeIL1);
 
     // For energy density study
     JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L1FastJet_AK4PF.txt").fullPath());
@@ -460,14 +451,9 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     vPar.push_back(*L2JetPar);
     vPar.push_back(*L3JetPar);
     jetCorrector = new FactorizedJetCorrector(vPar);
-    //FAKE vPar for typeI fix
-    vParTypeI.push_back(*L1JetParForTypeI);   
-    vParTypeI.push_back(*L2JetPar);
-    vParTypeI.push_back(*L3JetPar);
+    //vPar for typeI -- only RC
+    vParTypeI.push_back(*L1JetParForTypeI);
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
-    //FAKE vPar for typeI fix only L1
-    vParTypeIL1.push_back(*L1JetParForTypeI);
-    jetCorrectorForTypeIL1 = new FactorizedJetCorrector(vParTypeIL1);
 
     // For energy density study
     JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L1FastJet_AK4PF.txt").fullPath());
@@ -1360,7 +1346,7 @@ void GammaJetFilter::correctJets(pat::JetCollection& jets, edm::Event& iEvent, c
     jetCorrector->setRho(*rho_);
     corrections = jetCorrector->getCorrection();     
     
-    jet.scaleEnergy(corrections);
+    jet.scaleEnergy(corrections); // L1L2L3 + Res for data
     
     //    std::cout<<"Corrected Jet   "<< jet.pt() <<std::endl;
   }
@@ -1377,59 +1363,50 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   //  rawMet.setP4(reco::Candidate::PolarLorentzVector(met.uncorrectedPt(), met.eta(), met.uncorrectedPhi(), met.uncorrectedSumEt() ) );
   rawMet.setP4(reco::Candidate::PolarLorentzVector(met.uncorPt(), met.eta(), met.uncorPhi(), met.uncorSumEt() ) ); //new release
 
-  //  std::cout<< "componenti della met:  "<< met.uncorPt() << "  " << met.eta() << " " << met.uncorPhi() << " " << met.uncorSumEt() << std::endl;
+  //  std::cout<< "Met components:  "<< met.uncorPt() << "  " << met.eta() << " " << met.uncorPhi() << " " << met.uncorSumEt() << std::endl;
 
   double deltaPx = 0., deltaPy = 0.;
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4
   
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) {
-    const pat::Jet& jet = *it;
-    
-    if (jet.pt() > 10) {
-      
-      const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
-      /*//without typei fix
-	const pat::Jet* L1Jet  = jet.userData<pat::Jet>("L1Jet");
-	reco::Candidate::LorentzVector L1JetP4  = L1Jet->p4();
-      */
-      
-      //with typeI fix
+
+    //    const pat::Jet& jet = *it;    
+    //    const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
+    const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
+
+      double corrs =1.;
       double corrsForTypeI =1.;
-      double corrsForTypeIL1=1.;
       edm::Handle<double> rho_;
       event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
-      
-      jetCorrectorForTypeIL1->setJetEta(rawJet->eta());
-      jetCorrectorForTypeIL1->setJetPt(rawJet->pt());
-      jetCorrectorForTypeIL1->setJetA(rawJet->jetArea());
-      jetCorrectorForTypeIL1->setRho(*rho_);
-      corrsForTypeIL1 = jetCorrectorForTypeIL1->getCorrection();
-      
-      pat::Jet jetL1 = *rawJet;
-      jetL1.scaleEnergy(corrsForTypeIL1);
       
       jetCorrectorForTypeI->setJetEta(rawJet->eta());
       jetCorrectorForTypeI->setJetPt(rawJet->pt());
       jetCorrectorForTypeI->setJetA(rawJet->jetArea());
       jetCorrectorForTypeI->setRho(*rho_);
-      corrsForTypeI = jetCorrectorForTypeI->getCorrection();
+      corrsForTypeI = jetCorrectorForTypeI->getCorrection(); //only RC
+      
+      pat::Jet jetRC = *rawJet;
+      jetRC.scaleEnergy(corrsForTypeI); // only RC
+      
+      jetCorrector ->setJetEta(rawJet->eta());
+      jetCorrector ->setJetPt(rawJet->pt());
+      jetCorrector ->setJetA(rawJet->jetArea());
+      jetCorrector ->setRho(*rho_);
+      corrs = jetCorrector->getCorrection(); // L1L2L3
       
       pat::Jet jet = *rawJet;
-      jet.scaleEnergy(corrsForTypeI);
-      
-      //typeI fix
-      reco::Candidate::LorentzVector L1JetP4  = jetL1.p4();
+      jet.scaleEnergy(corrs); // L1L2L3
+
+    if (jet.pt() > 10) {
+     
+      reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
       
       double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
       if (emEnergyFraction > 0.90)
         continue;
       
-      ////without typei fix
-      //     //reco::Candidate::LorentzVector rawJetP4 = rawJet->p4();
-      //      reco::Candidate::LorentzVector L1JetP4  = L1Jet->p4();
-      
-      deltaPx += (jet.px() - L1JetP4.px());
-      deltaPy += (jet.py() - L1JetP4.py());
+      deltaPx += (jet.px() - RCJetP4.px());
+      deltaPy += (jet.py() - RCJetP4.py());
     } // jet.pt() > 10
   }//loop over jets
   
@@ -1494,51 +1471,49 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   
   /////////////// Propagate the JEC to MET 
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4
-  //TypeI fix : use different L1corrections - only for typeI calculation! - 
+  // TypeI fix : use different L1corrections - only for typeI calculation! - 
   double deltaPx = 0., deltaPy = 0.;
   
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) { 
-    //embed raw and l1 jet
+    
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
-    //apply the ad hoc corrections
-    //calculate the corrections
+    
+    double corrs =1.;
     double corrsForTypeI =1.;
-    double corrsForTypeIL1=1.;
     edm::Handle<double> rho_;
     event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
     
-    jetCorrectorForTypeIL1->setJetEta(rawJet->eta());
-    jetCorrectorForTypeIL1->setJetPt(rawJet->pt());
-    jetCorrectorForTypeIL1->setJetA(rawJet->jetArea());
-    jetCorrectorForTypeIL1->setRho(*rho_);
-    corrsForTypeIL1 = jetCorrectorForTypeIL1->getCorrection();
+    jetCorrectorForTypeI ->setJetEta(rawJet->eta());
+    jetCorrectorForTypeI ->setJetPt(rawJet->pt());
+    jetCorrectorForTypeI ->setJetA(rawJet->jetArea());
+    jetCorrectorForTypeI ->setRho(*rho_);
+    corrsForTypeI = jetCorrectorForTypeI ->getCorrection(); //only RC
     
-    pat::Jet jetL1 = *rawJet;
-    jetL1.scaleEnergy(corrsForTypeIL1);
+    pat::Jet jetRC = *rawJet;
+    jetRC.scaleEnergy(corrsForTypeI); //only RC
     
-    jetCorrectorForTypeI->setJetEta(rawJet->eta()); 
-    jetCorrectorForTypeI->setJetPt(rawJet->pt());
-    jetCorrectorForTypeI->setJetA(rawJet->jetArea());
-    jetCorrectorForTypeI->setRho(*rho_);
-    corrsForTypeI = jetCorrectorForTypeI->getCorrection();
+    jetCorrector ->setJetEta(rawJet->eta()); 
+    jetCorrector ->setJetPt(rawJet->pt());
+    jetCorrector ->setJetA(rawJet->jetArea());
+    jetCorrector ->setRho(*rho_);
+    corrs = jetCorrector ->getCorrection(); // L1L2L3
     
     pat::Jet jet = *rawJet;
-    jet.scaleEnergy(corrsForTypeI);
-    //go ahead with typeI
+    jet.scaleEnergy(corrs); //L1L2L3
+
     if (jet.pt() > 10) {
       
        double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
        if (emEnergyFraction > 0.90)
 	 continue;
        
-       reco::Candidate::LorentzVector L1JetP4  = jetL1.p4();
+       reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
        
-       deltaPx += (jet.px() - L1JetP4.px());
-       deltaPy += (jet.py() - L1JetP4.py());
+       deltaPx += (jet.px() - RCJetP4.px());
+       deltaPy += (jet.py() - RCJetP4.py());
     }// pt >10
   } // end loop on jet
-  
-  
+    
   // define MET with JEC
   double correctedMetPx = FootprintMEx  - deltaPx;
   double correctedMetPy = FootprintMEy  - deltaPy;
@@ -1557,45 +1532,45 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
   //photon is the one after
   
   //  std::cout<< " Correct MET With Regression "<< std::endl; 
-  
-  
+    
   double deltaPx = 0., deltaPy = 0.;
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) {
-    const pat::Jet& jet = *it;
+    //    const pat::Jet& jet = *it; 
+    //    const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
+    const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
+
+    double corrs =1.;
+    double corrsForTypeI=1.;
+    edm::Handle<double> rho_;
+    event.getByLabel(edm::InputTag("fixedGridRhoFastjetAllCalo"), rho_);
+    
+    jetCorrectorForTypeI ->setJetEta(rawJet->eta());
+    jetCorrectorForTypeI ->setJetPt(rawJet->pt());
+    jetCorrectorForTypeI ->setJetA(rawJet->jetArea());
+    jetCorrectorForTypeI ->setRho(*rho_);
+    corrsForTypeI = jetCorrectorForTypeI ->getCorrection(); // only RC
+    
+    pat::Jet jetRC = *rawJet;
+    jetRC.scaleEnergy(corrsForTypeI); //only RC
+    
+    jetCorrector ->setJetEta(rawJet->eta());
+    jetCorrector ->setJetPt(rawJet->pt());
+    jetCorrector ->setJetA(rawJet->jetArea());
+    jetCorrector ->setRho(*rho_);
+    corrs = jetCorrector ->getCorrection(); // L1L2L3
+    
+    pat::Jet jet = *rawJet;
+    jet.scaleEnergy(corrs); // L1L2L3
     
     if (jet.pt() > 10) {
       
-      const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
-      double corrsForTypeI =1.;
-      double corrsForTypeIL1=1.;
-      edm::Handle<double> rho_;
-      event.getByLabel(edm::InputTag("fixedGridRhoFastjetAllCalo"), rho_);
-      
-      jetCorrectorForTypeIL1->setJetEta(rawJet->eta());
-      jetCorrectorForTypeIL1->setJetPt(rawJet->pt());
-      jetCorrectorForTypeIL1->setJetA(rawJet->jetArea());
-      jetCorrectorForTypeIL1->setRho(*rho_);
-      corrsForTypeIL1 = jetCorrectorForTypeIL1->getCorrection();
-      
-      pat::Jet jetL1 = *rawJet;
-      jetL1.scaleEnergy(corrsForTypeIL1);
-      
-      jetCorrectorForTypeI->setJetEta(rawJet->eta());
-      jetCorrectorForTypeI->setJetPt(rawJet->pt());
-      jetCorrectorForTypeI->setJetA(rawJet->jetArea());
-      jetCorrectorForTypeI->setRho(*rho_);
-      corrsForTypeI = jetCorrectorForTypeI->getCorrection();
-      
-      pat::Jet jet = *rawJet;
-      jet.scaleEnergy(corrsForTypeI);
-      
-      reco::Candidate::LorentzVector L1JetP4  = jetL1.p4();
+      reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
       
       double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
       if (emEnergyFraction > 0.90) continue;
       
-      deltaPx += (jet.px() - L1JetP4.px());
-      deltaPy += (jet.py() - L1JetP4.py());
+      deltaPx += (jet.px() - RCJetP4.px());
+      deltaPy += (jet.py() - RCJetP4.py());
     }
   }
   
