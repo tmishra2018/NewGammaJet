@@ -138,7 +138,7 @@ private:
   //giulia --- comment qg tagging stuff
   void processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo, /* edm::Handle<edm::ValueMap<float>>& qgTagMLP, edm::Handle<edm::ValueMap<float>>& qgTagLikelihood,*/ const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees);
   
-  //federico -- redefine of rawMET on-the-fly --- not constant
+  //federico -- redefine of rawMET on-the-fly --- not constant -- negative sum of pf candidates
   void correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets, edm::Event& event);
   // not used - regression already implemented in the pat photon
   void correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets,  edm::Event& event, pat::Photon& photon, const pat::PhotonRef& photonRef);
@@ -1374,8 +1374,8 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
     //    const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
 
-      double corrs =1.;
-      double corrsForTypeI =1.;
+      double corrs = 1.;
+      double corrsForTypeI = 1.;
       edm::Handle<double> rho_;
       event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
       
@@ -1424,7 +1424,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   
   float FootprintMEx = 0;
   float FootprintMEy = 0;
-  // std::cout<< " Inizializzazione "<< std::endl; 
+  // std::cout<< " Inizialization "<< std::endl; 
   // std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
   // std::cout<< " FootprintMEy "<< FootprintMEy << std::endl; 
   // std::cout<< " NPF Candidate To Remove "<< photon.numberOfSourceCandidatePtrs() << std::endl; 
@@ -1438,7 +1438,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     const pat::PackedCandidate &pf = (*pfs)[i];
     // pfcandidate-based footprint removal
     if (std::find(footprint.begin(), footprint.end(), reco::CandidatePtr(pfs,i)) != footprint.end()) {
-      //   std::cout<< "pfCandidate ESCLUSE # "<< i << std::endl; 
+      //   std::cout<< "pfCandidate exclused # "<< i << std::endl; 
       //   std::cout<< " pf.px "<< pf.px() << std::endl; 
       //   std::cout<< " pf.py "<< pf.py() << std::endl; 
       //   std::cout<< " pf.pt "<< pf.pt() << std::endl; 
@@ -1450,15 +1450,14 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     // std::cout<< " pf.px "<< pf.px() << std::endl; 
     // std::cout<< " pf.py "<< pf.py() << std::endl; 
   }// loop over pfCand
-  
-  
+    
   // Re-adding  photon but reco 
   FootprintMEx += -1.* photon.px();
   FootprintMEy += -1.* photon.py();
 
   double FootprintMEPt = sqrt(FootprintMEx * FootprintMEx + FootprintMEy * FootprintMEy);   
   
-  //  std::cout<< "MEx MEy Finale corretta con Footprint "<< std::endl; 
+  //  std::cout<< "MEx MEy Final footprint corrected"<< std::endl; 
   //  std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
   //  std::cout<< " FootprintMEy "<< FootprintMEy << std::endl; 
   //  std::cout<< " FootprintMEPt "<< FootprintMEPt << std::endl;   
@@ -1469,15 +1468,14 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   
   /////////////// Propagate the JEC to MET 
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4
-  // TypeI fix : use different L1corrections - only for typeI calculation! - 
   double deltaPx = 0., deltaPy = 0.;
   
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) { 
     
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
     
-    double corrs =1.;
-    double corrsForTypeI =1.;
+    double corrs = 1.;
+    double corrsForTypeI = 1.;
     edm::Handle<double> rho_;
     event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
     
@@ -1499,15 +1497,20 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     pat::Jet jet = *rawJet;
     jet.scaleEnergy(corrs); //L1L2L3
 
-    if (jet.pt() > 10) {
+    double dR = reco::deltaR(photon, jet);
+
+    //      std::cout<<"deltaR photon jet = "<< dR <<"  EM EnergyFraction =  "<<emEnergyFraction<<std::endl;
+    //    if ( dR<0.25 ) std::cout<<"excluded"<<std::endl;
+    
+    if (jet.pt() > 10 && dR > 0.25) {
       
-       double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-       if (emEnergyFraction > 0.90)
-	 continue;
+      //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      //      if (emEnergyFraction > 0.90) std::cout<<"Questa la escluderei"<<std::endl;
+      //	 continue;
        
        deltaPx += (jet.px() - jetRC.px());
        deltaPy += (jet.py() - jetRC.py());
-    }// pt >10
+    }// pt >10 && dR >0.25
   } // end loop on jet
     
   // define MET with JEC
