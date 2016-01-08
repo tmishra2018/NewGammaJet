@@ -1,2 +1,0 @@
-/cmshome/fpreiato/GammaJet/CMSSW_7_3_2/test/26D84431-6473-E411-ADC6-00266CFFA6F8.root
-/cmshome/fpreiato/GammaJet/CMSSW_7_3_2/test/00D67F78-2873-E411-B3BB-0025907DC9C0.root
