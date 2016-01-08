@@ -1,1 +1,0 @@
-./SinglePhoton__Run2015D-05Oct2015-v1__MINIAOD.txt
