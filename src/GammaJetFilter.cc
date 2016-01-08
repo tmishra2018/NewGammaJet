@@ -1399,14 +1399,12 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
 
     if (jet.pt() > 10) {
      
-      reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
-      
       double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
       if (emEnergyFraction > 0.90)
         continue;
       
-      deltaPx += (jet.px() - RCJetP4.px());
-      deltaPy += (jet.py() - RCJetP4.py());
+      deltaPx += (jet.px() - jetRC.px());
+      deltaPy += (jet.py() - jetRC.py());
     } // jet.pt() > 10
   }//loop over jets
   
@@ -1507,10 +1505,8 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
        if (emEnergyFraction > 0.90)
 	 continue;
        
-       reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
-       
-       deltaPx += (jet.px() - RCJetP4.px());
-       deltaPy += (jet.py() - RCJetP4.py());
+       deltaPx += (jet.px() - jetRC.px());
+       deltaPy += (jet.py() - jetRC.py());
     }// pt >10
   } // end loop on jet
     
@@ -1564,13 +1560,11 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
     
     if (jet.pt() > 10) {
       
-      reco::Candidate::LorentzVector RCJetP4  = jetRC.p4();
-      
       double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
       if (emEnergyFraction > 0.90) continue;
       
-      deltaPx += (jet.px() - RCJetP4.px());
-      deltaPy += (jet.py() - RCJetP4.py());
+      deltaPx += (jet.px() - jetRC.px());
+      deltaPy += (jet.py() - jetRC.py());
     }
   }
   
