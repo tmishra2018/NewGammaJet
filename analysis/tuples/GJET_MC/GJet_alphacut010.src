@@ -1,9 +1,0 @@
-#!/bin/bash                                                                                                             
-                                                                                                                        
-export SCRAM_ARCH=slc6_amd64_gcc491                                                                                     
-                                                                                                                        
-cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/                     
-                                                                                                                        
-eval `scramv1 runtime -sh`                                                                                              
-                                                        
-gammaJetFinalizer -i PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_ReReco.root -d GJet_Pt15To6000_ReReco_Finalized_alphacut010 --type pf --algo ak4 --chs --alpha 0.10 --mc
