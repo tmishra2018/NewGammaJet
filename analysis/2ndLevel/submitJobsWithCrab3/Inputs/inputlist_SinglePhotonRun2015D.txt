@@ -1,1 +1,0 @@
-/SinglePhoton/Run2015D-PromptReco-v3/MINIAOD -1 100 74X_dataRun2_Prompt_v2
