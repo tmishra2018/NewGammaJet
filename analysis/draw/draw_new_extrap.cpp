@@ -394,8 +394,8 @@ void drawCombinedGraphs(TGraphErrors* balancingData, TGraphErrors* balancingMC, 
 int main(int argc, char* argv[]) {
 
   if (argc != 7 && argc != 8) {
-    std::cout << "USAGE: ./drawPhotonJet [data_dataset] [mc_SIGNAL_dataset] [mc_BG_dataset] [recoType] [jetAlgo]" << std::endl;
-    exit(23);
+  std::cout << "USAGE: ./drawPhotonJet [data_dataset] [mc_SIGNAL_dataset] [mc_BG_dataset] [recoType] [jetAlgo]" << std::endl;
+  //    exit(23);
   }
 
   setPrettyStyle();
@@ -447,7 +447,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Opened mc file '" << mc1FileName << "'." << std::endl;
 
   if (mcPhotonJetFile) {
-    //db->add_mcFile(mcPhotonJetFile, mc_photonjet, "#gamma+jet MC", 46);
+    // db->add_mcFile(mcPhotonJetFile, mc_photonjet, "#gamma+jet MC", 46);
   }
 
   if (mc_QCD != "") {
@@ -461,7 +461,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Opened mc file '" << mc2FileName << "'." << std::endl;
 
     if (mcQCDFile && mc_QCD != mc_photonjet) {
-      //db->add_mcFile(mcQCDFile, mc_QCD, "QCD MC", 38);
+      // db->add_mcFile(mcQCDFile, mc_QCD, "QCD MC", 38);
     }
   }
 
@@ -480,7 +480,8 @@ int main(int argc, char* argv[]) {
   mkdir(directoryName, 0755);
 
   TParameter<double>* pLumi = static_cast<TParameter<double>*>(dataFile->Get("analysis/luminosity"));
-  double lumi = pLumi->GetVal() * 1e-9;
+  //  double lumi = pLumi->GetVal() * 1e-9;
+  double lumi = pLumi->GetVal();
 
   //bool log = true;
   gErrorIgnoreLevel = kWarning;
@@ -526,7 +527,7 @@ int main(int argc, char* argv[]) {
   }
   // Special case eta < 1.3
   {
-    const std::string& etaName = "eta013";
+    const std::string& etaName = "eta0013";
     std::cout << "Processing " << etaName << std::endl;
     
     TString responseName = TString::Format("%s/extrap_resp_balancing_%s_graph", rootFolder.Data(), etaName.c_str());
@@ -594,7 +595,7 @@ int main(int argc, char* argv[]) {
 
   // Eta < 1.3
   {
-    const std::string& etaName = "eta013";
+    const std::string& etaName = "eta0013";
     std::cout << "Processing " << etaName << std::endl;
     
     TString responseName = TString::Format("%s/extrap_resp_balancing_%s_graph", rootFolder.Data(), etaName.c_str());

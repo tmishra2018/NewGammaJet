@@ -28,11 +28,10 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-
   TFile f1("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting/MC_ptPhot_scaled.root");
   TH1D *h_mc = (TH1D*)f1.Get("h_mc");
 
-  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton__Run2015D_2015-10-23_NoPrescale_alphacut030_PFlowAK4chs.root");
+  TFile f2("/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/PhotonJet_SinglePhoton__Run2015D_2015-12-04_alphacut030_NoPrescale_PFlowAK4chs.root");
   TTree* PhotonTree_data = (TTree*) f2.Get("photon");
   uint64_t totalEvents_data = PhotonTree_data->GetEntries();
   
@@ -69,7 +68,7 @@ int main(int argc, char* argv[]) {
   h_data -> SetLineColor(kRed);
   h_mc -> Draw();
   h_data -> Draw("same");
-  c1-> SaveAs("Distributions.png");
+  c1-> SaveAs("Plot/Distributions.png");
   ///////////////////////////////////////////////////
   
   //calcolo rapporto
@@ -80,7 +79,7 @@ int main(int argc, char* argv[]) {
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
   c2->SetLogx();
   h_ratio -> Draw();
-  c2-> SaveAs("Ratio.png");
+  c2-> SaveAs("Plot/Ratio.png");
   /////////////////////////////////////////////////////////////////////////    
   
   TH1D *h_data_reweighted = new TH1D("h_data_reweighted", "data reweighted", 6, arraybins);
@@ -118,10 +117,10 @@ int main(int argc, char* argv[]) {
   h_data_reweighted -> SetLineColor(kRed);
   h_data_reweighted -> Draw();
   h_mc -> Draw("same");
-  c3-> SaveAs("Data_reweighted.png");
+  c3-> SaveAs("Plot/Data_reweighted.png");
   
   
-  TFile f_new("Prescale_ReReco_alphacut030.root", "recreate");          
+  TFile f_new("Prescale_ReReco_alphacut030_07Dic2015_GJet_plus_QCD.root", "recreate");          
   
   h_mc  -> Write();      
   h_data->Write();

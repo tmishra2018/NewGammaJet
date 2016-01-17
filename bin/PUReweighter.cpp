@@ -6,6 +6,8 @@
 PUReweighter::PUReweighter(const std::string& dataFilePath, const std::string& mcFilePath):
   puHisto(NULL) {
 
+  //  std::cout << " Enter HERE " << std::endl;
+
     TFile* dataFile = TFile::Open(dataFilePath.c_str());
     TFile* mcFile = TFile::Open(mcFilePath.c_str());
 
@@ -13,42 +15,39 @@ PUReweighter::PUReweighter(const std::string& dataFilePath, const std::string& m
       std::cerr << "Error: can't open " << dataFilePath << ". No PU reweighting." << std::endl;
       return;
     }
-
+    
     if (! mcFile) {
       std::cerr << "Error: can't open " << mcFilePath << ". No PU reweighting." << std::endl;
       return;
     }
-
+    
     TH1* dataHisto = static_cast<TH1*>(dataFile->Get("pileup"));
     TH1* mcHisto = static_cast<TH1*>(mcFile->Get("pileup"));
-
+    
     //TODO: Check for NULL ptr
-
+    
     // Normalize
     dataHisto->Scale(1.0 / dataHisto->Integral());
     mcHisto->Scale(1.0 / mcHisto->Integral());
-
+    
     // MC * data / MC = data, so the weights are data/MC:
     puHisto = static_cast<TH1*>(dataHisto->Clone());
     puHisto->Divide(mcHisto);
     puHisto->SetDirectory(0); // "detach" the histo from the file
-
     
     std::cout << " Lumi/Pileup Reweighting: Computed Weights per In-Time Nint " << std::endl;
-
     int NBins = puHisto->GetNbinsX();
-
     for (int ibin = 1; ibin < NBins + 1; ++ibin) {
       std::cout << "   " << ibin - 1 << " " << puHisto->GetBinContent(ibin) << std::endl;
     }
+      
     
-
     dataFile->Close();
     mcFile->Close();
-
+    
     delete dataFile;
     delete mcFile;
-  }
+}
 
 PUReweighter::PUReweighter(const std::string& dataFilePath, PUProfile profile/* = PUProfile::S10*/):
   puHisto(NULL) {

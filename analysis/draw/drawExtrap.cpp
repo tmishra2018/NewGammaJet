@@ -22,7 +22,8 @@ drawExtrap::drawExtrap(const std::string& analysisType, const std::string& recoT
   FIXM_ = false;
   EXCLUDE_FIRST_POINT_ = false;
 
-  mExtrapBinning.initialize(mPtBinning, (recoType == "pf") ? "PFlow" : "Calo");
+  if(recoType == "PFlow") std::cout<<"recoType PFlow" << std::endl;
+  mExtrapBinning.initialize(mPtBinning, recoType);
 }
 
 
@@ -165,8 +166,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_mcRatioResp_vs_pt->SetMarkerStyle(25);
   gr_mcRatioResp_vs_pt->SetMarkerColor(kBlack);
   gr_mcRatioResp_vs_pt->SetMarkerSize(1.5);
-
-
 
   TGraphErrors* gr_DATAReso_vs_pt = new TGraphErrors(0);
   gr_DATAReso_vs_pt->SetName("gr_DATAReso_vs_pt");
@@ -318,31 +317,21 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     char projName[100];
     sprintf(projName, "projection_%d", iPtBin);
 
-    //TH1D* h1_proj = h2_ptPhotReco_vs_pt->ProjectionY(projName, iPtBin + 1, iPtBin + 1);
-    //float ptPhotReco_thisBin = h1_proj->GetMean();
-    //float ptPhotReco_err_thisBin = (h1_proj->GetEntries() > 1.) ? h1_proj->GetRMS() / sqrt(h1_proj->GetEntries()) : h1_proj->GetRMS();
-
-    //    float ptPhotReco_thisBin =  (currentBin.first + currentBin.second) / 2.;
     float ptPhotReco_thisBin =  ptMeanVec.at(iPtBin); // weighted mean
     float ptPhotReco_err_thisBin = 0;
 
-    /*TH1D* h1_projDATA = h2_ptPhotReco_vs_ptDATA->ProjectionY(projName, iPtBin + 1, iPtBin + 1);
-    float ptPhotReco_thisBinDATA = h1_projDATA->GetMean();
-    float ptPhotReco_err_thisBinDATA = (h1_projDATA->GetEntries() > 1.) ? h1_projDATA->GetRMS() / sqrt(h1_projDATA->GetEntries()) : h1_projDATA->GetRMS();
-
-    Double_t ptMin = ptPhot_binning[iPtBin];
-    Double_t ptMax = ptPhot_binning[iPtBin + 1];*/
-
-    //federico -- npoints in alpha =10 = tutto lo scan in alpha -- con -XX non considera gli ultimi XX bin
+    //federico -- npoints in alpha : scan in alpha -- con -XX non considera gli ultimi XX bin
     int nPoints = mExtrapBinning.size();
 
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-
-    /*Float_t xDATA[nPoints];
-    Float_t x_errDATA[nPoints];
-    getXPoints(get_dataFile(0), xHistoName, nPoints, xDATA, x_errDATA);*/
+    
+    // debugging
+    //    std::cout<< "nPoints = " << nPoints <<std::endl;
+    //    for(int i = 0 ; i < nPoints; i++){
+    //    std::cout<< "x = " << x[i] <<std::endl;
+    //    }
 
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
@@ -356,19 +345,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     Float_t y_resp_MPF[nPoints];
     Float_t y_resp_MPF_err[nPoints];
 
-    // Corrected MPF
-    /*Float_t y_resp_MPFDATA_TypeICor[nPoints];
-    Float_t y_resp_MPFDATA_TypeICor_err[nPoints];
-
-    Float_t y_resp_MPF_TypeICor[nPoints];
-    Float_t y_resp_MPF_TypeICor_err[nPoints];
-
-    Float_t y_resp_MPFDATA_TypeIpIICor[nPoints];
-    Float_t y_resp_MPFDATA_TypeIpIICor_err[nPoints];
-
-    Float_t y_resp_MPF_TypeIpIICor[nPoints];
-    Float_t y_resp_MPF_TypeIpIICor_err[nPoints];*/
-
     Float_t y_resp_genPhot[nPoints];
     Float_t y_resp_genPhot_err[nPoints];
 
@@ -381,17 +357,8 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     Float_t y_resp_recoGenMet[nPoints];
     Float_t y_resp_recoGenMet_err[nPoints];
 
-    /*Float_t y_resp_recoGenCos[nPoints];
-    Float_t y_resp_recoGenCos_err[nPoints];
-
-    Float_t y_resp_genPart[nPoints];
-    Float_t y_resp_genPart_err[nPoints];*/
-
     Float_t y_resp_genGamma[nPoints];
     Float_t y_resp_genGamma_err[nPoints];
-
-    /*Float_t y_resp_partGamma[nPoints];
-    Float_t y_resp_partGamma_err[nPoints];*/
 
     Float_t y_resp_photGamma[nPoints];
     Float_t y_resp_photGamma_err[nPoints];
@@ -477,94 +444,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_balancing_phot_gamma_%s", (int) currentBin.first, (int) currentBin.second, etaRegion.c_str());
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_photGamma, y_resp_photGamma_err,  y_reso_photGamma, y_reso_photGamma_err);
   
-    // NPV Study
-    /*const int npvMax = 31;
-
-    // True Response / Resolution
-    std::vector<Float_t> y_true_resp_npv;
-    std::vector<Float_t> y_true_resp_npv_err;
-    std::vector<Float_t> y_true_reso_npv;
-    std::vector<Float_t> y_true_reso_npv_err;
-
-    std::vector<Float_t> y_resp_npv_DATA;
-    std::vector<Float_t> y_resp_npv_DATA_err;
-    std::vector<Float_t> y_reso_npv_DATA;
-    std::vector<Float_t> y_reso_npv_DATA_err;
-
-    std::vector<Float_t> y_resp_npv_BAL;
-    std::vector<Float_t> y_resp_npv_BAL_err;
-    std::vector<Float_t> y_reso_npv_BAL;
-    std::vector<Float_t> y_reso_npv_BAL_err;
-
-    std::vector<Float_t> y_resp_npv_MPFDATA;
-    std::vector<Float_t> y_resp_npv_MPFDATA_err;
-    std::vector<Float_t> y_reso_npv_MPFDATA;
-    std::vector<Float_t> y_reso_npv_MPFDATA_err;
-
-    std::vector<Float_t> y_resp_npv_MPF;
-    std::vector<Float_t> y_resp_npv_MPF_err;
-    std::vector<Float_t> y_reso_npv_MPF;
-    std::vector<Float_t> y_reso_npv_MPF_err;
-
-    std::vector<Float_t> y_resp_npv_MPF_TypeICor_DATA;
-    std::vector<Float_t> y_resp_npv_MPF_TypeICor_DATA_err;
-    std::vector<Float_t> y_reso_npv_MPF_TypeICor_DATA;
-    std::vector<Float_t> y_reso_npv_MPF_TypeICor_DATA_err;
-
-    std::vector<Float_t> y_resp_npv_MPF_TypeICor_;
-    std::vector<Float_t> y_resp_npv_MPF_TypeICor__err;
-    std::vector<Float_t> y_reso_npv_MPF_TypeICor_;
-    std::vector<Float_t> y_reso_npv_MPF_TypeICor__err;
-
-    std::vector<Float_t> y_resp_npv_MPF_TypeIpIICor_DATA;
-    std::vector<Float_t> y_resp_npv_MPF_TypeIpIICor_DATA_err;
-    std::vector<Float_t> y_reso_npv_MPF_TypeIpIICor_DATA;
-    std::vector<Float_t> y_reso_npv_MPF_TypeIpIICor_DATA_err;
-
-    std::vector<Float_t> y_resp_npv_MPF_TypeIpIICor_;
-    std::vector<Float_t> y_resp_npv_MPF_TypeIpIICor__err;
-    std::vector<Float_t> y_reso_npv_MPF_TypeIpIICor_;
-    std::vector<Float_t> y_reso_npv_MPF_TypeIpIICor__err;*/
-
-    /*if (corrected)
-      L2L3_text = "_L2L3";
-    if (etaRegion != "")
-      sprintf(yHistoName, "npv_ptPhot_%d_%d/response%s_%s_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), etaRegion.c_str(), iPtBin);
-    else
-      sprintf(yHistoName, "npv_ptPhot_%d_%d/response%s_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), iPtBin);
-    getYPointsVector(get_dataFile(0), yHistoName, npvMax, y_resp_npv_DATA, y_resp_npv_DATA_err, y_reso_npv_DATA, y_reso_npv_DATA_err);
-    getYPointsVector(get_mcFile(0), yHistoName, npvMax, y_resp_npv_BAL, y_resp_npv_BAL_err, y_reso_npv_BAL, y_reso_npv_BAL_err);
-
-    if (! corrected) {
-      if (etaRegion != "")
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response%s_mpf_%s_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), etaRegion.c_str(), iPtBin);
-      else
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response%s_mpf_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), iPtBin);
-      getYPointsVector(get_dataFile(0), yHistoName, npvMax, y_resp_npv_MPFDATA, y_resp_npv_MPFDATA_err, y_reso_npv_MPFDATA, y_reso_npv_MPFDATA_err);
-      getYPointsVector(get_mcFile(0), yHistoName, npvMax, y_resp_npv_MPF, y_resp_npv_MPF_err, y_reso_npv_MPF, y_reso_npv_MPF_err);
-    } else {
-      if (etaRegion != "")
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response_L2L3_mpf_TypeICor_%s_%d", (int)ptMin, (int)ptMax, etaRegion.c_str(), iPtBin);
-      else
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response_L2L3_mpf_TypeICor_%d", (int)ptMin, (int)ptMax, iPtBin);
-      getYPointsVector(get_dataFile(0), yHistoName, npvMax, y_resp_npv_MPF_TypeICor_DATA, y_resp_npv_MPF_TypeICor_DATA_err, y_reso_npv_MPF_TypeICor_DATA, y_reso_npv_MPF_TypeICor_DATA_err);
-      getYPointsVector(get_mcFile(0), yHistoName, npvMax, y_resp_npv_MPF_TypeICor_, y_resp_npv_MPF_TypeICor__err, y_reso_npv_MPF_TypeICor_, y_reso_npv_MPF_TypeICor__err);
-
-      if (etaRegion != "")
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response_L2L3_mpf_TypeIpIICor_%s_%d", (int)ptMin, (int)ptMax, etaRegion.c_str(), iPtBin);
-      else
-        sprintf(yHistoName, "npv_ptPhot_%d_%d/response_L2L3_mpf_TypeIpIICor_%d", (int)ptMin, (int)ptMax, iPtBin);
-      getYPointsVector(get_dataFile(0), yHistoName, npvMax, y_resp_npv_MPF_TypeIpIICor_DATA, y_resp_npv_MPF_TypeIpIICor_DATA_err, y_reso_npv_MPF_TypeIpIICor_DATA, y_reso_npv_MPF_TypeIpIICor_DATA_err);
-      getYPointsVector(get_mcFile(0), yHistoName, npvMax, y_resp_npv_MPF_TypeIpIICor_, y_resp_npv_MPF_TypeIpIICor__err, y_reso_npv_MPF_TypeIpIICor_, y_reso_npv_MPF_TypeIpIICor__err);
-
-    }
-
-    if (etaRegion != "")
-      sprintf(yHistoName, "npv_ptPhot_%d_%d/true_response%s_%s_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), etaRegion.c_str(), iPtBin);
-    else
-      sprintf(yHistoName, "npv_ptPhot_%d_%d/true_response%s_%s_%d", (int)ptMin, (int)ptMax, L2L3_text.c_str(), etaRegion.c_str(), iPtBin);
-    getYPointsVector(get_mcFile(0), yHistoName, npvMax, y_true_resp_npv, y_true_resp_npv_err, y_true_reso_npv, y_true_reso_npv_err);*/
-
     //draw response histograms:
 
     TGraphErrors* gr_resp_DATA = new TGraphErrors(nPoints, x, y_resp_DATA, x_err, y_resp_err_DATA);
@@ -587,23 +466,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     gr_resp_MPF->SetMarkerColor(recoPhot_color);
     gr_resp_MPF->SetLineColor(recoPhot_color);
 
-    // Type I + II Corrected MPF
-    /*TGraphErrors* gr_resp_MPFDATA_TypeICor = new TGraphErrors(nPoints, xDATA, y_resp_MPFDATA_TypeICor, x_errDATA, y_resp_MPFDATA_TypeICor_err);
-    gr_resp_MPFDATA_TypeICor->SetMarkerStyle(20);
-    gr_resp_MPFDATA_TypeICor->SetMarkerColor(recoPhot_color);
-
-    TGraphErrors* gr_resp_MPF_TypeICor = new TGraphErrors(nPoints, x, y_resp_MPF_TypeICor, x_err, y_resp_MPF_TypeICor_err);
-    gr_resp_MPF_TypeICor->SetMarkerStyle(24);
-    gr_resp_MPF_TypeICor->SetMarkerColor(recoPhot_color);
-
-    TGraphErrors* gr_resp_MPFDATA_TypeIpIICor = new TGraphErrors(nPoints, xDATA, y_resp_MPFDATA_TypeIpIICor, x_errDATA, y_resp_MPFDATA_TypeIpIICor_err);
-    gr_resp_MPFDATA_TypeIpIICor->SetMarkerStyle(20);
-    gr_resp_MPFDATA_TypeIpIICor->SetMarkerColor(recoPhot_color);
-
-    TGraphErrors* gr_resp_MPF_TypeIpIICor = new TGraphErrors(nPoints, x, y_resp_MPF_TypeIpIICor, x_err, y_resp_MPF_TypeIpIICor_err);
-    gr_resp_MPF_TypeIpIICor->SetMarkerStyle(24);
-    gr_resp_MPF_TypeIpIICor->SetMarkerColor(recoPhot_color);*/
-
     TGraphErrors* gr_resp_genPhot = new TGraphErrors(nPoints, x, y_resp_genPhot, x_err, y_resp_genPhot_err);
     gr_resp_genPhot->SetMarkerStyle(22);
     //gr_resp_genPhot->SetMarkerColor(kGreen+3);
@@ -615,11 +477,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     //gr_resp_genPhot->SetMarkerColor(kGreen+3);
     gr_resp_metRecoGen->SetMarkerColor(genPhot_color);
     gr_resp_metRecoGen->SetLineColor(genPhot_color);
-
-    /*TGraphErrors* gr_resp_cosRecoGen = new TGraphErrors(nPoints, x, y_resp_recoGenCos, x_err, y_resp_recoGenCos_err);
-    gr_resp_cosRecoGen->SetMarkerStyle(21);
-    gr_resp_cosRecoGen->SetMarkerColor(kOrange);
-    //gr_resp_metRecoGen->SetMarkerColor(genPhot_color);*/
 
     TGraphErrors* gr_resp_genMPF = new TGraphErrors(nPoints, x, y_resp_genMPF, x_err, y_resp_genMPF_err);
     gr_resp_genMPF->SetMarkerStyle(22);
@@ -637,187 +494,27 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     gr_resp_photGenReco->SetMarkerColor(recoGen_color);
     gr_resp_photGenReco->SetLineColor(recoGen_color);
 
-    /*TGraphErrors* gr_resp_genPart = new TGraphErrors(nPoints, x, y_resp_genPart, x_err, y_resp_genPart_err);
-    gr_resp_genPart->SetMarkerStyle(21);
-    gr_resp_genPart->SetMarkerColor(kGreen);*/
-
     TGraphErrors* gr_resp_genGamma = new TGraphErrors(nPoints, x, y_resp_genGamma, x_err, y_resp_genGamma_err);
     gr_resp_genGamma->SetMarkerStyle(21);
     gr_resp_genGamma->SetMarkerColor(kGreen);
     gr_resp_genGamma->SetLineColor(kGreen);
 
-    /*TGraphErrors* gr_resp_partGamma = new TGraphErrors(nPoints, x, y_resp_partGamma, x_err, y_resp_partGamma_err);
-    gr_resp_partGamma->SetMarkerStyle(21);
-    gr_resp_partGamma->SetMarkerColor(kYellow);*/
-
     TGraphErrors* gr_resp_photGamma = new TGraphErrors(nPoints, x, y_resp_photGamma, x_err, y_resp_photGamma_err);
     gr_resp_photGamma->SetMarkerStyle(21);
     gr_resp_photGamma->SetMarkerColor(kGray);
     gr_resp_photGamma->SetLineColor(kGray);
-   
-    /*if (recoGen != "RecoRelRaw") {
-      // NPV Study
-      Float_t npv_x[npvMax];
-      Float_t npv_x_err[npvMax] = {0};
-      for (int i = 0; i < npvMax; i++)
-        npv_x[i] = i;
-
-      // True Response
-      TGraphErrors* gr_true_resp_vs_npv = new TGraphErrors(y_true_resp_npv.size(), npv_x, (Float_t *) &y_true_resp_npv[0], npv_x_err, (Float_t *) &y_true_resp_npv_err[0]);
-      gr_true_resp_vs_npv->SetName("gr_true_resp_vs_npv");
-      gr_true_resp_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-
-      // Balancing
-      TGraphErrors* gr_resp_bal_data_vs_npv = new TGraphErrors(y_resp_npv_DATA.size(), npv_x, (Float_t *) &y_resp_npv_DATA[0], npv_x_err, (Float_t *) &y_resp_npv_DATA_err[0]);
-      gr_resp_bal_data_vs_npv->SetName("gr_resp_bal_data_vs_npv");
-      gr_resp_bal_data_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-      gr_resp_bal_data_vs_npv->SetMarkerStyle(20);
-      gr_resp_bal_data_vs_npv->SetMarkerColor(recoPhot_color);
-
-      TGraphErrors* gr_resp_bal_vs_npv = new TGraphErrors(y_resp_npv_BAL.size(), npv_x, (Float_t*) &y_resp_npv_BAL[0], npv_x_err, (Float_t *) &y_resp_npv_BAL_err[0]);
-      gr_resp_bal_vs_npv->SetName("gr_resp_bal_vs_npv");
-      gr_resp_bal_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-      gr_resp_bal_vs_npv->SetMarkerStyle(24);
-      gr_resp_bal_vs_npv->SetMarkerColor(recoPhot_color);
-
-      // MPF
-      TGraphErrors* gr_resp_mpf_data_vs_npv = NULL;
-      TGraphErrors* gr_resp_mpf_TypeICor_data_vs_npv = NULL;
-      TGraphErrors* gr_resp_mpf_TypeIpIICor_data_vs_npv = NULL;
-
-      TGraphErrors* gr_resp_mpf_vs_npv = NULL;
-      TGraphErrors* gr_resp_mpf_TypeICor_vs_npv = NULL;
-      TGraphErrors* gr_resp_mpf_TypeIpIICor_vs_npv = NULL;
-
-      if (! corrected) {
-        gr_resp_mpf_data_vs_npv = new TGraphErrors(y_resp_npv_MPFDATA.size(), npv_x, (Float_t *) &y_resp_npv_MPFDATA[0], npv_x_err, (Float_t *) &y_resp_npv_MPFDATA_err[0]);
-        gr_resp_mpf_data_vs_npv->SetName("gr_resp_mpf_data_vs_npv");
-        gr_resp_mpf_data_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_data_vs_npv->SetMarkerStyle(20);
-        gr_resp_mpf_data_vs_npv->SetMarkerColor(recoPhot_color);
-
-        gr_resp_mpf_vs_npv = new TGraphErrors(y_resp_npv_MPF.size(), npv_x, (Float_t*) &y_resp_npv_MPF[0], npv_x_err, (Float_t *) &y_resp_npv_MPF_err[0]);
-        gr_resp_mpf_vs_npv->SetName("gr_resp_mpf_vs_npv");
-        gr_resp_mpf_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_vs_npv->SetMarkerStyle(24);
-        gr_resp_mpf_vs_npv->SetMarkerColor(recoPhot_color);
-      } else {
-        gr_resp_mpf_TypeICor_data_vs_npv = new TGraphErrors(y_resp_npv_MPF_TypeICor_DATA.size(), npv_x, (Float_t *) &y_resp_npv_MPF_TypeICor_DATA[0], npv_x_err, (Float_t *) &y_resp_npv_MPF_TypeICor_DATA_err[0]);
-        gr_resp_mpf_TypeICor_data_vs_npv->SetName("gr_resp_mpf_TypeICor_data_vs_npv");
-        gr_resp_mpf_TypeICor_data_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_TypeICor_data_vs_npv->SetMarkerStyle(20);
-        gr_resp_mpf_TypeICor_data_vs_npv->SetMarkerColor(recoPhot_color);
-
-        gr_resp_mpf_TypeICor_vs_npv = new TGraphErrors(y_resp_npv_MPF_TypeICor_.size(), npv_x, (Float_t*) &y_resp_npv_MPF_TypeICor_[0], npv_x_err, (Float_t *) &y_resp_npv_MPF_TypeICor__err[0]);
-        gr_resp_mpf_TypeICor_vs_npv->SetName("gr_resp_mpf_TypeICor_vs_npv");
-        gr_resp_mpf_TypeICor_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_TypeICor_vs_npv->SetMarkerStyle(24);
-        gr_resp_mpf_TypeICor_vs_npv->SetMarkerColor(recoPhot_color);
-
-        gr_resp_mpf_TypeIpIICor_data_vs_npv = new TGraphErrors(y_resp_npv_MPF_TypeIpIICor_DATA.size(), npv_x, (Float_t *) &y_resp_npv_MPF_TypeIpIICor_DATA[0], npv_x_err, (Float_t *) &y_resp_npv_MPF_TypeIpIICor_DATA_err[0]);
-        gr_resp_mpf_TypeIpIICor_data_vs_npv->SetName("gr_resp_mpf_TypeIpIICor_data_vs_npv");
-        gr_resp_mpf_TypeIpIICor_data_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_TypeIpIICor_data_vs_npv->SetMarkerStyle(20);
-        gr_resp_mpf_TypeIpIICor_data_vs_npv->SetMarkerColor(recoPhot_color);
-
-        gr_resp_mpf_TypeIpIICor_vs_npv = new TGraphErrors(y_resp_npv_MPF_TypeIpIICor_.size(), npv_x, (Float_t*) &y_resp_npv_MPF_TypeIpIICor_[0], npv_x_err, (Float_t *) &y_resp_npv_MPF_TypeIpIICor__err[0]);
-        gr_resp_mpf_TypeIpIICor_vs_npv->SetName("gr_resp_mpf_TypeIpIICor_vs_npv");
-        gr_resp_mpf_TypeIpIICor_vs_npv->RemovePoint(0); // nothing interesting at NPV = 0
-        gr_resp_mpf_TypeIpIICor_vs_npv->SetMarkerStyle(24);
-        gr_resp_mpf_TypeIpIICor_vs_npv->SetMarkerColor(recoPhot_color);
-      }
-
-      // Fits
-      
-         const std::string fct = "[0] + [1]*x";
-      // Balancing
-      TF1 *fit_resp_bal_data_vs_npv = new TF1("fit1", fct.c_str(), 0, y_resp_npv_DATA.size());
-      fit_resp_bal_data_vs_npv->SetLineColor(recoPhot_color);
-      fit_resp_bal_data_vs_npv->SetParameter(0, 1);
-      fit_resp_bal_data_vs_npv->SetParameter(1, 0);
-      gr_resp_bal_data_vs_npv->Fit(fit_resp_bal_data_vs_npv, "QR");
-
-      TF1 *fit_resp_bal_vs_npv = new TF1("fit2", fct.c_str(), 0, y_resp_npv_BAL.size());
-      fit_resp_bal_vs_npv->SetLineColor(recoPhot_color);
-      fit_resp_bal_vs_npv->SetParameter(0, 1);
-      fit_resp_bal_vs_npv->SetParameter(1, 0);
-      gr_resp_bal_vs_npv->Fit(fit_resp_bal_vs_npv, "QR");
-
-      // MPF
-      TF1 *fit_resp_mpf_data_vs_npv = new TF1("fit3", fct.c_str(), 0, y_resp_npv_DATA.size());
-      fit_resp_mpf_data_vs_npv->SetLineColor(recoPhot_color);
-      fit_resp_mpf_data_vs_npv->SetParameter(0, 1);
-      fit_resp_mpf_data_vs_npv->SetParameter(1, 0);
-      gr_resp_mpf_data_vs_npv->Fit(fit_resp_mpf_data_vs_npv, "QR");
-
-      TF1 *fit_resp_mpf_vs_npv = new TF1("fit4", fct.c_str(), 0, y_resp_npv_BAL.size());
-      fit_resp_mpf_vs_npv->SetLineColor(recoPhot_color);
-      fit_resp_mpf_vs_npv->SetParameter(0, 1);
-      fit_resp_mpf_vs_npv->SetParameter(1, 0);
-      gr_resp_mpf_vs_npv->Fit(fit_resp_mpf_vs_npv, "QR");
-      
-
-      TString dirName = TString::Format("npv_ptPhot_%d_%d", (int) ptMin, (int) ptMax);
-
-      graphFile->mkdir(dirName);
-      graphFile->cd(dirName);
-
-      gr_true_resp_vs_npv->Write();
-
-      gr_resp_bal_data_vs_npv->Write();
-      gr_resp_bal_vs_npv->Write();
-
-      if (! corrected) {
-        gr_resp_mpf_data_vs_npv->Write();
-        gr_resp_mpf_vs_npv->Write();
-
-        delete gr_resp_mpf_data_vs_npv;
-        delete gr_resp_mpf_vs_npv;
-      } else {
-        gr_resp_mpf_TypeICor_data_vs_npv->Write();
-        gr_resp_mpf_TypeICor_vs_npv->Write();
-
-        delete gr_resp_mpf_TypeICor_data_vs_npv;
-        delete gr_resp_mpf_TypeICor_vs_npv;
-
-        gr_resp_mpf_TypeIpIICor_data_vs_npv->Write();
-        gr_resp_mpf_TypeIpIICor_vs_npv->Write();
-
-        delete gr_resp_mpf_TypeIpIICor_data_vs_npv;
-        delete gr_resp_mpf_TypeIpIICor_vs_npv;
-      }
-
-      delete gr_true_resp_vs_npv;
-
-      delete gr_resp_bal_data_vs_npv;
-      delete gr_resp_bal_vs_npv;
-
-      graphFile->cd();
-    }*/
 
     Float_t lastX = x[nPoints - 1];
     Float_t xMax_fit = lastX + 2. / 100.;
     //Float_t xMax_fit_green = x[2]+2./100.;
 
     Float_t xMax_axis;
-    if (lastX <= 12. / 100.)
-      xMax_axis = 15. / 100.;
-    else if (lastX <= 20. / 100.)
-      xMax_axis = 25. / 100.;
-    else if (lastX <= 25. / 100.)
       xMax_axis = 30. / 100.;
-    else if (lastX <= 35. / 100.)
-      xMax_axis = 40. / 100.;
-
   
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
     std::string fitFunct_name;
-    ////  if( ptMin <=150. )
-    fitFunct_name = "[0] - x*x*[1]";
-    ////  else
-    ////    fitFunct_name = "[0] - x*[1]";
-
+    fitFunct_name = "[0] + x*[1]";
 
     TF1* fit_resp_genPhot = new TF1("fit_resp_genPhot", fitFunct_name.c_str());
     fit_resp_genPhot->SetRange(0., xMax_fit);
@@ -844,33 +541,12 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     fit_resp_recoGenMet->SetLineColor(kGreen);
     gr_resp_metRecoGen->Fit(fit_resp_recoGenMet, "RQ");
   
-    /*TF1* fit_resp_recoGenCos = new TF1("fit_resp_recoGenCos", "[0] - x*x*[1]");
-    fit_resp_recoGenCos->SetRange(0., xMax_fit);
-    fit_resp_recoGenCos->SetLineWidth(0.5);
-    fit_resp_recoGenCos->SetLineColor(kOrange);
-    if (!corrected && recoGen != "RecoRelRaw")
-      gr_resp_cosRecoGen->Fit(fit_resp_recoGenCos, "RQ");*/
-  
-    fitFunct_name = "[0]*[1] - x*x*[2]";
-
     TF1* fit_resp_genMPF = new TF1("fit_resp_genMPF", "[0]");
     fit_resp_genMPF->SetRange(0., xMax_fit);
     fit_resp_genMPF->SetLineWidth(0.5);
     fit_resp_genMPF->SetLineColor(genPhot_color);
     gr_resp_genMPF->Fit(fit_resp_genMPF, "RQ");
-   
-    /*TF1* fit_resp_genPart = new TF1("fit_resp_genPart", "[0]+[1]*x");
-    fit_resp_genPart->SetRange(0., xMax_fit);
-    fit_resp_genPart->SetLineWidth(0.5);
-    fit_resp_genPart->SetLineColor(kGreen);
-    gr_resp_genPart->Fit(fit_resp_genPart, "RQ");*/
-
-    /*TF1* fit_resp_partGamma = new TF1("fit_resp_partGamma", "[0]+[1]*x");
-    fit_resp_partGamma->SetRange(0., xMax_fit);
-    fit_resp_partGamma->SetLineWidth(0.5);
-    fit_resp_partGamma->SetLineColor(kYellow);
-    gr_resp_partGamma->Fit(fit_resp_partGamma, "RQ");*/
-  
+     
     TF1* fit_resp_photGamma = new TF1("fit_resp_photGamma", "[0]");
     fit_resp_photGamma->SetRange(0., xMax_fit);
     fit_resp_photGamma->SetLineWidth(0.5);
@@ -882,23 +558,17 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     total_resp->SetRange(0., xMax_fit);
     total_resp->SetLineColor(LINE_COLOR);
 
-    float q_resp = fit_resp_genPhot->GetParameter(0);
+    //    float q_resp = fit_resp_genPhot->GetParameter(0);
+    ///////////////////////////////////////////////////////////////////////////
 
-    fitFunct_name = "[0]*[1] - x*x*[2]";
+    if(ptMin == 180){
+      gr_resp_recoPhot -> RemovePoint(0);
+      gr_resp_DATA -> RemovePoint(0);
+    } 
+
+    // fitta il balancing MC
     TF1* fit_respParabola = new TF1("fit_respParabola", fitFunct_name.c_str());
     fit_respParabola->SetRange(0., xMax_fit);
-    if (NOQ_) {  //to evaluate syst
-      float delta_q_resp = fabs((1. - q_resp) / 2.);
-      if (q_resp > 1.) fit_respParabola->FixParameter(1, 1. + delta_q_resp);
-      else            fit_respParabola->FixParameter(1, 1. - delta_q_resp);
-    } else {
-      fit_respParabola->FixParameter(1, fit_resp_genPhot->GetParameter(0));
-    }
-    // if( FIXM_ ) {
-    //   fit_respParabola->FixParameter(2, fit_resp_genPhot->GetParameter(1));
-    // } else {
-    fit_respParabola->SetParameter(2, fit_resp_genPhot->GetParameter(1));
-    // }
     fit_respParabola->SetLineColor(2);
     fit_respParabola->SetLineColor(recoPhot_color);
     fit_respParabola->SetLineStyle(2);
@@ -906,9 +576,10 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     gr_resp_recoPhot->Fit(fit_respParabola, "RQ");
 
     const std::string lineFunction = "[0] + [1]*x";
+    // fitta l'MPF MC
     TF1* fit_respParabolaMPF = new TF1("fit_respParabolaMPF", lineFunction.c_str());
     fit_respParabolaMPF->SetRange(0., xMax_fit);
-    fit_respParabolaMPF->SetParameter(0, fit_resp_genMPF->GetParameter(0));
+    //    fit_respParabolaMPF->SetParameter(0, fit_resp_genMPF->GetParameter(0));
     fit_respParabolaMPF->SetParameter(1, 0);
     fit_respParabolaMPF->SetLineColor(2);
     fit_respParabolaMPF->SetLineColor(recoPhot_color);
@@ -916,22 +587,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     fit_respParabolaMPF->SetLineWidth(1.);
     gr_resp_MPF->Fit(fit_respParabolaMPF, "RQ");
 
+    //fitta il balancing DATA
     TF1* fit_respParabola_DATA = new TF1("fit_respParabola_DATA", fitFunct_name.c_str());
     fit_respParabola_DATA->SetRange(0., xMax_fit);
-    if (NOQ_) {  //to evaluate syst
-      float delta_q_resp = fabs((1. - q_resp) / 2.);
-      if (q_resp > 1.) fit_respParabola_DATA->FixParameter(1, 1. + delta_q_resp);
-      else            fit_respParabola_DATA->FixParameter(1, 1. - delta_q_resp);
-    } else {
-      fit_respParabola_DATA->FixParameter(1, fit_resp_genPhot->GetParameter(0));
-    }
-    if (FIXM_)
-      fit_respParabola_DATA->FixParameter(2, fit_respParabola->GetParameter(2));
     fit_respParabola_DATA->SetLineColor(recoPhot_color);
     fit_respParabola_DATA->SetLineWidth(1.);
     gr_resp_DATA->Fit(fit_respParabola_DATA, "RQ");
-  
-
+ 
+    // fitta l'MPF DATA
     TF1* fit_respParabola_MPFDATA = new TF1("fit_respParabola_MPFDATA", lineFunction.c_str());
     fit_respParabola_MPFDATA->SetRange(0., xMax_fit);
     fit_respParabola_MPFDATA->SetParameter(0, fit_resp_genMPF->GetParameter(0));
@@ -940,50 +603,11 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     fit_respParabola_MPFDATA->SetLineWidth(1.);
     gr_resp_MPFDATA->Fit(fit_respParabola_MPFDATA, "RQ");
 
-    /* Type I+II corrected MPF */
-    /*TF1* fit_resp_MPF_TypeICor = NULL, *fit_resp_MPF_TypeIpIICor = NULL;
-      TF1* fit_resp_MPFDATA_TypeICor = NULL, *fit_resp_MPFDATA_TypeIpIICor = NULL;
-      if (corrected) {
-      fit_resp_MPF_TypeICor = new TF1("fit_resp_MPF_TypeICor", lineFunction.c_str(), 0, xMax_fit);
-      fit_resp_MPF_TypeICor->SetParameter(0, 1);
-      fit_resp_MPF_TypeICor->SetParameter(1, 0);
-      fit_resp_MPF_TypeICor->SetLineColor(recoPhot_color);
-      fit_resp_MPF_TypeICor->SetLineWidth(1.);
-      gr_resp_MPF_TypeICor->Fit(fit_resp_MPF_TypeICor, "QR");
-
-      fit_resp_MPFDATA_TypeICor = new TF1("fit_resp_MPFDATA_TypeICor", lineFunction.c_str(), 0, xMax_fit);
-      fit_resp_MPFDATA_TypeICor->SetParameter(0, 1);
-      fit_resp_MPFDATA_TypeICor->SetParameter(1, 0);
-      fit_resp_MPFDATA_TypeICor->SetLineColor(recoPhot_color);
-      fit_resp_MPFDATA_TypeICor->SetLineWidth(1.);
-      gr_resp_MPFDATA_TypeICor->Fit(fit_resp_MPFDATA_TypeICor, "QR");
-
-      fit_resp_MPF_TypeIpIICor = new TF1("fit_resp_MPF_TypeIpIICor", lineFunction.c_str(), 0, xMax_fit);
-      fit_resp_MPF_TypeIpIICor->SetParameter(0, 1);
-      fit_resp_MPF_TypeIpIICor->SetParameter(1, 0);
-      fit_resp_MPF_TypeIpIICor->SetLineColor(recoPhot_color);
-      fit_resp_MPF_TypeIpIICor->SetLineWidth(1.);
-      gr_resp_MPF_TypeIpIICor->Fit(fit_resp_MPF_TypeIpIICor, "QR");
-
-      fit_resp_MPFDATA_TypeIpIICor = new TF1("fit_resp_MPFDATA_TypeIpIICor", lineFunction.c_str(), 0, xMax_fit);
-      fit_resp_MPFDATA_TypeIpIICor->SetParameter(0, 1);
-      fit_resp_MPFDATA_TypeIpIICor->SetParameter(1, 0);
-      fit_resp_MPFDATA_TypeIpIICor->SetLineColor(recoPhot_color);
-      fit_resp_MPFDATA_TypeIpIICor->SetLineWidth(1.);
-      gr_resp_MPFDATA_TypeIpIICor->Fit(fit_resp_MPFDATA_TypeIpIICor, "QR");
-      }*/
-
-
-    /*std::string total_mpf_str = "1+(fit_resp_recoGenCos*fit_resp_genRecoPhot*fit_resp_recoGenMet*(fit_resp_genMPF - 1))";
-      TF1* total_mpf = new TF1("total_mpf", total_mpf_str.c_str());
-      total_resp->SetRange(0., xMax_fit);
-      total_resp->SetLineColor(kGray);*/
-
     // set response graph points:
   
     if (fit_respParabola_DATA->GetParameter(0) > 0) {
 
-      std::cout<< " ++++++++++++++++++++++++++  " <<  fit_respParabola_DATA->GetParameter(0)<< std::endl;
+      std::cout<< " +++++++ Response(alpha = 0) = " <<  fit_respParabola_DATA->GetParameter(0)<< std::endl;
       gr_DATAResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_respParabola_DATA->GetParameter(0));
       gr_DATAResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_respParabola_DATA->GetParError(0));
     }
@@ -1003,45 +627,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
       gr_extrapRespMPF_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_respParabolaMPF->GetParError(0));
     }
 
-    /* else if (recoGen != "RecoRelRaw") {
-       gr_DATARespMPF_TypeICor_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBinDATA, fit_resp_MPFDATA_TypeICor->GetParameter(0));
-       gr_DATARespMPF_TypeICor_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBinDATA, fit_resp_MPFDATA_TypeICor->GetParError(0));
-       gr_extrapRespMPF_TypeICor_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_resp_MPF_TypeICor->GetParameter(0));
-       gr_extrapRespMPF_TypeICor_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_resp_MPF_TypeICor->GetParError(0));
-
-       gr_DATARespMPF_TypeIpIICor_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBinDATA, fit_resp_MPFDATA_TypeIpIICor->GetParameter(0));
-       gr_DATARespMPF_TypeIpIICor_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBinDATA, fit_resp_MPFDATA_TypeIpIICor->GetParError(0));
-       gr_extrapRespMPF_TypeIpIICor_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_resp_MPF_TypeIpIICor->GetParameter(0));
-       gr_extrapRespMPF_TypeIpIICor_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_resp_MPF_TypeIpIICor->GetParError(0));
-       }*/
-
     gr_intrResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_resp_recoGen->GetParameter(0));
     gr_intrResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_resp_recoGen->GetParError(0));
 
     gr_qResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, (fit_resp_genPhot->GetParameter(0) - 1.));
     gr_qResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, (fit_resp_genPhot->GetParError(0)));
-
-    /*gr_qGenPartResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, (fit_resp_genPart->GetParameter(0) - 1.));
-      gr_qGenPartResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, (fit_resp_genPart->GetParError(0)));
-
-      gr_qPartGammaResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, (fit_resp_partGamma->GetParameter(0) - 1.));
-      gr_qPartGammaResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, (fit_resp_partGamma->GetParError(0)));*/
-
+  
     gr_qPhotGammaResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, (fit_resp_photGamma->GetParameter(0) - 1.));
     gr_qPhotGammaResp_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, (fit_resp_photGamma->GetParError(0)));
-
-
-    //Float_t y0_recoGen = fit_resp_recoGen->GetParameter(0);
-    //Float_t y0_genPhot = fit_resp_genPhot->GetParameter(0);
-    //Float_t y0_err_recoGen = fit_resp_recoGen->GetParError(0);
-    //Float_t y0_err_genPhot = fit_resp_genPhot->GetParError(0);
-    //
-    //gr_qGenPartResp_vs_pt->SetPoint( iPtBin, ptPhotReco_thisBin, y0_genPhot*y0_recoGen );
-    //float trueResp_err = y0_err_genPhot*y0_err_genPhot*y0_recoGen*y0_recoGen;
-    //trueResp_err += y0_genPhot*y0_genPhot*y0_err_recoGen*y0_err_recoGen;
-    //trueResp_err = sqrt( trueResp_err );
-    //gr_qGenPartResp_vs_pt->SetPointError( iPtBin, ptPhotReco_err_thisBin, trueResp_err );
-
 
     Float_t yMin_axis;
     if (this->get_recoType() == "calo") {
@@ -1057,7 +650,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
     TH2D* h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
-    h2_axes_resp->SetYTitle((rawJets) ? "Response (with raw jets)" : "Response");
+    h2_axes_resp->SetYTitle((rawJets) ? "Response (with raw jets)" : "Jet Response");
     //h2_axes_resp->GetXaxis()->SetTitleOffset(1.1);
     //h2_axes_resp->GetYaxis()->SetTitleOffset(1.5);
 
@@ -1078,14 +671,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     legend_resp->SetBorderSize(0);
     //legend_resp->SetFillStyle(0);
     legend_resp->SetFillColor(kWhite);
-    legend_resp->AddEntry(gr_resp_recoGen, "MC Intrinsic", "P");
-    legend_resp->AddEntry(gr_resp_genPhot, "MC Imbalance", "P");
-    legend_resp->AddEntry(total_resp, "MC Intr #oplus Imb", "L");
+    //federico // voglio solo i plot principali
+    //    legend_resp->AddEntry(gr_resp_recoGen, "MC Intrinsic", "P");
+    //    legend_resp->AddEntry(gr_resp_genPhot, "MC Imbalance", "P");
+    //    legend_resp->AddEntry(total_resp, "MC Intr #oplus Imb", "L");
 
-    legend_resp->AddEntry(gr_resp_recoPhot, "MC (#gamma + jets)", "PL");
     legend_resp->AddEntry(gr_resp_DATA, "DATA ( #gamma + jets)", "PL");
+    legend_resp->AddEntry(gr_resp_recoPhot, "MC (#gamma + jets)", "PL");
 
-  
     TString labelText = TString::Format("%d < p_{T}^{#gamma} < %d GeV", (int) ptMin, (int) ptMax);
     TPaveText* label_resp = new TPaveText(0.24, 0.18, 0.4, 0.21, "brNDC");
     label_resp->SetTextFont(42);
@@ -1094,7 +687,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     label_resp->AddText(labelText);
 
     TPaveText* label_algo = this->get_labelAlgo(4);
-
     TPaveText* label_cms = this->get_labelCMS(0);
     TPaveText* label_sqrt = this->get_labelSqrt(0);
 
@@ -1113,9 +705,9 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     //c1_resp->SetBottomMargin(0.12);
     c1_resp->cd();
     h2_axes_resp->Draw();
-    total_resp->Draw("same");
-    gr_resp_recoGen->Draw("Psame");
-    gr_resp_genPhot->Draw("Psame");
+    //    total_resp->Draw("same");
+    //    gr_resp_recoGen->Draw("Psame");
+    //    gr_resp_genPhot->Draw("Psame");
     legend_resp->Draw("same");
     label_resp->Draw("same");
     label_cms->Draw("same");
@@ -1127,6 +719,20 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
     rawPostfix = (rawJets) ? "RAW" : "";
 
+    // Fit parameters
+    TPaveText* label_fit_ = new TPaveText(0.45, 0.60, 0.4, 0.54, "blNDC");
+    label_fit_->SetFillColor(kWhite);
+    label_fit_->SetTextSize(0.030);
+
+    TString line1_ = TString::Format("MC: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_respParabola->GetParameter(0), fit_respParabola->GetParError(0), fit_respParabola->GetParameter(1), fit_respParabola->GetParError(1));
+    TString line2_ = TString::Format("Data: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_respParabola_DATA->GetParameter(0), fit_respParabola_DATA->GetParError(0), fit_respParabola_DATA->GetParameter(1), fit_respParabola_DATA->GetParError(1));
+
+    label_fit_->SetTextAlign(11);
+    label_fit_->AddText(line2_);
+    label_fit_->AddText(line1_);
+
+    label_fit_->Draw("same");
+
     char canvasName_resp_pdf[500];
     char canvasName_resp_png[500];
 
@@ -1134,16 +740,83 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     sprintf(canvasName_resp_png, "%s/response%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
   
     if (OUTPUT_GRAPHS || ptMin == 155) {
-      c1_resp->SaveAs(canvasName_resp_pdf);
+      //      c1_resp->SaveAs(canvasName_resp_pdf);
       c1_resp->SaveAs(canvasName_resp_png);
     }
 
     delete legend_resp;
+    /////////////////////////////////////////////
 
+    TGraphErrors* gr_mcRatio = fitTools::get_graphRatio(gr_resp_DATA, gr_resp_recoPhot);
+    gr_mcRatio->SetName("gr_mcRatioResp");
+    gr_mcRatio->SetMarkerStyle(20);
+    gr_mcRatio->SetMarkerColor(recoPhot_color);
+    gr_mcRatio->SetLineColor(recoPhot_color);
+    gr_mcRatio->SetMarkerSize(markerSize);
+    
+    for (int iPointDATA = 0; iPointDATA < gr_mcRatio->GetN(); ++iPointDATA) {
+      Double_t x, y;
+      gr_mcRatio->GetPoint(iPointDATA, x, y);
+      //      std::cout<< "x= "<< x << " y= "<<y<<std::endl; 
+    }
+
+    TF1* fit_mcRatio_Parabola = new TF1("fit_mcRatio_Parabola", fitFunct_name.c_str());
+    fit_mcRatio_Parabola->SetRange(0., xMax_fit);
+    fit_mcRatio_Parabola->SetParameter(0, 1.);
+    fit_mcRatio_Parabola->SetParameter(1, 0.);
+    fit_mcRatio_Parabola->SetLineColor(recoPhot_color);
+    fit_mcRatio_Parabola->SetLineWidth(1.);
+    gr_mcRatio->Fit(fit_mcRatio_Parabola, "RQ");
+    
+    //    gr_mcRatioResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_mcRatio_Parabola->GetParameter(0));
+    
+    c1_resp->Clear();
+    c1_resp->cd();
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, yMin_axis, yMax_resp);
+    h2_axes_resp->SetXTitle(xTitle.c_str());
+    h2_axes_resp->SetYTitle("DATA/MC ratio");
+    h2_axes_resp->Draw();
+
+    TPaveText* label_fit_mcRatio = new TPaveText(0.45, 0.65, 0.4, 0.59, "blNDC");
+    label_fit_mcRatio->SetFillColor(kWhite);
+    label_fit_mcRatio->SetTextSize(0.030);
+
+    TString line1_mcRatio = TString::Format("Ratio: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_mcRatio_Parabola->GetParameter(0), fit_mcRatio_Parabola->GetParError(0), fit_mcRatio_Parabola->GetParameter(1), fit_mcRatio_Parabola->GetParError(1));
+
+    label_fit_mcRatio ->SetTextAlign(11);
+    label_fit_mcRatio ->AddText(line1_mcRatio);
+    label_fit_mcRatio ->Draw("same");
+
+    if (etaRegion_str != "")
+      legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax, etaRegion_str.c_str());
+    else
+      legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax);
+    legend_resp->SetTextSize(0.035);
+    legend_resp->SetTextFont(42);
+    legend_resp->SetBorderSize(0);
+    //legend_resp->SetFillStyle(0);
+    legend_resp->SetFillColor(kWhite);
+    legend_resp->AddEntry(gr_mcRatio, "DATA/MC ratio", "P");
+    
+    legend_resp->Draw("same");
+    label_resp->Draw("same");
+    label_cms->Draw("same");
+    label_sqrt->Draw("same");
+    label_algo->Draw("same");
+    
+    gr_mcRatio->Draw("Psame");
+    
+    if (OUTPUT_GRAPHS) {
+      sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+      c1_resp->SaveAs(canvasName_resp_png);
+    }
+    
+    /////////////////////////////////////
     // MPF Extrap
     c1_resp->Clear();
-
     c1_resp->cd();
+    h2_axes_resp->SetXTitle(xTitle.c_str());
+    h2_axes_resp->SetYTitle((rawJets) ? "Response (with raw jets)" : "Jet Response");
     h2_axes_resp->Draw();
 
     if (etaRegion_str != "")
@@ -1155,13 +828,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     legend_resp->SetBorderSize(0);
     //legend_resp->SetFillStyle(0);
     legend_resp->SetFillColor(kWhite);
-    legend_resp->AddEntry(gr_resp_genMPF, "MPF Gen", "PL");
+    //    legend_resp->AddEntry(gr_resp_genMPF, "MPF Gen", "PL");
     legend_resp->AddEntry(gr_resp_MPFDATA, "DATA (#gamma + jets)", "PL");
     legend_resp->AddEntry(gr_resp_MPF, "MC (#gamma + jets)", "PL");
 
+    // voglio solo le distribuzioni principali
     //    total_mpf->Draw("same");
     gr_resp_MPF->Draw("Psame");
-    gr_resp_genMPF->Draw("Psame");
+    //    gr_resp_genMPF->Draw("Psame");
     //    gr_resp_photGenReco->Draw("Psame");
     //    gr_resp_metRecoGen->Draw("Psame");
     //    gr_resp_cosRecoGen->Draw("Psame");
@@ -1183,10 +857,9 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     TString line2 = TString::Format("Data: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_respParabola_MPFDATA->GetParameter(0), fit_respParabola_MPFDATA->GetParError(0), fit_respParabola_MPFDATA->GetParameter(1), fit_respParabola_MPFDATA->GetParError(1));
 
     label_fit->SetTextAlign(11);
-    label_fit->AddText(line1);
     label_fit->AddText(line2);
-
-    //label_fit->Draw("same");
+    label_fit->AddText(line1);
+    label_fit->Draw("same");
   
     std::string MPF = "MPF";
 
@@ -1194,139 +867,88 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     sprintf(canvasName_resp_png, "%s/response%s%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
 
     if (OUTPUT_GRAPHS || ptMin == 155) {
-      c1_resp->SaveAs(canvasName_resp_pdf);
+      //      c1_resp->SaveAs(canvasName_resp_pdf);
       c1_resp->SaveAs(canvasName_resp_png);
     }
-
-    /* else if (recoGen != "RecoRelRaw") {
-    // MPF Extrap Type I
-    c1_resp->Clear();
-
-    c1_resp->cd();
-    h2_axes_resp->Draw();
-
-    if (etaRegion_str != "")
-    legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax, etaRegion_str.c_str());
-    else
-    legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax);
-    legend_resp->SetTextSize(0.035);
-    legend_resp->SetTextFont(42);
-    //legend_resp->SetFillStyle(0);
-    legend_resp->SetFillColor(kWhite);
-    legend_resp->AddEntry(gr_resp_genMPF, "MPF Gen", "P");
-    legend_resp->AddEntry(gr_resp_MPFDATA, "DATA (MPF #gamma + jet)", "P");
-    legend_resp->AddEntry(gr_resp_MPF, "MC (MPF #gamma + jet)", "P");
-
-    //    total_mpf->Draw("same");
-    //    gr_resp_photGenReco->Draw("Psame");
-    //    gr_resp_metRecoGen->Draw("Psame");
-    //    gr_resp_cosRecoGen->Draw("Psame");
-
-    legend_resp->Draw("same");
-    label_resp->Draw("same");
-    label_cms->Draw("same");
-    label_sqrt->Draw("same");
-    //label_CMStop->Draw("same");
-    label_algo->Draw("same");
-    gr_resp_genMPF->Draw("Psame");
-    gr_resp_MPF_TypeICor->Draw("Psame");
-    gr_resp_MPFDATA_TypeICor->Draw("Psame");
-
-    // Fit parameters
-    TPaveText* label_fit = new TPaveText(0.45, 0.40, 0.4, 0.34, "blNDC");
-    label_fit->SetFillColor(kWhite);
-    label_fit->SetTextSize(0.030);
-
-    TString line1 = TString::Format("MC: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_resp_MPF_TypeICor->GetParameter(0), fit_resp_MPF_TypeICor->GetParError(0), fit_resp_MPF_TypeICor->GetParameter(1), fit_resp_MPF_TypeICor->GetParError(1));
-    TString line2 = TString::Format("Data: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_resp_MPFDATA_TypeICor->GetParameter(0), fit_resp_MPFDATA_TypeICor->GetParError(0), fit_resp_MPFDATA_TypeICor->GetParameter(1), fit_resp_MPFDATA_TypeICor->GetParError(1));
-
-    label_fit->SetTextAlign(11);
-    label_fit->AddText(line1);
-    label_fit->AddText(line2);
-
-    label_fit->Draw("same");
-
-    std::string MPF = "MPF";
-
-    if (etaRegion != "") {
-    sprintf(canvasName_resp_pdf, "%s/responseMPF_TypeICor_%s_ptPhot_%d_%d_%s.pdf", get_outputdir().c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-    sprintf(canvasName_resp_png, "%s/responseMPF_TypeICor_%s_ptPhot_%d_%d_%s.png", get_outputdir().c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-    } else {
-    sprintf(canvasName_resp_pdf, "%s/responseMPF_TypeICor_ptPhot_%d_%d_%s.pdf", get_outputdir().c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-    sprintf(canvasName_resp_png, "%s/responseMPF_TypeICor_ptPhot_%d_%d_%s.png", get_outputdir().c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
+  
+    TGraphErrors* gr_mcRatioMPF = fitTools::get_graphRatio(gr_resp_MPFDATA, gr_resp_MPF);
+    gr_mcRatioMPF -> SetName("gr_mcRatioRespMPF");
+    gr_mcRatioMPF -> SetMarkerStyle(20);
+    gr_mcRatioMPF -> SetMarkerColor(recoPhot_color);
+    gr_mcRatioMPF -> SetLineColor(recoPhot_color);
+    gr_mcRatioMPF -> SetMarkerSize(markerSize);
+    
+    for (int iPointDATA = 0; iPointDATA < gr_mcRatioMPF->GetN(); ++iPointDATA) {
+      Double_t x, y;
+      gr_mcRatioMPF->GetPoint(iPointDATA, x, y);
+      //      std::cout<< "MPF --> x= "<< x << " y= "<<y<<std::endl; 
     }
 
-    if (OUTPUT_GRAPHS || ptMin == 150) {
-    c1_resp->SaveAs(canvasName_resp_pdf);
-    c1_resp->SaveAs(canvasName_resp_png);
-    }
-
-    // MPF Extrap Type I+II
+    TF1* fit_mcRatioMPF_Parabola = new TF1("fit_mcRatioMPF_Parabola", fitFunct_name.c_str());
+    fit_mcRatioMPF_Parabola->SetRange(0., xMax_fit);
+    fit_mcRatioMPF_Parabola->SetParameter(0, 1.);
+    fit_mcRatioMPF_Parabola->SetParameter(1, 0.);
+    fit_mcRatioMPF_Parabola->SetLineColor(recoPhot_color);
+    fit_mcRatioMPF_Parabola->SetLineWidth(1.);
+    gr_mcRatioMPF->Fit(fit_mcRatioMPF_Parabola, "RQ");
+    
+    //    gr_mcRatioResp_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_mcRatio_Parabola->GetParameter(0));
+    
     c1_resp->Clear();
-
     c1_resp->cd();
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, yMin_axis, yMax_resp);
+    h2_axes_resp->SetXTitle(xTitle.c_str());
+    h2_axes_resp->SetYTitle("DATA/MC ratio");
     h2_axes_resp->Draw();
 
+    TPaveText* label_fit_mcRatioMPF = new TPaveText(0.45, 0.65, 0.4, 0.59, "blNDC");
+    label_fit_mcRatioMPF->SetFillColor(kWhite);
+    label_fit_mcRatioMPF->SetTextSize(0.030);
+
+    TString line1_mcRatioMPF = TString::Format("Ratio: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_mcRatioMPF_Parabola->GetParameter(0), fit_mcRatioMPF_Parabola->GetParError(0), fit_mcRatioMPF_Parabola->GetParameter(1), fit_mcRatioMPF_Parabola->GetParError(1));
+
+    label_fit_mcRatioMPF ->SetTextAlign(11);
+    label_fit_mcRatioMPF ->AddText(line1_mcRatioMPF);
+    label_fit_mcRatioMPF ->Draw("same");
+
     if (etaRegion_str != "")
-    legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax, etaRegion_str.c_str());
+      legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax, etaRegion_str.c_str());
     else
       legend_resp = new TLegend(legbox.xMin, legbox.yMin, legbox.xMax, legbox.yMax);
     legend_resp->SetTextSize(0.035);
     legend_resp->SetTextFont(42);
+    legend_resp->SetBorderSize(0);
     //legend_resp->SetFillStyle(0);
     legend_resp->SetFillColor(kWhite);
-    legend_resp->AddEntry(gr_resp_genMPF, "MPF Gen", "P");
-    legend_resp->AddEntry(gr_resp_MPFDATA, "DATA (MPF #gamma + jet)", "P");
-    legend_resp->AddEntry(gr_resp_MPF, "MC (MPF #gamma + jet)", "P");
-
-    //    total_mpf->Draw("same");
-    //    gr_resp_photGenReco->Draw("Psame");
-    //    gr_resp_metRecoGen->Draw("Psame");
-    //    gr_resp_cosRecoGen->Draw("Psame");
-
+    legend_resp->AddEntry(gr_mcRatio, "DATA/MC ratio", "P");
+    
     legend_resp->Draw("same");
     label_resp->Draw("same");
     label_cms->Draw("same");
     label_sqrt->Draw("same");
-    //label_CMStop->Draw("same");
     label_algo->Draw("same");
-    gr_resp_genMPF->Draw("Psame");
-    gr_resp_MPF_TypeIpIICor->Draw("Psame");
-    gr_resp_MPFDATA_TypeIpIICor->Draw("Psame");
-
-    // Fit parameters
-    delete label_fit;
-    label_fit = new TPaveText(0.45, 0.40, 0.4, 0.34, "blNDC");
-    label_fit->SetFillColor(kWhite);
-    label_fit->SetTextSize(0.030);
-
-    line1 = TString::Format("MC: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_resp_MPF_TypeIpIICor->GetParameter(0), fit_resp_MPF_TypeIpIICor->GetParError(0), fit_resp_MPF_TypeIpIICor->GetParameter(1), fit_resp_MPF_TypeIpIICor->GetParError(1));
-    line2 = TString::Format("Data: (%.3lf #pm %.3lf)  + (%.3lf #pm %.3lf)x", fit_resp_MPFDATA_TypeIpIICor->GetParameter(0), fit_resp_MPFDATA_TypeIpIICor->GetParError(0), fit_resp_MPFDATA_TypeIpIICor->GetParameter(1), fit_resp_MPFDATA_TypeIpIICor->GetParError(1));
-
-    label_fit->SetTextAlign(11);
-    label_fit->AddText(line1);
-    label_fit->AddText(line2);
-
-    label_fit->Draw("same");
-
-    if (etaRegion != "") {
-      sprintf(canvasName_resp_pdf, "%s/responseMPF_TypeIpIICor_%s_ptPhot_%d_%d_%s.pdf", get_outputdir().c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-      sprintf(canvasName_resp_png, "%s/responseMPF_TypeIpIICor_%s_ptPhot_%d_%d_%s.png", get_outputdir().c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-    } else {
-      sprintf(canvasName_resp_pdf, "%s/responseMPF_TypeIpIICor_ptPhot_%d_%d_%s.pdf", get_outputdir().c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-      sprintf(canvasName_resp_png, "%s/responseMPF_TypeIpIICor_ptPhot_%d_%d_%s.png", get_outputdir().c_str(), (int)ptMin, (int)ptMax, recoGen.c_str());
-    }
-
-    if (OUTPUT_GRAPHS || ptMin == 150) {
-      c1_resp->SaveAs(canvasName_resp_pdf);
+    
+    gr_mcRatioMPF->Draw("Psame");
+    
+    if (OUTPUT_GRAPHS) {
+      sprintf(canvasName_resp_png, "%s/dataMC_ratioMPF_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
       c1_resp->SaveAs(canvasName_resp_png);
     }
-  }*/
 
-  // TEST //
+
+
+
+
+
+
+
+
+
+
+
   // Compute Data/MC ratio and do the extrapolation AFTER
-
-  TGraphErrors* gr_mcRatio = this->get_graphRatio(gr_resp_DATA, gr_resp_recoPhot);
+    /*
+   TGraphErrors* gr_mcRatio = this->get_graphRatio(gr_resp_DATA, gr_resp_recoPhot);
   gr_mcRatio->SetName("gr_mcRatioResp");
   gr_mcRatio->SetMarkerStyle(20);
   gr_mcRatio->SetMarkerColor(recoPhot_color);
@@ -1334,16 +956,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_mcRatio->SetMarkerSize(markerSize);
   
   TF1* fit_mcRatio_Parabola = new TF1("fit_mcRatio_Parabola", fitFunct_name.c_str());
-  fit_respParabola_DATA->SetRange(0., xMax_fit);
-  /*if( NOQ_ ) { //to evaluate syst
-    float delta_q_resp = fabs( (1.-q_resp)/2. );
-    if( q_resp>1. ) fit_respParabola_DATA->FixParameter(1, 1.+delta_q_resp);
-    else            fit_respParabola_DATA->FixParameter(1, 1.-delta_q_resp);
-    } else {*/
-  fit_mcRatio_Parabola->FixParameter(1, 1);
-  //}
-  if (FIXM_)
-    fit_mcRatio_Parabola->FixParameter(2, 1);
+  fit_mcRatio_Parabola->SetRange(0., xMax_fit);
   fit_mcRatio_Parabola->SetLineColor(recoPhot_color);
   fit_mcRatio_Parabola->SetLineWidth(1.);
   gr_mcRatio->Fit(fit_mcRatio_Parabola, "RQ");
@@ -1352,6 +965,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
   c1_resp->Clear();
   c1_resp->cd();
+  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, yMin_axis, yMax_resp);
   h2_axes_resp->SetYTitle("DATA/MC ratio");
   h2_axes_resp->Draw();
 
@@ -1375,10 +989,11 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_mcRatio->Draw("Psame");
 
   if (OUTPUT_GRAPHS || ptMin == 155) {
-    sprintf(canvasName_resp_pdf, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    c1_resp->SaveAs(canvasName_resp_pdf);
+    //    sprintf(canvasName_resp_pdf, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    c1_resp->SaveAs(canvasName_resp_png);
   }
-
+    */
   delete gr_mcRatio;
   delete fit_mcRatio_Parabola;
   delete legend_resp;
@@ -1818,7 +1433,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   std::string canvasName_reso_pdf = canvasName_reso_str + ".pdf";
   std::string canvasName_reso_png = canvasName_reso_str + ".png";
   if (OUTPUT_GRAPHS || ptMin == 155) {
-    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
+    //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
   }
 
@@ -1832,7 +1447,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   std::string canvasName_reso_all_pdf = canvasName_reso_all + ".pdf";
   std::string canvasName_reso_all_png = canvasName_reso_all + ".png";
   if (OUTPUT_GRAPHS) {
-    c1_reso->SaveAs(canvasName_reso_all_pdf.c_str());
+    //    c1_reso->SaveAs(canvasName_reso_all_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_all_png.c_str());
   }
 
@@ -1883,7 +1498,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   canvasName_reso_pdf = canvasName_reso_str + ".pdf";
   canvasName_reso_png = canvasName_reso_str + ".png";
   if (OUTPUT_GRAPHS || ptMin == 155) {
-    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
+    //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
   }
 
@@ -2008,7 +1623,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   if (OUTPUT_GRAPHS || ptMin == 155) {
     char output_name[500];
     sprintf(output_name, "%s/reso_dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    c1_reso->SaveAs(output_name);
+    //    c1_reso->SaveAs(output_name);
   }
 
   delete gr_mcRatioReso;
@@ -2093,17 +1708,28 @@ void drawExtrap::getXPoints(int ptBin, Float_t* x, Float_t* x_err) const {
     x[i] = h1_pt2ndJetMean->GetMean();
     x_err[i] =  h1_pt2ndJetMean->GetRMS() / sqrt((Float_t)h1_pt2ndJetMean->GetEntries());
     }*/
-  std::pair<float, float> bin = mExtrapBinning.getBinValue(ptBin);
+  std::pair<float, float> bin = mExtrapBinning.getBinValue(0);
 
   float minPt = bin.first;
   float maxPt = 0;
   float stepPt = bin.second - bin.first;
   size_t numPoints = mExtrapBinning.size();
 
-  for (size_t i = 0; i < numPoints; i++) {
+  //  std::cout<<"ptBin = "<< ptBin<< std::endl;
+  //  std::cout<<"n points = "<< numPoints<< std::endl;
+  //  std::cout<<"bin.first = "<< bin.first<< std::endl;
+  //  std::cout<<"bin.second = "<< bin.second<< std::endl;
 
+  for (size_t i = 0; i < numPoints; i++) {
+    
+    //    std::cout<<"Bin parte da: "<< minPt<< std::endl;
+    //    std::cout<<"procede a step di: "<< stepPt<< std::endl;
+    
     maxPt = minPt + stepPt;
+    //    std::cout<<"Bin finisce a: "<< maxPt<< std::endl;
+
     x[i] = (minPt + maxPt) / 2.;
+    //    std::cout<<"punti sul grafico x= "<< x[i]<< std::endl;
     x_err[i] = 0.;
 
     minPt += stepPt;

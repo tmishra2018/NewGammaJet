@@ -1304,13 +1304,17 @@ TGraphErrors* fitTools::get_graphRatio(TGraphErrors* gr_data, TGraphErrors* gr_M
 
     Double_t datax, datay;
     gr_data->GetPoint(i, datax, datay);
-    //Double_t dataxerr = gr_data->GetErrorX(i);
+    Double_t dataxerr = gr_data->GetErrorX(i);
     Double_t datayerr = gr_data->GetErrorY(i);
+
+    //    std::cout<< "fitTools ---->  xData= "<< datax << " yData= "<<datay<<std::endl;
 
     Double_t mcx, mcy;
     gr_MC->GetPoint(i, mcx, mcy);
     Double_t mcxerr = gr_MC->GetErrorX(i);
     Double_t mcyerr = gr_MC->GetErrorY(i);
+
+    //    std::cout<< "fitTools ---->  xMC= "<< mcx << " yMC= "<<mcy<<std::endl;
 
     Double_t ratiox = mcx;
     Double_t ratioxerr = mcxerr;
@@ -1318,6 +1322,7 @@ TGraphErrors* fitTools::get_graphRatio(TGraphErrors* gr_data, TGraphErrors* gr_M
     Double_t ratioy = (mcy > 0.) ? datay / mcy : 0.;
     Double_t ratioyerr = (mcy > 0.) ? sqrt(datayerr * datayerr / (mcy * mcy) + datay * datay * mcyerr * mcyerr / (mcy * mcy * mcy * mcy)) : 0.;
 
+    //    std::cout<< "fitTools ---->  ratioY= "<< ratioy <<std::endl;
 
     if (ratioyerr > 0.) {
       gr_ratio->SetPoint(i, ratiox, ratioy);

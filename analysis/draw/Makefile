@@ -42,7 +42,7 @@ SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 ###
 
 #all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_all_methods_vs_npv draw_crosschecks
-all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_new_extrap draw_vs_npv drawEnergyFractions draw_vs_run
+all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_new_extrap draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData
 
 clean:
 	@rm *.o;
@@ -78,6 +78,9 @@ drawEnergyFractions: drawBase.o fitTools.o drawEnergyFractions.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 draw_vs_run: drawBase.o fitTools.o draw_vs_run.o
+	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+drawPhotonJet_2bkg_NOData: drawBase.o fitTools.o drawPhotonJet_2bkg_NOData.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 #draw_vs_run: draw_vs_run.cc

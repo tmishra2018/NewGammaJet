@@ -6,7 +6,11 @@
   </path>
   <path>
     <name weight="1">HLT_Photon50_R9Id90_HE10_IsoM_v.*</name>
-    <pt from="60" to="100" />
+    <pt from="60" to="85" />
+  </path>
+  <path>
+    <name weight="1">HLT_Photon75_R9Id90_HE10_IsoM_v.*</name>
+    <pt from="85" to="100" />
   </path>
   <path>
     <name weight="1">HLT_Photon90_R9Id90_HE10_IsoM_v.*</name>
@@ -18,6 +22,6 @@
   </path>
   <path>
     <name weight="1">HLT_Photon165_R9Id90_HE10_IsoM_v.*</name>
-    <pt from="175" to="8000" />
+    <pt from="175" to="5000" />
   </path>
 </triggers>

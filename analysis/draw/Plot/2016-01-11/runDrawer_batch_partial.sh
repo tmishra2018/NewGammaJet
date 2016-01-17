@@ -1,0 +1,5 @@
+bsub -q cmslong -o Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut010/logfile.log source /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-01-11/Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut010/drawer.src
+bsub -q cmslong -o Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut015/logfile.log source /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-01-11/Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut015/drawer.src
+bsub -q cmslong -o Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut020/logfile.log source /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-01-11/Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut020/drawer.src
+bsub -q cmslong -o Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut030/logfile.log source /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-01-11/Data_vs_GJet_Madgraph_plus_QCD_Pythia/AlphaCut030/drawer.src
+

@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
   //bool sameEvents = false; //until njets histos have no overflows... or maybe use GetEntries instead of integral?
 
   drawBase* db = new drawBase("PhotonJet", recoType, jetAlgo, OUTPUT_GRAPHS);
-  db->set_pdf_aussi((bool)true);
+  db->set_pdf_aussi((bool)false);
   db->set_flags(flags);
   db->set_isCMSArticle(false);
 
@@ -170,18 +170,18 @@ int main(int argc, char* argv[]) {
   db->drawHisto("EtaPhoton_passedID", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton_passedID", "Photon Phi", " ", "Events" , false);
   db->drawHisto("ptFirstJet_passedID", "Jet Transverse Momentum", "GeV", "Events", log);
-  db->drawHisto("EtaFirstJet_passedID", "FirstJet Eta", " ", "Events" , log);
-  db->drawHisto("PhiFirstJet_passedID", "FirstJet Phi", " ", "Events" , false);
-  db->drawHisto("ptSecondJet_passedID", "2nd Jet Transverse Momentum", "GeV", "Events", log);
-  db->drawHisto("EtaSecondJet_passedID", "2nd Jet Eta", " ", "Events" , log);
-  db->drawHisto("PhiSecondJet_passedID", "2nd Jet Phi", " ", "Events" , false);
+ db->drawHisto("EtaFirstJet_passedID", "FirstJet Eta", " ", "Events" , log);
+ db->drawHisto("PhiFirstJet_passedID", "FirstJet Phi", " ", "Events" , false);
+ db->drawHisto("ptSecondJet_passedID", "2nd Jet Transverse Momentum", "GeV", "Events", log);
+ db->drawHisto("EtaSecondJet_passedID", "2nd Jet Eta", " ", "Events" , log);
+ db->drawHisto("PhiSecondJet_passedID", "2nd Jet Phi", " ", "Events" , false);
 
-  db->drawHisto("ptSecondJet_2ndJetOK", "2nd Jet Transverse Momentum", "GeV", "Events", log);
-  db->drawHisto("EtaSecondJet_2ndJetOK", "2nd Jet Eta", " ", "Events" , log);
-  db->drawHisto("PhiSecondJet_2ndJetOK", "2nd Jet Phi", " ", "Events" , false);
+ db->drawHisto("ptSecondJet_2ndJetOK", "2nd Jet Transverse Momentum", "GeV", "Events", log);
+ db->drawHisto("EtaSecondJet_2ndJetOK", "2nd Jet Eta", " ", "Events" , log);
+ db->drawHisto("PhiSecondJet_2ndJetOK", "2nd Jet Phi", " ", "Events" , false);
 
-  db->drawHisto("MET_passedID", "Missing E_{T}", "GeV", "Events", log);
-  db->drawHisto("alpha_passedID", "#alpha", "", "Events", log);
+ db->drawHisto("MET_passedID", "Missing E_{T}", "GeV", "Events", log);
+ db->drawHisto("alpha_passedID", "#alpha", "", "Events", log);
 
   //db->drawHisto("etaPhot", "#eta", "", "", log);
 
@@ -273,13 +273,13 @@ int main(int argc, char* argv[]) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
   
     //cout << "after set_legendTitle" << endl << endl;
-  
+
     TString responseName = TString::Format("resp_balancing_%s", etaBinning.getBinName(i).c_str());
     db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response", "", "Events", log);
 
     // Raw jets
-    responseName = TString::Format("resp_balancing_raw_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response (raw jets)", "", "Events", log);
+    // responseName = TString::Format("resp_balancing_raw_%s", etaBinning.getBinName(i).c_str());
+    // db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response (raw jets)", "", "Events", log);
     
     //  -- federico    
     //Balancing Reco - Gen JET
@@ -296,26 +296,26 @@ int main(int argc, char* argv[]) {
 
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_eta0013", "Balancing Response", "", "Events", log);
-  db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", log);
+  // db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", log);
 
   // MPF
   db->setFolder("analysis/mpf");
   for (size_t i = 0; i < etaBinningSize; i++) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
-    
+   
     TString responseName = TString::Format("resp_mpf_%s", etaBinning.getBinName(i).c_str());
     db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response", "", "Events", log);
 
     // Raw jets
-    responseName = TString::Format("resp_mpf_raw_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response (raw ME_{T})", "", "Events", log);
+    // responseName = TString::Format("resp_mpf_raw_%s", etaBinning.getBinName(i).c_str());
+    // db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response (raw ME_{T})", "", "Events", log);
 
   }
   // Special case eta < 1.3
 
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", log);
-  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw ME_{T})", "", "Events", log);
+  // db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw ME_{T})", "", "Events", log);
 
   delete db;
   db = NULL;

@@ -1,0 +1,12 @@
+#!/bin/bash                                                                                                             
+                                                                                                                        
+export SCRAM_ARCH=slc6_amd64_gcc491                                                                                     
+                                                                                                                        
+cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-01-11/Data_vs_GJet_plus_QCD_Madgraph/AlphaCut020/    
+                                                                                                                        
+eval `scramv1 runtime -sh`                                                                                              
+                                                        
+../../../../drawPhotonJet_2bkg SinglePhoton_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 pf ak4 LUMI
+../../../../drawPhotonJetExtrap --type pf --algo ak4 SinglePhoton_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 
+../../../../draw_ratios_vs_pt SinglePhoton_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 pf ak4
+../../../../draw_all_methods_vs_pt SinglePhoton_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 GJet_plus_QCD_Madgraph_2016-01-11_alphacut020 pf ak4

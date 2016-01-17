@@ -2,6 +2,9 @@
 #include "fitTools.h"
 
 #include "TColor.h"
+#include "TMinuit.h"
+#include "TFitResult.h"
+#include "TMatrixDSym.h"
 #include "TRegexp.h"
 #include "TVirtualFitter.h"
 #include <iostream>
@@ -15,6 +18,8 @@
 #define LIGHT_RED TColor::GetColor(0xcf, 0xa0, 0xa1)
 #define BALANCING_COLOR TColor::GetColor(217, 91, 67)
 #define MPF_COLOR TColor::GetColor(192, 41, 66)
+
+bool MCComparison = false;
 
 drawBase::drawBase(const std::string& analysisType, const std::string& recoType, const std::string& jetAlgo, bool outputGraphs, const std::string& flags) {
 
@@ -371,11 +376,10 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
     // save vs pt info:
 
-    //giulia -- TO BE CHANGED --> Federico
     bool hasData = (lastHistos_data_.size() > 0);
     bool hasMC = (lastHistos_mc_.size() > 0);
-    //bool hasData = false;
-    //bool hasMC = true;
+    //  bool hasData = false;
+    //  bool hasMC = true;
     
     //giulia --- ?  
     // if(isEComp) hasMC=false;
@@ -556,7 +560,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   //  gr_resolutionGEN_vs_pt->SetName(graphName);
   //  gr_resolutionGEN_vs_pt->Write();
 
-  graphFile->Close();
+  //federico
+  //  graphFile->Close();
 
   
 //gStyle->SetPadTickX(1);
@@ -636,15 +641,38 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     gr_resp_ratio->SetMarkerSize(1.5);
     gr_resp_ratio->SetMarkerColor(kBlue - 6);
 
-    TF1* ratioFit = new TF1("ratioFit", "[0]", ptPhotMin, ptPhotMax);
+    //federico
+    graphName = TString::Format("%s_ratio_vs_pt", name.c_str());
+    gr_resp_ratio ->SetName(graphName);
+    gr_resp_ratio ->Write(); 
+    graphFile->Close();
+    
+    //federico : To change function for fit
+    TF1* ratioFit = new TF1("ratioFit", "[0]", ptPhotMin, ptPhotMax); //costant function
+    // TF1* ratioFit = new TF1("ratioFit", "[0]+[1]*log(x/200.)", ptPhotMin, ptPhotMax); //logaritmic function
     ratioFit->SetParameter(0, 0.);
+    // ratioFit->SetParameter(1, 0.);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(2);
-    gr_resp_ratio->Fit(ratioFit, "RQ");
-    //std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
-
+    TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
+    // std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
+    
+    //first method: stampa covariance matrix
+    //     int npar = 2;
+    //     TMatrixDSym mat(npar);
+    //     gMinuit->mnemat( mat.GetMatrixArray(), npar);
+    //     mat.Print();
+    
+    //second method: stampa covariance matrix && correlation matrix
+    // fitres->PrintCovMatrix(std::cout);
+    
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
+    //  double fitValue_1 = ratioFit->GetParameter(1);
+    //  double fitError_1 = ratioFit->GetParError(1);
+    // federico aggiunto parametro [1]
+    std::cout<<"Parameter [0] = "<< fitValue <<" #pm "<<fitError<< std::endl;
+    // std::cout<<"Parameter [1] = "<< fitValue_1 <<" #pm "<<fitError_1<<  std::endl;
 
     //TBox* errors = new TBox(ptPhotMin, fitValue - fitError, ptPhotMax, fitValue + fitError);
     //errors->SetFillColor(kBlue - 10);
@@ -656,14 +684,19 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     errors->SetFillColor(LIGHT_RED);
     errors->SetLineColor(46);
 
-    TPaveText* fitlabel = new TPaveText(0.55, 0.77, 0.88, 0.83, "brNDC");
+    //federico: aggiunta scritta dei parametri al plot
+    TPaveText* fitlabel = new TPaveText(0.55, 0.72, 0.88, 0.83, "brNDC");
     fitlabel->SetTextSize(0.08);
     fitlabel->SetFillColor(0);
-    TString fitLabelText = TString::Format("Fit: %.3f #pm %.3f", fitValue, fitError);
+    //    TString fitLabelText = TString::Format("Fit: %.3f #pm %.3f", fitValue, fitError);
+    //    TString fitLabelText = TString::Format("Fit: %.3f + %.3f *log(pT/200)", fitValue, fitValue_1);
+    TString fitLabelText = TString::Format("[0]: %.3f #pm %.3f", fitValue, fitError);
+    // TString fitLabelText_1 = TString::Format("[1]: %.3f #pm %.3f", fitValue_1, fitError_1);
     fitlabel->AddText(fitLabelText);
+    // fitlabel->AddText(fitLabelText_1);
     fitlabel->Draw("same");
 
-    std::cout << "Fit value  " << fitValue << " #pm " << fitError << std::endl;
+    //    std::cout << "Fit value  " << fitValue << " #pm " << fitError << std::endl;
 
     line_plus_resp->Draw("same");
     line_minus_resp->Draw("same");
@@ -671,12 +704,13 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     errors->Draw("e3 same");
     //ratioFit->Draw("same");
 
+    
     gr_resp_ratio->Draw("P same");
-
+    
     gPad->RedrawAxis();
-
+    
     pad_hi->cd();
-
+    
   } // if !nodata && !nomc
 
   TH2D* h2_axes = new TH2D("axes_again", "", 10, ptPhotMin, ptPhotMax, 10, 0.4, 1.25);
@@ -705,17 +739,41 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   legend->SetTextSize(legendTextSize_);
   if (! isMPF) {
     if (!noDATA) {
-      legend->AddEntry(gr_response_vs_pt, "Data (#gamma+Jet)", "P");
+      //federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(gr_response_vs_pt, "G+Jet MC", "P");
+	legend->AddEntry(gr_response_vs_pt, "Pythia Flat", "P");
+      }else{
+	legend->AddEntry(gr_response_vs_pt, "Data (#gamma+Jet)", "P");
+      }
     }
     if (!noMC) {
-      legend->AddEntry(gr_responseMC_vs_pt, "Simulation (#gamma+Jet)", "P");
+      // federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC", "P");
+	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph HT binned", "P");
+      }else{
+	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (#gamma+Jet)", "P");
+      }
     }
   } else {
     if (!noDATA) {
-      legend->AddEntry(gr_response_vs_pt, "Data (MPF)", "P");
+      //federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(gr_response_vs_pt, "G+Jet MC (MPF)", "P");
+	legend->AddEntry(gr_response_vs_pt, "Pythia (MPF)", "P");
+      }else{
+	legend->AddEntry(gr_response_vs_pt, "Data (MPF)", "P");
+      }
     }
     if (!noMC) {
-      legend->AddEntry(gr_responseMC_vs_pt, "Simulation (MPF)", "P");
+      // federico -- legend to MC  comparison     
+      if(MCComparison){
+	//	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC (MPF)", "P");
+	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph (MPF)", "P");
+      }else{
+	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (MPF)", "P");
+      }
     }
   }
   if (!noMC) {
@@ -975,9 +1033,6 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-//federico
-
 void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
 
 
@@ -1014,7 +1069,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     // prescaled region
     double oldScaleFactor = scaleFactor_;
     //    scaleFactor_ = -1;
-    //tolti qua federico
+    // federico
     // pt phot cut label
     //    TString labelPtPhot = TString::Format("%d < p_{T}^{#gamma} < %d GeV/c", (int) currentBin.first, (int) currentBin.second);
     //    drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
@@ -1176,7 +1231,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     gr_resp_ratio->SetMarkerSize(1.5);
     gr_resp_ratio->SetMarkerColor(kBlue - 6);
 
-    //federico -- try to change function  y = k --> y = mx +q --- NOT NOW
+    // fit with function  y = k --> y = mx +q 
     //    TF1* ratioFit = new TF1("ratioFit", "[0]+x*[1]", etaMin, etaMax);
     TF1* ratioFit = new TF1("ratioFit", "[0]", etaMin, etaMax);
     ratioFit->SetParameter(0, 0.);
@@ -1188,9 +1243,9 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
 
-    //federico -- per un possibile fit non costante al rapporto
+    //federico -- linear fit
     //    double fitValue_m = ratioFit->GetParameter(1);
-    // double fitError_m = ratioFit->GetParError(1);
+    //    double fitError_m = ratioFit->GetParError(1);
 
     //TBox* errors = new TBox(ptPhotMin, fitValue - fitError, ptPhotMax, fitValue + fitError);
     //errors->SetFillColor(kBlue - 10);
@@ -1361,19 +1416,14 @@ void drawBase::drawHisto(const std::string& name, const std::string& axisName, c
 
 
    drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
-   //Federico -> to draw without ratio
-   // drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, fitMin, fitMax);
-
 
 } //drawhisto
 
 void drawBase::drawHisto_fromTree(const std::string& treeName, const std::string& varName, const std::string& selection, int nBins, float xMin, float xMax, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& flags, const std::string& labelText, bool add_jetAlgoText) {
 
-
   // need this = true here. love these root features.
   TH1F::AddDirectory(kTRUE);
 
-  //Federico
   bool noDATA = false;
   bool noMC = false;
 
@@ -1474,9 +1524,6 @@ void drawBase::drawHisto_fromTree(const std::string& treeName, const std::string
 
 void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, std::vector<TH1*> mcHistos_superimp, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& flags, const std::string& labelText, bool add_jetAlgoText, bool drawRatio/* = true*/, double fitMin/* = 0*/, double fitMax/* = 8000*/) {
 
-
-  //giulia --- TO BE CHANGED --- NO DATA!
-  //Federico
   bool noDATA = false;
   bool noMC = false;
 
@@ -1737,15 +1784,39 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   legend->SetTextSize(legendTextSize_);
   for (unsigned i = 0; i < dataHistos.size(); ++i)
     if (dataFiles_[i].fillStyle != -1) {
-      legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "F");
+      // federico -- legend to MC  comparison  
+      if( MCComparison){
+	//	legend->AddEntry(dataHistos[i], "G+Jet", "F");
+	legend->AddEntry(dataHistos[i], "Pythia", "F");
+      }else{
+	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "F");
+      }
     } else {
-      legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "P");
+      //federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(dataHistos[i], "G+Jet MC", "P");
+	legend->AddEntry(dataHistos[i], "Pythia", "P");
+      }else{
+	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "P");
+      }
     }
   for (unsigned i = 0; i < mcHistos.size(); ++i)  {
     if (mcFiles_[i].markerStyle == -1) {
-      legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "F");
+      // federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(mcHistos[i], "QCD", "F");
+	legend->AddEntry(mcHistos[i], "Madgraph", "F");
+      }else{
+	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "F");
+      }
     } else {
-      legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "P");
+      //federico -- legend to MC  comparison  
+      if(MCComparison){
+	//	legend->AddEntry(mcHistos[i], "QCD", "F");
+	legend->AddEntry(mcHistos[i], "Madgraph", "F");
+      }else{
+	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "P");
+      }
     }
   }
   for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
@@ -1938,10 +2009,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   // Errors on MC
   for (uint32_t i = 1; i <= (uint32_t) mcHisto_sum->GetNbinsX(); i++) {
     float error = mcHisto_sum->GetBinError(i);
-    float entries = mcHisto_sum->GetBinContent(i);
-    float lumi_error = entries * 0.026; // Lumi error
 
-    float xsec_error = entries * 0.1;
+    //    float entries = mcHisto_sum->GetBinContent(i);
+    //    float lumi_error = entries * 0.026; // Lumi error
+    //    float xsec_error = entries * 0.1;
+    float lumi_error = 0;
+    float xsec_error = 0;
 
     mcHisto_sum->SetBinError(i, std::sqrt(error * error + lumi_error * lumi_error + xsec_error * xsec_error));
   }
@@ -3953,13 +4026,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   void drawBase::drawHisto_vs_vertex(std::vector<std::pair<int, int> > vertexBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
     
   bool isMPF = TString(name).Contains("mpf", TString::kIgnoreCase);
-  // Ignore bin between 3500 - 7000
-  //int number_of_plots = ptBins.size() - 1;
   int number_of_plots = vertexBins.size();
 
   std::string ptPhotMean_name = "ptPhotMean";
   std::string ptJetGenMean_name = "ptJetGenMean";
-
 
   TGraphErrors* gr_response_vs_pt = new TGraphErrors(0);
   gr_response_vs_pt->SetName("response_vs_pt");
@@ -4178,10 +4248,9 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   
 //gStyle->SetPadTickX(1);
 //gStyle->SetPadTickY(1);
-//giulia --- TO BE CHANGED -> Federico
   bool noDATA = (gr_response_vs_pt->GetN() == 0);
-  //bool noDATA = true;
   bool noMC = (gr_responseMC_vs_pt->GetN() == 0);
+  // bool noDATA = true;
 
   TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
   c1->cd();

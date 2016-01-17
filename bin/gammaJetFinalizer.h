@@ -132,12 +132,11 @@ class GammaJetFinalizer
     int checkTrigger(std::string& passedTrigger, float& weight);
 
     void cleanTriggerName(std::string& trigger);
-//new RD PU reweighting
-    void computePUWeight(const std::string& passedTrigger, int run_period);
-//old wrong S10 pu reweighting
-//    void computePUWeight(const std::string& passedTrigger);
+    // new RD PU reweighting
+    // void computePUWeight(const std::string& passedTrigger, int run_period);
+    void computePUWeight();
 
-    void computePUWeight_Fede(double ptPhot, int nvertex);
+    void computePUWeight_NVtxBased(double ptPhot, int nvertex);
     void computeTriggerWeight(double ptPhot, float& weight);
 
     template<typename T>

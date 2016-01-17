@@ -32,7 +32,7 @@ void setGraphStyle(TGraphErrors* graph, int markerStyle, int markerColor, int ma
 }
 
 bool SAVE_EPS = false;
-bool SAVE_PDF = true;
+bool SAVE_PDF = false;
 bool SAVE_PNG = true;
 bool SAVE_ROOT = false;
 void saveCanvas(TCanvas* canvas, const std::string& name) {

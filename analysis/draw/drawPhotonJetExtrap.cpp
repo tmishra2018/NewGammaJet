@@ -79,13 +79,17 @@ int main(int argc, char* argv[]) {
     else
       algoType = recoType + jetAlgo;
 
-    if (recoType == "JPT" && jetAlgo == "AK5")
+    if (recoType == "JPT" && jetAlgo == "AK4")
       algoType = "jptak4";
 
     //std::string mcFlags = (useGenJets) ? "GENJETS_" + flags : flags;
 
+    //debugging
+    //    if(typeArg.getValue() == "pf") std::cout<< "typeARG GIUSTO" << std::endl; 
+    //    if(recoType == "PFlow") std::cout<< "recoType GIUSTO" << std::endl; 
+
     drawExtrap* db = new drawExtrap("PhotonJet", recoType, jetAlgo, true);
-    db->set_pdf_aussi(true);
+    db->set_pdf_aussi(false);
     db->set_isCMSArticle(false);
 
     db->set_FITRMS(resoArg.getValue());
@@ -192,13 +196,13 @@ int main(int argc, char* argv[]) {
       db->set_legendTitle(etaBinning.getBinTitle(i)); 
 
       db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), false);
-      db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), true);
+      // db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), true);
     }
 
     //special case
     db->set_legendTitle("|#eta| < 1.3");
     db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
-    db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", true);
+    // db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", true);
 
     delete db;
   } catch (TCLAP::ArgException &e) {

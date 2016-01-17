@@ -42,8 +42,8 @@ process.ak4PFchsL1FastL2L3 = cms.ESProducer(
     correctors = cms.vstring('ak4PFchsL1Fastjet', 'ak4PFchsL2Relative','ak4PFchsL3Absolute')
     )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) ) # run only on # events
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) ) # run only on # events
 
 from FWCore.ParameterSet.VarParsing import VarParsing
 #readFiles = cms.untracked.vstring(
@@ -56,8 +56,9 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
-      #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
+        #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
         'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_file1_ReReco.root'
+       # 'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/QCD_MC/QCD_file1_ReReco.root'
       )
     )
 
@@ -173,6 +174,7 @@ process.out.outputCommands = cms.untracked.vstring('keep *',
 
 process.TFileService = cms.Service("TFileService",
 # federico
+#          fileName = cms.string("output_singleFile_QCD.root") # run in local
           fileName = cms.string("output_singleFile_GJet.root") # run in local
 #       fileName = cms.string(THISROOTFILE) # run with crab
     )

@@ -6,7 +6,7 @@ import argparse
 import datetime 
 import re
 
-usage = "usage: python createAndSubmitMC.py -d Output_PHYS14 -v qq_RSG_gg_pu20bx25_TagXXX -i Inputs/InputList_qq_RSG_gg_pu20bx25_TagXXX.txt -t Inputs/crab3_template.py -c ../runFilter_MC.py --submit"
+usage = "Usage: python createAndSubmitMC.py -d Output_Run2 -v qq_RSG_gg_pu20bx25_TagXXX -i Inputs/InputList_XXX.txt -t Inputs/crab3_template_mc.py -c ../runFilter_MC.py --submit"
 print usage
 
 parser = argparse.ArgumentParser(description='Process options.')
@@ -99,7 +99,8 @@ for line in ins:
       "THISROOTFILE":"\""+sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root"+"\"",
       "THISGLOBALTAG":"\""+globaltag+"\"",
       "WORKINGAREA":storagedir+"/"+namedir+"/workdir", 
-      "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3], 
+#      "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3], 
+      "WORKINGDIR":sample, 
       "CMSSWCFG":storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py",
       "OUTFILENAME":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
       "INPUTDATASET":dataset,
