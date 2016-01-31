@@ -116,7 +116,7 @@ print("\tPt hat max: %f" % ptHatMax)
 
 process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 isMC = cms.untracked.bool(True),
-                                photons = cms.untracked.InputTag("slimmedPhotons"),
+#                                photons = cms.untracked.InputTag("slimmedPhotons"),
                                 firstJetPtCut = cms.untracked.bool(False),
                                 
                                 crossSection = cms.double(crossSection),
@@ -131,8 +131,20 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
                                 phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
                                 phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
-                                prescales = cms.InputTag("patTrigger"),
-                                
+                                prescalesTag = cms.InputTag("patTrigger"),
+                                triggerResultsTag = cms.InputTag("TriggerResults", "", "HLT"),  
+                                generatorTag = cms.InputTag("generator"),  
+                                vertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),  
+                                photonsTag = cms.InputTag("slimmedPhotons"),
+                                jetsTag = cms.InputTag("slimmedJets"),
+                                jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
+                                metTag = cms.InputTag("slimmedMETs"),
+                                electronsTag = cms.InputTag("slimmedElectrons"),
+                                muonsTag = cms.InputTag("slimmedMuons"),
+                                rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
+                                PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
+                                pfCands = cms.InputTag("packedPFCandidates"),                                                                                               
+
                                 runOnNonCHS   = cms.untracked.bool(False),
                                 runOnCHS      = cms.untracked.bool(True),
                                 
@@ -149,8 +161,6 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 #correctorLabel = cms.untracked.string("ak4PFResidual")
                                 
                                 # MET
-                                #federico
-                                pfCands = cms.InputTag("packedPFCandidates"),
                                 redoTypeIMETCorrection = cms.untracked.bool(True),
                                 doFootprintMETCorrection = cms.untracked.bool(True)
                                 )

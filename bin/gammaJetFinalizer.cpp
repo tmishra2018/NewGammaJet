@@ -104,11 +104,11 @@ void GammaJetFinalizer::runAnalysis() {
     // PU Reweighting 
     static std::string cmsswBase = getenv("CMSSW_BASE");
     static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
-    //  static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8
+    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8
     //  static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJET -- madgraph+pythia
     //  static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD pythia
     //  static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
-    static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
+    //    static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
     static std::string puData = TString::Format("%s/pu_truth_data2015_50bins.root", puPrefix.c_str()).Data();
     reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData, puMC));
     // Trigger
@@ -705,19 +705,21 @@ void GammaJetFinalizer::runAnalysis() {
   // Loop -- from = 0, to = totalEvents
   for (uint64_t i = from; i < to; i++) {     
 
-    //    if( i < 3682580) continue;
 
+    //test bug
+    //    if( i < 2885744) continue;
+    
     if ((i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
       double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
       start = end;
       std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
     }
-
+    
     //bug in crab outputs -- skip events with bugs on 50/25 ns
-    // if( mIsMC ){ // bug in GJET Pythia
-    //   if ( i == 820435 || i == 1924389 || i == 3477803 || i == 3547839 || i == 3682580 ) continue;
-    // }
+    if( mIsMC ){ // bug in GJET Pythia
+      if ( i == 1833416 || i == 2885744) continue;
+    }
     // No events skipped for GJet Madgraph
     
     if (EXIT) {
@@ -766,8 +768,8 @@ void GammaJetFinalizer::runAnalysis() {
     // if you want analyze a run range
     //    if( analysis.run <260533 || analysis.run >260627 ) continue;
 
-    // skippa all events -- usefull to check the crab output
-    // if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
+    // skipp all events -- usefull to check the crab output
+    //    if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
 
     if (! photon.is_present || ! firstJet.is_present)
       continue;

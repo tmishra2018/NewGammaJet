@@ -1,0 +1,1 @@
+/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM 1 1 0 10000 10 76X_mcRun2_asymptotic_v12

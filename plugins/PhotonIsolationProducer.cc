@@ -168,7 +168,7 @@ void PhotonIsolationProducer::produce(edm::Event& iEvent, const edm::EventSetup&
   edm::Handle<pat::METCollection> rawMets;
   //  iEvent.getByLabel(std::string("patPFMet" + ((*it == "AK5Calo") ? "" : *it)), rawMets);
   iEvent.getByLabel(std::string("slimmedMETs"), rawMets);
-  const pat::MET& rawMet = rawMets->at(0);
+  //  const pat::MET& rawMet = rawMets->at(0);
 
   // First, conversion safe electron veto
   edm::Handle<reco::BeamSpot> bsHandle;

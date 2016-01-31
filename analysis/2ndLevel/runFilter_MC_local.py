@@ -22,7 +22,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 #process.GlobalTag.globaltag = cms.string("PHYS14_25_V2::All")
 # federico
-process.GlobalTag.globaltag = cms.string("74X_mcRun2_asymptotic_v2") # run in local
+process.GlobalTag.globaltag = cms.string("76X_mcRun2_asymptotic_v12") # run in local
 #process.GlobalTag.globaltag = cms.string(THISGLOBALTAG) #run with crab
 
 
@@ -42,8 +42,8 @@ process.ak4PFchsL1FastL2L3 = cms.ESProducer(
     correctors = cms.vstring('ak4PFchsL1Fastjet', 'ak4PFchsL2Relative','ak4PFchsL3Absolute')
     )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) ) # run only on # events
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) ) # run only on # events
 
 from FWCore.ParameterSet.VarParsing import VarParsing
 #readFiles = cms.untracked.vstring(
@@ -57,7 +57,7 @@ process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
         #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
-        'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_MC/GJet_file1_ReReco.root'
+        'file:../tuples/GJET_Pythia/GJet_file1_76X.root'
        # 'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/QCD_MC/QCD_file1_ReReco.root'
       )
     )
@@ -111,7 +111,7 @@ print("\tPt hat max: %f" % ptHatMax)
 
 process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 isMC = cms.untracked.bool(True),
-                                photons = cms.untracked.InputTag("slimmedPhotons"),
+#                                photons = cms.untracked.InputTag("slimmedPhotons"),
                                 firstJetPtCut = cms.untracked.bool(False),
                                 
                                 crossSection = cms.double(crossSection),
@@ -126,8 +126,20 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
                                 phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
                                 phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"), 
-                                prescales = cms.InputTag("patTrigger"),  
-                                                               
+                                prescalesTag = cms.InputTag("patTrigger"),  
+                                triggerResultsTag = cms.InputTag("TriggerResults", "", "HLT"),  
+                                generatorTag = cms.InputTag("generator"),  
+                                vertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),  
+                                photonsTag = cms.InputTag("slimmedPhotons"),
+                                jetsTag = cms.InputTag("slimmedJets"),
+                                jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
+                                metTag = cms.InputTag("slimmedMETs"),
+                                electronsTag = cms.InputTag("slimmedElectrons"),
+                                muonsTag = cms.InputTag("slimmedMuons"),
+                                rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
+                                PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
+                                pfCands = cms.InputTag("packedPFCandidates"),                                                               
+
                                 runOnNonCHS   = cms.untracked.bool(False),
                                 runOnCHS      = cms.untracked.bool(True),
                                 
@@ -137,16 +149,14 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 runOnCaloAK4  = cms.untracked.bool(False),
                                 runOnCaloAK8  = cms.untracked.bool(False),
                                 
-                                # JEC  --- federico
+                                # JEC
                                 doJetCorrection = cms.untracked.bool(True),
                                 correctJecFromRaw = cms.untracked.bool(True),
                                 correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3"),
                                 #correctorLabel = cms.untracked.string("ak4PFResidual")
                                 
                                 # MET
-                                #federico
-                                pfCands = cms.InputTag("packedPFCandidates"),
-                                redoTypeIMETCorrection = cms.untracked.bool(False),
+                                redoTypeIMETCorrection = cms.untracked.bool(True),
                                 doFootprintMETCorrection = cms.untracked.bool(True)                             
                )
 

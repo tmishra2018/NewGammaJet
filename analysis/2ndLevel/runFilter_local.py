@@ -19,8 +19,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 #process.load("Configuration/StandardSequences/GeometryDB_cff")
 #process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)) # all events
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000)) # 5000 events
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)) # all events
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000)) # 5000 events
 ###################################### Run on AOD instead of MiniAOD? ########
 runOnAOD = False #Federico
 ###################################### Run on RECO instead of MiniAOD? ########
@@ -34,7 +34,7 @@ process.source = cms.Source("PoolSource",
 #    'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/AOD/PromptReco-v1/000/246/865/00000/E69D98C7-150B-E511-9118-02163E014206.root' #AOD
       #'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/865/00000/3296E66B-160B-E511-AD26-02163E013395.root' #RECO
 #    'file:Express_AOD_1.root' # AOD
-   'file:../tuples/Data/SinglePhoton_file1_ReReco.root'  #Express_miniAOD.root' # miniAOD
+   'file:../tuples/Data/SinglePhoton_file1_76X.root'  #Express_miniAOD.root' # miniAOD
 #      THISINPUTFILE
       )
     )
@@ -211,7 +211,7 @@ if runOnRECO:
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, THISGLOBALTAG, '')
-process.GlobalTag.globaltag = cms.string("74X_dataRun2_Prompt_v2")
+process.GlobalTag.globaltag = cms.string("76X_dataRun2_v15")
 #process.GlobalTag.globaltag = cms.string("GR_P_V56")
 #process.GlobalTag = GlobalTag(process.GlobalTag, "GR_P_V56", '')
 
@@ -311,9 +311,21 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
      phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
      phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
      phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
-     prescales = cms.InputTag("patTrigger"),
+     prescalesTag = cms.InputTag("patTrigger"),
+     triggerResultsTag = cms.InputTag("TriggerResults", "", "HLT"),  
+     generatorTag = cms.InputTag("generator"),  
+     vertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),  
+     photonsTag = cms.InputTag("slimmedPhotons"),
+     jetsTag = cms.InputTag("slimmedJets"),
+     jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
+     metTag = cms.InputTag("slimmedMETs"),
+     electronsTag = cms.InputTag("slimmedElectrons"),
+     muonsTag = cms.InputTag("slimmedMuons"),
+     rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
+     PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
+     pfCands = cms.InputTag("packedPFCandidates"),                                                               
    
-    # JEC
+     # JEC
     doJetCorrection = cms.untracked.bool(True),
     correctJecFromRaw = cms.untracked.bool(True),
 #    correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3"), #federico
@@ -321,8 +333,6 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
     #correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3Residual"),
 
     # MET
-     #federico
-     pfCands = cms.InputTag("packedPFCandidates"),
     redoTypeIMETCorrection = cms.untracked.bool(True),
     doFootprintMETCorrection = cms.untracked.bool(True)
 

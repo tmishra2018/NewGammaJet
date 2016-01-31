@@ -2,8 +2,8 @@
 
 export SCRAM_ARCH=slc6_amd64_gcc491
 
-cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data
+cd /cmshome/fpreiato/GammaJet/CMSSW_7_6_3_patch2/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data
 
 eval `scramv1 runtime -sh`
 
-gammaJetFinalizer -i PhotonJet_2ndLevel_SinglePhoton__Run2015D_2016-01-11.root -d SinglePhoton_2016-01-11_alphacut015 --type pf --algo ak4 --chs --alpha 0.15
+gammaJetFinalizer -i PhotonJet_2ndLevel_SinglePhoton__Run2015D_2016-01-19.root -d SinglePhoton_2016-01-19_alphacut015 --type pf --algo ak4 --chs --alpha 0.15
