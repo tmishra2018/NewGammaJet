@@ -143,7 +143,7 @@ python mergeData.py -i [list_to_merge.txt] -o [output_directory] --lumi_tot [int
 You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+.
 Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'.
 
-=== Step 2 - PileUp reweighting
+=== Step 2 - PileUp
 
 The MC is reweighting according to data, based on the number of vertices in the event, in order to take into account differences between simulation and data scenario wrt PU.
 All the utilities to do that are available in the folder 'analysis/PUReweighting'.
