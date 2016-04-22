@@ -1,1 +1,0 @@
-/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 20 30 10 74X_mcRun2_asymptotic_v2
