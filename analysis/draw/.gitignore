@@ -1,9 +1,10 @@
-drawPhotonJet_2bkg
-drawPhotonJetExtrap
-draw_ratios_vs_pt
-draw_all_methods_vs_pt
-draw_vs_run
-draw_vs_npv
-draw_new_extrap
 drawEnergyFractions
+drawPhotonJetExtrap
+drawPhotonJet_2bkg
+drawPhotonJet_2bkg_NOData
+draw_all_methods_vs_pt
+draw_new_extrap
+draw_ratios_vs_pt
+draw_vs_npv
+draw_vs_run
 Plot
