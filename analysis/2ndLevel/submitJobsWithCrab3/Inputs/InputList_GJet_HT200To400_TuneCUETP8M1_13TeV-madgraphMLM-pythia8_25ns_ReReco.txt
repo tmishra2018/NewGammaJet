@@ -1,2 +1,0 @@
-/GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
-
