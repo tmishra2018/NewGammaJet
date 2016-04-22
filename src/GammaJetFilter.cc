@@ -16,7 +16,6 @@ Implementation:
 //
 //
 
-
 // system include files
 #include <cmath>
 #include <cstdio>
@@ -181,13 +180,6 @@ private:
 
   std::vector<std::string> mJetCollections;
   std::map<std::string, JetInfos> mJetCollectionsData;
-
-  // Input Tags
-  //  edm::InputTag mPhotonsIT;
-  //  edm::InputTag mJetsAK4PFlowIT;
-  //  edm::InputTag mJetsAK8PFlowIT;
-  //  edm::InputTag mJetsAK4CaloIT;
-  //  edm::InputTag mJetsAK8CaloIT;
   
   // federico -- Photon variables computed upstream in a special producer
   //    edm::EDGetTokenT<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMapToken_; // from rel73 ok in photon class
@@ -207,7 +199,6 @@ private:
   edm::EDGetTokenT<pat::MuonCollection> muonsToken_;
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> PUInfoToken_;
-
   
   // Events Counter
   int Event_Initial =0 ;
@@ -241,7 +232,7 @@ private:
   
   double mPtHatMin;
   double mPtHatMax;
-
+  
   std::vector<double>  NEvent_vec;
   std::vector<double>  R_min_vec;
   std::vector<double>  R_max_vec;
@@ -388,21 +379,31 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
 				  (iConfig.getParameter<edm::InputTag>("phoNeutralHadronIsolation"))),
   phoPhotonIsolationToken_(consumes <edm::ValueMap<float> >
 			   (iConfig.getParameter<edm::InputTag>("phoPhotonIsolation"))),
-  // trigger prescale
-  triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("prescalesTag"))),
+  triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>
+			 (iConfig.getParameter<edm::InputTag>("prescalesTag"))),
   triggerResultsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsTag"))),
-  // packed PF candidate
-  pfToken_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCands"))),
-  generatorToken_(consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("generatorTag"))),
-  vertexToken_(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertexTag"))),
-  photonsToken_(consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonsTag"))),
-  jetsToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jetsTag"))),
-  jetsAK8Token_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jetsAK8Tag"))),
-  metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("metTag"))),
-  electronsToken_(consumes<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronsTag"))),
-  muonsToken_(consumes<pat::MuonCollection>(iConfig.getParameter<edm::InputTag>("muonsTag"))),
-  rhoToken_(consumes<double>(iConfig.getParameter<edm::InputTag>("rhoTag"))),
-  PUInfoToken_(consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("PUInfoTag")))
+  pfToken_(consumes<pat::PackedCandidateCollection>
+	   (iConfig.getParameter<edm::InputTag>("pfCands"))),
+  generatorToken_(consumes<GenEventInfoProduct>
+		  (iConfig.getParameter<edm::InputTag>("generatorTag"))),
+  vertexToken_(consumes<reco::VertexCollection>
+	       (iConfig.getParameter<edm::InputTag>("vertexTag"))),
+  photonsToken_(consumes<pat::PhotonCollection>
+		(iConfig.getParameter<edm::InputTag>("photonsTag"))),
+  jetsToken_(consumes<pat::JetCollection>
+	     (iConfig.getParameter<edm::InputTag>("jetsTag"))),
+  jetsAK8Token_(consumes<pat::JetCollection>
+		(iConfig.getParameter<edm::InputTag>("jetsAK8Tag"))),
+  metToken_(consumes<pat::METCollection>
+	    (iConfig.getParameter<edm::InputTag>("metTag"))),
+  electronsToken_(consumes<pat::ElectronCollection>
+		  (iConfig.getParameter<edm::InputTag>("electronsTag"))),
+  muonsToken_(consumes<pat::MuonCollection>
+	      (iConfig.getParameter<edm::InputTag>("muonsTag"))),
+  rhoToken_(consumes<double>
+	    (iConfig.getParameter<edm::InputTag>("rhoTag"))),
+  PUInfoToken_(consumes<std::vector<PileupSummaryInfo>>
+	       (iConfig.getParameter<edm::InputTag>("PUInfoTag")))
 {
   
   mIsMC = iConfig.getUntrackedParameter<bool>("isMC", "false");
@@ -415,32 +416,33 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   //   RegressionCorrector = new EnergyScaleCorrection_class(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/22Jan2012-runDepMCAll_v3-noR9shift-step8-invMass_SC_regrCorrSemiParV5_pho-loose-Et_20-trigger-noPF-HggRunEtaR9Et.dat").fullPath(),"");
   //  }
   //
+
   // Load the corrections files
   if (! mIsMC) { // DATA
     mJSONFile  = iConfig.getParameter<std::string>("json");
     mCSVFile    = iConfig.getParameter<std::string>("csv");
     mFilterData = iConfig.getUntrackedParameter<bool>("filterData", true);
-    // Create the JetCorrectorParameter objects, the order does not matter.
-    
-    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L3Absolute_AK4PFchs.txt").fullPath());    
-    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L2Relative_AK4PFchs.txt").fullPath());
+
+    // Create the JetCorrectorParameter objects, the order does not matter.   
     JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L2Relative_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L3Absolute_AK4PFchs.txt").fullPath());    
+    
     // for Type-I MET --- To use RC instead FastJet
     JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1RC_AK4PFchs.txt").fullPath());
-    // L2Residual 
-    JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25ns_COMB_LOGLIN_L2Residual_v2_AK4PFchs_nokFSR.txt").fullPath());
-    // L2L3Residual
-    // JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1M1_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
-
-    // Residual corrections for the closure test --- only for data
-    //    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV3M3_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
     
+    // Only L2Residual 
+    //    JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25ns_COMB_LOGLIN_L2Residual_v2_AK4PFchs_nokFSR.txt").fullPath());
+
+    // L2L3Res: Residual corrections for the closure test --- only for data
+    // JetCorrectorParameters *ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1M1_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
+        
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!    
     vPar.push_back(*L1JetPar);
     vPar.push_back(*L2JetPar);
     vPar.push_back(*L3JetPar);
-    vPar.push_back(*L2ResJetPar);
-    //vPar.push_back(*ResJetPar); //comment if you dont want residuals
+    // vPar.push_back(*L2ResJetPar);
+    // vPar.push_back(*ResJetPar); //comment if you dont want residuals
     jetCorrector = new FactorizedJetCorrector(vPar);
     //vPar for typeI -- only RC
     vParTypeI.push_back(*L1JetParForTypeI);
@@ -458,19 +460,21 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     delete L3JetPar;
     delete L2JetPar;
     delete L1JetPar;
-    delete L2ResJetPar;
-    //delete ResJetPar;
+    // delete L2ResJetPar;
+    // delete ResJetPar;
     delete L1JetParForTypeI;
     delete L1FastJet_PF;
     delete L1RC_PF;
-  } else {  // MC
-    // Create the JetCorrectorParameter objects, the order does not matter.
+  } 
+  else {  // MC
 
-    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L3Absolute_AK4PFchs.txt").fullPath());    
-    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L2Relative_AK4PFchs.txt").fullPath());
-    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1FastJet_AK4PFchs.txt").fullPath());
+    // Create the JetCorrectorParameter objects, the order does not matter.
+    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Spring16_25nsV1_MC_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Spring16_25nsV1_MC_L2Relative_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Spring16_25nsV1_MC_L3Absolute_AK4PFchs.txt").fullPath());    
+    
     // For Type-I --- To use RC instead FastJet
-    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
 
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vPar.push_back(*L1JetPar);
@@ -497,13 +501,10 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     delete L1FastJet_PF;
     delete L1RC_PF;
   }
-  
-  //  mPhotonsIT = iConfig.getUntrackedParameter<edm::InputTag>("photons", edm::InputTag("slimmedPhotons"));
+
+  //  mJetsAK4CaloIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK4Calo", edm::InputTag("selectedPatJets"));
+  //  mJetsAK8CaloIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK8Calo", edm::InputTag("selectedPatJetsCaloAK8"));  
   mCorrPhotonWRegression = iConfig.getUntrackedParameter<bool>("doPhotonRegression", false);
-  //  mJetsAK4PFlowIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK4PFlow", edm::InputTag("slimmedJets"));
-  //  mJetsAK8PFlowIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK8PFlow", edm::InputTag("slimmedJetsAK8"));
-  //mJetsAK4CaloIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK4Calo", edm::InputTag("selectedPatJets"));
-  //mJetsAK8CaloIT = iConfig.getUntrackedParameter<edm::InputTag>("jetsAK8Calo", edm::InputTag("selectedPatJetsCaloAK8"));
   mDoJEC         = iConfig.getUntrackedParameter<bool>("doJetCorrection", false);
   mRedoTypeI     = iConfig.getUntrackedParameter<bool>("redoTypeIMETCorrection", false);
   mDoFootprint     = iConfig.getUntrackedParameter<bool>("doFootprintMETCorrection", false);
@@ -546,7 +547,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   mMuonsTree = fs->make<TTree>("muons", "muons tree");
   mElectronsTree = fs->make<TTree>("electrons", "electrons tree");
   //federico
-  mPhotonStudy = fs->make<TTree>("photonStudy", "photon Study tree");
+  //  mPhotonStudy = fs->make<TTree>("photonStudy", "photon Study tree");
 
   mTotalLuminosity = fs->make<TParameter<double> >("total_luminosity", 0.);
   
@@ -574,7 +575,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
       mJetCollections.push_back("PFlowAK8");
       mJetCollectionsData["PFlowAK8"] = {AK8, jetsAK8Token_};
     }
-  }
+  }// non CHS
   
   if (runOnCHS) {
     if (runOnPFAK4) {
@@ -585,7 +586,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
       mJetCollections.push_back("PFlowAK8chs");
       mJetCollectionsData["PFlowAK8chs"] = {AK8, jetsAK8Token_};
     }
-  }
+  } // on CHS
   
   if (runOnCaloAK4) {
     std::cout<<"CaloJetAK4 Not implemented"<<std::endl;
@@ -662,7 +663,6 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   }
 }
 
-
 GammaJetFilter::~GammaJetFilter()
 {
   
@@ -736,8 +736,6 @@ void GammaJetFilter::updateBranchArray(TTree* tree, void* address, const std::st
 //
 // member functions
 //
-
-
 // ------------ method called on each new Event  ------------
 bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
@@ -785,8 +783,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   const reco::Vertex& primaryVertex = vertices->at(0);
 
-  int nPV = vertices->size();
-
+  //  int nPV = vertices->size();
   //  std::cout<< "Nvertex = "<< nPV<<std::endl;
  
   EventCounter -> AddBinContent(3, generatorWeight );
@@ -807,8 +804,8 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   // Necessery collection for calculate sigmaIPhiIPhi
   // 2011 Photon ID
-  edm::ESHandle<CaloTopology> topology;
-  iSetup.get<CaloTopologyRecord>().get(topology);
+  //  edm::ESHandle<CaloTopology> topology;
+  //  iSetup.get<CaloTopologyRecord>().get(topology);
   
   edm::Handle<pat::PhotonCollection> photons; //handle for pat::photonref
   iEvent.getByToken( photonsToken_, photons);
@@ -930,11 +927,9 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     // MET
     edm::Handle<pat::METCollection> metsHandle;
-    // iEvent.getByLabel(edm::InputTag("slimmedMETs"), metsHandle);
     iEvent.getByToken( metToken_, metsHandle);
     
     edm::Handle<pat::METCollection> rawMetsHandle;
-    // iEvent.getByLabel(edm::InputTag("slimmedMETs"),  rawMetsHandle);
     iEvent.getByToken( metToken_,  rawMetsHandle);
     
     pat::METCollection mets = *metsHandle;
@@ -943,13 +938,12 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     pat::METCollection rawMets = *rawMetsHandle;
     pat::MET& rawMet = rawMets[0];
      
-    //    std::cout<<"FINO A QUA FUNZIONA"<<std::endl;
 
     if (mDoJEC || mRedoTypeI) { // authomatic done if mDoJEC is done
       if (mDoFootprint) {
 	correctMETWithFootprintAndTypeI(rawMet, met, jets, iEvent, photon);
       } else {
-	if (mCorrPhotonWRegression) { // regression done nothing
+	if (mCorrPhotonWRegression) { // regression does nothing
 	  correctMETWithRegressionAndTypeI(rawMet, met, jets, iEvent, photon, GoodphotonRef);
 	} else {
 	  correctMETWithTypeI(rawMet, met, jets, iEvent, photon);
@@ -979,7 +973,6 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   // Number of vertices for pu reweighting
   edm::Handle<std::vector<PileupSummaryInfo> > puInfos;
-  //  iEvent.getByLabel(edm::InputTag("slimmedAddPileupInfo"), puInfos);
   iEvent.getByToken( PUInfoToken_  , puInfos);
   
   float nTrueInteractions = -1;
@@ -990,8 +983,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   EventNumber_t event = eventId.event();
   RunNumber_t run = eventId.run();
   LuminosityBlockNumber_t lumiBlock = eventId.luminosityBlock();
-  
-  
+    
   if (mIsMC) {
     /* // old stuff -- do the same thing
        for (std::vector<PileupSummaryInfo>::const_iterator it = puInfos->begin(); it != puInfos->end();
@@ -1009,7 +1001,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
        }*/ 
     nTrueInteractions = puInfos->at(1).getTrueNumInteractions();
   } else {
-    // updated and saved in the 2nd step (from file)
+    // for Data: recipe to get the PU info
     nTrueInteractions = -1;
   }
   
@@ -1026,7 +1018,6 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   // Triggers
   edm::Handle<edm::TriggerResults> triggerResults;
-  //  iEvent.getByLabel(edm::InputTag("TriggerResults", "", "HLT"), triggerResults);
   iEvent.getByToken( triggerResultsToken_, triggerResults);
   
   edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
@@ -1079,18 +1070,16 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   photonToTree(GoodphotonRef, photon, iEvent);
   
-  photonStudy(&photon, iEvent, nPVGood, nPV);
-
-
+  // federico
+  //  photonStudy(&photon, iEvent, nPVGood, nPV);
+  
   // Electrons
   edm::Handle<pat::ElectronCollection> electrons;
-  //  iEvent.getByLabel("slimmedElectrons", electrons);
   iEvent.getByToken( electronsToken_, electrons);
   electronsToTree(electrons, primaryVertex);
   
   // Muons
   edm::Handle<pat::MuonCollection> muons;
-  //  iEvent.getByLabel("slimmedMuons", muons);
   iEvent.getByToken( muonsToken_, muons);
   muonsToTree(muons, primaryVertex);
   
@@ -1409,7 +1398,6 @@ void GammaJetFilter::correctJets(pat::JetCollection& jets, edm::Event& iEvent, c
     //    std::cout<<"correctJets: jetToRAW.pt() = "<< jet.pt()<<std::endl;
     // NOW: corrections from txt file for both DATA and MC
     edm::Handle<double> rho_;
-    //    iEvent.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
     iEvent.getByToken( rhoToken_, rho_);
     jetCorrector->setJetEta(jet.eta());
     jetCorrector->setJetPt(jet.pt());
@@ -1431,10 +1419,9 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   
   // std::cout<< " Correct MET only Type I "<< std::endl; 
 
-  //  rawMet.setP4(reco::Candidate::PolarLorentzVector(met.uncorrectedPt(), met.eta(), met.uncorrectedPhi(), met.uncorrectedSumEt() ) );
   rawMet.setP4(reco::Candidate::PolarLorentzVector(met.uncorPt(), met.eta(), met.uncorPhi(), met.uncorSumEt() ) ); //new release
 
-  //  std::cout<< "Met components:  "<< met.uncorPt() << "  " << met.eta() << " " << met.uncorPhi() << " " << met.uncorSumEt() << std::endl;
+  // std::cout<< "Met components:  "<< met.uncorPt() << "  " << met.eta() << " " << met.uncorPhi() << " " << met.uncorSumEt() << std::endl;
 
   double deltaPx = 0., deltaPy = 0.;
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4
@@ -1448,7 +1435,6 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
       double corrs = 1.;
       double corrsForTypeI = 1.;
       edm::Handle<double> rho_;
-      //      event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
       event.getByToken( rhoToken_, rho_);
       
       jetCorrectorForTypeI->setJetEta(rawJet->eta());
@@ -1471,7 +1457,7 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
 
       double dR = reco::deltaR(photon, jet);
       //      if (jet.pt() > 10) {
-      if(jet.pt() > 10 && dR > 0.25) { // va bene     
+      if(jet.pt() > 10 && dR > 0.25) {
 	
 	//	double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
 	//	if (emEnergyFraction > 0.90)
@@ -1496,9 +1482,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   edm::Handle<pat::PackedCandidateCollection> pfs;
   event.getByToken(pfToken_, pfs);
   
-  //  std::cout<<"2) FINO A QUA FUNZIONA"<<std::endl;
-
-  float FootprintMEx = 0;
+   float FootprintMEx = 0;
   float FootprintMEy = 0;
   // std::cout<< " Inizialization "<< std::endl; 
   // std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
@@ -1541,10 +1525,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   rawMet.setP4(reco::Candidate::LorentzVector(FootprintMEx, FootprintMEy, 0., FootprintMEPt));
 
   //  std::cout<<"raw MET "<< rawMet.et() <<std::endl;
-  //  std::cout<<"3) FINO A QUA FUNZIONA"<<std::endl;
 
-  //  std::cout<< " rawMet.et "<< rawMet.et() << std::endl;   
-  
   /////////////// Propagate the JEC to MET 
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4
   
@@ -1552,43 +1533,19 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
 
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) { 
     
-    //    std::cout<<"111) QUI"<<std::endl;
-
-    //    std::cout<<"it->pt() "<<it->pt()<<std::endl;
-
-    //    if( !it->hasUserData("rawJet") ){
-      //  std::cout<<"OK"<<std::endl;
-      //  }else{
-    //      std::cout<<"rawJet Not exist"<<std::endl;   
-    //    }
-    
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
 
-    //    std::cout<<"correctMETWithFootprint: rawJet.pt() = "<< rawJet->pt()<<std::endl;
-
-    //    const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
-    // const pat::Jet& rawJet = *it->userData<pat::Jet>("rawJet");    
-    //    const pat::Jet& rawJet = *it->userData("rawJet");    
-    //    std::cout<<"rawJet->pt() = "<< rawJet.pt()<< std::endl;
-
-    //  }// federico
-    
     double corrs = 1.;
     double corrsForTypeI = 1.;
     edm::Handle<double> rho_;
-    //    event.getByLabel(edm::InputTag("fixedGridRhoFastjetAll"), rho_);
     event.getByToken( rhoToken_, rho_);
 
-    //    std::cout<<"rho_ = "<< *rho_<< std::endl;
-    
     jetCorrectorForTypeI ->setJetEta(rawJet->eta());
     jetCorrectorForTypeI ->setJetPt(rawJet->pt());
     jetCorrectorForTypeI ->setJetA(rawJet->jetArea());
     jetCorrectorForTypeI ->setRho(*rho_);
     corrsForTypeI = jetCorrectorForTypeI ->getCorrection(); //only RC
     
-    //  std::cout<<"112) QUA"<<std::endl;
-
     pat::Jet jetRC = *rawJet;
     jetRC.scaleEnergy(corrsForTypeI); //only RC
     
@@ -1600,22 +1557,20 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     
     pat::Jet jet = *rawJet;
     jet.scaleEnergy(corrs); //L1L2L3
-
+    
     double dR = reco::deltaR(photon, jet);
-    // if(dR < 0.25 ) std::cout<<"deltaR photon jet = "<< dR <<"  EM EnergyFraction =  "<<emEnergyFraction<<std::endl;
     
     if (jet.pt()>10 && dR>0.25) {
-
+      
       //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      //	if (emEnergyFraction > 0.90)
       //	 continue;
-       
-       deltaPx += (jet.px() - jetRC.px());
-       deltaPy += (jet.py() - jetRC.py());
+      
+      deltaPx += (jet.px() - jetRC.px());
+      deltaPy += (jet.py() - jetRC.py());
     }// pt >10 && dR >0.25
   } // end loop on jet
-    
-  //  std::cout<<"4) FINO A QUA FUNZIONA"<<std::endl;
-
+  
   // define MET with JEC
   double correctedMetPx = FootprintMEx  - deltaPx;
   double correctedMetPy = FootprintMEy  - deltaPy;
@@ -1623,11 +1578,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   
   met.setP4(reco::Candidate::LorentzVector(correctedMetPx, correctedMetPy, 0., correctedMetPt));
   
-  //  std::cout<< " Met.pt "<< met.pt() << std::endl;   
   //  std::cout<< " Met.et "<< met.et() << std::endl;   
-
-  //  std::cout<<"5) FINO A QUA FUNZIONA"<<std::endl;
-
 } 
 
 
@@ -1687,7 +1638,6 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
   met.setP4(reco::Candidate::LorentzVector(correctedMetPx, correctedMetPy, 0., correctedMetPt));  
   
 }
-
 
 void GammaJetFilter::extractRawJets(pat::JetCollection& jets) {
   
@@ -1756,7 +1706,6 @@ void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, 
       if (index > 1) {
       	// It's the third jet of the event. We only want to consider the first two jets for our leading jet,
 	// so, throw this event
-	if(verbose)	std::cout << "Salto questo evento perche ha 3 jets????"<<std::endl;
 	break;
       }
       
@@ -1797,12 +1746,10 @@ void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, 
   const pat::Jet* firstJet = NULL;
   const pat::Jet* secondJet = NULL;
   
-  if (selectedJets.size() > 0) {
-    
+  if (selectedJets.size() > 0) {    
     firstJet = &selectedJets[0];
     mSelectedFirstJetPhotonDeltaPhi->Fill(fabs(reco::deltaPhi(*photon, *firstJet)));
     mSelectedFirstJetPhotonDeltaR->Fill(reco::deltaR(*photon, *firstJet));
-
     if(verbose)    std::cout << "process Jet 1 deltaR= "<< reco::deltaR(*photon,*firstJet) <<std::endl;
    
     if (selectedJets.size() > 1) {
@@ -1899,6 +1846,7 @@ void GammaJetFilter::endJob() {
   std::cout<< "N_pho_R9 =  " << N_pho_R9 << std::endl ;
   std::cout<< "OnlyOneGoodPhotons = " << OnlyOneGoodPhotons << std::endl ;
 
+  /*
   for(int ii =0; ii<11; ii++){
     NEvent_vec.push_back(NEvent_array[ii]);
     R_min_vec.push_back(R_min_array[ii]);
@@ -1911,7 +1859,7 @@ void GammaJetFilter::endJob() {
     SumPt_vec.push_back(SumPt_array[ii]);
     KL1FastJet_vec.push_back(KL1FastJet_array[ii]);
     KL1RC_vec.push_back(KL1RC_array[ii]);
-    /*
+    
     std::cout<<"NEvent_array["<<ii<<"] = "<< NEvent_array[ii]<<std::endl;
     std::cout<<"R_min_array["<<ii<<"] = "<< R_min_array[ii]<<std::endl;
     std::cout<<"R_max_array["<<ii<<"] = "<< R_max_array[ii]<<std::endl;
@@ -1923,7 +1871,7 @@ void GammaJetFilter::endJob() {
     std::cout<<"SumPt_array["<<ii<<"] = "<< SumPt_array[ii]<<std::endl;
     std::cout<<"KL1FastJet_array["<<ii<<"] = "<< KL1FastJet_array[ii]<<std::endl;
     std::cout<<"KL1RC_array["<<ii<<"] = "<< KL1RC_array[ii]<<std::endl;
-    */
+    
   }
 
   mPhotonStudy -> Branch("NEvents", "vector<double>", &NEvent_vec);             
@@ -1939,7 +1887,7 @@ void GammaJetFilter::endJob() {
   mPhotonStudy -> Branch("K_L1RC", "vector<double>", &KL1RC_vec);          
 
    mPhotonStudy->Fill();
-
+*/
 
 
 }
@@ -2065,8 +2013,7 @@ enum class IsolationType {
     PHOTONS
     };
 
-
-//updated effective areas for SPRING15 50ns // 25 ns to check
+//updated effective areas for SPRING25
 float getEffectiveArea(float eta, IsolationType type) {
   eta = fabs(eta);
   switch (type) {
@@ -2103,8 +2050,7 @@ float getEffectiveArea(float eta, IsolationType type) {
     else
       return 0.0656;
     break;
-    
-    
+     
   case IsolationType::PHOTONS:
     if (eta < 1.0)
       return 0.1271;
