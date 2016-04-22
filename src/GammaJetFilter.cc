@@ -422,13 +422,15 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     mFilterData = iConfig.getUntrackedParameter<bool>("filterData", true);
     // Create the JetCorrectorParameter objects, the order does not matter.
     
-    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L3Absolute_AK4PFchs.txt").fullPath());    
-    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L2Relative_AK4PFchs.txt").fullPath());
-    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L3Absolute_AK4PFchs.txt").fullPath());    
+    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L2Relative_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1FastJet_AK4PFchs.txt").fullPath());
     // for Type-I MET --- To use RC instead FastJet
-    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L1RC_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1RC_AK4PFchs.txt").fullPath());
     // L2Residual 
-    JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L2Residual_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25ns_COMB_LOGLIN_L2Residual_v2_AK4PFchs_nokFSR.txt").fullPath());
+    // L2L3Residual
+    // JetCorrectorParameters *L2ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1M1_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
 
     // Residual corrections for the closure test --- only for data
     //    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV5/Summer15_25nsV3M3_DATA_L2L3Residual_AK4PFchs.txt").fullPath());
@@ -445,8 +447,8 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
 
     // For energy density study
-    JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L1FastJet_AK4PF.txt").fullPath());
-    JetCorrectorParameters *L1RC_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_DATA_L1RC_AK4PF.txt").fullPath());
+    JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1RC_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_DATA/Fall15_25nsV1_DATA_L1RC_AK4PFchs.txt").fullPath());
 
     vParL1FastJet.push_back(*L1FastJet_PF);
     jetCorrectorForL1FastJet = new FactorizedJetCorrector(vParL1FastJet);
@@ -464,11 +466,11 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   } else {  // MC
     // Create the JetCorrectorParameter objects, the order does not matter.
 
-    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L3Absolute_AK4PFchs.txt").fullPath());    
-    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L2Relative_AK4PFchs.txt").fullPath());
-    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L3Absolute_AK4PFchs.txt").fullPath());    
+    JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L2Relative_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1FastJet_AK4PFchs.txt").fullPath());
     // For Type-I --- To use RC instead FastJet
-    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L1RC_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
 
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vPar.push_back(*L1JetPar);
@@ -480,8 +482,8 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
 
     // For energy density study
-    JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L1FastJet_AK4PF.txt").fullPath());
-    JetCorrectorParameters *L1RC_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Summer15_25nsV6/Summer15_25nsV6_MC_L1RC_AK4PF.txt").fullPath());
+    JetCorrectorParameters *L1FastJet_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1FastJet_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1RC_PF = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Fall15_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
 
     vParL1FastJet.push_back(*L1FastJet_PF);
     jetCorrectorForL1FastJet = new FactorizedJetCorrector(vParL1FastJet);

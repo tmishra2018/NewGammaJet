@@ -19,6 +19,7 @@
 #define BALANCING_COLOR TColor::GetColor(217, 91, 67)
 #define MPF_COLOR TColor::GetColor(192, 41, 66)
 
+//federico
 bool MCComparison = false;
 
 drawBase::drawBase(const std::string& analysisType, const std::string& recoType, const std::string& jetAlgo, bool outputGraphs, const std::string& flags) {
@@ -741,8 +742,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     if (!noDATA) {
       //federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(gr_response_vs_pt, "G+Jet MC", "P");
-	legend->AddEntry(gr_response_vs_pt, "Pythia Flat", "P");
+	legend->AddEntry(gr_response_vs_pt, "G+Jet MC", "P");
+	//	legend->AddEntry(gr_response_vs_pt, "Pythia Flat", "P");
       }else{
 	legend->AddEntry(gr_response_vs_pt, "Data (#gamma+Jet)", "P");
       }
@@ -750,8 +751,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     if (!noMC) {
       // federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC", "P");
-	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph HT binned", "P");
+	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC", "P");
+	//	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph HT binned", "P");
       }else{
 	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (#gamma+Jet)", "P");
       }
@@ -760,8 +761,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     if (!noDATA) {
       //federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(gr_response_vs_pt, "G+Jet MC (MPF)", "P");
-	legend->AddEntry(gr_response_vs_pt, "Pythia (MPF)", "P");
+	legend->AddEntry(gr_response_vs_pt, "G+Jet MC (MPF)", "P");
+	// legend->AddEntry(gr_response_vs_pt, "Pythia (MPF)", "P");
       }else{
 	legend->AddEntry(gr_response_vs_pt, "Data (MPF)", "P");
       }
@@ -769,8 +770,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     if (!noMC) {
       // federico -- legend to MC  comparison     
       if(MCComparison){
-	//	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC (MPF)", "P");
-	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph (MPF)", "P");
+	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC (MPF)", "P");
+	// legend->AddEntry(gr_responseMC_vs_pt, "Madgraph (MPF)", "P");
       }else{
 	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (MPF)", "P");
       }
@@ -1786,16 +1787,16 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     if (dataFiles_[i].fillStyle != -1) {
       // federico -- legend to MC  comparison  
       if( MCComparison){
-	//	legend->AddEntry(dataHistos[i], "G+Jet", "F");
-	legend->AddEntry(dataHistos[i], "Pythia", "F");
+	legend->AddEntry(dataHistos[i], "G+Jet", "F");
+	// legend->AddEntry(dataHistos[i], "Pythia", "F");
       }else{
 	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "F");
       }
     } else {
       //federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(dataHistos[i], "G+Jet MC", "P");
-	legend->AddEntry(dataHistos[i], "Pythia", "P");
+	legend->AddEntry(dataHistos[i], "G+Jet MC", "P");
+	// legend->AddEntry(dataHistos[i], "Pythia", "P");
       }else{
 	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "P");
       }
@@ -1804,16 +1805,16 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     if (mcFiles_[i].markerStyle == -1) {
       // federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(mcHistos[i], "QCD", "F");
-	legend->AddEntry(mcHistos[i], "Madgraph", "F");
+	legend->AddEntry(mcHistos[i], "QCD", "F");
+	// legend->AddEntry(mcHistos[i], "Madgraph", "F");
       }else{
 	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "F");
       }
     } else {
       //federico -- legend to MC  comparison  
       if(MCComparison){
-	//	legend->AddEntry(mcHistos[i], "QCD", "F");
-	legend->AddEntry(mcHistos[i], "Madgraph", "F");
+	legend->AddEntry(mcHistos[i], "QCD", "F");
+	// legend->AddEntry(mcHistos[i], "Madgraph", "F");
       }else{
 	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "P");
       }

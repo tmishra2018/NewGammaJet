@@ -104,9 +104,9 @@ void GammaJetFinalizer::runAnalysis() {
     // PU Reweighting 
     static std::string cmsswBase = getenv("CMSSW_BASE");
     static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
-    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8
+    //    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8
     //  static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJET -- madgraph+pythia
-    //  static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD pythia
+    static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD pythia
     //  static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
     //    static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
     static std::string puData = TString::Format("%s/pu_truth_data2015_50bins.root", puPrefix.c_str()).Data();
@@ -383,7 +383,12 @@ void GammaJetFinalizer::runAnalysis() {
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
 
-  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 100, 0., 2000.);
+  double ptBins[] = {0, 40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 700, 1000, 1500};
+  int  binnum = sizeof(ptBins)/sizeof(double) -1;
+  TH1F* h_ptPhoton_passedID_Binned = new TH1F("ptPhoton_passedID_Binned","ptPhoton", binnum, ptBins);
+  TH1F* h_ptPhoton_Binned = new TH1F("ptPhoton_Binned","ptPhoton", binnum, ptBins);
+
+  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 400, 0., 2000.);
   TH1F* h_EtaPhoton_passedID = analysisDir.make<TH1F>("EtaPhoton_passedID", "EtaPhoton", 60, -5, 5.);
   TH1F* h_PhiPhoton_passedID = analysisDir.make<TH1F>("PhiPhoton_passedID", "PhiPhoton", 60, -3.5, 3.5);
   TH1F* h_ptFirstJet_passedID = analysisDir.make<TH1F>("ptFirstJet_passedID", "ptFirstJet", 200, 0., 2000.);
@@ -707,7 +712,7 @@ void GammaJetFinalizer::runAnalysis() {
 
 
     //test bug
-    //    if( i < 2885744) continue;
+    //    if( i < 2947062) continue;
     
     if ((i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
@@ -718,7 +723,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs on 50/25 ns
     if( mIsMC ){ // bug in GJET Pythia
-      if ( i == 1833416 || i == 2885744) continue;
+      if ( i == 1762271 || i == 2947062) continue;
     }
     // No events skipped for GJet Madgraph
     
@@ -1032,6 +1037,7 @@ void GammaJetFinalizer::runAnalysis() {
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
     h_ptPhoton               ->Fill(photon.pt, eventWeight);
+    h_ptPhoton_Binned        ->Fill(photon.pt, eventWeight);
     h_EtaPhoton             ->Fill(photon.eta, eventWeight);
     h_PhiPhoton             ->Fill(photon.phi, eventWeight);
     h_ptFirstJet              ->Fill(firstJet.pt, eventWeight);
@@ -1256,6 +1262,7 @@ void GammaJetFinalizer::runAnalysis() {
       do {
         h_deltaPhi_passedID          ->Fill(deltaPhi, eventWeight);
         h_ptPhoton_passedID        ->Fill(photon.pt, eventWeight);
+        h_ptPhoton_passedID_Binned        ->Fill(photon.pt, eventWeight);
 	h_EtaPhoton_passedID      ->Fill(photon.eta, eventWeight);
 	h_PhiPhoton_passedID      ->Fill(photon.phi, eventWeight);
         h_ptFirstJet_passedID       ->Fill(firstJet.pt, eventWeight);
@@ -1533,6 +1540,9 @@ void GammaJetFinalizer::runAnalysis() {
 #endif
 
   }
+
+  analysisDir.cd();
+  h_ptPhoton_passedID_Binned->Write();
 
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
@@ -2025,8 +2035,8 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
       }
     }
     
-    passedTrigger = mandatoryTrigger->at(0).name.str();
-    return TRIGGER_OK;
+    //    passedTrigger = mandatoryTrigger->at(0).name.str();
+    //    return TRIGGER_OK;
   }
   // }else {
   

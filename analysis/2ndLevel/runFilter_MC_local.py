@@ -43,7 +43,7 @@ process.ak4PFchsL1FastL2L3 = cms.ESProducer(
     )
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) ) # run only on # events
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) ) # run only on # events
 
 from FWCore.ParameterSet.VarParsing import VarParsing
 #readFiles = cms.untracked.vstring(

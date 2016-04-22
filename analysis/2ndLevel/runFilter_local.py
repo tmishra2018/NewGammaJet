@@ -20,7 +20,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 #process.load("Configuration/StandardSequences/GeometryDB_cff")
 #process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)) # all events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000)) # 5000 events
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000)) # 5000 events
 ###################################### Run on AOD instead of MiniAOD? ########
 runOnAOD = False #Federico
 ###################################### Run on RECO instead of MiniAOD? ########

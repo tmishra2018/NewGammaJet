@@ -6,4 +6,4 @@ cd /cmshome/fpreiato/GammaJet/CMSSW_7_6_3_patch2/src/JetMETCorrections/GammaJetF
 
 eval `scramv1 runtime -sh`
 
-gammaJetFinalizer -i PhotonJet_2ndLevel_SinglePhoton__Run2015D_2016-01-19.root -d SinglePhoton_2016-01-19_alphacut015 --type pf --algo ak4 --chs --alpha 0.15
+gammaJetFinalizer -i PhotonJet_2ndLevel_SinglePhoton__Run2015D_2016-02-15.root -d SinglePhoton_2016-02-15_alphacut015 --type pf --algo ak4 --chs --alpha 0.15

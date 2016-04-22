@@ -1,1 +1,1 @@
-/SinglePhoton/Run2015D-16Dec2015-v1/MINIAOD -1 300 76X_dataRun2_v15
+/SinglePhoton/Run2015D-16Dec2015-v1/MINIAOD -1 50 76X_dataRun2_v15

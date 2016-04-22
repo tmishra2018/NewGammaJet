@@ -139,6 +139,7 @@ int main(int argc, char* argv[]) {
   db->set_rebin(1);
 
   // Data / MC comparison
+  db->drawHisto("ptPhoton_Binned", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("EtaPhoton", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton", "Photon Phi", " ", "Events" , false);

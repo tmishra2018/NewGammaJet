@@ -35,18 +35,21 @@ int main(int argc, char* argv[]) {
   cout<< "Stamp Mean ALL distribution  "<< MeanAll << endl;
 
   std::vector<std::pair<float, float> > mPtBins;   
-  mPtBins.push_back(std::make_pair(40., 60.));                                                                                                                         
+  mPtBins.push_back(std::make_pair(40., 50.));                                                                                                                         
+  mPtBins.push_back(std::make_pair(50., 60.));                                                                                                                         
   mPtBins.push_back(std::make_pair(60., 85.));                                                                                                                         
-  mPtBins.push_back(std::make_pair(85., 100.));                                                                                                                        
-  mPtBins.push_back(std::make_pair(100., 130.));                                                                                                                       
+  mPtBins.push_back(std::make_pair(85., 105.));                                                                                                                        
+  mPtBins.push_back(std::make_pair(105., 130.));                                                                                                                       
   mPtBins.push_back(std::make_pair(130., 175.));                                                                                                                       
-  mPtBins.push_back(std::make_pair(175., 250.));                                                                                                                       
-  mPtBins.push_back(std::make_pair(250., 300.));                                                                                                                       
+  mPtBins.push_back(std::make_pair(175., 230.));                                                                                                                       
+  mPtBins.push_back(std::make_pair(230., 300.));                                                                                                                       
   mPtBins.push_back(std::make_pair(300., 400.));                                                                                                                       
-  mPtBins.push_back(std::make_pair(400., 500.));                                                                                                                       
-  mPtBins.push_back(std::make_pair(500., 1200.)); 
+  mPtBins.push_back(std::make_pair(400., 500.));                                                                                                           
+  mPtBins.push_back(std::make_pair(500., 700.));                                                                                                                       
+  mPtBins.push_back(std::make_pair(700., 1000.));                                                                                                                       
+  mPtBins.push_back(std::make_pair(1000., 1500.)); 
   
-  for( int i = 0 ; i< 10 ; i++){ 
+  for( int i = 0 ; i< mPtBins.size() ; i++){ 
 
     std::pair<float, float> currentBin = mPtBins[i];
  
@@ -59,13 +62,13 @@ int main(int argc, char* argv[]) {
 
   cout<<"Calcolo a mano"<< endl;
 
-  int bin_500 = ptPhot -> FindBin(500);
-  int bin_1100 = ptPhot -> FindBin(1100);
+  int bin_500 = ptPhot -> FindBin(40);
+  int bin_1100 = ptPhot -> FindBin(50);
   int start = bin_500;
-  int finish = bin_1100+1;
+  int finish = bin_1100;
 
-  cout<<"bin(500) "<<bin_500<<endl;
-  cout<<"bin(1100) "<<bin_1100<<endl;
+  cout<<"bin(40) "<<bin_500<<endl;
+  cout<<"bin(50) "<<bin_1100<<endl;
 
   double N_tot = 0 ;
   double num = 0;
@@ -75,9 +78,9 @@ int main(int argc, char* argv[]) {
     double bin = ptPhot-> GetBin(i);
     double N_i = ptPhot-> GetBinContent(i);
     double x_i = ptPhot-> GetBinCenter(i);
-    //    cout<<"bin "<<bin<<endl;
-    //    cout<<"N_i "<<N_i<<endl;
-    //    cout<<"x_i "<<x_i<<endl;
+    cout<<"bin "<<bin<<endl;
+    cout<<"N_i "<<N_i<<endl;
+    cout<<"x_i "<<x_i<<endl;
     num += N_i * x_i ;
     N_tot +=N_i;
   }
