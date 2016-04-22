@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
   
   string* mc = new string(argv[1]);
 
-  //std::cout<<"USAGE: ./generate_mc_pileup.exe [MC sample]"<<std::endl;
+  //USAGE: ./generate_mc_pileup.exe [MC sample]
 
   TChain* chain = new TChain("gammaJet/analysis", "analysis");
 
