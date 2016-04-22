@@ -13,12 +13,12 @@
     </path>
     <path>
       <name>HLT_Photon75_R9Id90_HE10_IsoM_v.*</name>
-      <pt from="85" to="100" />
+      <pt from="85" to="105" />
       <weight value="1" />
     </path>
     <path>
       <name>HLT_Photon90_R9Id90_HE10_IsoM_v.*</name>
-      <pt from="100" to="130" />
+      <pt from="105" to="130" />
       <weight value="1" />
     </path>
     <path>
