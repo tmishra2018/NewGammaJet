@@ -155,6 +155,7 @@ private:
   // ----------member data ---------------------------
   bool mIsMC;
   bool mFilterData;
+  StringCutObjectSelector<reco::Candidate>* skipMuonSelection_;
   std::string mJSONFile;
   std::string mCSVFile;
   boost::shared_ptr<Json::Value> mValidRuns;
@@ -404,9 +405,13 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
 	    (iConfig.getParameter<edm::InputTag>("rhoTag"))),
   PUInfoToken_(consumes<std::vector<PileupSummaryInfo>>
 	       (iConfig.getParameter<edm::InputTag>("PUInfoTag")))
+
 {
   
   mIsMC = iConfig.getUntrackedParameter<bool>("isMC", "false");
+  // to remove
+  std::string skipMuonSelection_string = iConfig.getParameter<std::string>("skipMuonSelection");
+  skipMuonSelection_ = new StringCutObjectSelector<reco::Candidate>(skipMuonSelection_string,true);
   
   //giulia --- no more necessary, regression integrated in release 73X
   //Photon energy regression corrector (need to define it once for data once for mc)
@@ -474,7 +479,8 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Spring16_25nsV1_MC_L3Absolute_AK4PFchs.txt").fullPath());    
     
     // For Type-I --- To use RC instead FastJet
-    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
+    //    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Fall15_25nsV1_MC_L1RC_AK4PFchs.txt").fullPath());
+    JetCorrectorParameters *L1JetParForTypeI = new JetCorrectorParameters(edm::FileInPath("JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_MC/Spring16_25nsV1_MC_L1FastJet_AK4PFchs.txt").fullPath());
 
     // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vPar.push_back(*L1JetPar);
@@ -1428,44 +1434,42 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) {
 
-    //    const pat::Jet& jet = *it;    
-    //    const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
 
-      double corrs = 1.;
-      double corrsForTypeI = 1.;
-      edm::Handle<double> rho_;
-      event.getByToken( rhoToken_, rho_);
+    double corrs = 1.;
+    double corrsForTypeI = 1.;
+    edm::Handle<double> rho_;
+    event.getByToken( rhoToken_, rho_);
       
-      jetCorrectorForTypeI->setJetEta(rawJet->eta());
-      jetCorrectorForTypeI->setJetPt(rawJet->pt());
-      jetCorrectorForTypeI->setJetA(rawJet->jetArea());
-      jetCorrectorForTypeI->setRho(*rho_);
-      corrsForTypeI = jetCorrectorForTypeI->getCorrection(); //only RC
+    jetCorrectorForTypeI->setJetEta(rawJet->eta());
+    jetCorrectorForTypeI->setJetPt(rawJet->pt());
+    jetCorrectorForTypeI->setJetA(rawJet->jetArea());
+    jetCorrectorForTypeI->setRho(*rho_);
+    corrsForTypeI = jetCorrectorForTypeI->getCorrection(); //only RC
       
-      pat::Jet jetRC = *rawJet;
-      jetRC.scaleEnergy(corrsForTypeI); // only RC
+    pat::Jet jetRC = *rawJet;
+    jetRC.scaleEnergy(corrsForTypeI); // only RC
       
-      jetCorrector ->setJetEta(rawJet->eta());
-      jetCorrector ->setJetPt(rawJet->pt());
-      jetCorrector ->setJetA(rawJet->jetArea());
-      jetCorrector ->setRho(*rho_);
-      corrs = jetCorrector->getCorrection(); // L1L2L3
+    jetCorrector ->setJetEta(rawJet->eta());
+    jetCorrector ->setJetPt(rawJet->pt());
+    jetCorrector ->setJetA(rawJet->jetArea());
+    jetCorrector ->setRho(*rho_);
+    corrs = jetCorrector->getCorrection(); // L1L2L3
       
-      pat::Jet jet = *rawJet;
-      jet.scaleEnergy(corrs); // L1L2L3
+    pat::Jet jet = *rawJet;
+    jet.scaleEnergy(corrs); // L1L2L3
 
-      double dR = reco::deltaR(photon, jet);
-      //      if (jet.pt() > 10) {
-      if(jet.pt() > 10 && dR > 0.25) {
+    double dR = reco::deltaR(photon, jet);
+
+    if(jet.pt() > 15 && dR > 0.25) {
 	
-	//	double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-	//	if (emEnergyFraction > 0.90)
-	//	  continue;
+      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      if (emEnergyFraction > 0.90)
+	continue;
 	
-	deltaPx += (jet.px() - jetRC.px());
-	deltaPy += (jet.py() - jetRC.py());
-      } // jet.pt() > 10
+      deltaPx += (jet.px() - jetRC.px());
+      deltaPy += (jet.py() - jetRC.py());
+    } // jet.pt() && dR
   }//loop over jets
   
   double correctedMetPx = rawMet.px() - deltaPx;
@@ -1482,7 +1486,7 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
   edm::Handle<pat::PackedCandidateCollection> pfs;
   event.getByToken(pfToken_, pfs);
   
-   float FootprintMEx = 0;
+  float FootprintMEx = 0;
   float FootprintMEy = 0;
   // std::cout<< " Inizialization "<< std::endl; 
   // std::cout<< " FootprintMEx "<< FootprintMEx << std::endl; 
@@ -1560,15 +1564,16 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     
     double dR = reco::deltaR(photon, jet);
     
-    if (jet.pt()>10 && dR>0.25) {
-      
-      //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-      //	if (emEnergyFraction > 0.90)
-      //	 continue;
+    if (jet.pt()>15 && dR>0.25) {
+
+      // removed electron/photon      
+      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      if (emEnergyFraction > 0.90)
+	continue;
       
       deltaPx += (jet.px() - jetRC.px());
       deltaPy += (jet.py() - jetRC.py());
-    }// pt >10 && dR >0.25
+    }// pt && dR
   } // end loop on jet
   
   // define MET with JEC
@@ -1591,8 +1596,7 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
     
   double deltaPx = 0., deltaPy = 0.;
   for (pat::JetCollection::const_iterator it = jets.begin(); it != jets.end(); ++it) {
-    //    const pat::Jet& jet = *it; 
-    //    const pat::Jet* rawJet = jet.userData<pat::Jet>("rawJet");
+
     const pat::Jet* rawJet = it->userData<pat::Jet>("rawJet");
 
     double corrs =1.;
@@ -1620,11 +1624,12 @@ void GammaJetFilter::correctMETWithRegressionAndTypeI(const pat::MET& rawMet, pa
     jet.scaleEnergy(corrs); // L1L2L3
 
     double dR = reco::deltaR(photon, jet);    
-    //    if (jet.pt() > 10) {
-    if (jet.pt() > 10 && dR > 0.25) {
+    
+    if (jet.pt() > 15 && dR > 0.25) {
       
-      //      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
-      //      if (emEnergyFraction > 0.90) continue;
+      double emEnergyFraction = rawJet->chargedEmEnergyFraction() + rawJet->neutralEmEnergyFraction();
+      if (emEnergyFraction > 0.90)
+	continue;
       
       deltaPx += (jet.px() - jetRC.px());
       deltaPy += (jet.py() - jetRC.py());
