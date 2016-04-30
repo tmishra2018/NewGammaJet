@@ -22,7 +22,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 #process.GlobalTag.globaltag = cms.string("PHYS14_25_V2::All")
 # federico
-process.GlobalTag.globaltag = cms.string("76X_mcRun2_asymptotic_v12") # run in local
+#process.GlobalTag.globaltag = cms.string("76X_mcRun2_asymptotic_v12") # run in local
+process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_v3") # run in local
 #process.GlobalTag.globaltag = cms.string(THISGLOBALTAG) #run with crab
 
 
@@ -57,7 +58,7 @@ process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
         #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
-        'file:../tuples/GJET_Pythia/GJet_file1_76X.root'
+        'file:../tuples/GJET_Pythia/GJet_Pythia_80X_file1.root'
        # 'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/QCD_MC/QCD_file1_ReReco.root'
       )
     )
