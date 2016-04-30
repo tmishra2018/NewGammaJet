@@ -31,7 +31,7 @@ class JetTree: public BaseTree {
 //    Float_t         btag_jet_b_probability;
 //    Float_t         btag_csv;
 //    Float_t         qg_tag_mlp;
-//    Float_t         qg_tag_likelihood;
+    Float_t         qg_tag_likelihood;
     Float_t         jet_CHEn;
     Float_t         jet_NHEn;
     Float_t         jet_PhEn;
@@ -90,7 +90,7 @@ void JetTree::Init(TTree *tree)
 //  fChain->SetBranchAddress("btag_jet_b_probability", &btag_jet_b_probability, NULL);
 //  fChain->SetBranchAddress("btag_csv", &btag_csv, NULL);
 //  fChain->SetBranchAddress("qg_tag_mlp", &qg_tag_mlp, NULL);
-//  fChain->SetBranchAddress("qg_tag_likelihood", &qg_tag_likelihood, NULL);
+  fChain->SetBranchAddress("qg_tag_likelihood", &qg_tag_likelihood, NULL);
   fChain->SetBranchAddress("jet_CHEn", &jet_CHEn, NULL);
   fChain->SetBranchAddress("jet_NHEn", &jet_NHEn, NULL);
   fChain->SetBranchAddress("jet_PhEn", &jet_PhEn, NULL);
@@ -117,7 +117,7 @@ void JetTree::DisableUnrelatedBranches()
 //  fChain->SetBranchStatus("btag_jet_b_probability", 0);
 //  fChain->SetBranchStatus("btag_csv", 0);
 //  fChain->SetBranchStatus("qg_tag_mlp", 0);
-//  fChain->SetBranchStatus("qg_tag_likelihood", 0);
+  fChain->SetBranchStatus("qg_tag_likelihood", 0);
   fChain->SetBranchStatus("jet_CHEn", 0);
   fChain->SetBranchStatus("jet_NHEn", 0);
   fChain->SetBranchStatus("jet_PhEn", 0);

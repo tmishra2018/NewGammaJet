@@ -1,11 +1,12 @@
 import FWCore.ParameterSet.Config as cms
 import os
+from CondCore.CondDB.CondDB_cfi  import *
 
 process = cms.Process("GAMMAJET")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = cms.untracked.string('INFO')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000 #1000
 
 #--- import of standard configurations
 #process.load("Configuration/StandardSequences/GeometryDB_cff")
@@ -18,13 +19,13 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-
+process.load('RecoJets.JetProducers.QGTagger_cfi')
+process.QGTagger.srcJets          = cms.InputTag('slimmedJets')    # Could be reco::PFJetCollection or pat::JetCollection (both AOD and miniAOD)
+process.QGTagger.jetsLabel       = cms.string('QGL_AK4PFchs')        # Other options: see https://twiki.cern.ch/twiki/bin/viewauth/CMS/QGDataBaseVersion
 
 #process.GlobalTag.globaltag = cms.string("PHYS14_25_V2::All")
 # federico
-#process.GlobalTag.globaltag = cms.string("76X_mcRun2_asymptotic_v12") # run in local
 process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_v3") # run in local
-#process.GlobalTag.globaltag = cms.string(THISGLOBALTAG) #run with crab
 
 
 process.load("JetMETCorrections.Configuration.JetCorrectionProducers_cff")
@@ -46,6 +47,26 @@ process.ak4PFchsL1FastL2L3 = cms.ESProducer(
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) ) #run over all events
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) ) # run only on # events
 
+#////////////////////////////////
+#qgDatabaseVersion = 'v2b' # check https://twiki.cern.ch/twiki/bin/viewauth/CMS/QGDataBaseVersion
+#CondCore.DBCommon.CondDBSetup_cfi
+
+# non funziona!!!
+
+#QGPoolDBESSource = cms.ESSource("PoolDBESSource",
+ #                               CondDB,
+   #                             toGet = cms.VPSet(),
+     #                           connect = cms.string('frontier://FrontierProd/CMS_COND_PAT_000'),
+       #                         )
+#for type in ['AK4PFchs','AK4PFchs_antib']:
+ #   QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
+   #             record = cms.string('QGLikelihoodRcd'),
+     #           tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
+       #         label  = cms.untracked.string('QGL_'+type)
+        #        )))
+    
+#////////////////////////////////
+
 from FWCore.ParameterSet.VarParsing import VarParsing
 #readFiles = cms.untracked.vstring(
 #    )
@@ -58,8 +79,8 @@ process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
         #'file:/cmshome/gdimperi/GammaJet/JetCorrections/CMSSW_7_3_2/test/test_file_MINIAOD_for_JEC2015.root'
-        'file:../tuples/GJET_Pythia/GJet_Pythia_80X_file1.root'
-       # 'file:/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/QCD_MC/QCD_file1_ReReco.root'
+        #'file:../tuples/GJET_Pythia/GJet_Pythia_80X_file1.root'
+        'file:../tuples/QCD_Pythia/QCD_Pythia_80X_file1.root'
       )
     )
 
@@ -97,12 +118,16 @@ crossSection = float(options.crossSection) if isinstance(options.crossSection, f
 ptHatMin = options.lowPtHat if isinstance(options.lowPtHat, float) else -1
 ptHatMax = options.highPtHat if isinstance(options.highPtHat, float) else -1
 
+#processedEvents = procEvents
+#crossSection = xsec
+#ptHatMin = ptMin 
+#ptHatMax = ptMax
+
 print("Running on sample with:")
 print("\tNumber of processed events: %d" % processedEvents)
 print("\tCross-section: %f" % crossSection)
 print("\tPt hat min: %f" % ptHatMin)
 print("\tPt hat max: %f" % ptHatMax)
-
 
 ## Add our PhotonIsolationProducer to the analysisSequence. This producer compute pf isolations  for our photons
 #process.photonPFIsolation = cms.EDProducer("PhotonIsolationProducer",
@@ -123,7 +148,7 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 dumpAllGenParticles = cms.untracked.bool(False),
                                 
                                 # federico -> ValueMap names from the producer upstream
-                                #    full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"), # from rel73 ok in photon class
+                                full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"),
                                 phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
                                 phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
                                 phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"), 
@@ -165,6 +190,7 @@ process.p = cms.Path(
     process.chs *
     #    process.photonPFIsolation*
     process.photonIDValueMapProducer * # federico -> add process for isolation
+    process.QGTagger * # federico
     process.gammaJet)
 
 process.out = cms.OutputModule("PoolOutputModule",
@@ -187,7 +213,6 @@ process.TFileService = cms.Service("TFileService",
 # federico
 #          fileName = cms.string("output_singleFile_QCD.root") # run in local
           fileName = cms.string("output_singleFile_GJet.root") # run in local
-#       fileName = cms.string(THISROOTFILE) # run with crab
     )
 
 #process.out.fileName = 'patTuple_cleaned.root'

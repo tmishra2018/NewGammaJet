@@ -136,8 +136,7 @@ private:
   void correctJets(pat::JetCollection& jets, edm::Event& iEvent, const edm::EventSetup& iSetup);
   void extractRawJets(pat::JetCollection& jets);
   //giulia --- comment qg tagging stuff
-  //  void processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo, /* edm::Handle<edm::ValueMap<float>>& qgTagMLP, edm::Handle<edm::ValueMap<float>>& qgTagLikelihood,*/ const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees);
-  void processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo, edm::Handle<edm::ValueMap<float>>& qgTag, const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees);
+  void processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo, /* edm::Handle<edm::ValueMap<float>>& qgTagMLP, edm::Handle<edm::ValueMap<float>>& qgTagLikelihood,*/ const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees);
   
   //federico -- redefine of rawMET on-the-fly --- not constant -- negative sum of pf candidates
   void correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets, edm::Event& event, pat::Photon& photon);
@@ -200,7 +199,6 @@ private:
   edm::EDGetTokenT<pat::MuonCollection> muonsToken_;
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> PUInfoToken_;
-  edm::EDGetTokenT<edm::ValueMap<float> > qgToken_; 
   
   // Events Counter
   int Event_Initial =0 ;
@@ -413,7 +411,6 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
 {
   
   mIsMC = iConfig.getUntrackedParameter<bool>("isMC", "false");
-  qgToken_ = consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "qgLikelihood"));
   
   //giulia --- no more necessary, regression integrated in release 73X
   //Photon energy regression corrector (need to define it once for data once for mc)
@@ -905,9 +902,15 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       pat::Jet& jet = *it;
       
       pat::Jet rawJet = jet.correctedJet("Uncorrected");
-      rawJet.addUserFloat("qgLikelihood", -10); //quark/gluon discriminator not performed on rawJet
       jet.addUserData("rawJet", rawJet, true); // Store raw jet inside our jet. This allow us to correctly sort the resulting collection
 
+      /*     
+      if( !jet.hasUserData("rawJet") ){
+	std::cout<<"CODE: rawJet Not exist"<<std::endl;   
+      }else{
+	std::cout<<"CODE:rawJet EXIST"<<std::endl;   
+      }
+      }*/
     }
 
     if (mDoJEC) {
@@ -922,11 +925,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     //iEvent.getByLabel("QGTagger" + *it,"qgMLP", qgTagHandleMLP);
     //iEvent.getByLabel("QGTagger" + *it,"qgLikelihood", qgTagHandleLikelihood);
     
-    edm::Handle<edm::ValueMap<float>> qgTagHandle;
-    iEvent.getByToken(qgToken_, qgTagHandle);
-
-    //    processJet(&photon, jets, infos.algo, /*qgTagHandleMLP, qgTagHandleLikelihood, */jetsHandle, mJetTrees[*it]);
-    processJets(&photon, jets, infos.algo, qgTagHandle, jetsHandle, mJetTrees[*it]);
+    processJets(&photon, jets, infos.algo, /*qgTagHandleMLP, qgTagHandleLikelihood, */jetsHandle, mJetTrees[*it]);
     
     Event_AfterJets++;     
     EventCounter -> AddBinContent(5, generatorWeight );
@@ -1433,8 +1432,7 @@ void GammaJetFilter::extractRawJets(pat::JetCollection& jets) {
   
 }
 
-//void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo,/* edm::Handle<edm::ValueMap<float>>& qgTagMLP, edm::Handle<edm::ValueMap<float>>& qgTagLikelihood,*/ const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees) {
-void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo, edm::Handle<edm::ValueMap<float>>& qgTag, const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees) {
+void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, const JetAlgorithm algo,/* edm::Handle<edm::ValueMap<float>>& qgTagMLP, edm::Handle<edm::ValueMap<float>>& qgTagLikelihood,*/ const edm::Handle<pat::JetCollection>& handleForRef, std::vector<TTree*>& trees) {
   
   bool verbose = false;
 
@@ -1473,15 +1471,10 @@ void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, 
     
     //giulia --- comment QG tagging stuff
     // Extract Quark Gluon tagger value
+    pat::JetRef jetRef(handleForRef, index);
     //it->addUserFloat("qgTagMLP", (*qgTagMLP)[jetRef]);
     //it->addUserFloat("qgTagLikelihood", (*qgTagLikelihood)[jetRef]);
-
-    pat::JetRef jetRef(handleForRef, index);
-    it->addUserFloat("qgLikelihood", (*qgTag)[jetRef]);
-    //    std::cout<<"Test" << std::endl;
-    //    float qglikelihood = it->userFloat("qgLikelihood");
-    //    std::cout<<qglikelihood << std::endl; 
-       
+    
     const double deltaR_threshold = (algo == AK4) ? 0.4 : 0.8;
     
     if(verbose)    std::cout<<"selectedJets.size = "<< selectedJets.size() << std::endl; 
@@ -1546,7 +1539,7 @@ void GammaJetFilter::processJets(pat::Photon* photon, pat::JetCollection& jets, 
       if(verbose)      std::cout << "process Jet 2 deltaR= "<< reco::deltaR(*photon,*secondJet) <<std::endl;
     }
   }
-
+  
   jetsToTree(firstJet, secondJet, trees);
   
   return;
@@ -1990,7 +1983,7 @@ bool GammaJetFilter::isValidJet(const pat::Jet& jet) {
     //https://twiki.cern.ch/twiki/bin/view/CMS/JetID#Recommendations_for_13_TeV_data    
     // Jet ID works on uncorrected jets. *EnergyFraction take that into account when calculating the fraction,
     // so there's *NO* need to use an uncorrected jet
-    bool isValid = true;
+    bool isValid = false;
 
     if (fabs(jet.eta()) < 3.0) {
       isValid &= jet.neutralHadronEnergyFraction() < 0.99;
@@ -2388,8 +2381,9 @@ void GammaJetFilter::jetsToTree(const pat::Jet* firstJet, const pat::Jet* second
   jetToTree(secondJet, false, trees[1], trees[5]);
   
   // Raw jets
-  const pat::Jet* rawJet = (firstJet) ? firstJet->userData<pat::Jet>("rawJet") : NULL; 
+  const pat::Jet* rawJet = (firstJet) ? firstJet->userData<pat::Jet>("rawJet") : NULL;
   jetToTree(rawJet, false, trees[2], NULL);
+  
   rawJet = (secondJet) ? secondJet->userData<pat::Jet>("rawJet") : NULL;
   jetToTree(rawJet, false, trees[3], NULL);
 }
@@ -2449,10 +2443,7 @@ void GammaJetFilter::jetToTree(const pat::Jet* jet, bool _findNeutrinos, TTree* 
     // // Quark Gluon tagging
     // float qgTagMLP = jet->userFloat("qgTagMLP");
     // float qgTagLikelihood = jet->userFloat("qgTagLikelihood");
-
-    float qgTagLikelihood = jet->userFloat("qgLikelihood");
-    //    std::cout<< "Conferma = "<<qgTagLikelihood << std::endl; 
-
+    
     // updateBranch(tree, &tcHighEfficiency, "btag_tc_high_eff");
     // updateBranch(tree, &tcHighPurity, "btag_tc_high_pur");
     // updateBranch(tree, &ssvHighEfficiency, "btag_ssv_high_eff");
@@ -2461,7 +2452,7 @@ void GammaJetFilter::jetToTree(const pat::Jet* jet, bool _findNeutrinos, TTree* 
     // updateBranch(tree, &jetBProbability, "btag_jet_b_probability");
     // updateBranch(tree, &csv, "btag_csv");
     // updateBranch(tree, &qgTagMLP, "qg_tag_mlp");
-    updateBranch(tree, &qgTagLikelihood, "qg_tag_likelihood");
+    // updateBranch(tree, &qgTagLikelihood, "qg_tag_likelihood");
     
     //jet energy composition
     float jetCHEn = jet->chargedHadronEnergy();

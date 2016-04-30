@@ -14,7 +14,7 @@ config.Data.inputDataset = 'INPUTDATASET'
 config.Data.unitsPerJob = FILESPERJOB
 config.Data.splitting = 'FileBased'
 config.Data.publication = False
-config.Data.outLFNDirBase = '/store/user/fpreiato/JetMET2015/MC/Spring15/'
+config.Data.outLFNDirBase = '/store/user/fpreiato/JetMET2015/MC/Spring16/'
 config.section_('User')
 config.section_('Site')
 config.Site.storageSite = 'T2_IT_Rome'
