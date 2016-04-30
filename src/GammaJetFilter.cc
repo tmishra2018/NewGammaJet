@@ -155,7 +155,6 @@ private:
   // ----------member data ---------------------------
   bool mIsMC;
   bool mFilterData;
-  StringCutObjectSelector<reco::Candidate>* skipMuonSelection_;
   std::string mJSONFile;
   std::string mCSVFile;
   boost::shared_ptr<Json::Value> mValidRuns;
@@ -409,9 +408,6 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
 {
   
   mIsMC = iConfig.getUntrackedParameter<bool>("isMC", "false");
-  // to remove
-  std::string skipMuonSelection_string = iConfig.getParameter<std::string>("skipMuonSelection");
-  skipMuonSelection_ = new StringCutObjectSelector<reco::Candidate>(skipMuonSelection_string,true);
   
   //giulia --- no more necessary, regression integrated in release 73X
   //Photon energy regression corrector (need to define it once for data once for mc)
