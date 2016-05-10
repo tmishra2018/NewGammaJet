@@ -23,7 +23,7 @@ This is a documentation for the gamma + jets framework.
 
 export SCRAM_ARCH=slc6_amd64_gcc530
 cmsrel CMSSW_8_0_5_patch1
-cd CMSSW_8_0_3_patch1/src
+cd CMSSW_8_0_5_patch1/src
 git clone https://github.com/FPreiato/GammaJet.git JetMETCorrections/GammaJetFilter/
 cd ..
 scram b -j 9
