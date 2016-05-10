@@ -21,9 +21,9 @@ This is a documentation for the gamma + jets framework.
 [source,bash]
 ----
 
-export SCRAM_ARCH=slc6_amd64_gcc491
-cmsrel CMSSW_7_6_3_patch2
-cd CMSSW_7_6_3_patch2/src
+export SCRAM_ARCH=slc6_amd64_gcc530
+cmsrel CMSSW_8_0_5_patch1
+cd CMSSW_8_0_3_patch1/src
 git clone https://github.com/FPreiato/GammaJet.git JetMETCorrections/GammaJetFilter/
 cd ..
 scram b -j 9
