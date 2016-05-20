@@ -181,11 +181,13 @@ private:
      
   // Trees
   void createTrees(const std::string& rootName, TFileService& fs);
-  //  TTree* mPhotonTree;
-  //  TTree* mPhotonGenTree;
+  TTree* mGenParticlesTree;
+  TTree* mPhotonTree;
+  TTree* mPhotonGenTree;
   TTree* mAnalysisTree;
-  // TTree* mElectronsTree;
-  // TTree* mMuonsTree;
+  TTree* mElectronsTree;
+  TTree* mMuonsTree;
+  TTree* mPhotonStudy;
 
   double crossSection;
   TParameter<long long>* mProcessedEvents;
@@ -403,16 +405,16 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
   
   
   edm::Service<TFileService> fs;
-  //  mAnalysisTree = fs->make<TTree>("photon", "photon tree");
+  mPhotonTree = fs->make<TTree>("photon", "photon tree");
   
-  //  if (mIsMC){
-  ///    mPhotonGenTree = fs->make<TTree>("photon_gen", "photon gen tree");
-  //  }  else{
-  //    mPhotonGenTree = nullptr;
-  //  }
+  if (mIsMC){
+    mPhotonGenTree = fs->make<TTree>("photon_gen", "photon gen tree");
+  }  else{
+    mPhotonGenTree = nullptr;
+  }
   mAnalysisTree = fs->make<TTree>("analysis", "analysis tree");
-  //  mMuonsTree = fs->make<TTree>("muons", "muons tree");
-  //  mElectronsTree = fs->make<TTree>("electrons", "electrons tree");
+  mMuonsTree = fs->make<TTree>("muons", "muons tree");
+  mElectronsTree = fs->make<TTree>("electrons", "electrons tree");
   
   crossSection = -1.;
   
@@ -1442,34 +1444,34 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   float pho_py = photon.py();
   float pho_pz = photon.pz();
   float pho_e = photon.energy();
-  updateBranch(mAnalysisTree,&pho_is_present,"is_present","I");
-  updateBranch(mAnalysisTree,&pho_et,"et");
-  updateBranch(mAnalysisTree,&pho_pt,"pt");
-  updateBranch(mAnalysisTree,&pho_eta,"eta");
-  updateBranch(mAnalysisTree,&pho_phi,"phi"); 
-  updateBranch(mAnalysisTree,&pho_px,"px");
-  updateBranch(mAnalysisTree,&pho_py,"py");
-  updateBranch(mAnalysisTree,&pho_pz,"pz");
-  updateBranch(mAnalysisTree,&pho_e,"e");
+  updateBranch(mPhotonTree,&pho_is_present,"is_present","I");
+  updateBranch(mPhotonTree,&pho_et,"et");
+  updateBranch(mPhotonTree,&pho_pt,"pt");
+  updateBranch(mPhotonTree,&pho_eta,"eta");
+  updateBranch(mPhotonTree,&pho_phi,"phi"); 
+  updateBranch(mPhotonTree,&pho_px,"px");
+  updateBranch(mPhotonTree,&pho_py,"py");
+  updateBranch(mPhotonTree,&pho_pz,"pz");
+  updateBranch(mPhotonTree,&pho_e,"e");
   
   bool hasPixelSeed = photonRef->hasPixelSeed();
-  updateBranch(mAnalysisTree, &hasPixelSeed, "has_pixel_seed", "O");
+  updateBranch(mPhotonTree, &hasPixelSeed, "has_pixel_seed", "O");
   
   // Photon ID related
   float hadTowOverEm = photonRef->hadTowOverEm();
-  updateBranch(mAnalysisTree, &hadTowOverEm, "hadTowOverEm");
+  updateBranch(mPhotonTree, &hadTowOverEm, "hadTowOverEm");
 
   // Get the full5x5 map
   edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
   event.getByToken(full5x5SigmaIEtaIEtaMapToken_, full5x5SigmaIEtaIEtaMap);  
   
   float sigmaIetaIeta = (*full5x5SigmaIEtaIEtaMap)[photonRef] ;
-  updateBranch(mAnalysisTree, &sigmaIetaIeta, "sigmaIetaIeta");
+  updateBranch(mPhotonTree, &sigmaIetaIeta, "sigmaIetaIeta");
 
   edm::Handle<double> rhos;
   event.getByToken( rhoToken_, rhos);
   float rho = *rhos;
-  updateBranch(mAnalysisTree, &rho, "rho");
+  updateBranch(mPhotonTree, &rho, "rho");
   
   bool hasMatchedPromptElectron ; 
   if (photonRef->passElectronVeto())
@@ -1477,7 +1479,7 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   else 
     hasMatchedPromptElectron = true;
   
-  updateBranch(mAnalysisTree, &hasMatchedPromptElectron, "hasMatchedPromptElectron", "O");
+  updateBranch(mPhotonTree, &hasMatchedPromptElectron, "hasMatchedPromptElectron", "O");
   
   edm::Handle<edm::ValueMap<float> > phoChargedIsolationMap;
   event.getByToken(phoChargedIsolationToken_, phoChargedIsolationMap);
@@ -1491,15 +1493,15 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   float neutralHadronsIsolation  = getCorrectedPFIsolation((*phoNeutralHadronIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::NEUTRAL_HADRONS);
   float photonIsolation               = getCorrectedPFIsolation((*phoPhotonIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::PHOTONS);     
   
-  updateBranch(mAnalysisTree, &chargedHadronsIsolation, "chargedHadronsIsolation");
-  updateBranch(mAnalysisTree, &neutralHadronsIsolation, "neutralHadronsIsolation");
-  updateBranch(mAnalysisTree, &photonIsolation, "photonIsolation");
+  updateBranch(mPhotonTree, &chargedHadronsIsolation, "chargedHadronsIsolation");
+  updateBranch(mPhotonTree, &neutralHadronsIsolation, "neutralHadronsIsolation");
+  updateBranch(mPhotonTree, &photonIsolation, "photonIsolation");
   
-  mAnalysisTree->Fill();
+  mPhotonTree->Fill();
   
   if (mIsMC) {
-    particleToTree(photonRef->genPhoton(), mAnalysisTree, addresses);
-    mAnalysisTree->Fill();
+    particleToTree(photonRef->genPhoton(), mPhotonGenTree, addresses);
+    mPhotonGenTree->Fill();
   }
 }
 
@@ -1705,18 +1707,18 @@ void GammaJetFilter::electronsToTree(const edm::Handle<pat::ElectronCollection>&
     charge[i]     = electron.charge();
   }
 
-  updateBranch(mAnalysisTree, &n, "n", "I");
-  updateBranchArray(mAnalysisTree, id, "id", "n", "I");
-  updateBranchArray(mAnalysisTree, isolation, "isolation", "n");
-  updateBranchArray(mAnalysisTree, pt, "pt", "n");
-  updateBranchArray(mAnalysisTree, px, "px", "n");
-  updateBranchArray(mAnalysisTree, py, "py", "n");
-  updateBranchArray(mAnalysisTree, pz, "pz", "n");
-  updateBranchArray(mAnalysisTree, eta, "eta", "n");
-  updateBranchArray(mAnalysisTree, phi, "phi", "n");
-  updateBranchArray(mAnalysisTree, charge, "charge", "n", "I");
+  updateBranch(mElectronsTree, &n, "n", "I");
+  updateBranchArray(mElectronsTree, id, "id", "n", "I");
+  updateBranchArray(mElectronsTree, isolation, "isolation", "n");
+  updateBranchArray(mElectronsTree, pt, "pt", "n");
+  updateBranchArray(mElectronsTree, px, "px", "n");
+  updateBranchArray(mElectronsTree, py, "py", "n");
+  updateBranchArray(mElectronsTree, pz, "pz", "n");
+  updateBranchArray(mElectronsTree, eta, "eta", "n");
+  updateBranchArray(mElectronsTree, phi, "phi", "n");
+  updateBranchArray(mElectronsTree, charge, "charge", "n", "I");
   
-  mAnalysisTree->Fill();
+  mElectronsTree->Fill();
 }
 
 void GammaJetFilter::muonsToTree(const edm::Handle<pat::MuonCollection>& muons, const reco::Vertex& pv) {
@@ -1776,21 +1778,21 @@ void GammaJetFilter::muonsToTree(const edm::Handle<pat::MuonCollection>& muons, 
     if(pt[i] > 5 && isLooseMuon[i]) nLooseMuon++ ;
   }
   
-  updateBranch(mAnalysisTree, &n, "n", "I");
-  updateBranchArray(mAnalysisTree, id, "id", "n", "I");
-  updateBranchArray(mAnalysisTree, isolation, "relative_isolation", "n");
-  updateBranchArray(mAnalysisTree, delta_beta_isolation, "delta_beta_relative_isolation", "n");
-  updateBranchArray(mAnalysisTree, isLooseMuon, "isLooseMuon", "n", "I");
-  updateBranch(mAnalysisTree, &nLooseMuon, "nLooseMuon", "I");
-  updateBranchArray(mAnalysisTree, pt, "pt", "n");
-  updateBranchArray(mAnalysisTree, px, "px", "n");
-  updateBranchArray(mAnalysisTree, py, "py", "n");
-  updateBranchArray(mAnalysisTree, pz, "pz", "n");
-  updateBranchArray(mAnalysisTree, eta, "eta", "n");
-  updateBranchArray(mAnalysisTree, phi, "phi", "n");
-  updateBranchArray(mAnalysisTree, charge, "charge", "n", "I");
+  updateBranch(mMuonsTree, &n, "n", "I");
+  updateBranchArray(mMuonsTree, id, "id", "n", "I");
+  updateBranchArray(mMuonsTree, isolation, "relative_isolation", "n");
+  updateBranchArray(mMuonsTree, delta_beta_isolation, "delta_beta_relative_isolation", "n");
+  updateBranchArray(mMuonsTree, isLooseMuon, "isLooseMuon", "n", "I");
+  updateBranch(mMuonsTree, &nLooseMuon, "nLooseMuon", "I");
+  updateBranchArray(mMuonsTree, pt, "pt", "n");
+  updateBranchArray(mMuonsTree, px, "px", "n");
+  updateBranchArray(mMuonsTree, py, "py", "n");
+  updateBranchArray(mMuonsTree, pz, "pz", "n");
+  updateBranchArray(mMuonsTree, eta, "eta", "n");
+  updateBranchArray(mMuonsTree, phi, "phi", "n");
+  updateBranchArray(mMuonsTree, charge, "charge", "n", "I");
   
-  mAnalysisTree->Fill();
+  mMuonsTree->Fill();
 }
 
 //define this as a plug-in

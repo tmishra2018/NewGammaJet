@@ -21,27 +21,19 @@ class AnalysisTree {
 
     // Declaration of leaf types
     UInt_t                      run;
+    //    UInt_t                      lumi_block;
     UInt_t                      event;
-    Double_t                  crossSection;
-    Float_t                      ntrue_interactions;
-    UInt_t                       nvertex;
-    UInt_t                       nvertexGood;
-    Int_t                         pu_nvertex;
-    Double_t                  generator_weight;
+    Double_t                      crossSection;
+    Float_t                     ntrue_interactions;
+    UInt_t                      nvertex;
+    UInt_t                      nvertexGood;
+    Int_t                       pu_nvertex;
+    //    Float_t                     event_weight;
+    Double_t                    generator_weight;
     Float_t                     evtWeightTot; //Federico
-    std::vector<std::string>*     trigger_names;
-    std::vector<bool>*             trigger_results;
+    std::vector<std::string>*   trigger_names;
+    std::vector<bool>*          trigger_results;
     std::vector<double>*          trigger_prescale;
-    //Photons
-    Bool_t          has_pixel_seed;                                                                                                                
-    Float_t         hadTowOverEm;                                                                                                                  
-    Float_t         sigmaIetaIeta;                                                                                                                 
-    Float_t         rho;                                                                                                                           
-    Bool_t          hasMatchedPromptElectron;                                                                                                      
-    Float_t         chargedHadronsIsolation;                                                                                                       
-    Float_t         neutralHadronsIsolation;                                                                                                       
-    Float_t         photonIsolation;       
-
 
     // List of branches
     TBranch        *b_crossSection;   //!
@@ -49,22 +41,8 @@ class AnalysisTree {
     TBranch        *b_nvertex;   //!
     TBranch        *b_nvertexGood;   //!
     TBranch        *b_pu_nvertex;   //!
+    // TBranch        *b_event_weight;   //!
     TBranch        *b_evtWeightTot;   //! Federico
-    // Photon
-    // no branch
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     AnalysisTree();
     virtual ~AnalysisTree();
@@ -106,27 +84,19 @@ void AnalysisTree::Init(TTree *tree)
   //fChain->SetMakeClass(1);
 
   fChain->SetBranchAddress("run", &run, NULL);
+  //  fChain->SetBranchAddress("lumi_block", &lumi_block, NULL);
   fChain->SetBranchAddress("event", &event, NULL);
   fChain->SetBranchAddress("crossSection", &crossSection, &b_crossSection);
   fChain->SetBranchAddress("ntrue_interactions", &ntrue_interactions, &b_ntrue_interactions);
   fChain->SetBranchAddress("nvertex", &nvertex, &b_nvertex);
   fChain->SetBranchAddress("nvertexGood", &nvertexGood, &b_nvertexGood);
   fChain->SetBranchAddress("pu_nvertex", &pu_nvertex, &b_nvertex);
+  // fChain->SetBranchAddress("event_weight", &event_weight, &b_event_weight);
   fChain->SetBranchAddress("generator_weight", &generator_weight, NULL);
   fChain->SetBranchAddress("evtWeightTot", &evtWeightTot, &b_evtWeightTot); //Federico
   fChain->SetBranchAddress("trigger_names", &trigger_names, NULL);
   fChain->SetBranchAddress("trigger_results", &trigger_results, NULL);
   fChain->SetBranchAddress("trigger_prescale", &trigger_prescale, NULL); //Federico
-  //photon
-  fChain->SetBranchAddress("has_pixel_seed", &has_pixel_seed, NULL);                                                                               
-  fChain->SetBranchAddress("hadTowOverEm", &hadTowOverEm, NULL);                                                                                   
-  fChain->SetBranchAddress("sigmaIetaIeta", &sigmaIetaIeta, NULL);                                                                                 
-  fChain->SetBranchAddress("rho", &rho, NULL);                                                                                                     
-  fChain->SetBranchAddress("hasMatchedPromptElectron", &hasMatchedPromptElectron, NULL);                                                           
-  fChain->SetBranchAddress("chargedHadronsIsolation", &chargedHadronsIsolation, NULL);                                                             
-  fChain->SetBranchAddress("neutralHadronsIsolation", &neutralHadronsIsolation, NULL);                                                             
-  fChain->SetBranchAddress("photonIsolation", &photonIsolation, NULL);
-
 
   //fChain->SetCacheSize(-1);
   //fChain->AddBranchToCache("*");

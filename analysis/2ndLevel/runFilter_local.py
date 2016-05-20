@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 import os
+from CondCore.CondDB.CondDB_cfi  import *
 
 process = cms.Process("GAMMAJET2")
 
@@ -16,15 +17,18 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load('RecoJets.JetProducers.QGTagger_cfi')
+process.QGTagger.srcJets          = cms.InputTag('slimmedJets')    # Could be reco::PFJetCollection or pat::JetCollection (both AOD and miniAOD)
+process.QGTagger.jetsLabel       = cms.string('QGL_AK4PFchs')        # Other options: see https://twiki.cern.ch/twiki/bin/viewauth/CMS/QGDataBaseVersion
 
 #process.load("Configuration/StandardSequences/GeometryDB_cff")
 #process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)) # all events
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000)) # 5000 events
 ###################################### Run on AOD instead of MiniAOD? ########
-runOnAOD = False #Federico
+runOnAOD=False #Federico
 ###################################### Run on RECO instead of MiniAOD? ########
-runOnRECO = False
+runOnRECO=False
 if runOnRECO: runOnAOD=True
 
 
@@ -34,7 +38,7 @@ process.source = cms.Source("PoolSource",
 #    'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/AOD/PromptReco-v1/000/246/865/00000/E69D98C7-150B-E511-9118-02163E014206.root' #AOD
       #'root://xrootd.unl.edu//store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/865/00000/3296E66B-160B-E511-AD26-02163E013395.root' #RECO
 #    'file:Express_AOD_1.root' # AOD
-   'file:../tuples/Data/SinglePhoton_file1_76X.root'  #Express_miniAOD.root' # miniAOD
+   'file:../tuples/Data/SinglePhoton_file1_80X.root'  #Express_miniAOD.root' # miniAOD
 #      THISINPUTFILE
       )
     )
@@ -211,7 +215,7 @@ if runOnRECO:
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, THISGLOBALTAG, '')
-process.GlobalTag.globaltag = cms.string("76X_dataRun2_v15")
+process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_v3")
 #process.GlobalTag.globaltag = cms.string("GR_P_V56")
 #process.GlobalTag = GlobalTag(process.GlobalTag, "GR_P_V56", '')
 
@@ -284,74 +288,78 @@ else:
 
 ##### User analyzer ######
 process.gammaJet = cms.EDFilter('GammaJetFilter',
-    isMC = cms.untracked.bool(False),
-    photons = cms.untracked.InputTag("slimmedPhotons"),
-    firstJetPtCut = cms.untracked.bool(False),
-
-    #json = cms.string(os.path.join(fullPath, "lumiSummary.json")),
-    #csv = cms.string(os.path.join(fullPath, "lumibyls.csv")),
-     json = cms.string( "file:lumiSummary.json"),
-     csv = cms.string( "file:lumibyls.csv"),
-   
-     filterData = cms.untracked.bool(False),
-
-    runOnNonCHS   = cms.untracked.bool(False),
-    runOnCHS      = cms.untracked.bool(True),
-
-    runOnPFAK4    = cms.untracked.bool(True),
-    runOnPFAK8    = cms.untracked.bool(False),
-
-    runOnCaloAK4  = cms.untracked.bool(False),
-    runOnCaloAK8  = cms.untracked.bool(False),
-
-    runOnPFClusterAK4  = cms.untracked.bool(False),
-
-    # federico -> ValueMap names from the producer upstream
-    #    full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"), # from rel73 ok in photon class
-     phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
-     phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
-     phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
-     prescalesTag = cms.InputTag("patTrigger"),
-     triggerResultsTag = cms.InputTag("TriggerResults", "", "HLT"),  
-     generatorTag = cms.InputTag("generator"),  
-     vertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),  
-     photonsTag = cms.InputTag("slimmedPhotons"),
-     jetsTag = cms.InputTag("slimmedJets"),
-     jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
-     metTag = cms.InputTag("slimmedMETs"),
-     electronsTag = cms.InputTag("slimmedElectrons"),
-     muonsTag = cms.InputTag("slimmedMuons"),
-     rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
-     PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
-     pfCands = cms.InputTag("packedPFCandidates"),                                                               
-   
-     # JEC
-    doJetCorrection = cms.untracked.bool(True),
-    correctJecFromRaw = cms.untracked.bool(True),
-#    correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3"), #federico
-    #if you want to correct data also with residual
-    #correctorLabel = cms.untracked.string("ak4PFchsL1FastL2L3Residual"),
-
-    # MET
-    redoTypeIMETCorrection = cms.untracked.bool(True),
-    doFootprintMETCorrection = cms.untracked.bool(True)
-
-    )
+                                isMC = cms.untracked.bool(False),
+                                firstJetPtCut = cms.untracked.bool(False),
+                                
+                                json = cms.string( "file:lumiSummary.json"),
+                                csv = cms.string( "file:lumibyls.csv"),
+                                
+                                filterData = cms.untracked.bool(False),
+                                
+                                runOnNonCHS   = cms.untracked.bool(False),
+                                runOnCHS      = cms.untracked.bool(True),
+                                
+                                runOnPFAK4    = cms.untracked.bool(True),
+                                runOnPFAK8    = cms.untracked.bool(False),
+                                
+                                runOnCaloAK4  = cms.untracked.bool(False),
+                                runOnCaloAK8  = cms.untracked.bool(False),
+                                
+                                runOnPFClusterAK4  = cms.untracked.bool(False),
+                                
+                                full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"),
+                                phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
+                                phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
+                                phoPhotonIsolation             = cms.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
+                                prescalesTag = cms.InputTag("patTrigger"),
+                                triggerResultsTag = cms.InputTag("TriggerResults", "", "HLT"),  
+                                generatorTag = cms.InputTag("generator"),  
+                                vertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),  
+                                photonsTag = cms.InputTag("slimmedPhotons"),
+                                jetsTag = cms.InputTag("slimmedJets"),
+                                jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
+                                metTag = cms.InputTag("slimmedMETs"),
+                                electronsTag = cms.InputTag("slimmedElectrons"),
+                                muonsTag = cms.InputTag("slimmedMuons"),
+                                rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
+                                PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
+                                pfCands = cms.InputTag("packedPFCandidates"),                                                               
+                                
+                                # MET
+                                redoTypeIMETCorrection = cms.untracked.bool(True),
+                                doFootprintMETCorrection = cms.untracked.bool(True),
+                                
+                                # JEC
+                                doJetCorrection = cms.untracked.bool(True),
+                                correctJecFromRaw = cms.untracked.bool(True),
+                                applyL2Res = cms.untracked.bool(False),
+                                applyL2L3Res = cms.untracked.bool(False),
+                                
+                                L1corr_DATA = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L1FastJet_AK4PFchs.txt'),
+                                L2corr_DATA = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L2Relative_AK4PFchs.txt'),
+                                L3corr_DATA = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L3Absolute_AK4PFchs.txt'),
+                                L1RCcorr_DATA =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L1FastJet_AK4PFchs.txt'), #L1RC   
+                                #to be changed witg the real one
+                                L2Rescorr_DATA = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L1FastJet_AK4PFchs.txt'),
+                                L2L3ResCorr_DATA = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV1_DATA/Spring16_25nsV1_DATA_L1FastJet_AK4PFchs.txt'),         
+                                 
+                                )
 
 
 
 ########## Path ##########
 process.p = cms.Path()
 if runOnRECO:
-     process.p += process.pfClusterRefsForJets_step
-process.p +=process.photonIDValueMapProducer  # federico -> add process for isolation
+  process.p += process.pfClusterRefsForJets_step
+process.p += process.photonIDValueMapProducer
+process.p += process.QGTagger
 process.p += process.gammaJet
 #process.endjob_step = cms.EndPath(process.endOfProcess)
 #process.MINIAODoutput_step = cms.EndPath(process.MINIAODoutput)
 
 process.TFileService = cms.Service("TFileService",
-#     fileName = cms.string(THISROOTFILE) # run on crab
-     fileName = cms.string("output_singleFile_Data.root") # run in local
-     )
+                                   #     fileName = cms.string(THISROOTFILE) # run on crab
+                                   fileName = cms.string("output_singleFile_Data.root") # run in local
+                                   )
 
 #process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))

@@ -348,7 +348,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_ntrue_interactions_reweighted = analysisDir.make<TH1F>("ntrue_interactions_reweighted", "ntrue_interactions_reweighted", 76, 0., 75.);
 
   TH1F* h_mPUWeight = analysisDir.make<TH1F>("mPUWeight", "mPUWeight", 50, 0., 5.);
-  TH1F* h_analysis_event_weight = analysisDir.make<TH1F>("analysis_event_weight", "analysis_event_weight", 50, 0., 5.);
+  //  TH1F* h_analysis_event_weight = analysisDir.make<TH1F>("analysis_event_weight", "analysis_event_weight", 50, 0., 5.);
   TH1F* h_generatorWeight = analysisDir.make<TH1F>("generatorWeight", "generatorWeight", 50, 0., 5.);
   TH1F* h_analysis_evtWeightTot = analysisDir.make<TH1F>("analysis_evtWeightTot", "analysis_evtWeightTot", 50, 0., 10.);
   TH1F* h_event_weight_used = analysisDir.make<TH1F>("event_weight_used", "event_weight_used", 20, 0., 2.);
@@ -1020,13 +1020,14 @@ void GammaJetFinalizer::runAnalysis() {
     if(mIsMC){
       mu = analysis.ntrue_interactions ;
     } else {
-      mu = getAvgPU( analysis.run, analysis.lumi_block );
+      //      mu = getAvgPU( analysis.run, analysis.lumi_block );
+      mu = 1;
       //      std::cout<< analysis.run << "  " << analysis.lumi_block << "  " << mu<<endl;
     }
     
  
     h_mPUWeight                   ->Fill(mPUWeight);
-    h_analysis_event_weight  ->Fill(analysis.event_weight);
+    //   h_analysis_event_weight  ->Fill(analysis.event_weight);
     h_generatorWeight           ->Fill(generatorWeight);
     h_analysis_evtWeightTot  ->Fill(evtWeightSum);
     h_event_weight_used       ->Fill(eventWeight);

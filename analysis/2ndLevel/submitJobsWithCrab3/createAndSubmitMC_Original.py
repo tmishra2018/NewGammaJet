@@ -66,9 +66,12 @@ os.system("mkdir "+storagedir+"/"+namedir+"/workdir")
 
 for line in ins:
   dataset = line.split()[0]
-  xsection = line.split()[1]
-  filesperjob = line.split()[2]
-  globaltag = line.split()[3]
+  processedevents = line.split()[1]
+  xsection = line.split()[2]
+  ptHatMin = line.split()[3]
+  ptHatMax = line.split()[4]
+  filesperjob = line.split()[5]
+  globaltag = line.split()[6]
   globaltag = globaltag.strip()
 
   #datasets.append(dataset)  
@@ -81,7 +84,10 @@ for line in ins:
 
   print "line : "+line
   print "dataset : "+dataset
+  print "processedevents : "+processedevents +  "\n ******* \nNOTE that for flat samples the correct thing to put in processedEvents is 1!!\n*************"
   print "cross section : "+xsection
+  print "ptHat Min : "+ptHatMin
+  print "ptHat Max : "+ptHatMax
   print "filesperjob : "+filesperjob
   print "globaltag : "+globaltag
 
@@ -99,7 +105,10 @@ for line in ins:
       "OUTFILENAME":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
       "INPUTDATASET":dataset,
       "FILESPERJOB":filesperjob,
+      "procEvents":processedevents,
       "xsec":xsection,
+      "ptMin":ptHatMin,
+      "ptMax":ptHatMax
       }
 ##create cmssw configuration file
   cmssw_cfgfile = storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py"
