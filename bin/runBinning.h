@@ -59,6 +59,7 @@ class RunBinning {
       mRunBins.push_back(std::make_pair(259686, 259891)); // 208.717 pb-1
       mRunBins.push_back(std::make_pair(260373, 260532)); // 246.805 pb-1
       mRunBins.push_back(std::make_pair(260533, 260627)); // 287.615 pb-1
+     mRunBins.push_back(std::make_pair(260628, 1000000)); // 2016 Collisions
       // end of pp collision 2015
     }
 

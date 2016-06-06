@@ -36,7 +36,6 @@
 
 #include "gammaJetFinalizer.h"
 #include "PUReweighter.h"
-#include "JECReader.h"
 
 #include <boost/regex.hpp>
 

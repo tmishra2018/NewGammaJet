@@ -6,7 +6,6 @@
 #include <TParameter.h>
 #include <TH2D.h>
 
-
 #include <fstream>
 #include <sstream>
 #include <signal.h>
@@ -17,18 +16,19 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
+#include <DataFormats/Math/interface/deltaPhi.h>
+#include <DataFormats/PatCandidates/interface/Jet.h>
+
+#include <PhysicsTools/FWLite/interface/TFileService.h>
+
 #include <FWCore/FWLite/interface/AutoLibraryLoader.h>
 #include <FWCore/Framework/interface/Event.h>
 
 #include <DataFormats/Common/interface/Handle.h>
 #include <DataFormats/FWLite/interface/Event.h>
 #include <DataFormats/FWLite/interface/ChainEvent.h>
-#include <DataFormats/Math/interface/deltaPhi.h>
-#include <DataFormats/PatCandidates/interface/Jet.h>
 #include <DataFormats/PatCandidates/interface/MET.h>
 #include <DataFormats/PatCandidates/interface/Photon.h>
-
-#include <PhysicsTools/FWLite/interface/TFileService.h>
 
 #include <SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h>
 
@@ -36,7 +36,6 @@
 
 #include "gammaJetFinalizer.h"
 #include "PUReweighter.h"
-#include "JECReader.h"
 #include "parsePileUpJSON2.h"
 
 #include <boost/regex.hpp>
@@ -45,8 +44,7 @@
 #define MAKE_RED "\033[31m"
 #define MAKE_BLUE "\033[34m"
 
-#define ADD_TREES true
-#define PROFILE false
+#define ADD_TREES false
 
 #define DELTAPHI_CUT (2.8)
 
@@ -56,15 +54,15 @@
 
 boost::shared_ptr<PUReweighter> reweighter;
 
+TFile* PUFile;
+
 bool EXIT = false;
 
 GammaJetFinalizer::GammaJetFinalizer():
   mRandomGenerator(0) {
   mPUWeight = 1.;
   mDoMCComparison = false; // do ptPhoton cut < 200GeV
-  mNoPUReweighting = false; // do PUReweighting
-  mIsBatchJob = false;
-  mUseExternalJECCorrecion = false;
+  mNoPUReweighting = false; // do not PUReweighting
 }
 
 GammaJetFinalizer::~GammaJetFinalizer() {
@@ -73,7 +71,8 @@ GammaJetFinalizer::~GammaJetFinalizer() {
 
 std::string GammaJetFinalizer::buildPostfix() {
   std::string algo = mJetAlgo == AK4 ? "AK4" : "AK8";
-  std::string type = mJetType == PF ? "PFlow" : "Calo";
+  //  std::string type = mJetType == PF ? "PFlow" : "Calo";
+ std::string type = "PFlow" ;
 
   std::string postfix = type + algo;
 
@@ -103,14 +102,11 @@ void GammaJetFinalizer::runAnalysis() {
   if (mIsMC) {
     // PU Reweighting 
     static std::string cmsswBase = getenv("CMSSW_BASE");
-    static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
-    //    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8
-    //  static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJET -- madgraph+pythia
-    static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD pythia
-    //  static std::string puMC = TString::Format("%s/computed_mc_GJET_plus_QCD_Madgraph_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
-    //    static std::string puMC = TString::Format("%s/computed_mc_GJET_Madgraph_plus_QCD_Pythia_pu_truth_50bins.root", puPrefix.c_str()).Data(); // GJet + QCD madgraph
-    static std::string puData = TString::Format("%s/pu_truth_data2015_50bins.root", puPrefix.c_str()).Data();
-    reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData, puMC));
+    // PU Reweighting                                                                                                                                                   
+    static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();                          
+    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data(); //GJET Flat -- pythia8                       
+    static std::string puData = TString::Format("%s/pu_truth_data2016_100bins.root", puPrefix.c_str()).Data();                                                           
+    reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData, puMC));                                                                                           
     // Trigger
     std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc.xml", cmsswBase.c_str()).Data();
     std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
@@ -248,17 +244,10 @@ void GammaJetFinalizer::runAnalysis() {
 
   std::cout << std::endl << "##########" << std::endl;
   std::cout << "# " << MAKE_BLUE << "Running on " << MAKE_RED << ((mIsMC) ? "MC" : "DATA") << RESET_COLOR << std::endl;
-  if (mUseExternalJECCorrecion) {
-    std::cout << "# " << MAKE_RED << "Using external JEC " << RESET_COLOR << std::endl;
-  }
   std::cout << "##########" << std::endl << std::endl;
 
   // Output file
-  // Build output file name
-  // PhotonJet_<dataset>_<postfix>.root
-  std::string outputFile = (!mIsBatchJob)
-    ? TString::Format("PhotonJet_%s_%s.root", mDatasetName.c_str(), postFix.c_str()).Data()
-    : TString::Format("PhotonJet_%s_%s_part%02d.root", mDatasetName.c_str(), postFix.c_str(), mCurrentJob).Data();
+  std::string outputFile = TString::Format("PhotonJet_%s_%s.root", mDatasetName.c_str(), postFix.c_str()).Data();
   fwlite::TFileService fs(outputFile);
 
 #if ADD_TREES
@@ -314,27 +303,6 @@ void GammaJetFinalizer::runAnalysis() {
   miscTree->SetName("rho");
 #endif
 
-  FactorizedJetCorrector* jetCorrector = NULL;
-  //void* jetCorrector = NULL;
-  if (mUseExternalJECCorrecion) {
-
-    std::string jecJetAlgo = "AK4";
-    if (mJetType == PF)
-      jecJetAlgo += "PF";
-    else/* if (recoType == "calo")*/
-      jecJetAlgo += "Calo";
-    /*else if (recoType == "jpt")
-      jecJetAlgo += "JPT";*/
-
-    if (mJetType == PF && mUseCHS)
-      jecJetAlgo += "chs";
-
-    std::cout << "Using '" << jecJetAlgo << "' algorithm for external JEC" << std::endl;
-
-    const std::string payloadsFile = "jec_payloads.xml";
-    jetCorrector = makeFactorizedJetCorrectorFromXML(payloadsFile, jecJetAlgo, mIsMC);
-  }
-
   std::cout << "Processing..." << std::endl;
 
   // Automatically call Sumw2 when creating an histogram
@@ -388,7 +356,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_ptPhoton_passedID_Binned = new TH1F("ptPhoton_passedID_Binned","ptPhoton", binnum, ptBins);
   TH1F* h_ptPhoton_Binned = new TH1F("ptPhoton_Binned","ptPhoton", binnum, ptBins);
 
-  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 400, 0., 2000.);
+  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 100, 0., 2000.);
   TH1F* h_EtaPhoton_passedID = analysisDir.make<TH1F>("EtaPhoton_passedID", "EtaPhoton", 60, -5, 5.);
   TH1F* h_PhiPhoton_passedID = analysisDir.make<TH1F>("PhiPhoton_passedID", "PhiPhoton", 60, -3.5, 3.5);
   TH1F* h_ptFirstJet_passedID = analysisDir.make<TH1F>("ptFirstJet_passedID", "ptFirstJet", 200, 0., 2000.);
@@ -582,7 +550,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<std::vector<TH1F*>> vertex_responseMPFRaw = buildEtaVertexVector<TH1F>(vertexDir, "resp_mpf_raw", 150, 0., 2.);
   std::vector<TH1F*> vertex_responseMPFEta013 = buildVertexVector<TH1F>(vertexDir, "resp_mpf", "eta0013", 150, 0., 2.);
   std::vector<TH1F*> vertex_responseMPFRawEta013 = buildVertexVector<TH1F>(vertexDir, "resp_mpf_raw", "eta0013", 150, 0., 2.);
-
+  /*
   // vs run number -- time dependence study
   TFileDirectory runDir;
   std::vector<std::vector<TH1F*>> run_responseBalancing ;
@@ -597,7 +565,7 @@ void GammaJetFinalizer::runAnalysis() {
   run_responseMPF = buildEtaRunVector<TH1F>(runDir, "resp_mpf", 150, 0., 2.);
   run_responseMPFEta013 = buildRunVector<TH1F>(runDir, "resp_mpf", "eta0013", 150, 0., 2.);
   }
-
+  */
   // Extrapolation
   int extrapolationBins = 50;
   double extrapolationMin = 0.;
@@ -690,31 +658,16 @@ void GammaJetFinalizer::runAnalysis() {
   uint64_t from = 0;
   uint64_t to = totalEvents;
 
-  if (mIsBatchJob) {
-    // Compute new from / to index
-    uint64_t eventsPerJob = totalEvents / mTotalJobs;
-    from = mCurrentJob * eventsPerJob;
-    to = (mCurrentJob == (mTotalJobs - 1)) ? totalEvents : (mCurrentJob + 1) * eventsPerJob;
-
-    std::cout << "Batch mode: running from " << from << " (included) to " << to << " (excluded)" << std::endl;
-  }
-
   clock::time_point start = clock::now();
 
-#if PROFILE
-  std::chrono::milliseconds t0; 
-  std::chrono::microseconds t1; 
-  std::chrono::microseconds t2;
-#endif
 
   // Loop -- from = 0, to = totalEvents
   for (uint64_t i = from; i < to; i++) {     
 
-
-    //test bug
-    //    if( i < 2947062) continue;
+    //skip test bug
+    //    if( i < 1318285) continue;
     
-    if ((i - from) % 50000 == 0) { //50000
+    if ( (i - from) < 10 || (i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
       double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
       start = end;
@@ -723,7 +676,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs on 50/25 ns
     if( mIsMC ){ // bug in GJET Pythia
-      if ( i == 1762271 || i == 2947062) continue;
+      if ( i == 117167 || i == 662324 || i == 1318285) continue;
     }
     // No events skipped for GJet Madgraph
     
@@ -731,9 +684,6 @@ void GammaJetFinalizer::runAnalysis() {
       break;
     }
 
-#if PROFILE
-    auto fooA = clock::now();
-#endif
 
     analysis.GetEntry(i);
     photon.GetEntry(i);
@@ -759,23 +709,12 @@ void GammaJetFinalizer::runAnalysis() {
 
     misc.GetEntry(i);
 
-#if PROFILE
-    auto fooB = clock::now();
-
-    t0 += std::chrono::duration_cast<std::chrono::milliseconds>(fooB - fooA);
-
-    if ((i - from) % 50000 == 0) { 
-      std::cout << "GetEntry() : " << std::chrono::duration_cast<std::chrono::milliseconds>(t0).count() << "ms" << std::endl;
-      t0 = std::chrono::milliseconds::zero();
-    }
-#endif
-
     // if you want analyze a run range
     //    if( analysis.run <260533 || analysis.run >260627 ) continue;
 
-    // skipp all events -- usefull to check the crab output
-    //    if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
-
+    // skip all events -- usefull to check the crab output
+    //   if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
+   
     if (! photon.is_present || ! firstJet.is_present)
       continue;
 
@@ -783,35 +722,6 @@ void GammaJetFinalizer::runAnalysis() {
     
     //        std::cout<<" passedPhotonJetCut  " << std::endl;
     
-    if (jetCorrector) {
-   
-      //      std::cout<<" if JetCorrector " << std::endl;
-
-   // jetCorrector isn't null. Correct raw jet with jetCorrector and rebuild the corrected jet
-      jetCorrector->setJetEta(firstRawJet.eta);
-      jetCorrector->setJetPt(firstRawJet.pt);
-      jetCorrector->setRho(misc.rho);
-      jetCorrector->setJetA(firstRawJet.jet_area);
-      jetCorrector->setNPV(analysis.nvertex);
-
-      double correction = jetCorrector->getCorrection();
-      firstJet.pt = firstRawJet.pt * correction;
-
-      jetCorrector->setJetEta(secondRawJet.eta);
-      jetCorrector->setJetPt(secondRawJet.pt);
-      jetCorrector->setRho(misc.rho);
-      jetCorrector->setJetA(secondRawJet.jet_area);
-      jetCorrector->setNPV(analysis.nvertex);
-
-      correction = jetCorrector->getCorrection();
-      secondJet.pt = secondRawJet.pt * correction;
-
-      //      std::cout<<" END JetCorrector " << std::endl;
-    }
-
-#if PROFILE
-    fooA = clock::now();
-#endif
 
     // federico -- trigger throw away photon with pT < 40
     //    if(photon.pt <40) continue;
@@ -819,7 +729,7 @@ void GammaJetFinalizer::runAnalysis() {
     int checkTriggerResult = 0;
     std::string passedTrigger;
     float triggerWeight = 1.;
-    //    std::cout<<" finding trigger " << std::endl;
+    if(mVerbose) std::cout<<" finding trigger " << std::endl;
     if ((checkTriggerResult = checkTrigger(passedTrigger, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
@@ -852,19 +762,12 @@ void GammaJetFinalizer::runAnalysis() {
     }
     passedEventsFromTriggers++;
     
-    //    std::cout<<" passedEventFromTriggers  " << std::endl;
+    if(mVerbose)    std::cout<<" passedEventFromTriggers  " << std::endl;
     
     if (mIsMC) {
-      // 2012 data divided in period with different triggers
-      //   int run_period=0;
-      //   if (analysis.run>190456 && analysis.run<196531) run_period=1;
-      //   if (analysis.run>198022 && analysis.run<203742) run_period=2;
-      //   if (analysis.run>203768 && analysis.run<208686) run_period=3;
-      //   cleanTriggerName(passedTrigger);
       
       // PU reweighting -- official recipe
-      //      computePUWeight(passedTrigger, run_period);
-      computePUWeight(); // 2015 analysis
+      computePUWeight(); // 2016 analysis
            
       //federico -- N vertex based
       // computePUWeight_NVtxBased(photon.pt, analysis.nvertex);      
@@ -886,15 +789,6 @@ void GammaJetFinalizer::runAnalysis() {
       //  std::cout<< triggerWeight << std::endl;
     }
     
-#if PROFILE
-    fooB = clock::now();
-    t1 += std::chrono::duration_cast<std::chrono::microseconds>(fooB - fooA);
-    if ((i - from) % 50000 == 0) {
-      std::cout << "Trigger + PU : " << t1.count() / 1000. << " ms" << std::endl;
-      t1 = std::chrono::microseconds::zero();
-    }
-#endif
-
     // Weights 
     double generatorWeight = (mIsMC) ? analysis.generator_weight : 1.;
     if (generatorWeight == 0.)
@@ -916,9 +810,6 @@ void GammaJetFinalizer::runAnalysis() {
     // new
     double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : triggerWeight;
 
-#if PROFILE
-    fooA = clock::now();
-#endif
 
 #if ADD_TREES
     if (mUncutTrees) {
@@ -1020,8 +911,7 @@ void GammaJetFinalizer::runAnalysis() {
     if(mIsMC){
       mu = analysis.ntrue_interactions ;
     } else {
-      //      mu = getAvgPU( analysis.run, analysis.lumi_block );
-      mu = 1;
+      mu = getAvgPU( analysis.run, analysis.lumi_block );
       //      std::cout<< analysis.run << "  " << analysis.lumi_block << "  " << mu<<endl;
     }
     
@@ -1116,8 +1006,8 @@ void GammaJetFinalizer::runAnalysis() {
     if ( mIsMC)   etaBinGen = mEtaBinning.getBin(firstGenJet.eta);
     int vertexBin = mVertexBinning.getVertexBin(analysis.nvertex);
 
-    int runBin = -1;
-    if(!mIsMC)  runBin = mRunBinning.getRunBin(analysis.run);
+    //    int runBin = -1;
+    //    if(!mIsMC)  runBin = mRunBinning.getRunBin(analysis.run);
 
     float jetcalcen=0;
     float jetcalcenraw=0;
@@ -1353,10 +1243,10 @@ void GammaJetFinalizer::runAnalysis() {
 	  responseMPFEta013[ptBin]->Fill(respMPF, eventWeight);
 	  responseMPFRawEta013[ptBin]->Fill(respMPFRaw, eventWeight);
 
-	  if(!mIsMC){
-	    run_responseBalancingEta013[runBin]->Fill(respBalancing, eventWeight);
-	    run_responseMPFEta013[runBin]->Fill(respMPF, eventWeight);
-	  }
+	  //	  if(!mIsMC){
+	    //	    run_responseBalancingEta013[runBin]->Fill(respBalancing, eventWeight);
+	    //	    run_responseMPFEta013[runBin]->Fill(respMPF, eventWeight);
+	  //	  }
 
           if (vertexBin >= 0) {
             vertex_responseBalancingEta013[vertexBin]->Fill(respBalancing, eventWeight);
@@ -1474,10 +1364,10 @@ void GammaJetFinalizer::runAnalysis() {
         responseMPF[etaBin][ptBin]->Fill(respMPF, eventWeight);
         responseMPFRaw[etaBin][ptBin]->Fill(respMPFRaw, eventWeight);
 
-	if(!mIsMC){
-	  run_responseBalancing[etaBin][runBin]->Fill(respBalancing, eventWeight);
-	  run_responseMPF[etaBin][runBin]->Fill(respMPF, eventWeight);
-	}
+	//	if(!mIsMC){
+	//	  run_responseBalancing[etaBin][runBin]->Fill(respBalancing, eventWeight);
+	//	  run_responseMPF[etaBin][runBin]->Fill(respMPF, eventWeight);
+	//	}
 
         if (vertexBin >= 0) {
           vertex_responseBalancing[etaBin][vertexBin]->Fill(respBalancing, eventWeight);
@@ -1529,16 +1419,7 @@ void GammaJetFinalizer::runAnalysis() {
 
     }// if secondJetOK --> end of "passedID" histo
 
-#if PROFILE
-    fooB = clock::now();
 
-    t2 += std::chrono::duration_cast<std::chrono::microseconds>(fooB - fooA);
-
-    if ((i - from) % 50000 == 0) { 
-      std::cout << "Remaining : " << t2.count() / 1000. << " ms" << std::endl;
-      t2 = std::chrono::microseconds::zero();
-    }
-#endif
 
   }
 
@@ -1801,44 +1682,10 @@ void GammaJetFinalizer::computePUWeight() {
   if (mNoPUReweighting)
     return;
   
-  //// / static std::string cmsswBase = getenv("CMSSW_BASE");
-  //// /static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
-  //  static std::string puMC = TString::Format("%s/summer12_computed_mc_%s_pu_truth_75bins.root", puPrefix.c_str(), mDatasetName.c_str()).Data();
-  //  static std::string puData = TString::Format("%s/pu_truth_data_photon_2012_true_%s_75bins.root", puPrefix.c_str(), passedTrigger.c_str()).Data();
-
-  //  std::string puMC = TString::Format("%s/", puPrefix.c_str()).Data();
-  // if (run_period==1) { puMC = TString::Format("%s/PURDMCRun2012AB.root", puPrefix.c_str()).Data();}
-  // if (run_period==2) { puMC = TString::Format("%s/PURDMCRun2012C.root", puPrefix.c_str()).Data();}
-  // if (run_period==3) { puMC = TString::Format("%s/PURDMCRun2012D.root", puPrefix.c_str()).Data();}
-  
-  //std::string puData = TString::Format("%s/pu_truth_data_photon_2012_true_75bins.root", puPrefix.c_str()).Data();
- // if (mNoPUReweighting) cout << "No PU Reweighting --- PUWeight"<<mPUWeight << endl;
-  //  boost::shared_ptr<PUReweighter> reweighter = mLumiReweighting[std::make_pair(passedTrigger,run_period)];
- //PUProfile profile;
- //if (run_period==1) profile = PUProfile::RDAB;
- //if (run_period==2) profile = PUProfile::RDC;
- //if (run_period==3) profile = PUProfile::RDD;
-
-  //// /  boost::shared_ptr<PUReweighter> reweighter;
-
-  //  if (! reweighter.get()) {
-// //    if (! boost::filesystem::exists(puMC)) {
-// //      std::cout << "Warning: " << MAKE_RED << "pileup histogram for MC was not found. No PU reweighting." << RESET_COLOR << std::endl;
-// //      std::cout << "File missing: " << puMC << std::endl;
-// //      mNoPUReweighting = true;
-// //      mPUWeight = 1.;
-// //      return;
-// //    } else {
-//      std::cout << MAKE_BLUE << "Create PU reweighting profile for " << passedTrigger << RESET_COLOR << std::endl;
- //      reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData)); //, puMC));
-  //// /      reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData, puMC));
-      //   mLumiReweighting[std::make_pair(passedTrigger,run_period)] = reweighter;
-// //    }
-//  }
-
-  //  std::cout<<analysis.ntrue_interactions<<std::endl;  
   mPUWeight = reweighter->weight(analysis.ntrue_interactions);
+  //  std::cout<<analysis.ntrue_interactions<<std::endl;  
   //  std::cout<<mPUWeight<<std::endl;
+
 }//end compute PUReweight
 
 
@@ -1846,19 +1693,8 @@ void GammaJetFinalizer::computePUWeight_NVtxBased(double ptPhot, int nvertex) {
 
   //  std::cout << "My PU reweighting   "<< nvertex<<std::endl;
 
-  TFile* PUFile;
-  static std::string cmsswBase = getenv("CMSSW_BASE");
-  static std::string pathFile = "src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting";                              
-  TString PUFileName = TString::Format("%s/%s/NvertexPU_ReReco_07Dic2015_GJet_plus_QCD.root", cmsswBase.c_str(), pathFile.c_str() );
-
-  PUFile = TFile::Open(PUFileName );                                                                                                            
-                                                                                                                                                            
-  if (PUFile) {                                                                                                                                       
-    std::cout << "Opened PU file" << std::endl;                                                                                                       
-  }else{                                                                                                                                                    
-    std::cout << "Unable to open PU file" << std::endl;                                                                                           
-    exit(1);                                                                                                                                                
-  }  
+  if (mNoPUReweighting)
+    return;
 
   TH1D *h_ratio=0;
   if(ptPhot >= 40 && ptPhot < 60)             h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_40_60");  
@@ -1866,47 +1702,14 @@ void GammaJetFinalizer::computePUWeight_NVtxBased(double ptPhot, int nvertex) {
   if(ptPhot >= 85 && ptPhot < 100)           h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_85_100");  
   if(ptPhot >= 100 && ptPhot < 130)         h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_100_130");  
   if(ptPhot >= 130 && ptPhot < 175)         h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_130_175");  
-  if(ptPhot >= 175 && ptPhot <= 5000)    h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_175_5000");  
+  if(ptPhot >= 175 )                                     h_ratio = (TH1D*)PUFile->Get("h_ratio_ptPhot_175_Inf");  
   
   int bin = h_ratio->FindBin(nvertex);
   mPUWeight = h_ratio->GetBinContent(bin);  
-  //  std::cout<< "Nvtx  "<<nvertex<< std::endl;
-  //  std::cout<< "bin "<<bin<< std::endl;
-  //  std::cout<< "PU Weight  "<<mPUWeight<< std::endl;
+  if(mVerbose) std::cout<< "Nvtx  "<<nvertex<< std::endl;
+  if(mVerbose) std::cout<< "bin "<<bin<< std::endl;
+  if(mVerbose) std::cout<< "PU Weight  "<<mPUWeight<< std::endl;
 }
-
-void GammaJetFinalizer::computeTriggerWeight(double ptPhot, float& weight) {
-
-  //  std::cout<< ptPhot << "   "<< nvertex<<std::endl;
-
-  TFile* PrescaleFile;
-  static std::string cmsswBase = getenv("CMSSW_BASE");
-  static std::string pathFile = "src/JetMETCorrections/GammaJetFilter/analysis/PrescaleWeighting";                              
-  TString PrescaleFileName = TString::Format("%s/%s/Prescale_ReReco_alphacut030_07Dic2015_GJet_plus_QCD.root", cmsswBase.c_str(), pathFile.c_str() );
-
-  PrescaleFile = TFile::Open(PrescaleFileName );                                                                                                            
-                                                                                                                                                            
-  if (PrescaleFile) {                                                                                                                                       
-    std::cout << "Opened prescale file" << std::endl;                                                                                                       
-  }else{                                                                                                                                                    
-    std::cout << "Unable to open prescale file" << std::endl;                                                                                           
-    exit(1);                                                                                                                                                
-  }  
-
-  TH1D *h_ratio = (TH1D*)PrescaleFile->Get("h_ratio");  
-  int bin;
-
-  if(ptPhot >=40 && ptPhot <60)          bin =1;                                                                                                                       
-  if(ptPhot >=60 && ptPhot <85)          bin =2;                                                                                                                       
-  if(ptPhot >=85 && ptPhot <100)        bin =3;                                                                                                                        
-  if(ptPhot >=100 && ptPhot <130)      bin =4;                                                                                                                         
-  if(ptPhot >=130 && ptPhot <175)      bin =5;                                                                                                                         
-  if(ptPhot >=175 && ptPhot <=5000) bin =6;  
-
-  weight = h_ratio->GetBinContent(bin);     
-  if(weight<1) weight =1 ;
-}
-
 
 void GammaJetFinalizer::checkInputFiles() {
   for (std::vector<std::string>::iterator it = mInputFiles.begin(); it != mInputFiles.end();) {
@@ -2013,25 +1816,27 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
       throw new std::exception(); // This should NEVER happened
       }*/
 
+    return TRIGGER_OK;
+
     // added require "trigger passed" also for MC
     size_t size = analysis.trigger_names->size();
     
     for (int i = size - 1; i >= 0; i--) {
       bool passed = analysis.trigger_results->at(i);
-      //if (!passed) std::cout << "Trigger NOT passed" <<std::endl;
+      if (!passed) std::cout << "Trigger NOT passed" <<std::endl;
       if (! passed)
 	continue;
       
       //      if (boost::regex_match(analysis.trigger_names->at(i), mandatoryTrigger->first)) {
       if (boost::regex_match(analysis.trigger_names->at(i), mandatoryTrigger->at(0).name )) {
-	//std::cout << "Triggers  matching"<<std::endl;
-	//        passedTrigger = mandatoryTrigger->first.str();
+	std::cout << "Triggers  matching"<<std::endl;
+	//passedTrigger = mandatoryTrigger->first.str();
 	passedTrigger = mandatoryTrigger->at(0).name.str();
-	//std::cout << "Trigger name   " << analysis.trigger_names->at(i) << std::endl;
+	std::cout << "Trigger name   " << analysis.trigger_names->at(i) << std::endl;
 	//	std::cout << "Trigger prescale   " << analysis.trigger_prescale->at(i) << std::endl;
 	//	weight = analysis.trigger_prescale->at(i); // prescale from ntupla
 	weight = 1;
-	//	std::cout << "Trigger OK"<<std::endl;
+	std::cout << "Trigger OK"<<std::endl;
 	return TRIGGER_OK;
       }
     }
@@ -2100,31 +1905,23 @@ int main(int argc, char** argv) {
     TCLAP::ValueArg<std::string> inputListArg("", "input-list", "Text file containing input files", true, "input.list", "string");
     cmd.xorAdd(inputArg, inputListArg);
 
+    // Jet type
     std::vector<std::string> jetTypes;
     jetTypes.push_back("pf");
-    jetTypes.push_back("calo");
+    //    jetTypes.push_back("calo");
     TCLAP::ValuesConstraint<std::string> allowedJetTypes(jetTypes);
-
-    TCLAP::ValueArg<std::string> typeArg("", "type", "jet type", true, "pf", &allowedJetTypes, cmd);
-
+    TCLAP::ValueArg<std::string> typeArg("", "type", "jet type", false, "pf", &allowedJetTypes, cmd);
     std::vector<std::string> algoTypes;
     algoTypes.push_back("ak4");
     algoTypes.push_back("ak8");
     TCLAP::ValuesConstraint<std::string> allowedAlgoTypes(algoTypes);
-
-    TCLAP::ValueArg<std::string> algoArg("", "algo", "jet algo", true, "ak5", &allowedAlgoTypes, cmd);
+    TCLAP::ValueArg<std::string> algoArg("", "algo", "jet algo", true, "ak4", &allowedAlgoTypes, cmd);
+    TCLAP::ValueArg<float> chsArg("", "chs", "Use CHS branches", false, true, "bool", cmd);
+    // alpha cut
+    TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 0.3)", false, 0.3, "float", cmd);
 
     TCLAP::SwitchArg mcArg("", "mc", "MC?", cmd);
-
-    TCLAP::ValueArg<int> totalJobsArg("", "num-jobs", "number of jobs planned", false, -1, "int", cmd);
-    TCLAP::ValueArg<int> currentJobArg("", "job", "current job id", false, -1, "int", cmd);
-
     TCLAP::SwitchArg mcComparisonArg("", "mc-comp", "Cut photon pt to avoid trigger prescale issues", cmd);
-    TCLAP::SwitchArg externalJECArg("", "jec", "Use external JEC", cmd);
-
-    TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 0.2)", false, 0.2, "float", cmd);
-
-    TCLAP::SwitchArg chsArg("", "chs", "Use CHS branches", cmd);
     TCLAP::SwitchArg verboseArg("v", "verbose", "Enable verbose mode", cmd);
     TCLAP::SwitchArg uncutTreesArg("", "uncut-trees", "Fill trees before second jet cut", cmd);
 
@@ -2148,14 +1945,13 @@ int main(int argc, char** argv) {
     finalizer.setJetAlgo(typeArg.getValue(), algoArg.getValue());
     finalizer.setMC(mcArg.getValue());
     finalizer.setMCComparison(mcComparisonArg.getValue());
-    finalizer.setUseExternalJEC(externalJECArg.getValue());
     finalizer.setAlphaCut(alphaCutArg.getValue());
     finalizer.setCHS(chsArg.getValue());
     finalizer.setVerbose(verboseArg.getValue());
     finalizer.setUncutTrees(uncutTreesArg.getValue());
-    if (totalJobsArg.isSet() && currentJobArg.isSet()) {
-      finalizer.setBatchJob(currentJobArg.getValue(), totalJobsArg.getValue());
-    }
+    //    if (totalJobsArg.isSet() && currentJobArg.isSet()) {
+    //   finalizer.setBatchJob(currentJobArg.getValue(), totalJobsArg.getValue());
+    //  }
 
     finalizer.runAnalysis();
 

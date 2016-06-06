@@ -75,12 +75,8 @@ class GammaJetFinalizer
     }
 
     void setJetAlgo(const std::string& jetType, const std::string& jetAlgo) {
-      if (jetType == "pf") {
-        mJetType = PF;
-      } else {
-        mJetType = CALO;
-      }
-
+      mJetType = PF;
+      
       if (jetAlgo == "ak4") {
         mJetAlgo = AK4;
       } else {
@@ -99,13 +95,13 @@ class GammaJetFinalizer
     void setUseExternalJEC(bool useExternalJEC) {
       mUseExternalJECCorrecion = useExternalJEC;
     }
-
+    /*
     void setBatchJob(int currentJob, int totalJobs) {
       mIsBatchJob = true;
       mCurrentJob = currentJob;
       mTotalJobs = totalJobs;
     }
-
+    */
     void setAlphaCut(float alphaCut) {
       mAlphaCut = alphaCut;
     }

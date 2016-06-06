@@ -53,6 +53,7 @@ os.system("hadd -f "+filename_out+"  "+files )
 inputFile = TFile(filename_out,"UPDATE")
 h_sumOfWeights = inputFile.Get("gammaJet/h_sumW")
 sumOfWeights = h_sumOfWeights.Integral()
+#sumOfWeights = 51430.2 #to be fixed
 
 ##### update total luminosity ######
 lumi = inputFile.Get("gammaJet/total_luminosity")

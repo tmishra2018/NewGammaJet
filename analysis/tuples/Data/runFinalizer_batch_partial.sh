@@ -1,1 +1,2 @@
-bsub -q cmslong -o logfile_alphacut020_BIS.log source /cmshome/fpreiato/GammaJet/CMSSW_7_6_3_patch2/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/Data_alphacut020.src
+bsub -q cmslong -o logfile_alphacut030.log source /cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_6/src/JetMETCorrections/GammaJetFilter/analysis/tuples/Data/Data_alphacut030.src 
+

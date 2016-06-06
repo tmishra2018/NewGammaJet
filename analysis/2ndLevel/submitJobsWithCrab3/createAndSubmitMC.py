@@ -99,7 +99,7 @@ for line in ins:
       "OUTFILENAME":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
       "INPUTDATASET":dataset,
       "FILESPERJOB":filesperjob,
-      "xsec":xsection,
+      "XSECTION":xsection,
       }
 ##create cmssw configuration file
   cmssw_cfgfile = storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py"

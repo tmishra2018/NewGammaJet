@@ -31,7 +31,6 @@ class NewExtrapBinning {
           return it - mBinning.begin();
         }
       }
-
       return -1;
     }
 

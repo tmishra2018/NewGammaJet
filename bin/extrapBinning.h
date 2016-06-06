@@ -17,14 +17,13 @@ class ExtrapBinning {
       size_t s = ptBinning.size();
       for (size_t i = 0; i < s; i++) {
 
-        std::pair<float, float> bin = ptBinning.getBinValue(i);
+	//        std::pair<float, float> bin = ptBinning.getBinValue(i);
         float minPt = 0.;
         float ptStep = 0.;
 
 	/*
 	//old binning
         // In percent 
-        if (recoType == "PFlow" || recoType == "JPT") {
           if (bin.first <= 80.) {
             minPt = 8.;
             ptStep = 3.;
@@ -35,36 +34,10 @@ class ExtrapBinning {
             minPt = 2.;
             ptStep = 2.;
           }
-        } else {
-          if (bin.first <= 60.) {
-            minPt = 8.;
-            ptStep = 1.5;
-          } else if (bin.first <= 350.) {
-            minPt = 6.;
-            ptStep = 1.5;
-          } else {
-            minPt = 2.;
-            ptStep = 2.;
-          }
-	}
 */
         // In percent -- federico
-        if (recoType == "PFlow" || recoType == "JPT") {
 	  minPt = 0.0;
 	  ptStep = 3.0;
-        } else {
-          if (bin.first <= 60.) {
-            minPt = 8.;
-            ptStep = 1.5;
-          } else if (bin.first <= 350.) {
-            minPt = 6.;
-            ptStep = 1.5;
-          } else {
-            minPt = 2.;
-            ptStep = 2.;
-          }
-	}
-	
 
         minPt /= 100.;
         ptStep /= 100.;
@@ -72,8 +45,7 @@ class ExtrapBinning {
 
 	mMapping.push_back(std::make_pair(minPt, maxPt));
 
-      }//end ciclo su ptBin
-	
+      }//end ciclo su ptBin	
     } //end initialize
 
     int getBin(float ptPhoton, float ptSecondJet, int ptBin) const {
@@ -96,8 +68,6 @@ class ExtrapBinning {
 
   private:
     PtBinning mPtBinning;
-    // static const int mSize = 10;
-    //federico
     static const int mSize = 10;
 
     std::vector<std::pair<float, float> > mMapping; // first is minPt, second is maxPt
