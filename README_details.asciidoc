@@ -1,5 +1,7 @@
 // To compile, simply run 'asciidoc manual.txt'
 = Gamma + jets analysis
+Sébastien Brochet <s.brochet@ipnl.in2p3.fr>
+02 May 2013
 :toc2:
 :data-uri:
 :latexmath:
@@ -20,260 +22,80 @@ This is a documentation for the gamma + jets framework.
 ----
 
 export SCRAM_ARCH=slc6_amd64_gcc530
-cmsrel CMSSW_8_0_8_patch1
-cd CMSSW_8_0_8_patch1/src
-git clone https://github.com/FPreiato/NewGammaJet.git JetMETCorrections/GammaJetFilter/
+cmsrel CMSSW_8_0_5_patch1
+cd CMSSW_8_0_5_patch1/src
+git clone https://github.com/FPreiato/GammaJet.git JetMETCorrections/GammaJetFilter/
+cd ..
 scram b -j 9
 
 ----
+
+The new analysis code starts from MINIAOD format instead of AOD. MINIAOD contains PAT objets: this allow to use basically the old structure skipping Step 1.
+There is a flag in the code for data that allows to run on AOD and produce MiniAODs on-the-fly.
+
+=== General notes (work in progress)
+
+- Energy regression for the photon is now directly implemented in the `photon->energy()`
+- For flavor studies, QG-tagging, b-tagging,  reclustering is needed and have to be implemented. Now ak4 PAT jets stored in the MINIAOD are used directly, changing on-the-fly the JEC for jets and MET.
   
-=== STEP 1
+=== Step 1
 
-This step will convert MiniAOD tuples to root trees, performing a simple selection.
+This step will convert MiniAOD tuples to root trees, performing a simple selection :
 
-To Test the code:
+- Select events with only one good photon : the photon ID is done at this step
+- Choose the first and second jet of the event, with a loose delta phi cut
+- Additionnaly, if requested, the JEC can be redone at this step, as well as the TypeI MET corrections. More details about that later.
 
+The CMSSW python configuration files can be found in 'analysis/2ndLevel/', 'runFilter_MC.py' to run on MC and 'runFilter.py' to run on Data.
+All they do is to run the +GammaJetFilter+ responsible of the miniAOD -> trees conversion.
+
+.runFilter[_MC].py
+****
+Theses config. files configure the +GammaJetFilter+. A list of options with their meaning is available below.
+
+- +isMC+: If +True+, indicates we are running on MC.
+- +photons+: The input tag of the photons collection.
+- Others tag for the others collections implemented since 76X
+- +filterData+ (only for data): If +True+, the +json+ parameter file will be used to filter run and lumisection according to the content of the file.
+Json file not read in the code -- Put it false 
+
+- +runOn[Non]CHS+: If +True+, run the filter on (Non) CHS collection.
+- +runPFAK4+: If +True+, run the filter on PF AK4 jets.
+- +runPFAK8+: If +True+, run the filter on PF AK8 jets.
+- +runCaloAK4+: If +True+, run the filter on calo AK4 jets. Not saved in miniAOD, need to run on AOD.
+- +runCaloAK8+: If +True+, run the filter on calo AK8 jets. Not saved in miniAOD, need to run on AOD.
+
+- +doJetCorrection+: If +True+, redo the jet correction from scratch. The jet correction factors will be read from global tag (by default), or from an external database if configured correctly.
+- +correctJecFromRaw+: If +True+, the new JEC factory is computed taking the raw jet. Turn off *only* if you know what you are doing.
+- +correctorLabel+: The corrector label to use for computing the new JEC. The default should be fine for PF AK4 CHS jets.
+- +redoTypeIMETCorrection+: If +True+, TypeI MET is recomputed. Automatically +True+ if +doJetCorrection+ is +True+.
+- +doFootprintMETCorrection+: If +True+, MET is calculated from pf Candidate removing the pfCand(photon) and adding the reco photon
+****
+
+You can find the code for the +GammaJetFilter+ in 'src/GammaJetFilter.cc'. If an event does not pass the preselection, it's dumped. Resulting root trees contains only potential gamma + jets events, with exactly one good photon.
+
+.Running crab
+****
+In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you'll find the scripts +createAndSubmit[Data][MC]+. These scripts read a txt file with the sample to use.
+The format used is:
+
+[for Data] dataset_DASformat processed_events files_per_job GlobalTag
+----
+/SinglePhoton/Run2015D-PromptReco-v4/MINIAOD -1 300 74X_dataRun2_Prompt_v2
 ----
 
-cd JetMETCorrections/GammaJetFilter/
+[for MC] dataset_DASformat processed_events cross_section ptHatMin ptHatMax files_per_job GlobalTag
 
 ----
-
-- Download a single file (MC or Data)
-
+/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 1 1 0 10000 10 74X_mcRun2_asymptotic_v2
 ----
 
-Data:
-xrdcp root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/MINIAOD/PromptReco-v2/000/273/158/00000/1A45407E-761A-E611-AD5E-02163E013724.root analysis/tuples/Data/SinglePhoton_file1_80X.root
-
-MC:
-xrdcp root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/50000/C01E2D8A-F90F-E611-B935-00266CFCC9F8.root analysis/tuples/GJET_Pythia/GJet_Pythia_80X_file1.root
-
-----
-
-- Go in "analysis/2ndLevel/" and run the script +runFilter_local.py+ for the data and +runFilter_MC_local.py+ for MC
-
-Before launch it, a general overview:
-
-in these scripts you can change some stuff about the configuration:
-
-- the global tag
-- the type of jets that you want in the ntuples (at the moment only the AK4chs are supported, for Puppi jets work in progress) 
-- there is a bool if you want to apply new JEC (MET will be change as well)
-- two bools to choose if you want to apply the L2Res or L2L3Res (only for data)
-- The txt files with the corrections
-
-These python scripts will run the code for the gamma+jets analysis in +src/GammaJetFilter.cc+
-
-Some numbers are hard-coded but you don't have to change every time:
-in the class +isValidPhotonEB+ numbers for the photon ID and Isolation (tight cut based selection) 
-in the class +getEffectiveArea+ contains the effective areas for the photon isolation
-in the class +isValidJet+ numbers for jet Id and isolation (loose cut based selection)
-
-To run the script (on 1000 events)
-
-----
-
-cmsRun runFilter_local.py
-
-cmsRun runFilter_MC_local.py
-
-----
-
-Now you should have two files in analysis/2ndLevel:
-+output_singleFile_Data.root+ and +output_singleFile_GJet.root+
-
-=== STEP 2
-
-To produce the histograms with the response you can use the macro
-+gammaJetFinalizer.cpp+ in the directory +/bin/+
-
-DATA:
-gammaJetFinalizer -i output_singleFile_Data.root -d Test_Data --algo ak4 --alpha 0.30
-MC:
-gammaJetFinalizer -i output_singleFile_GJet.root -d Test_GJet --algo ak4 --alpha 0.30 --mc
-
-These commands will produce two files with all necessary historgrams and they will call
-
-PhotonJet_Test_MC_PFlowAK4chs.root
-PhotonJet_Test_Data_PFlowAK4chs.root
-
-These final are used to produce the final plots. The code to do this is in +analysis/draw+.
-The first time that you used this code you need to compile it. 
-Go in that directory and compile with 
-
-----
-
-make all
-
-----
-
-In our files there are too few events, so it's possible to get some errors (related to empty plots), even if
-the program doesn't crash.
-I can suggest you to use my files in order to produce some understable plots.
-You should be able to get my files from:
-
- Data:
-/cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_8_patch1/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-05-31_600pb/AlphaCut030/PhotonJet_SinglePhoton_2016-05-31_alphacut030_PFlowAK4chs.root
-
-MC:
-/cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_8_patch1/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-05-31_600pb/AlphaCut030/PhotonJet_GJet_Pythia_2016-05-31_alphacut030_PFlowAK4chs.root
-
-
-The drawers work only if you are in the same directory of the files produce in step2 (named PhotonJet_*).
-I usually move the files in the directory +analysis/draw/Plot+ but it's not necessary for this test.
-If you have copied my files, go in the directory of these files.
-
-The first drawer uses 1D histograms of the response and creates graphics with the response in function of pT for each bin of eta.
-To run it:
-
-----
-
-../draw/drawPhotonJet_2bkg Test_Data Test_MC Test_MC pf ak4 LUMI
-
-----
-
-or, if you are using my files
-
-----
-
-<path pointing draw directory>/drawPhotonJet_2bkg SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4 LUMI
-
-----
-
-At the moment the option +pf+ and +ak4+ are mandatory, we have only those jets.
-The option LUMI is to normalize the plots at the data luminosity, while if you want to
-normalize the plots at the same area you can use the option +SHAPE+.
-The GJet files is passed twice because there is the opportunity to pass also a QCD file.
-
-This drawer produces a directory called +PhotonJetPlots_<Data>_vs_<MC>_PFlowAK4_LUMI+ that
-contains the plot (png format) and it produces also a root file.
-
-The second drawer is to perform the extrapolation at alpha = 0 (no secondary activity)
-To run it:
-
-----
-
-../draw/drawPhotonJetExtrap --type pf --algo ak4 Test_Data Test_MC Test_MC
-
-----
-
-or, if you are using my files
-
-----
-
-<path pointing draw directory>/drawPhotonJetExtrap --type pf --algo ak4 SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030
-
------
-
-The third drawer gets the previous results to build the plots for the extrapolated responses 
-in function of pT in each bin of eta.
-To run it:
-
-----
-
-../draw/draw_ratios_vs_pt Test_Data Test_MC Test_MC pf ak4
-
-----
-
-or, if you are using my files
-
-----
-
-<path pointing draw directory>/draw_ratios_vs_pt SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4
-
-----
-
-The plots are saved in the directory +PhotonJetPlots_<Data>_vs_<MC>_PFlowAK4_LUMI/vs_pt+.
-
-The last drawer produces plots with some comparison between the different responses (MPF and Balancing) before and after the extrapolation.
-To run it:
-
-----
-
-../draw/draw_all_methods_vs_pt Test_Data Test_MC Test_MC pf ak4
-
-----
-
-or, if you are using my files
-
-----
-
-<path pointing draw directory>/draw_all_methods_vs_pt SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4
-
-----
-
-The plots are saved in the directory +PhotonJetPlots_<Data>_vs_<MC>_PFlowAK4_LUMI/vs_pt+.
-In this last directory a root file named +plots.root+ will be also saved.
-This root file is very important because is used by Mikko for the global fit.
-You have to run all analysis (from Finalizer to this last drawer) for different alpha cut (0.10/ 0.15 / 0.20 / 0.30).
-For each alpha cut you will have a plots.root that you have to merged in a single root file and send it to Mikko.
-
-=======================================
-
-=== RUNNING ON CRAB (work in progress)
-
-In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you can find the scripts +createAndSubmit[Data][MC]+.
-These scripts read a txt file with the sample to use and submit the jobs on crab.
-The txt files have to be in this format:
-
-[for Data] dataset  files_per_job     GlobalTag
-
-The dataset is in DAS format. For example:
-
-----
-/SinglePhoton/Run2015D-PromptReco-v4/MINIAOD 300 74X_dataRun2_Prompt_v2
-----
-
-[for MC] dataset     cross_section            files_per_job               GlobalTag
-
-The dataset is in DAS format. For example:
-
-----
-/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 365896 3 80X_mcRun2_asymptotic_2016_v3
-----
-
-The txt files
-+InputList_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_80X.txt+
-and
-+inputlist_SinglePhotonRun2016B_PromptRecov2.txt+
-are already done and they can be used to run on crab.
-
-In the directory 'Inputs', there are the template for crab: 'crab3_template_data.py' and 'crab3_template_mc.py'.
-Before launch on crab, you should edit these template files changing the storage element and, for data, the JSON file using the latest one.
-
-If it's your first time I should create a outpur directory, for example:
-
-----
-
-mkdir Output_Run2
-
-----
-
-To submit the jobs on crab:
-
-For data:
-
-----
-
-python createAndSubmitData.py -d Output_Run2/ -v SinglePhoton_<TagName> -i Inputs/inputlist_SinglePhotonRun2016B_PromptRecov2.txt -t Inputs/crab3_template_data.py -c ../runFilter.py --submit
-
-----
-
-For MC:
-
-----
-
-python createAndSubmitMC.py -d Output_Run2/ -v GJet_<TagName> -i Inputs/InputList_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_80X.txt -t Inputs/crab3_template_mc.py -c ../runFilter_MC.py
-
-----
-
-Don't forget to change the python scripts +runFilter.py+ and +runFilter_MC.py+ with the configuration you want
-and with the latest JECs.
-
-
-Once crab is done, the next step is to merge the output in order to have one file per dataset. 
-For that, you can used 'mergeAndAddWeight.py' and 'mergeData.py' in the folder 'scripts'.
+Cross section is not really used at this step (relics from old code)
+Don't forget to also edit the template files in the directory 'Inputs', 'crab3_template_data.py' and 'crab3_template_mc.py' to
+change your storage element and for data JSON file and eventually the run range.
+
+Once crab is done, the only remaining step is to merge the output in order to have one file per dataset. 
+For that, you can used 'mergeAndAddWeight.py' and 'mergeData.py' in the folder 'scripts'.  
 You can create the list with the files to merge with the script 'createList_T2.py', passing the path of crab output.
 
 [createList_T2.py] python createList_T2.py -i [pnfs_path] -o [output_directory]
