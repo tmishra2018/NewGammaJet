@@ -236,6 +236,7 @@ int main(int argc, char* argv[]) {
   size_t etaBinningSize = etaBinning.size();
 
      //giulia --- not useful
+  // federico -- to be restored
 //  db->set_rebin(2);
 ////Jet energy composition
 //  db->setFolder("analysis/ecomposition");
