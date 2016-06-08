@@ -101,7 +101,7 @@ private:
   void correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets, edm::Event& event, pat::Photon& photon);
   void correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets,  edm::Event& event, pat::Photon& photon);
    
-  bool isValidPhotonEB_SPRING15(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight);
+  bool isValidPhotonEB(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight);
   bool isValidJet(const pat::Jet& jet);
   
  
@@ -323,18 +323,17 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     vPar.push_back(*L2JetPar);
     vPar.push_back(*L3JetPar);
     if(mApplyL2Res){
-      std::cout<<"applico le L2Res" << std::endl ;
+      std::cout<<"Applying L2Res" << std::endl ;
       vPar.push_back(*L2ResJetPar);
     }else if(mApplyL2L3Res){
-      std::cout<<"applico le L2L3Res" << std::endl ;
+      std::cout<<"Applying L2L3Res" << std::endl ;
       vPar.push_back(*ResJetPar);
-      // vPar.push_back(*L2ResJetPar);
     }
     jetCorrector = new FactorizedJetCorrector(vPar);
     //vPar for MET typeI -- only RC
     vParTypeI.push_back(*L1JetParForTypeI);
     jetCorrectorForTypeI = new FactorizedJetCorrector(vParTypeI);
-
+    
     delete L1JetPar;    
     delete L2JetPar;
     delete L3JetPar;
@@ -342,7 +341,7 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
     delete L2ResJetPar;
     delete ResJetPar;
   } else {  // MC
-
+    
     edm::FileInPath L1corr_MC_ = iConfig.getParameter<edm::FileInPath>("L1corr_MC");
     edm::FileInPath L2corr_MC_ = iConfig.getParameter<edm::FileInPath>("L2corr_MC");
     edm::FileInPath L3corr_MC_ = iConfig.getParameter<edm::FileInPath>("L3corr_MC");
@@ -593,7 +592,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       
       pat::PhotonRef PhotonReftmp(photonsHandle, index);
       
-      if (isValidPhotonEB_SPRING15(PhotonReftmp, iEvent, generatorWeight)) {
+      if (isValidPhotonEB(PhotonReftmp, iEvent, generatorWeight)) {
 	photonsVec.push_back(*it);
 	goodPhoIndex=index;
       }
@@ -792,7 +791,7 @@ void GammaJetFilter::correctJets(pat::JetCollection& jets, edm::Event& iEvent, c
     double toRaw = jet.jecFactor("Uncorrected"); // factor =1/ correction
     jet.setP4(jet.p4() * toRaw); // It's now a raw jet
     
-    std::cout<<"Raw Jet   "<< jet.pt() <<std::endl;
+    //    std::cout<<"Raw Jet   "<< jet.pt() <<std::endl;
 
     double corrections =1.;
     
@@ -807,7 +806,7 @@ void GammaJetFilter::correctJets(pat::JetCollection& jets, edm::Event& iEvent, c
         
     jet.scaleEnergy(corrections) ; // L1L2L3 + Res (only for data)
     
-    std::cout<<"Corrected Jet   "<< jet.pt() <<std::endl;
+    //    std::cout<<"Corrected Jet   "<< jet.pt() <<std::endl;
   }
   
   // Sort collection by pt
@@ -1176,26 +1175,36 @@ bool GammaJetFilter::isValidJet(const pat::Jet& jet) {
     // Jet ID works on uncorrected jets. *EnergyFraction take that into account when calculating the fraction,
     // so there's *NO* need to use an uncorrected jet
     bool isValid = true;
-     
+    
+    double jet_energy = jet.chargedHadronEnergy() + jet.neutralHadronEnergy() + jet.electronEnergy() +jet.photonEnergy() + jet.muonEnergy();    
+    double chf = jet.chargedHadronEnergy()/jet_energy;
+    double nhf = jet.neutralHadronEnergy()/jet_energy;
+    double cemf = jet.electronEnergy()/jet_energy;    
+    double nemf = jet.photonEnergy()/jet_energy;
+    //    double muf = jet.muonEnergy()/jet_energy; // not used in Jet ID
+
+    int chMult = jet.chargedHadronMultiplicity() + jet.electronMultiplicity() + jet.muonMultiplicity();
+    int neMult = jet.neutralHadronMultiplicity() + jet.photonMultiplicity();    
+
     if (fabs(jet.eta()) < 3.0) {
-      isValid &= jet.neutralHadronEnergyFraction() < 0.99;
-      isValid &= jet.neutralEmEnergyFraction() < 0.99;
-      isValid &= (jet.chargedMultiplicity()+jet.neutralMultiplicity() ) > 1;
+      isValid &= nhf < 0.99;
+      isValid &= nemf < 0.99;
+      isValid &= ( chMult + neMult ) > 1;
       if (fabs(jet.eta()) < 2.4) {
-	isValid &= jet.chargedHadronEnergyFraction() > 0.;
-	isValid &= jet.chargedMultiplicity() > 0;
-	isValid &= jet.chargedEmEnergyFraction() < 0.99;
+	isValid &= chf > 0.;
+	isValid &= chMult > 0;
+	isValid &= cemf < 0.99;
       }
     }else{
-      isValid &= jet.neutralEmEnergyFraction() < 0.90;
-      isValid &= jet.neutralMultiplicity() > 10; 
+      isValid &= nemf < 0.90;
+      isValid &= neMult > 10; 
     }  
     return isValid;
   } else {
     throw cms::Exception("UnsupportedJetType")
       << "Only PF are supported at this time" << std::endl;
   }
-   
+  
   return false;
 }
 
@@ -1271,7 +1280,7 @@ double getCorrectedPFIsolation(double isolation, double rho, float eta, Isolatio
 }
 
 // See https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedPhotonIdentificationRun2 -- tight WP
-bool GammaJetFilter::isValidPhotonEB_SPRING15(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight) {
+bool GammaJetFilter::isValidPhotonEB(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight) {
   
   //  real photon matching a gen level photon 
   if (mIsMC && !photonRef->genPhoton())   
@@ -1482,32 +1491,37 @@ void GammaJetFilter::jetToTree(const pat::Jet* jet, bool _findNeutrinos, TTree* 
     float area = jet->jetArea();
     float qgTagLikelihood = jet->userFloat("qgLikelihood");
     //jet energy composition
-    float jetCHEn = jet->chargedHadronEnergy();
-    float jetNHEn = jet->neutralHadronEnergy();
-    float jetCEEn = jet->chargedEmEnergy();
-    float jetNEEn = jet->neutralEmEnergy();
-    float jetPhEn = jet->photonEnergy();
-    float jetElEn = jet->electronEnergy();
-    float jetMuEn = jet->chargedMuEnergy();
+    float jet_energy  = jet->chargedHadronEnergy() + jet->neutralHadronEnergy() + jet->electronEnergy() + jet->photonEnergy() + jet->muonEnergy();       
+    float jetCHEnF   = jet->chargedHadronEnergy()/jet_energy;
+    float jetNHEnF   = jet->neutralHadronEnergy()/jet_energy;
+    float jetCEmEnF = jet->electronEnergy()/jet_energy;
+    float jetNEmEnF = jet->photonEnergy()/jet_energy;
+    float jetMuEnF   = jet->muonEnergy()/jet_energy;
     //jet constituents multiplicities
-    int jetPhMult = jet->photonMultiplicity();
+    int jetCHMult = jet->chargedHadronMultiplicity();
     int jetNHMult = jet->neutralHadronMultiplicity();
     int jetElMult = jet->electronMultiplicity();
-    int jetCHMult = jet->chargedHadronMultiplicity();
-    
-    updateBranch(tree, &jetCHEn, "jet_CHEn");
-    updateBranch(tree, &jetNHEn, "jet_NHEn");
-    updateBranch(tree, &jetPhEn, "jet_PhEn");
-    updateBranch(tree, &jetElEn, "jet_ElEn");
-    updateBranch(tree, &jetMuEn, "jet_MuEn");
-    updateBranch(tree, &jetCEEn, "jet_CEEn");
-    updateBranch(tree, &jetNEEn, "jet_NEEn");
-    updateBranch(tree, &jetPhMult, "jet_PhMult", "I");
-    updateBranch(tree, &jetNHMult, "jet_NHMult", "I");
-    updateBranch(tree, &jetElMult, "jet_ElMult", "I");
-    updateBranch(tree, &jetCHMult, "jet_CHMult", "I");
+    int jetPhMult = jet->photonMultiplicity();
+    int jetMuonMult = jet->muonMultiplicity();
+
+    int jetNeutralMult  =  jet->neutralHadronMultiplicity() + jet->photonMultiplicity();
+    int jetChargedMult =jet->chargedHadronMultiplicity() +jet->electronMultiplicity()+ jet->muonMultiplicity();
+
     updateBranch(tree, &area, "jet_area");
     updateBranch(tree, &qgTagLikelihood, "qg_tag_likelihood");
+    updateBranch(tree, &jet_energy, "jet_Energy");
+    updateBranch(tree, &jetCHEnF, "jet_CHEnF");
+    updateBranch(tree, &jetNHEnF, "jet_NHEnF");
+    updateBranch(tree, &jetCEmEnF, "jet_CEmEnF");
+    updateBranch(tree, &jetNEmEnF, "jet_NEmEnF");
+    updateBranch(tree, &jetMuEnF, "jet_MuEnF");
+    updateBranch(tree, &jetCHMult, "jet_CHMult", "I");
+    updateBranch(tree, &jetNHMult, "jet_NHMult", "I");
+    updateBranch(tree, &jetPhMult, "jet_PhMult", "I");
+    updateBranch(tree, &jetElMult, "jet_ElMult", "I");
+    updateBranch(tree, &jetMuonMult, "jet_MuonMult", "I");
+    updateBranch(tree, &jetChargedMult, "jet_ChargedMult", "I");
+    updateBranch(tree, &jetNeutralMult, "jet_NeutralMult", "I");
     
     tree->Fill(); // This Fill() must be called inside the {} block, otherwise it'll crash. Don't move it!
   } else {

@@ -23,42 +23,36 @@ class JetTree: public BaseTree {
 
     // Declaration of leaf types
     Float_t         jet_area;
-//    Float_t         btag_tc_high_eff;
-//    Float_t         btag_tc_high_pur;
-//    Float_t         btag_ssv_high_eff;
-//    Float_t         btag_ssv_high_pur;
-//    Float_t         btag_jet_probability;
-//    Float_t         btag_jet_b_probability;
-//    Float_t         btag_csv;
-//    Float_t         qg_tag_mlp;
     Float_t         qg_tag_likelihood;
-    Float_t         jet_CHEn;
-    Float_t         jet_NHEn;
-    Float_t         jet_PhEn;
-    Float_t         jet_ElEn;
-    Float_t         jet_MuEn;
-    Float_t         jet_CEEn;
-    Float_t         jet_NEEn;
-    Int_t           jet_PhMult;
-    Int_t           jet_NHMult;
-    Int_t           jet_ElMult;
+    Float_t         jet_Energy;
+    Float_t         jet_CHEnF;
+    Float_t         jet_NHEnF;
+    Float_t         jet_CEmEnF;
+    Float_t         jet_NEmEnF;
+    Float_t         jet_MuEnF;
     Int_t           jet_CHMult;
-    // F.    Float_t         ptAK4matchCaloJet;
+    Int_t           jet_NHMult;
+    Int_t           jet_PhMult;
+    Int_t           jet_ElMult;
+    Int_t           jet_MuonMult;
+    Int_t           jet_ChargedMult;
+    Int_t           jet_NeutralMult;
 
     // List of branches
     TBranch        *b_jet_area;
-    TBranch        *b_jet_CHEn;   //!
-    TBranch        *b_jet_NHEn;   //!
-    TBranch        *b_jet_PhEn;   //!
-    TBranch        *b_jet_ElEn;   //!
-    TBranch        *b_jet_MuEn;   //!
-    TBranch        *b_jet_CEEn;   //!
-    TBranch        *b_jet_NEEn;   //!
-    TBranch        *b_jet_PhMult;   //!
-    TBranch        *b_jet_NHMult;   //!
-    TBranch        *b_jet_ElMult;   //!
-    TBranch        *b_jet_CHMult;   //!
-    //F.    TBranch        *b_ptAK4matchCaloJet;   //!
+    TBranch        *b_jet_Energy;
+    TBranch        *b_jet_CHEnF;
+    TBranch        *b_jet_NHEnF; 
+    TBranch        *b_jet_CEmEnF;
+    TBranch        *b_jet_NEmEnF;
+    TBranch        *b_jet_MuEnF;  
+    TBranch        *b_jet_CHMult; 
+    TBranch        *b_jet_NHMult;  
+    TBranch        *b_jet_PhMult;  
+    TBranch        *b_jet_ElMult;  
+    TBranch        *b_jet_MuonMult; 
+    TBranch        *b_jet_ChargedMult; 
+    TBranch        *b_jet_NeutralMult; 
 
     JetTree();
 
@@ -82,52 +76,38 @@ void JetTree::Init(TTree *tree)
   BaseTree::Init(tree);
 
   fChain->SetBranchAddress("jet_area", &jet_area, &b_jet_area);
-//  fChain->SetBranchAddress("btag_tc_high_eff", &btag_tc_high_eff, NULL);
-//  fChain->SetBranchAddress("btag_tc_high_pur", &btag_tc_high_pur, NULL);
-//  fChain->SetBranchAddress("btag_ssv_high_eff", &btag_tc_high_eff, NULL);
-//  fChain->SetBranchAddress("btag_ssv_high_pur", &btag_tc_high_pur, NULL);
-//  fChain->SetBranchAddress("btag_jet_probability", &btag_jet_probability, NULL);
-//  fChain->SetBranchAddress("btag_jet_b_probability", &btag_jet_b_probability, NULL);
-//  fChain->SetBranchAddress("btag_csv", &btag_csv, NULL);
-//  fChain->SetBranchAddress("qg_tag_mlp", &qg_tag_mlp, NULL);
   fChain->SetBranchAddress("qg_tag_likelihood", &qg_tag_likelihood, NULL);
-  fChain->SetBranchAddress("jet_CHEn", &jet_CHEn, NULL);
-  fChain->SetBranchAddress("jet_NHEn", &jet_NHEn, NULL);
-  fChain->SetBranchAddress("jet_PhEn", &jet_PhEn, NULL);
-  fChain->SetBranchAddress("jet_ElEn", &jet_ElEn, NULL);
-  fChain->SetBranchAddress("jet_MuEn", &jet_MuEn, NULL);
-  fChain->SetBranchAddress("jet_CEEn", &jet_CEEn, NULL);
-  fChain->SetBranchAddress("jet_NEEn", &jet_NEEn, NULL);
-  fChain->SetBranchAddress("jet_PhMult", &jet_PhMult, NULL);
-  fChain->SetBranchAddress("jet_NHMult", &jet_NHMult, NULL);
-  fChain->SetBranchAddress("jet_ElMult", &jet_ElMult, NULL);
+  fChain->SetBranchAddress("jet_CHEnF", &jet_CHEnF, NULL);
+  fChain->SetBranchAddress("jet_NHEnF", &jet_NHEnF, NULL);
+  fChain->SetBranchAddress("jet_CEmEnF", &jet_CEmEnF, NULL);
+  fChain->SetBranchAddress("jet_NEmEnF", &jet_NEmEnF, NULL);
+  fChain->SetBranchAddress("jet_MuEnF", &jet_MuEnF, NULL);
   fChain->SetBranchAddress("jet_CHMult", &jet_CHMult, NULL);
-  // F.  fChain->SetBranchAddress("ptAK4matchCaloJet", &ptAK4matchCaloJet, NULL);
+  fChain->SetBranchAddress("jet_NHMult", &jet_NHMult, NULL);
+  fChain->SetBranchAddress("jet_PhMult", &jet_PhMult, NULL);
+  fChain->SetBranchAddress("jet_ElMult", &jet_ElMult, NULL);
+  fChain->SetBranchAddress("jet_MuonMult", &jet_MuonMult, NULL);
+  fChain->SetBranchAddress("jet_ChargedMult", &jet_ChargedMult, NULL);
+  fChain->SetBranchAddress("jet_NeutralMult", &jet_NeutralMult, NULL);
+
   InitCache();
 }
 
 void JetTree::DisableUnrelatedBranches()
 {
   fChain->SetBranchStatus("jet_area", 0);
-//  fChain->SetBranchStatus("btag_tc_high_eff", 0);
-//  fChain->SetBranchStatus("btag_tc_high_pur", 0);
-//  fChain->SetBranchStatus("btag_ssv_high_eff", 0);
-//  fChain->SetBranchStatus("btag_ssv_high_pur", 0);
-//  fChain->SetBranchStatus("btag_jet_probability", 0);
-//  fChain->SetBranchStatus("btag_jet_b_probability", 0);
-//  fChain->SetBranchStatus("btag_csv", 0);
-//  fChain->SetBranchStatus("qg_tag_mlp", 0);
   fChain->SetBranchStatus("qg_tag_likelihood", 0);
-  fChain->SetBranchStatus("jet_CHEn", 0);
-  fChain->SetBranchStatus("jet_NHEn", 0);
-  fChain->SetBranchStatus("jet_PhEn", 0);
-  fChain->SetBranchStatus("jet_ElEn", 0);
-  fChain->SetBranchStatus("jet_MuEn", 0);
-  fChain->SetBranchStatus("jet_CEEn", 0);
-  fChain->SetBranchStatus("jet_NEEn", 0);
-  fChain->SetBranchStatus("jet_PhMult", 0);
-  fChain->SetBranchStatus("jet_NHMult", 0);
-  fChain->SetBranchStatus("jet_ElMult", 0);
+  fChain->SetBranchStatus("jet_CHEnF", 0);
+  fChain->SetBranchStatus("jet_NHEnF", 0);
+  fChain->SetBranchStatus("jet_CEmEnF", 0);
+  fChain->SetBranchStatus("jet_NEmEnF", 0);
+  fChain->SetBranchStatus("jet_MuEnF", 0);
   fChain->SetBranchStatus("jet_CHMult", 0);
-  //  fChain->SetBranchStatus("ptAK4matchCaloJet", 0);
+  fChain->SetBranchStatus("jet_NHMult", 0);
+  fChain->SetBranchStatus("jet_PhMult", 0);
+  fChain->SetBranchStatus("jet_ElMult", 0);
+  fChain->SetBranchStatus("jet_MuonMult", 0);
+  fChain->SetBranchStatus("jet_ChargedMult", 0);
+  fChain->SetBranchStatus("jet_NeutralMult", 0);
+
 }

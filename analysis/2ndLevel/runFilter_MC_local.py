@@ -26,7 +26,7 @@ process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_v3")
 process.load("JetMETCorrections.Configuration.JetCorrectionProducers_cff")
 process.load("RecoEgamma/PhotonIdentification/PhotonIDValueMapProducer_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.source = cms.Source (
     "PoolSource", 
