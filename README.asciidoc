@@ -66,11 +66,12 @@ in these scripts you can change some stuff about the configuration:
 These python scripts will run the code for the gamma+jets analysis in +src/GammaJetFilter.cc+
 
 Some numbers are hard-coded but you don't have to change every time:
-in the class +isValidPhotonEB+ numbers for the photon ID and Isolation (tight cut based selection) 
-in the class +getEffectiveArea+ contains the effective areas for the photon isolation
-in the class +isValidJet+ numbers for jet Id and isolation (loose cut based selection)
 
-To run the script (on 1000 events)
+- in the class +isValidPhotonEB+ numbers for the photon ID and Isolation (tight cut based selection) 
+- in the class +getEffectiveArea+ contains the effective areas for the photon isolation
+- in the class +isValidJet+ numbers for jet Id and isolation (loose cut based selection)
+
+To run the script (default: on 1000 events)
 
 ----
 
