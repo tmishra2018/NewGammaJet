@@ -148,12 +148,12 @@ def write_inputlists(filelist, outputDir):
         sys.exit()
 
     os.system('mkdir -p '+outputDir)
-    mainInputList = open(outputDir+'inputListAllCurrent.txt','w')
+#    mainInputList = open(outputDir+'inputListAllCurrent.txt','w')
 
     keys.sort()
     for dataset in keys:
         inputListName = outputDir+dataset+'.txt'
-        mainInputList.write(inputListName+'\n')
+        #        mainInputList.write(inputListName+'\n')
         inputList = open(inputListName,'w')
         for path in filelist[dataset].keys():
             for job in filelist[dataset][path].keys():
@@ -166,7 +166,7 @@ def write_inputlists(filelist, outputDir):
                     filename = ('dcap://cmsrm-se01.roma1.infn.it/'+path+dataset+'_%i.root')%(job)
                 inputList.write(filename+'\n')
         inputList.close()
-    mainInputList.close()
+    #mainInputList.close()
 
     return
 

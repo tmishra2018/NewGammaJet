@@ -12,7 +12,6 @@ class ExtrapBinning {
     ExtrapBinning() {}
 
     void initialize(PtBinning ptBinning, const std::string& recoType) {
-
       
       size_t s = ptBinning.size();
       for (size_t i = 0; i < s; i++) {

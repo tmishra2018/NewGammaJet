@@ -52,7 +52,7 @@ class VertexBinning {
 
       mVertexBins.push_back(std::make_pair(0, 6)); // 6 escluso = Npv <= 5
       mVertexBins.push_back(std::make_pair(6, 13));
-      mVertexBins.push_back(std::make_pair(13, 35));
+      mVertexBins.push_back(std::make_pair(13, 50));
     }
 
 };

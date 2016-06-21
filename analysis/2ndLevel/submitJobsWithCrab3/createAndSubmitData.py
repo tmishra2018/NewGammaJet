@@ -6,7 +6,7 @@ import argparse
 import datetime 
 import re
 
-usage = "usage: python createAndSubmitMC.py -d Output_PHYS14/ -v qq_RSG_gg_pu20bx25_TagXXX -i Inputs_PHYS14/InputList_qq_RSG_gg_pu20bx25_TagXXX.txt -t Inputs_MC2014_Test/crab3_template.py -c ../flat-signal-cfg_miniAOD.py --submit"
+usage = "Usage: python createAndSubmitData.py -d Output_Run2 -v SignalPhoton_TagXXX -i Inputs/InputList_XXX.txt -t Inputs/crab3_template_data.py -c ../runFilter.py --submit"
 print usage
 
 parser = argparse.ArgumentParser(description='Process options.')

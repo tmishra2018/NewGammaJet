@@ -24,7 +24,6 @@ class JetTree: public BaseTree {
     // Declaration of leaf types
     Float_t         jet_area;
     Float_t         qg_tag_likelihood;
-    Float_t         jet_Energy;
     Float_t         jet_CHEnF;
     Float_t         jet_NHEnF;
     Float_t         jet_CEmEnF;
@@ -40,7 +39,6 @@ class JetTree: public BaseTree {
 
     // List of branches
     TBranch        *b_jet_area;
-    TBranch        *b_jet_Energy;
     TBranch        *b_jet_CHEnF;
     TBranch        *b_jet_NHEnF; 
     TBranch        *b_jet_CEmEnF;
@@ -91,23 +89,4 @@ void JetTree::Init(TTree *tree)
   fChain->SetBranchAddress("jet_NeutralMult", &jet_NeutralMult, NULL);
 
   InitCache();
-}
-
-void JetTree::DisableUnrelatedBranches()
-{
-  fChain->SetBranchStatus("jet_area", 0);
-  fChain->SetBranchStatus("qg_tag_likelihood", 0);
-  fChain->SetBranchStatus("jet_CHEnF", 0);
-  fChain->SetBranchStatus("jet_NHEnF", 0);
-  fChain->SetBranchStatus("jet_CEmEnF", 0);
-  fChain->SetBranchStatus("jet_NEmEnF", 0);
-  fChain->SetBranchStatus("jet_MuEnF", 0);
-  fChain->SetBranchStatus("jet_CHMult", 0);
-  fChain->SetBranchStatus("jet_NHMult", 0);
-  fChain->SetBranchStatus("jet_PhMult", 0);
-  fChain->SetBranchStatus("jet_ElMult", 0);
-  fChain->SetBranchStatus("jet_MuonMult", 0);
-  fChain->SetBranchStatus("jet_ChargedMult", 0);
-  fChain->SetBranchStatus("jet_NeutralMult", 0);
-
 }
