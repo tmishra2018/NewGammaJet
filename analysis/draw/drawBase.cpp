@@ -19,9 +19,6 @@
 #define BALANCING_COLOR TColor::GetColor(217, 91, 67)
 #define MPF_COLOR TColor::GetColor(192, 41, 66)
 
-//federico
-bool MCComparison = false;
-
 drawBase::drawBase(const std::string& analysisType, const std::string& recoType, const std::string& jetAlgo, bool outputGraphs, const std::string& flags) {
 
   style_ = new TStyle("drawBaseStyle", "");
@@ -42,7 +39,7 @@ drawBase::drawBase(const std::string& analysisType, const std::string& recoType,
   style_->SetCanvasColor(kWhite);
   style_->SetCanvasDefH(600); //Height of canvas
   style_->SetCanvasDefW(600); //Width of canvas
-  style_->SetCanvasDefX(0);   //POsition on screen
+  style_->SetCanvasDefX(0);   //Position on screen
   style_->SetCanvasDefY(0);
 
   // For the Pad:
@@ -113,7 +110,6 @@ drawBase::drawBase(const std::string& analysisType, const std::string& recoType,
   style_->SetPadRightMargin(0.05);//0.02);
 
   // For the Global title:
-
   style_->SetOptTitle(0);
   style_->SetTitleFont(42);
   style_->SetTitleColor(1);
@@ -214,7 +210,6 @@ drawBase::drawBase(const std::string& analysisType, const std::string& recoType,
 
   pdf_aussi_ = false;
   noStack_ = false;
-
   isCMSArticle_ = true;
 
   additionalLabel_ = 0;
@@ -278,7 +273,7 @@ void drawBase::set_isCMSArticle(bool set) {
 
 
 
-
+/*
 void drawBase::drawHisto_vs_pt(int nBinsPt, float* ptBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, std::string flags, const std::string& labelText) {
 
   std::vector<float> ptBins_vect;
@@ -289,65 +284,31 @@ void drawBase::drawHisto_vs_pt(int nBinsPt, float* ptBins, const std::string& na
 
   //  drawHisto_vs_pt(ptBins_vect, name, axisName, units, instanceName, log_aussi, legendQuadrant, flags, labelText);
 }
-
+*/
 
 
 void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
 
   
-  //  bool isEComp = TString(name).Contains("Energy", TString::kIgnoreCase);
-
-  bool isMPF = TString(name).Contains("mpf", TString::kIgnoreCase);
-  // Ignore bin between 3500 - 7000
+  bool isMPF  = TString(name).Contains("mpf", TString::kIgnoreCase);
+  bool isRAW = TString(name).Contains("raw", TString::kIgnoreCase);
+  // Ignore bin between 3500 - 7000 (last bin)
   //int number_of_plots = ptBins.size() - 1;
   int number_of_plots = ptBins.size();
 
-  std::string ptPhotMean_name = "ptPhotMean";
-  std::string ptJetGenMean_name = "ptJetGenMean";
-
-/*  TH2D* h2_ptPhot_data = 0;
-  TH2D* h2_ptPhot_mc = 0;
-  TH2D* h2_ptJetGen_mc = 0;*/
-
-// hp_ptPhot_data = (TProfile*)dataFiles_[0].file->Get(ptPhotMean_name.c_str());
-// hp_ptPhot_mc = (TProfile*)mcFiles_[0].file->Get(ptPhotMean_name.c_str());
-// hp_ptJetGen_mc = (TProfile*)mcFiles_[0].file->Get("ptJetGenMean");
-
-/*  h2_ptPhot_data = (TH2D*)dataFiles_[0].file->Get(ptPhotMean_name.c_str());
-  h2_ptPhot_mc = (mcFiles_.size() > 0) ? (TH2D*)mcFiles_[0].file->Get(ptPhotMean_name.c_str()) : 0;
-  h2_ptJetGen_mc = (mcFiles_.size() > 0) ? (TH2D*)mcFiles_[0].file->Get(ptJetGenMean_name.c_str()) : 0;
-
-  if (mcFiles_.size() > 1) {
-    for (unsigned i = 1; i < mcFiles_.size(); ++i) {
-      //TProfile* hp_ptPhot_mc2 = (TProfile*)mcFiles_[i].file->Get(ptPhotMean_name.c_str());
-      //TProfile* hp_ptJetGen_mc2 = (TProfile*)mcFiles_[i].file->Get("ptJetGenMean");
-      TH2D* h2_ptPhot_mc2 = (TH2D*)mcFiles_[i].file->Get(ptPhotMean_name.c_str());
-      TH2D* h2_ptJetGen_mc2 = (TH2D*)mcFiles_[i].file->Get(ptJetGenMean_name.c_str());
-      //hp_ptPhot_mc->Add( hp_ptPhot_mc2 );
-      //hp_ptJetGen_mc->Add( hp_ptJetGen_mc2 );
-      h2_ptPhot_mc->Add(h2_ptPhot_mc2);
-      h2_ptJetGen_mc->Add(h2_ptJetGen_mc2);
-    }
-  }
-*/
-
   TGraphErrors* gr_response_vs_pt = new TGraphErrors(0);
   gr_response_vs_pt->SetName("response_vs_pt");
-
   TGraphErrors* gr_responseMC_vs_pt = new TGraphErrors(0);
   gr_responseMC_vs_pt->SetName("responseMC_vs_pt");
-
-  TGraphErrors* gr_responseGEN_vs_pt = new TGraphErrors(0);
-  gr_responseGEN_vs_pt->SetName("responseGEN_vs_pt");
+  TGraphErrors* gr_responseTrue_vs_pt = new TGraphErrors(0);
+  gr_responseTrue_vs_pt->SetName("responseTrue_vs_pt");
 
   TGraphErrors* gr_resolution_vs_pt = new TGraphErrors(0);
   gr_resolution_vs_pt->SetName("resolution_vs_pt");
-
   TGraphErrors* gr_resolutionMC_vs_pt = new TGraphErrors(0);
   gr_resolutionMC_vs_pt->SetName("resolutionMC_vs_pt");
-
-  TGraphErrors* gr_resolutionGEN_vs_pt = new TGraphErrors(0);
-  gr_resolutionGEN_vs_pt->SetName("resolutionGEN_vs_pt");
+  TGraphErrors* gr_resolutionTrue_vs_pt = new TGraphErrors(0);
+  gr_resolutionTrue_vs_pt->SetName("resolutionTrue_vs_pt");
 
   TGraphErrors* gr_purity_vs_pt = new TGraphErrors(0);
   gr_purity_vs_pt->SetName("purity_vs_pt");
@@ -356,16 +317,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
   for (int iplot = 0; iplot < number_of_plots; ++iplot) {
 
-    //if( flags!="" ) histoName = histoName + "_" + flags;
-    //devo cambiare questo pezzo --> non media matematica ma media pesata
     std::pair<float, float> currentBin = ptBins[iplot];
-    //    float ptMean = (currentBin.first + currentBin.second) / 2.; //media aritmetica
     float ptMean = ptMeanVec.at(iplot); // weighted mean
 
     TString ptRange = TString::Format("ptPhot_%d_%d", (int) currentBin.first, (int) currentBin.second);
 
-    // Set shape normalization for comparing shapes, even if we are in
-    // prescaled region
+    // Set shape normalization for comparing shapes, even if we are in prescaled region
     double oldScaleFactor = scaleFactor_;
     scaleFactor_ = -1;
 
@@ -379,205 +336,160 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
     bool hasData = (lastHistos_data_.size() > 0);
     bool hasMC = (lastHistos_mc_.size() > 0);
-    //  bool hasData = false;
-    //  bool hasMC = true;
-    
-    //giulia --- ?  
-    // if(isEComp) hasMC=false;
+
+    Float_t meanTruncFraction = 0.99;
+    Float_t rmsTruncFraction = 0.99;
+
     Float_t dataResponse = (!hasData) ? 0. : lastHistos_data_[0]->GetMean();
     Float_t dataResponseErr = (!hasData) ? 0. : lastHistos_data_[0]->GetMeanError();
     Float_t dataRMS = (!hasData) ? 0. : lastHistos_data_[0]->GetRMS();
     Float_t dataRMSErr = (!hasData) ? 0. : lastHistos_data_[0]->GetRMSError();
 
-    Float_t meanTruncFraction = 0.99;
-    Float_t rmsTruncFraction = 0.99;
-
-    //     Float_t dataResponse = 0.;
-    //     Float_t dataResponseErr = 0.;
-    //     Float_t dataRMS = 0.;
-    //     Float_t dataRMSErr = 0.;
-
-
     if (hasData) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);
     }
-
+    
     Float_t dataResolution = (hasData) ? dataRMS / dataResponse : 0.;
     Float_t dataResolutionErr = (hasData) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
-
-
-    if (hasData) {
-
-      //if (h1_thisPhotPt_data->GetEntries() > 4) {
-        gr_response_vs_pt->SetPoint(iplot, ptMean, dataResponse);
-        gr_response_vs_pt->SetPointError(iplot, 0., dataResponseErr);
-      //}
-
-      if (dataResolution > 0.0005) {
-        gr_resolution_vs_pt->SetPoint(iplot, ptMean, dataResolution);
-        gr_resolution_vs_pt->SetPointError(iplot, 0., dataResolutionErr);
-      }
-
-    }
-
-    std::cout << "debug: hasData = " << hasData << std::endl;
-    std::cout << "debug: hasMC = " << hasMC << std::endl;
-   
+    
+    gr_response_vs_pt->SetPoint(iplot, ptMean, dataResponse);
+    gr_response_vs_pt->SetPointError(iplot, 0., dataResponseErr);
+    //      if (dataResolution > 0.0005) {
+    gr_resolution_vs_pt->SetPoint(iplot, ptMean, dataResolution);
+    gr_resolution_vs_pt->SetPointError(iplot, 0., dataResolutionErr);
+    //}
+    
     Float_t mcResponse = 0.;
     Float_t mcResponseErr = 0.;
     Float_t mcRMS = 0.;
     Float_t mcRMSErr = 0.;
     
-    std::cout << "debug: fitTools::getTruncatedMeanAndRMS" << std::endl;
-
     if (hasMC) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_mcHistoSum_, mcResponse, mcResponseErr, mcRMS, mcRMSErr, meanTruncFraction, rmsTruncFraction);
     }
-
+    
     Float_t mcResolution = (!hasMC) ? 0. : mcRMS / mcResponse;
     Float_t mcResolutionErr = (!hasMC) ? 0. : sqrt(mcRMSErr * mcRMSErr / (mcResponse * mcResponse) + mcResolution * mcResolution * mcResponseErr * mcResponseErr / (mcResponse * mcResponse * mcResponse * mcResponse));
-
-    if (hasMC) {
-
-      std::cout << "debug: set points on the graph" << std::endl;
-      std::cout << ptMean << "  Data Response  " << dataResponse << std::endl;
-      std::cout << ptMean << "  MC Response  " << mcResponse << std::endl;
-      gr_responseMC_vs_pt->SetPoint(iplot, ptMean, mcResponse);
-      gr_responseMC_vs_pt->SetPointError(iplot, 0., mcResponseErr);
-
-      //      std::cout << ptMean << "  MC Resolution  " << mcResolution << std::endl;
-      gr_resolutionMC_vs_pt->SetPoint(iplot, ptMean, mcResolution);
-      gr_resolutionMC_vs_pt->SetPointError(iplot, 0., mcResolutionErr);
-
-      float purityNum = lastHistos_mc_[0]->Integral(0, lastHistos_mc_[0]->GetNbinsX() + 1);
-      float purityNumErr = lastHistos_mc_[0]->Integral(0, lastHistos_mc_[0]->GetNbinsX() + 1) / ((float)lastHistos_mc_[0]->GetEntries());
-      float purityDenom = 0.;
-      float purityDenomErr = 0.;
-      for (unsigned iHisto = 0; iHisto < lastHistos_mc_.size(); ++iHisto) {
-        purityDenom +=  lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1);
-        purityDenomErr += lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1) * lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1) / ((float)lastHistos_mc_[iHisto]->GetEntries() * lastHistos_mc_[iHisto]->GetEntries());
-      }
-      purityDenomErr = sqrt(purityDenomErr);
-      float purity = purityNum / purityDenom;
-      float purityErr = sqrt(purityNumErr * purityNumErr / (purityDenom * purityDenom) + purityNum * purityNum * purityDenomErr * purityDenomErr / (purityDenom * purityDenom * purityDenom * purityDenom));
-      //gr_purity_vs_pt->SetPoint(iplot, ptMeanMC, purity);
-      //gr_purity_vs_pt->SetPointError(iplot, ptMeanErrMC, purityErr);
-      gr_purity_vs_pt->SetPoint(iplot, ptMean, purity);
-      gr_purity_vs_pt->SetPointError(iplot, 0., purityErr);
-
-      //      std::cout << "debug : get gen information" << std::endl;
-      
-      ////giulia debug
-      //// Get gen informations. To do that, we need to transform
-      //// resp_balancing_eta* in resp_balancing_gen_eta*
-      //      std::string responseGenName = std::string(name + "_" + ptRange);
-      // boost::replace_all(responseGenName, "eta", "gen_eta");
-      //if (isMPF) {
-      //  // For MPF, we don't have raw_gen
-      // boost::replace_all(responseGenName, "_raw", "");
-      // }
-      //std::cout << "debug : " << responseGenName << std::endl; 
-
-      //TH1* responseGEN = static_cast<TH1*>(mcGet(0, responseGenName));
-      // for (unsigned i = 1; i < mcFiles_.size(); ++i) {
-      //   TH1* responseGEN2 = static_cast<TH1*>(mcGet(i, responseGenName));
-      // responseGEN->Add(responseGEN2);
-      // }
-
-      //responseGEN->Scale(scaleFactor_);
-      //responseGEN->SetLineWidth(3);
-
-      //Float_t genResponse = 0.;
-      //Float_t genResponseErr = 0.;
-      //Float_t genRMS = 0.;
-      //Float_t genRMSErr = 0.;
-      
-      //giulia
-      //std::cout << "do fitTools::getTruncatedMeanAndRMS for gen" << std::endl;  
-      //fitTools::getTruncatedMeanAndRMS(responseGEN, genResponse, genResponseErr, genRMS, genRMSErr, meanTruncFraction, rmsTruncFraction);
-      
-      //Float_t genResolution = genRMS / genResponse;
-      //Float_t genResolutionErr = sqrt(genRMSErr * genRMSErr / (genResponse * genResponse) + genResolution * genResolution * genResponseErr * genResponseErr / (genResponse * genResponse * genResponse * genResponse));
-      // Float_t genResolution = 0.; 
-      //  Float_t genResolutionErr = 0.;
-      
-      //TH1D* h1_thisPtJetGen = (TH1D*)h2_ptJetGen_mc->ProjectionY("thisPtJetGen", iplot + 1, iplot + 1);
-
-      //Float_t ptMeanGEN = h1_thisPtJetGen->GetMean();
-      //Float_t ptMeanErrGEN = h1_thisPtJetGen->GetMeanError();
-
-      //gr_responseGEN_vs_pt->SetPoint(iplot, ptMeanGEN, genResponse);
-      //gr_responseGEN_vs_pt->SetPointError(iplot, ptMeanErrGEN, genResponseErr);
-
-      //gr_resolutionGEN_vs_pt->SetPoint(iplot, ptMeanGEN, genResolution);
-      //gr_resolutionGEN_vs_pt->SetPointError(iplot, ptMeanErrGEN, genResolutionErr);
-
-      //      gr_responseGEN_vs_pt->SetPoint(iplot, ptMean, genResponse);
-      //      gr_responseGEN_vs_pt->SetPointError(iplot, 0., genResponseErr);
-      //      std::cout << ptMean << "  " << genResponse << std::endl;
-
-      //      gr_resolutionGEN_vs_pt->SetPoint(iplot, ptMean, genResolution);
-      //      gr_resolutionGEN_vs_pt->SetPointError(iplot, 0., genResolutionErr);
-      //      std::cout << ptMean << "  " << genResolution << std::endl;
-
+    
+    gr_responseMC_vs_pt->SetPoint(iplot, ptMean, mcResponse);
+    gr_responseMC_vs_pt->SetPointError(iplot, 0., mcResponseErr);    
+    gr_resolutionMC_vs_pt->SetPoint(iplot, ptMean, mcResolution);
+    gr_resolutionMC_vs_pt->SetPointError(iplot, 0., mcResolutionErr);
+    
+    std::cout << "debug: set points on the graph" << std::endl;
+    std::cout <<"pT: "<< ptMean << "  Data Response:  " << dataResponse << std::endl;
+    std::cout <<"pT: "<< ptMean << "  MC Response:  " << mcResponse << std::endl;
+    
+    
+    float purityNum = lastHistos_mc_[0]->Integral(0, lastHistos_mc_[0]->GetNbinsX() + 1);
+    float purityNumErr = lastHistos_mc_[0]->Integral(0, lastHistos_mc_[0]->GetNbinsX() + 1) / ((float)lastHistos_mc_[0]->GetEntries());
+    float purityDenom = 0.;
+    float purityDenomErr = 0.;
+    for (unsigned iHisto = 0; iHisto < lastHistos_mc_.size(); ++iHisto) {
+      purityDenom +=  lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1);
+      purityDenomErr += lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1) * lastHistos_mc_[iHisto]->Integral(0, lastHistos_mc_[iHisto]->GetNbinsX() + 1) / ((float)lastHistos_mc_[iHisto]->GetEntries() * lastHistos_mc_[iHisto]->GetEntries());
     }
+    purityDenomErr = sqrt(purityDenomErr);
+    float purity = purityNum / purityDenom;
+    float purityErr = sqrt(purityNumErr * purityNumErr / (purityDenom * purityDenom) + purityNum * purityNum * purityDenomErr * purityDenomErr / (purityDenom * purityDenom * purityDenom * purityDenom));
+    //gr_purity_vs_pt->SetPoint(iplot, ptMeanMC, purity);
+    //gr_purity_vs_pt->SetPointError(iplot, ptMeanErrMC, purityErr);
+    gr_purity_vs_pt->SetPoint(iplot, ptMean, purity);
+    gr_purity_vs_pt->SetPointError(iplot, 0., purityErr);
+    
+    //      std::cout << "debug : get gen information" << std::endl;
 
+    if( !isRAW) {    
+    //// Get gen informations. To do that, we need to transform
+    //// resp_balancing_eta* in resp_balancing_gen_eta*
+    std::string responseTrueName = std::string(name + "_" + ptRange);
+    boost::replace_all(responseTrueName, "eta", "gen_eta");
+    std::cout << "debug : " << responseTrueName << std::endl; 
+    
+    TH1* responseTrue = static_cast<TH1*>(mcGet(0, responseTrueName));
+    for (unsigned i = 1; i < mcFiles_.size(); ++i) {
+      TH1* responseTrue2 = static_cast<TH1*>(mcGet(i, responseTrueName));
+      responseTrue->Add(responseTrue2);
+    }
+    
+    responseTrue->Scale(scaleFactor_);
+    responseTrue->SetLineWidth(3);
+    
+    Float_t genResponse = 0.;
+    Float_t genResponseErr = 0.;
+    Float_t genRMS = 0.;
+    Float_t genRMSErr = 0.;
+    
+    //    std::cout << "do fitTools::getTruncatedMeanAndRMS for gen" << std::endl;  
+    fitTools::getTruncatedMeanAndRMS(responseTrue, genResponse, genResponseErr, genRMS, genRMSErr, meanTruncFraction, rmsTruncFraction);
+    
+    Float_t genResolution = genRMS / genResponse;
+    Float_t genResolutionErr = sqrt(genRMSErr * genRMSErr / (genResponse * genResponse) + genResolution * genResolution * genResponseErr * genResponseErr / (genResponse * genResponse * genResponse * genResponse));
+    
+    //      TH1D* h1_thisPtJetGen = (TH1D*)h2_ptJetGen_mc->ProjectionY("thisPtJetGen", iplot + 1, iplot + 1);
+    //      Float_t ptMeanGEN = h1_thisPtJetGen->GetMean();
+    //      Float_t ptMeanErrGEN = h1_thisPtJetGen->GetMeanError();
+    
+    gr_responseTrue_vs_pt->SetPoint(iplot, ptMean, genResponse);
+    gr_responseTrue_vs_pt->SetPointError(iplot, 0, genResponseErr);
+    gr_resolutionTrue_vs_pt->SetPoint(iplot, ptMean, genResolution);
+    gr_resolutionTrue_vs_pt->SetPointError(iplot, 0, genResolutionErr);
+    
+    }// !isRAW 
   } // for pt bins
 
-  std::cout << "debug: now do plots" << std::endl;
-
+  //  std::cout << "debug: now do plots" << std::endl;
+  
   std::string graphFileName = "PhotonJetGraphs_" + get_fullSuffix() + ".root";
   TFile* graphFile = TFile::Open(graphFileName.c_str(), "update");
   graphFile->cd();
 
-  TString graphName = TString::Format("%s_data_vs_pt", name.c_str()); // something like resp_balancing_eta011_data_vs_pt
+  TString graphName = TString::Format("%s_data_vs_pt", name.c_str());
   gr_response_vs_pt->SetName(graphName);
   gr_response_vs_pt->Write();
 
   graphName = TString::Format("%s_mc_vs_pt", name.c_str());
   gr_responseMC_vs_pt->SetName(graphName);
   gr_responseMC_vs_pt->Write();
-
-  //  graphName = TString::Format("%s_gen_vs_pt", name.c_str());
-  //  gr_responseGEN_vs_pt->SetName(graphName);
-  //  gr_responseGEN_vs_pt->Write();
-
+  
+  if( !isRAW ){  
+    graphName = TString::Format("%s_gen_vs_pt", name.c_str());
+    gr_responseTrue_vs_pt->SetName(graphName);
+    gr_responseTrue_vs_pt->Write();
+  }
+  
   graphName = TString::Format("%s_purity_vs_pt", name.c_str());
   gr_purity_vs_pt->SetName(graphName);
   gr_purity_vs_pt->Write();
-
+  
   std::string resolutionName = name;
   boost::replace_all(resolutionName, "resp", "resolution");
   
-  graphName = TString::Format("%s_data_vs_pt", resolutionName.c_str()); // something like resolution_balancing_eta011_data_vs_pt
+  graphName = TString::Format("%s_data_vs_pt", resolutionName.c_str());
   gr_resolution_vs_pt->SetName(graphName);
   gr_resolution_vs_pt->Write();
-
+  
   graphName = TString::Format("%s_mc_vs_pt", resolutionName.c_str()); 
   gr_resolutionMC_vs_pt->SetName(graphName);
   gr_resolutionMC_vs_pt->Write();
-
-  //  graphName = TString::Format("%s_gen_vs_pt", resolutionName.c_str());
-  //  gr_resolutionGEN_vs_pt->SetName(graphName);
-  //  gr_resolutionGEN_vs_pt->Write();
-
-  //federico
-  //  graphFile->Close();
-
+  
+  if( !isRAW ){
+    graphName = TString::Format("%s_gen_vs_pt", resolutionName.c_str());
+    gr_resolutionTrue_vs_pt->SetName(graphName);
+    gr_resolutionTrue_vs_pt->Write();
+  }
+  //  graphFile->Close(); // want to save also the ratio
   
 //gStyle->SetPadTickX(1);
 //gStyle->SetPadTickY(1);
 
-
-  //giulia --- TO BE CHANGED -- NO DATA!
   bool noDATA = (gr_response_vs_pt->GetN() == 0);
-  //bool noDATA = true;
   bool noMC = (gr_responseMC_vs_pt->GetN() == 0);
-
+  
   int canvasHeight = (noMC || noDATA) ? 600 : 800;
   TCanvas* c1 = new TCanvas("c1", "c1", 600, canvasHeight);
   c1->cd();
-
+  
   // Data / MC comparison
   TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
   pad_hi->Draw();
@@ -595,23 +507,22 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
   float ptPhotMax = ptBins[ptBins.size() - 1].second;
   float ptPhotMin = ptBins[0].first;
-
+  
   TGraphErrors* gr_resp_ratio = 0;
   Float_t scale_uncert = (recoType_ == "Calo") ? 0.1 : 0.1;
-
+  
   TH2* h2_axes_lo_resp = NULL;
-
   TLine* line_one = new TLine(ptPhotMin, 1., ptPhotMax, 1.);
   TLine* line_plus_resp = new TLine(ptPhotMin, 1.05, ptPhotMax, 1.05);
   TLine* line_minus_resp = new TLine(ptPhotMin, 0.95, ptPhotMax, 0.95);
-
+  
   if (!noDATA && !noMC) {  //ugly will have to fix (cloning the TCanvas?)
-
-    pad_lo->cd();
+    
+    pad_lo->cd(); // data/MC ratio
     
     h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 10, ptPhotMin, ptPhotMax, 10, 0.86, 1.14);
-
-    h2_axes_lo_resp->SetXTitle("Photon p_{T} [GeV/c]");
+    
+    h2_axes_lo_resp->SetXTitle("p_{T}(#gamma) [GeV/c]");
     h2_axes_lo_resp->SetYTitle("Data / MC");
     h2_axes_lo_resp->GetXaxis()->SetTitleOffset(1.2);
     h2_axes_lo_resp->GetYaxis()->SetTitleOffset(0.55);
@@ -625,56 +536,49 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7, kTRUE);
     h2_axes_lo_resp->Draw("");
-
+    
     line_one->Draw("same");
-
+    
     //line_plus_resp->SetLineColor(46);
     line_plus_resp->SetLineWidth(2);
     line_plus_resp->SetLineStyle(2);
-
+    
     //line_minus_resp->SetLineColor(46);
     line_minus_resp->SetLineWidth(2);
     line_minus_resp->SetLineStyle(2);
-
+    
     gr_resp_ratio = this->get_graphRatio(gr_response_vs_pt, gr_responseMC_vs_pt);
     gr_resp_ratio->SetName("response_ratio");
     gr_resp_ratio->SetMarkerStyle(20);
     gr_resp_ratio->SetMarkerSize(1.5);
     gr_resp_ratio->SetMarkerColor(kBlue - 6);
-
-    //federico
+    
     graphName = TString::Format("%s_ratio_vs_pt", name.c_str());
     gr_resp_ratio ->SetName(graphName);
-    gr_resp_ratio ->Write(); 
+    gr_resp_ratio ->Write(); // saving in root file
     graphFile->Close();
     
-    //federico : To change function for fit
+    // Fit Function = constant function
     TF1* ratioFit = new TF1("ratioFit", "[0]", ptPhotMin, ptPhotMax); //costant function
-    // TF1* ratioFit = new TF1("ratioFit", "[0]+[1]*log(x/200.)", ptPhotMin, ptPhotMax); //logaritmic function
     ratioFit->SetParameter(0, 0.);
+    // TF1* ratioFit = new TF1("ratioFit", "[0]+[1]*log(x/200.)", ptPhotMin, ptPhotMax); //logaritmic function
     // ratioFit->SetParameter(1, 0.);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(2);
     TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
     // std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
     
-    //first method: stampa covariance matrix
-    //     int npar = 2;
-    //     TMatrixDSym mat(npar);
-    //     gMinuit->mnemat( mat.GetMatrixArray(), npar);
-    //     mat.Print();
-    
-    //second method: stampa covariance matrix && correlation matrix
+    // Print covariance matrix && correlation matrix
     // fitres->PrintCovMatrix(std::cout);
     
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
+    std::cout<<"Data/MC: Parameter [0] = "<< fitValue <<" #pm "<<fitError<< std::endl;
+    // // If two parameters function is used [1]
     //  double fitValue_1 = ratioFit->GetParameter(1);
     //  double fitError_1 = ratioFit->GetParError(1);
-    // federico aggiunto parametro [1]
-    std::cout<<"Parameter [0] = "<< fitValue <<" #pm "<<fitError<< std::endl;
-    // std::cout<<"Parameter [1] = "<< fitValue_1 <<" #pm "<<fitError_1<<  std::endl;
-
+    // std::cout<<"Data/MC: Parameter [1] = "<< fitValue_1 <<" #pm "<<fitError_1<<  std::endl;
+    
     //TBox* errors = new TBox(ptPhotMin, fitValue - fitError, ptPhotMax, fitValue + fitError);
     //errors->SetFillColor(kBlue - 10);
     //errors->SetFillStyle(1001);
@@ -685,39 +589,31 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     errors->SetFillColor(LIGHT_RED);
     errors->SetLineColor(46);
 
-    //federico: aggiunta scritta dei parametri al plot
     TPaveText* fitlabel = new TPaveText(0.55, 0.72, 0.88, 0.83, "brNDC");
     fitlabel->SetTextSize(0.08);
     fitlabel->SetFillColor(0);
-    //    TString fitLabelText = TString::Format("Fit: %.3f #pm %.3f", fitValue, fitError);
-    //    TString fitLabelText = TString::Format("Fit: %.3f + %.3f *log(pT/200)", fitValue, fitValue_1);
     TString fitLabelText = TString::Format("[0]: %.3f #pm %.3f", fitValue, fitError);
-    // TString fitLabelText_1 = TString::Format("[1]: %.3f #pm %.3f", fitValue_1, fitError_1);
     fitlabel->AddText(fitLabelText);
-    // fitlabel->AddText(fitLabelText_1);
     fitlabel->Draw("same");
 
     //    std::cout << "Fit value  " << fitValue << " #pm " << fitError << std::endl;
 
     line_plus_resp->Draw("same");
     line_minus_resp->Draw("same");
-
     errors->Draw("e3 same");
-    //ratioFit->Draw("same");
-
-    
-    gr_resp_ratio->Draw("P same");
-    
+    gr_resp_ratio->Draw("P same");    
     gPad->RedrawAxis();
-    
     pad_hi->cd();
     
   } // if !nodata && !nomc
 
   TH2D* h2_axes = new TH2D("axes_again", "", 10, ptPhotMin, ptPhotMax, 10, 0.4, 1.25);
-  h2_axes->SetXTitle("Photon p_{T} [GeV/c]");
-  h2_axes->SetYTitle("Jet p_{T} response");
-  //h2_axes->SetYTitle("< p_{T}^{jet} / p_{T}^{#gamma} >");
+  h2_axes->SetXTitle("p_{T}(#gamma) [GeV/c]");
+  if(! isMPF){
+    h2_axes->SetYTitle("p_{T} Balance");
+  }else{
+    h2_axes->SetYTitle("MPF response");    
+  }
   h2_axes->GetXaxis()->SetTitleOffset(1.1);
   h2_axes->GetYaxis()->SetTitleOffset(1.2);
   h2_axes->GetYaxis()->SetTitleSize(0.045);
@@ -728,7 +624,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   }
 
   h2_axes->Draw();
-
+  
   Float_t labelTextSize = 0.035;
   TPaveText* label_algo = get_labelAlgo(2);
 
@@ -738,47 +634,14 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   legend->SetFillColor(kWhite);
   legend->SetFillStyle(0);
   legend->SetTextSize(legendTextSize_);
-  if (! isMPF) {
-    if (!noDATA) {
-      //federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(gr_response_vs_pt, "G+Jet MC", "P");
-	//	legend->AddEntry(gr_response_vs_pt, "Pythia Flat", "P");
-      }else{
-	legend->AddEntry(gr_response_vs_pt, "Data (#gamma+Jet)", "P");
-      }
-    }
-    if (!noMC) {
-      // federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC", "P");
-	//	legend->AddEntry(gr_responseMC_vs_pt, "Madgraph HT binned", "P");
-      }else{
-	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (#gamma+Jet)", "P");
-      }
-    }
-  } else {
-    if (!noDATA) {
-      //federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(gr_response_vs_pt, "G+Jet MC (MPF)", "P");
-	// legend->AddEntry(gr_response_vs_pt, "Pythia (MPF)", "P");
-      }else{
-	legend->AddEntry(gr_response_vs_pt, "Data (MPF)", "P");
-      }
-    }
-    if (!noMC) {
-      // federico -- legend to MC  comparison     
-      if(MCComparison){
-	legend->AddEntry(gr_responseMC_vs_pt, "QCD MC (MPF)", "P");
-	// legend->AddEntry(gr_responseMC_vs_pt, "Madgraph (MPF)", "P");
-      }else{
-	legend->AddEntry(gr_responseMC_vs_pt, "Simulation (MPF)", "P");
-      }
-    }
+  if (!noDATA) {
+    legend->AddEntry(gr_response_vs_pt, "Data", "P");
   }
   if (!noMC) {
-    //legend->AddEntry(gr_responseGEN_vs_pt, "True Response", "P");
+      legend->AddEntry(gr_responseMC_vs_pt, "MC", "P");
+  } 
+  if (!noMC && !isRAW) {
+    legend->AddEntry(gr_responseTrue_vs_pt, "True Response", "P");
   }
   legend->Draw("same");
 
@@ -795,20 +658,19 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
 
   if (!noMC) {
-    /*
-    gr_responseGEN_vs_pt->SetMarkerStyle(29);
-    gr_responseGEN_vs_pt->SetMarkerColor(46);
-    gr_responseGEN_vs_pt->SetMarkerSize(2.);
-    gr_responseGEN_vs_pt->Draw("Psame");
-    */
-
+    if(!isRAW){
+      gr_responseTrue_vs_pt->SetMarkerStyle(29);
+      gr_responseTrue_vs_pt->SetMarkerColor(46);
+      gr_responseTrue_vs_pt->SetMarkerSize(2.);
+      gr_responseTrue_vs_pt->Draw("Psame");
+    }    
     gr_responseMC_vs_pt->SetMarkerStyle(24);
     gr_responseMC_vs_pt->SetMarkerSize(1.5);
     gr_responseMC_vs_pt->SetMarkerColor(kBlue - 6);
     gr_responseMC_vs_pt->SetLineColor(kBlue - 6);
     gr_responseMC_vs_pt->Draw("Psame");
   }
-
+  
   if (!noDATA) {
     if (noMC) {
       gr_response_vs_pt->SetMarkerColor(TColor::GetColor(0, 0, 153));
@@ -821,21 +683,21 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
       gr_response_vs_pt->SetMarkerSize(1.5);
       gr_response_vs_pt->SetMarkerColor(kBlue - 6);
     }
-
+    
     gr_response_vs_pt->Draw("Psame");
   }
-
+  
   gPad->RedrawAxis();
-
+  
   std::string canvName = outputdir_ + "/" + name + "_vs_pt";
-
+  
   if (noMC) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
   }
-
+  
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
   std::string canvName_fit_png = canvName + "_FITLINE.png";
@@ -846,12 +708,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   // ----------------------------------------------------
 
   TH2* h2_axes_lo_reso = new TH2D("axes_lo_reso", "", 10, ptPhotMin, ptPhotMax, 10, (1. - 6.*scale_uncert), (1. + 6.*scale_uncert));
-
+  
   if (!noDATA && !noMC) {
-
+    
     pad_lo->cd();
 
-    h2_axes_lo_reso->SetXTitle("Photon p_{T} [GeV/c]");
+    h2_axes_lo_reso->SetXTitle("p_{T}(#gamma) [GeV/c]");
     h2_axes_lo_reso->SetYTitle("Data / MC");
     h2_axes_lo_reso->GetXaxis()->SetTitleOffset(1.2);
     h2_axes_lo_reso->GetYaxis()->SetTitleOffset(0.55);
@@ -899,7 +761,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     fitlabel->SetTextSize(0.08);
     fitlabel->SetFillColor(0);
     char fitLabelText[150];
-    sprintf(fitLabelText, "FIT: %.3f #pm %.3f", constline->GetParameter(0), constline->GetParError(0));
+    sprintf(fitLabelText, "[0]: %.3f #pm %.3f", constline->GetParameter(0), constline->GetParError(0));
     fitlabel->AddText(fitLabelText);
     fitlabel->Draw("same");
     //line_plus_resp->Draw("same");
@@ -912,8 +774,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   } // if !nodata and !nomc
 
   TH2D* h2_axes2 = new TH2D("axes_again2", "", 10, ptPhotMin, ptPhotMax, 10, 0., 1.);
-  //h2_axes2->SetXTitle("Photon p_{T} [GeV/c]");
-  h2_axes2->SetYTitle("Resolution");
+  h2_axes->SetXTitle("p_{T}(#gamma) [GeV/c]");
+  if(! isMPF){
+    h2_axes2->SetYTitle("p_{T} Balance Resolution");
+  }else{
+    h2_axes2->SetYTitle("MPF Resolution");    
+  }
   //h2_axes2->GetXaxis()->SetTitleOffset(1.1);
   h2_axes2->GetYaxis()->SetTitleOffset(1.5);
   //h2_axes2->GetXaxis()->SetMoreLogLabels();
@@ -952,34 +818,26 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   legend2->SetFillColor(kWhite);
   legend2->SetFillStyle(0);
   legend2->SetTextSize(labelTextSize);
-  if (! isMPF) {
-    if (!noDATA) {
-      legend2->AddEntry(gr_resolution_vs_pt, "Data (#gamma+Jet)", "P");
-    }
-    if (!noMC) {
-      legend2->AddEntry(gr_resolutionMC_vs_pt, "Simulation (#gamma+Jet)", "P");
-    }
-  } else {
-    if (!noDATA) {
-      legend2->AddEntry(gr_resolution_vs_pt, "Data (MPF)", "P");
-    }
-    if (!noMC) {
-      legend2->AddEntry(gr_resolutionMC_vs_pt, "Simulation (MPF)", "P");
-    }
-
+  if (!noDATA) {
+    legend2->AddEntry(gr_resolution_vs_pt, "Data", "P");
   }
-  if (! noMC) {
-    legend2->AddEntry(gr_resolutionGEN_vs_pt, "True Resolution", "P");
+  if (!noMC) {
+    legend2->AddEntry(gr_resolutionMC_vs_pt, "MC", "P");
+  }
+  
+  if (! noMC && !isRAW) {
+    legend2->AddEntry(gr_resolutionTrue_vs_pt, "True Resolution", "P");
   }
 
   legend2->Draw("same");
 
   if (!noMC) {
-    gr_resolutionGEN_vs_pt->SetMarkerStyle(29);
-    gr_resolutionGEN_vs_pt->SetMarkerColor(46);
-    gr_resolutionGEN_vs_pt->SetMarkerSize(2.);
-    gr_resolutionGEN_vs_pt->Draw("Psame");
-
+    if(!isRAW){
+      gr_resolutionTrue_vs_pt->SetMarkerStyle(29);
+      gr_resolutionTrue_vs_pt->SetMarkerColor(46);
+      gr_resolutionTrue_vs_pt->SetMarkerSize(2.);
+      gr_resolutionTrue_vs_pt->Draw("Psame");
+    }
     gr_resolutionMC_vs_pt->SetMarkerStyle(24);
     gr_resolutionMC_vs_pt->SetMarkerSize(1.8);
     gr_resolutionMC_vs_pt->SetMarkerColor(kBlack);
@@ -999,25 +857,25 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
       gr_resolution_vs_pt->SetMarkerSize(1.8);
       gr_resolution_vs_pt->SetMarkerColor(kBlack);
     }
-
+    
     gr_resolution_vs_pt->Draw("Psame");
   }
-
+  
   label_cms2->Draw("same");
   label_sqrt2->Draw("same");
   label_algo2->Draw("same");
-
+  
   gPad->RedrawAxis();
-
+  
   canvName = outputdir_ + "/" + resolutionName + "_vs_pt";
-
+  
   if (outputGraphs_) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
   }
-
+  
   delete h2_axes;
   h2_axes = 0;
   delete h2_axes2;
@@ -1028,10 +886,10 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   h2_axes_lo_reso = 0;
   delete c1;
   c1 = 0;
-
+  
   //gStyle->SetPadTickX(0);
   //gStyle->SetPadTickY(0);*/
-
+  
 }
 
 void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
@@ -1327,10 +1185,10 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
   if (!noMC) {
     /*
-    gr_responseGEN_vs_pt->SetMarkerStyle(29);
-    gr_responseGEN_vs_pt->SetMarkerColor(46);
-    gr_responseGEN_vs_pt->SetMarkerSize(2.);
-    gr_responseGEN_vs_pt->Draw("Psame");
+    gr_responseTrue_vs_pt->SetMarkerStyle(29);
+    gr_responseTrue_vs_pt->SetMarkerColor(46);
+    gr_responseTrue_vs_pt->SetMarkerSize(2.);
+    gr_responseTrue_vs_pt->Draw("Psame");
     */
 
     gr_responseMC_vs_eta->SetMarkerStyle(24);
@@ -1406,6 +1264,7 @@ void drawBase::drawHisto(const std::string& name, const std::string& axisName, c
     std::cout << "Histo " << name << " not found in MC. Drawing only datas" << std::endl;
   }
 
+  /*
   std::vector<TH1*> mcHistos_superimp;
   TH1* mcHisto0_superimp = 0;
   if (mcFiles_superimp_.size() > 0 && mcFiles_superimp_[0].file != 0) {
@@ -1414,9 +1273,10 @@ void drawBase::drawHisto(const std::string& name, const std::string& axisName, c
   if (mcHisto0_superimp != 0) {
     mcHistos_superimp.push_back(mcHisto0_superimp);
   }
+  */
 
-
-   drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
+  //   drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
+  drawHisto_fromHistos(dataHistos, mcHistos, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
 
 } //drawhisto
 
@@ -1490,11 +1350,8 @@ void drawBase::drawHisto_fromTree(const std::string& treeName, const std::string
     } //for mc files
   } // if mcfiles > 1
 
-  //TFile* file = TFile::Open("PROVA.root", "recreate");
-  //for( unsigned i=0; i<mcHistos.size(); ++i ) mcHistos[i]->Write();
-  //file->Close();
-  //exit(13);
 
+  /*
   // superimposed mc histos (for now only one):
   std::vector<TH1*> mcHistos_superimp;
   //TH1D* mcHisto0_superimp = 0;
@@ -1511,23 +1368,25 @@ void drawBase::drawHisto_fromTree(const std::string& treeName, const std::string
       mcHistos_superimp.push_back(newHisto);
     }
   }
-
+  */
 
   // put it back to false:
   TH1F::AddDirectory(kTRUE);
 
-  drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, flags, labelText, add_jetAlgoText);
+  //  drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, flags, labelText, add_jetAlgoText);
+  drawHisto_fromHistos(dataHistos, mcHistos, name, axisName, units, instanceName, log_aussi, legendQuadrant, flags, labelText, add_jetAlgoText);
 
 } //drawhisto_fromTree
 
 
 
 
-void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, std::vector<TH1*> mcHistos_superimp, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& flags, const std::string& labelText, bool add_jetAlgoText, bool drawRatio/* = true*/, double fitMin/* = 0*/, double fitMax/* = 8000*/) {
+//void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, std::vector<TH1*> mcHistos_superimp, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& flags, const std::string& labelText, bool add_jetAlgoText, bool drawRatio/* = true*/, double fitMin/* = 0*/, double fitMax/* = 8000*/) {
+void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& flags, const std::string& labelText, bool add_jetAlgoText, bool drawRatio/* = true*/, double fitMin/* = 0*/, double fitMax/* = 8000*/) {
 
   bool noDATA = false;
   bool noMC = false;
-
+  
   if (dataHistos.size() == 0) {
     noDATA = true;
   }
@@ -1535,7 +1394,6 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   if (mcHistos.size() == 0) {
     noMC = true;
   }
-
 
   // FIRST: SET BASIC AESTHETICS FOR DATA HISTO(S)
   int markerStyle_default = 20;
@@ -1638,7 +1496,6 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     mcHisto_sum = new TH1D(*((TH1D*)mcHistos[0]->Clone()));
 
-
     if (mcHistos.size() > 1) {
       for (unsigned i = 1; i < mcHistos.size(); ++i) {
 	//federico
@@ -1676,6 +1533,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     } //if mc files size > 1
   } // if !nomc
 
+  /*
   // superimposed MC histos (for now only one):
   if (mcHistos_superimp.size() > 0) {
     mcHistos_superimp[0]->SetLineColor(mcFiles_superimp_[0].lineColor);
@@ -1684,7 +1542,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     mcHistos_superimp[0]->Rebin(rebin_);
     mcHistos_superimp[0]->Scale(mcFiles_superimp_[0].weight);
   }
-
+  */
   // normalize:
   if (scaleFactor_ > 0.) {
 
@@ -1693,9 +1551,11 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       for (unsigned i = 0; i < mcHistos.size(); ++i) {
         mcHistos[i]->Scale(scaleFactor_);
       }
+      /*
       for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
         mcHistos_superimp[i]->Scale(scaleFactor_);
       }
+      */
     }
 
   } else { //scale factor < 0 --> normalize to shapes
@@ -1750,7 +1610,6 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
   //Float_t yAxisMaxScale_ = (name=="phiJet" || name=="etaJet" || name=="ptSecondJetRel" || name=="phiPhot" || name=="etaPhot" ) ? 1.8 : 1.6;
   //if( name=="phiPhot" || name=="etaPhot" ) yAxisMaxScale_=2.;
-  //if(name=="clusterMajPhotReco" || name=="clusterMinPhotReco") yAxisMaxScale_ = 2.;
   Int_t nBinsx = refHisto->GetNbinsX();
   Float_t xMin = refHisto->GetXaxis()->GetXmin();
   Float_t xMax = refHisto->GetXaxis()->GetXmax();
@@ -1777,7 +1636,6 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     yMax *= 1.2;
   }
 
-
   TLegend* legend = new TLegend(lb.xMin, lb.yMin, lb.xMax, lb.yMax, legendTitle_.c_str());
   legend->SetTextFont(42);
   legend->SetBorderSize(0);
@@ -1785,45 +1643,22 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   legend->SetTextSize(legendTextSize_);
   for (unsigned i = 0; i < dataHistos.size(); ++i)
     if (dataFiles_[i].fillStyle != -1) {
-      // federico -- legend to MC  comparison  
-      if( MCComparison){
-	legend->AddEntry(dataHistos[i], "G+Jet", "F");
-	// legend->AddEntry(dataHistos[i], "Pythia", "F");
-      }else{
 	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "F");
-      }
     } else {
-      //federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(dataHistos[i], "G+Jet MC", "P");
-	// legend->AddEntry(dataHistos[i], "Pythia", "P");
-      }else{
 	legend->AddEntry(dataHistos[i], (dataFiles_[i].legendName).c_str(), "P");
-      }
     }
   for (unsigned i = 0; i < mcHistos.size(); ++i)  {
     if (mcFiles_[i].markerStyle == -1) {
-      // federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(mcHistos[i], "QCD", "F");
-	// legend->AddEntry(mcHistos[i], "Madgraph", "F");
-      }else{
-	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "F");
-      }
+      legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "F");
     } else {
-      //federico -- legend to MC  comparison  
-      if(MCComparison){
-	legend->AddEntry(mcHistos[i], "QCD", "F");
-	// legend->AddEntry(mcHistos[i], "Madgraph", "F");
-      }else{
-	legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "P");
-      }
+      legend->AddEntry(mcHistos[i], (mcFiles_[i].legendName).c_str(), "P");
     }
   }
+  /*
   for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
     legend->AddEntry(mcHistos_superimp[i], (mcFiles_superimp_[i].legendName).c_str(), "L");
   }
-
+*/
   bool noBinLabels = true;
   TH2D* h2_axes = new TH2D("axes", "", nBinsx, xMin, xMax, 10, yMin, yMax);
   if (xAxisMin_ != 9999.) {
@@ -1991,10 +1826,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   if (!noMC) {
     if (!noStack_) {
       mcHisto_stack->Draw("histo same");
-      for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
+      /*
+	for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
         int backwardsIndex = mcHistos_superimp.size() - 1 - i; //backwards is prettier: bg on the back, signal in front
         mcHistos_superimp[backwardsIndex]->Draw("h same");
-      }
+	}
+      */
     } else {
       for (unsigned i = 0; i < mcHistos.size(); ++i) {
         int backwardsIndex = mcHistos.size() - 1 - i; //backwards is prettier: bg on the back, signal in front
@@ -2173,11 +2010,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     if (!noMC) {
       if (!noStack_) {
         mcHisto_stack->Draw("histo same");
-        for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
+	/*
+	  for (unsigned i = 0; i < mcHistos_superimp.size(); ++i) {
           int backwardsIndex = mcHistos_superimp.size() - 1 - i; //backwards is prettier: bg on the back, signal in front
           mcHistos_superimp[backwardsIndex]->Draw("h same");
-        }
-
+	  }
+	*/
       } else {
         for (unsigned i = 0; i < mcHistos.size(); ++i) {
           int backwardsIndex = mcHistos.size() - 1 - i; //backwards is prettier: bg on the back, signal in front
@@ -2251,7 +2089,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
   lastHistos_data_.clear();
   lastHistos_mc_.clear();
-  lastHistos_mc_superimp_.clear();
+  //  lastHistos_mc_superimp_.clear();
 
   for (unsigned iHisto = 0; iHisto < dataHistos.size(); ++iHisto) {
     TH1* newHisto = static_cast<TH1*>(dataHistos[iHisto]->Clone());
@@ -2381,7 +2219,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     label_cuts->SetFillColor(kWhite);
     label_cuts->SetTextSize(0.035);
     label_cuts->SetTextFont(42);
-    label_cuts->AddText("anti-k_{T} 0.5 PFJets");
+    label_cuts->AddText("anti-k_{T} 0.5 PFJetsCHS");
     if (xVar != "eta") {
       char etaRange_ch[100];
       sprintf(etaRange_ch, "|#eta| < %.1f", etamax_);
@@ -3233,7 +3071,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   }
 
 
-
+/*
   void drawBase::add_mcFile_superimp(TFile* mcFile, const std::string& datasetName, const std::string& legendName, float multFactor, int lineColor, int lineWidth) {
 
     InputFile thisfile;
@@ -3254,7 +3092,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     std::cout << "-> Added (superimposed) MC file '" << mcFile->GetName()  << "'." << std::endl;
   }
-
+*/
 
 
 
@@ -3552,21 +3390,15 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       algoName = "anti-k_{T} 0.4 ";
     } else if (jetAlgo_ == "AK8") {
       algoName = "anti-k_{T} 0.8 ";
-    } else if (jetAlgo_ == "KT4") {
-      algoName = "k_{T} 0.4 ";
-    } else if (jetAlgo_ == "KT6") {
-      algoName = "k_{T} 0.6 ";
     } else {
       std::cout << "Jet algo '" << jetAlgo_ << "' currently not supported. Exiting." << std::endl;
       exit(918);
     }
 
     if (recoType_ == "PFlow") {
-      algoName += "PFJets";
-    } else if (recoType_ == "Calo") {
-      algoName += "CaloJets";
-    } else if (recoType_ == "JPT") {
-      algoName += "JPTJets";
+      algoName += "PFJetsCHS";
+    } else if (recoType_ == "PUPPI") {
+      algoName += "PUPPIJets";
     } else {
       std::cout << "Reco Type '" << recoType_ << "' currently not supported. Exiting." << std::endl;
       exit(919);
@@ -3593,12 +3425,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     label_cmstop->AddText("#sqrt{s} = 13 TeV");
     std::string leftText;
     if (dataFiles_.size() == 0) {
-      leftText = "CMS Simulation 2015";
+      leftText = "CMS Simulation";
     } else {
       if (isCMSArticle_) {
-        leftText = "CMS 2015";
+        leftText = "CMS";
       } else {
-        leftText = "CMS Preliminary 2015";
+        leftText = "CMS Preliminary";
       }
     }
 
@@ -3666,12 +3498,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     } else {
       std::string leftText;
       if (dataFiles_.size() == 0) {
-        leftText = "CMS Simulation 2015";
+        leftText = "CMS Simulation";
       } else {
         if (isCMSArticle_) {
-          leftText = "CMS 2015";
+          leftText = "CMS";
         } else {
-          leftText = "CMS Preliminary 2015";
+          leftText = "CMS Preliminary";
         }
       }
       if (lumi_ > 0.) {
@@ -3793,13 +3625,13 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     std::string returnString;
 
     if (dataFiles_.size() == 0) {
-      returnString = "CMS Simulation 2015";
+      returnString = "CMS Simulation";
     } else {
       if (isCMSArticle_) {
         std::string lumiText = this->get_lumiText();
-        returnString = "CMS 2015, " + lumiText;
+        returnString = "CMS, " + lumiText;
       } else {
-        returnString = "CMS Preliminary 2015";
+        returnString = "CMS Preliminary";
       }
     }
 
@@ -3838,7 +3670,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     std::string algoName = jetAlgo_;
     if (recoType_ != "calo") {
-      algoName = recoType_ + algoName;
+      algoName = recoType_ + algoName+"chs";
     }
     if (recoType_ == "jpt" && jetAlgo_ == "akt4") {
       algoName = "jptak4";
@@ -4047,8 +3879,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   TGraphErrors* gr_resolutionMC_vs_pt = new TGraphErrors(0);
   gr_resolutionMC_vs_pt->SetName("resolutionMC_vs_pt");
 
-  //TGraphErrors* gr_resolutionGEN_vs_pt = new TGraphErrors(0);
-  //gr_resolutionGEN_vs_pt->SetName("resolutionGEN_vs_pt");
+  //TGraphErrors* gr_resolutionTrue_vs_pt = new TGraphErrors(0);
+  //gr_resolutionTrue_vs_pt->SetName("resolutionTrue_vs_pt");
 
   //TGraphErrors* gr_purity_vs_pt = new TGraphErrors(0);
   //gr_purity_vs_pt->SetName("purity_vs_pt");
@@ -4195,14 +4027,14 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       ////gr_responseGEN_vs_pt->SetPoint(iplot, ptMeanGEN, genResponse);
       ////gr_responseGEN_vs_pt->SetPointError(iplot, ptMeanErrGEN, genResponseErr);
 
-      ////gr_resolutionGEN_vs_pt->SetPoint(iplot, ptMeanGEN, genResolution);
-      ////gr_resolutionGEN_vs_pt->SetPointError(iplot, ptMeanErrGEN, genResolutionErr);
+      ////gr_resolutionTrue_vs_pt->SetPoint(iplot, ptMeanGEN, genResolution);
+      ////gr_resolutionTrue_vs_pt->SetPointError(iplot, ptMeanErrGEN, genResolutionErr);
 
       //gr_responseGEN_vs_pt->SetPoint(iplot, ptMean, genResponse);
       //gr_responseGEN_vs_pt->SetPointError(iplot, 0., genResponseErr);
 
-      //gr_resolutionGEN_vs_pt->SetPoint(iplot, ptMean, genResolution);
-      //gr_resolutionGEN_vs_pt->SetPointError(iplot, 0., genResolutionErr);
+      //gr_resolutionTrue_vs_pt->SetPoint(iplot, ptMean, genResolution);
+      //gr_resolutionTrue_vs_pt->SetPointError(iplot, 0., genResolutionErr);
 
     }
 
@@ -4241,8 +4073,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   gr_resolutionMC_vs_pt->Write();
 
   //graphName = TString::Format("%s_gen_vs_npv", resolutionName.c_str());
-  //gr_resolutionGEN_vs_pt->SetName(graphName);
-  //gr_resolutionGEN_vs_pt->Write();
+  //gr_resolutionTrue_vs_pt->SetName(graphName);
+  //gr_resolutionTrue_vs_pt->Write();
 
   graphFile->Close();
 
@@ -4632,16 +4464,16 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
   }
   //if (! noMC) {
-    //legend2->AddEntry(gr_resolutionGEN_vs_pt, "True Resolution", "P");
+    //legend2->AddEntry(gr_resolutionTrue_vs_pt, "True Resolution", "P");
   //}
 
   legend2->Draw("same");
 
   if (!noMC) {
-    //gr_resolutionGEN_vs_pt->SetMarkerStyle(29);
-    //gr_resolutionGEN_vs_pt->SetMarkerColor(46);
-    //gr_resolutionGEN_vs_pt->SetMarkerSize(2.);
-    //gr_resolutionGEN_vs_pt->Draw("Psame");
+    //gr_resolutionTrue_vs_pt->SetMarkerStyle(29);
+    //gr_resolutionTrue_vs_pt->SetMarkerColor(46);
+    //gr_resolutionTrue_vs_pt->SetMarkerSize(2.);
+    //gr_resolutionTrue_vs_pt->Draw("Psame");
 
     gr_resolutionMC_vs_pt->SetMarkerStyle(24);
     gr_resolutionMC_vs_pt->SetMarkerSize(1.8);

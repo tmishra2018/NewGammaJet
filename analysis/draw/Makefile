@@ -42,7 +42,8 @@ SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 ###
 
 #all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_all_methods_vs_npv draw_crosschecks
-all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_new_extrap draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData
+all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData
+#get out: draw_new_extrap
 
 clean:
 	@rm *.o;
@@ -53,8 +54,8 @@ drawPhotonJet_2bkg: drawBase.o fitTools.o drawPhotonJet_2bkg.o
 draw_vs_npv: drawBase.o fitTools.o draw_vs_npv.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-draw_new_extrap: drawBase.o fitTools.o draw_new_extrap.o
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+#draw_new_extrap: drawBase.o fitTools.o draw_new_extrap.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 drawPhotonJetExtrap: drawBase.o fitTools.o drawExtrap.o drawPhotonJetExtrap.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
@@ -71,8 +72,8 @@ draw_all_methods_vs_npv: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBas
 draw_crosschecks: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o draw_crosschecks.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-drawSystPhotonJetExtrap: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o drawSystPhotonJetExtrap.o
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+#drawSystPhotonJetExtrap: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o drawSystPhotonJetExtrap.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 drawEnergyFractions: drawBase.o fitTools.o drawEnergyFractions.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
@@ -83,8 +84,6 @@ draw_vs_run: drawBase.o fitTools.o draw_vs_run.o
 drawPhotonJet_2bkg_NOData: drawBase.o fitTools.o drawPhotonJet_2bkg_NOData.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-#draw_vs_run: draw_vs_run.cc
-#		 g++ -o $@ $< `root-config --glibs --cflags`	
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

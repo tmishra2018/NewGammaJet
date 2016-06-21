@@ -14,7 +14,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-
 bool ELIF_ = false;
 bool FIXM_ = false;
 bool OUTPUT_GRAPHS = false;
@@ -165,67 +164,16 @@ int main(int argc, char* argv[]) {
   delete output;
   delete output_raw;
 
-  /*draw_vs_pt_plots("response",   "eta011", fit_rms, db, (bool)true);
-  draw_vs_pt_plots("resolution", "eta011", fit_rms, db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta011", fit_rms, db, (bool)true, "RecoRelRaw");
-  //draw_vs_pt_plots("resolution", "eta011", fit_rms, db, (bool)true, "RecoRelRaw");
-  draw_vs_pt_plots("response",   "eta013", fit_rms, db);
-  draw_vs_pt_plots("resolution", "eta013", fit_rms, db);
-  draw_vs_pt_plots("response",   "eta013", fit_rms, db, (bool)true);
-  draw_vs_pt_plots("resolution", "eta013", fit_rms, db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta013", fit_rms, db, (bool)true, "RecoRelRaw");
-  //draw_vs_pt_plots("resolution", "eta013", fit_rms, db, (bool)true, "RecoRelRaw");
-  draw_vs_pt_plots("response",   "eta1524", fit_rms, db);
-  draw_vs_pt_plots("resolution", "eta1524", fit_rms, db);
-  draw_vs_pt_plots("response",   "eta1524", fit_rms, db, (bool)true);
-  draw_vs_pt_plots("resolution", "eta1524", fit_rms, db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta1524", fit_rms, db, (bool)true, "RecoRelRaw");
-  //draw_vs_pt_plots("resolution", "eta1524", fit_rms, db, (bool)true, "RecoRelRaw");
-  draw_vs_pt_plots("response",   "eta243", fit_rms, db);
-  draw_vs_pt_plots("resolution", "eta243", fit_rms, db);
-  draw_vs_pt_plots("response",   "eta243", fit_rms, db, (bool)true);
-  draw_vs_pt_plots("resolution", "eta243", fit_rms, db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta243", fit_rms, db, (bool)true, "RecoRelRaw");
-  //draw_vs_pt_plots("resolution", "eta243", fit_rms, db, (bool)true, "RecoRelRaw");
-  //draw_vs_pt_plots("response",   "eta35", fit_rms, db);
-  //draw_vs_pt_plots("resolution", "eta35", fit_rms, db);
-  //draw_vs_pt_plots("response",   "eta35", fit_rms, db, (bool)true);
-  //draw_vs_pt_plots("resolution", "eta35", fit_rms, db, (bool)true);
-
-
-  //draw_vs_pt_plots("response",   "eta243", "RMS99", db);
-  //draw_vs_pt_plots("resolution", "eta243", "RMS99", db);
-  //draw_vs_pt_plots("response",   "eta243", "RMS99", db, (bool)true);
-  //draw_vs_pt_plots("resolution", "eta243", "RMS99", db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta23", "RMS99", db, (bool)true);
-  //draw_vs_pt_plots("resolution", "eta23", "RMS99", db, (bool)true);
-  //draw_vs_pt_plots("response",   "eta35", "RMS99", db);
-  //draw_vs_pt_plots("resolution", "eta35", "RMS99", db);
-  //draw_vs_pt_plots("response",   "eta35", "RMS99", db, (bool)true);
-  //draw_vs_pt_plots("resolution", "eta35", "RMS99", db, (bool)true);*/
-
   return 0;
 
 }
 
 
-
-
-
 void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile) {
 
   std::string fullEtaRegion;
-  //  if (etaRegion == "eta013") fullEtaRegion = "eta00_13";
-  //  else if (etaRegion == "eta008") fullEtaRegion = "eta00_08";
-  //  else if (etaRegion == "eta0813") fullEtaRegion = "eta08_13";
-  //  else if (etaRegion == "eta1319") fullEtaRegion = "eta13_19";
-  //  else if (etaRegion == "eta1925") fullEtaRegion = "eta19_25";
-  //  else if (etaRegion == "eta2530") fullEtaRegion = "eta25_30";
-  //  else if (etaRegion == "eta3032") fullEtaRegion = "eta30_32";
-  //  else if (etaRegion == "eta3252") fullEtaRegion = "eta32_52";
-  //  else fullEtaRegion = "eta_unknown";
-  // federico --- changed eta bins
-  if (etaRegion == "eta0008") fullEtaRegion = "eta00_08";
+  if (etaRegion == "eta0013") fullEtaRegion = "eta00_13";
+  else if (etaRegion == "eta0008") fullEtaRegion = "eta00_08";
   else if (etaRegion == "eta0813") fullEtaRegion = "eta08_13";
   else if (etaRegion == "eta0013") fullEtaRegion = "eta00_13";
   else if (etaRegion == "eta1319") fullEtaRegion = "eta13_19";
@@ -234,7 +182,6 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   else if (etaRegion == "eta3032") fullEtaRegion = "eta30_32";
   else if (etaRegion == "eta3252") fullEtaRegion = "eta32_52";
   else fullEtaRegion = "eta_unknown";
-
 
   if (resp_reso != "response" && resp_reso != "resolution") {
     std::cout << "Only 'Response' and 'Resolution' supported. Exiting." << std::endl;
@@ -284,15 +231,15 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     intrName += "Reso";
 
   intrName += "_vs_pt";
-
-  TGraphErrors* gr_responseGEN_vs_pt = (TGraphErrors*)file_extrap->Get(intrName.c_str());
-  gr_responseGEN_vs_pt->SetMarkerStyle(29);
-  gr_responseGEN_vs_pt->SetMarkerSize(markerSize);
-  gr_responseGEN_vs_pt->SetMarkerColor(kBlack);
-  if (/*resp_reso=="response" &&*/ (db->get_recoType() == "calo")) {
-    gr_responseGEN_vs_pt->RemovePoint(0);
-    gr_responseGEN_vs_pt->RemovePoint(0);
-  }
+  
+  //  TGraphErrors* gr_responseGEN_vs_pt = (TGraphErrors*)file_extrap->Get(intrName.c_str());
+  //  gr_responseGEN_vs_pt->SetMarkerStyle(29);
+  //  gr_responseGEN_vs_pt->SetMarkerSize(markerSize);
+  // gr_responseGEN_vs_pt->SetMarkerColor(kBlack);
+  // if (/*resp_reso=="response" &&*/ (db->get_recoType() == "calo")) {
+  //   gr_responseGEN_vs_pt->RemovePoint(0);
+  //  gr_responseGEN_vs_pt->RemovePoint(0);
+  // }
 
   std::string funcType;
   if (resp_reso == "response") {
@@ -301,14 +248,14 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     funcType = (db->get_recoType() == "pf" /*|| db->get_recoType()=="jpt"*/) ? "NSCPF" : "NSC";
   }
 
-  TF1* fit_responseGEN = (resp_reso == "response") ? fitTools::fitResponseGraph(gr_responseGEN_vs_pt, funcType, "f1_responseGEN", "RN", 1000.)
-                         : fitTools::fitResolutionGraph(gr_responseGEN_vs_pt, funcType, "f1_responseGEN", "RN", 1000.);
-  fit_responseGEN->SetLineWidth(2.);
-  fit_responseGEN->SetRange(xMin, xMax);
+  //  TF1* fit_responseGEN = (resp_reso == "response") ? fitTools::fitResponseGraph(gr_responseGEN_vs_pt, funcType, "f1_responseGEN", "RN", 1000.)
+  //                       : fitTools::fitResolutionGraph(gr_responseGEN_vs_pt, funcType, "f1_responseGEN", "RN", 1000.);
+  // fit_responseGEN->SetLineWidth(2.);
+  // fit_responseGEN->SetRange(xMin, xMax);
   // now get fit error band:
-  TH1D* band_responseGEN = fitTools::getBand(fit_responseGEN, "band_responseGEN");
-  band_responseGEN->SetFillColor(kYellow - 9);
-  band_responseGEN->SetLineWidth(2.);
+  // TH1D* band_responseGEN = fitTools::getBand(fit_responseGEN, "band_responseGEN");
+  // band_responseGEN->SetFillColor(kYellow - 9);
+  // band_responseGEN->SetLineWidth(2.);
 
   std::string prefix = (resp_reso == "response") ? "resp" : "resolution";
 
@@ -475,13 +422,6 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     gr_responseMPFExtrapMC_TypeIpIICor_vs_pt->RemovePoint(0);
     }*/
 
-  std::string responseELIF_name = "gr_DATAReso_subtr_vs_pt";
-  TGraphErrors* gr_responseELIF_vs_pt = (TGraphErrors*)file_extrap->Get(responseELIF_name.c_str());
-  gr_responseELIF_vs_pt->SetMarkerStyle(25);
-  gr_responseELIF_vs_pt->SetMarkerSize(markerSize);
-  gr_responseELIF_vs_pt->SetMarkerColor(kMagenta + 4);
-  //  gr_responseELIF_vs_pt->RemovePoint(0); //remove first point (cant extrapolate at such low pt)
-
 
   float ymin, ymax;
   if (resp_reso == "response") {
@@ -569,22 +509,22 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     legend->AddEntry(gr_responseEXTRAPMC_vs_pt, "#gamma+Jet Extrap. (MC)", "P");
     legend->AddEntry(gr_responseBALANCING_vs_pt, "#gamma+Jet Balancing", "P");
     legend->AddEntry(gr_responseBALANCINGMC_vs_pt, "#gamma+Jet Balancing (MC)", "P");
-    if (drawStars)
-      legend->AddEntry(gr_responseGEN_vs_pt, legendTrue.c_str(), "P");
-    else
-      legend->AddEntry(fit_responseGEN, legendTrue.c_str(), "L");
+    //    if (drawStars)
+    //      legend->AddEntry(gr_responseGEN_vs_pt, legendTrue.c_str(), "P");
+    //    else
+    //      legend->AddEntry(fit_responseGEN, legendTrue.c_str(), "L");
 
     c1->cd();
     c1->SetLogx();
     axes->Draw();
 
     line_one->Draw("same");
-
+    /*
     if (drawStars)
       gr_responseGEN_vs_pt->Draw("psame");
     else
       fit_responseGEN->Draw("same");
-
+    */
     gr_responseBALANCING_vs_pt->Draw("psame");
     gr_responseBALANCINGMC_vs_pt->Draw("psame");
 
@@ -625,22 +565,22 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     legend->AddEntry(gr_responseMPFExtrapMC_vs_pt, "#gamma+Jet MPF Extrap (MC)", "P");
     legend->AddEntry(gr_responseEXTRAP_vs_pt, "#gamma+Jet Extrapolation", "P");
     legend->AddEntry(gr_responseEXTRAPMC_vs_pt, "#gamma+Jet Extrap. (MC)", "P");
-    if (drawStars)
+    /*    if (drawStars)
       legend->AddEntry(gr_responseGEN_vs_pt, legendTrue.c_str(), "P");
     else
       legend->AddEntry(fit_responseGEN, legendTrue.c_str(), "L");
-
+    */
     c1->cd();
     c1->SetLogx();
     axes->Draw();
 
     line_one->Draw("same");
-
+    /*
     if (drawStars)
       gr_responseGEN_vs_pt->Draw("psame");
     else
       fit_responseGEN->Draw("same");
-
+    */
     gr_responseEXTRAP_vs_pt->Draw("psame");
     gr_responseEXTRAPMC_vs_pt->Draw("psame");
 
@@ -680,22 +620,22 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     legend->AddEntry(gr_responseMPFExtrapMC_vs_pt, "#gamma+Jet MPF Extrap (MC)", "P");
     legend->AddEntry(gr_responseMPF_vs_pt, "#gamma+Jet MPF", "P");
     legend->AddEntry(gr_responseMPFMC_vs_pt, "#gamma+Jet MPF (MC)", "P");
-    if (drawStars)
+    /*    if (drawStars)
       legend->AddEntry(gr_responseGEN_vs_pt, legendTrue.c_str(), "P");
     else
       legend->AddEntry(fit_responseGEN, legendTrue.c_str(), "L");
-
+    */
     c1->cd();
     c1->SetLogx();
     axes->Draw();
 
     line_one->Draw("same");
-
+    /*
     if (drawStars)
       gr_responseGEN_vs_pt->Draw("psame");
     else
       fit_responseGEN->Draw("same");
-
+    */
     gr_responseMPF_vs_pt->Draw("psame");
     gr_responseMPFMC_vs_pt->Draw("psame");
 
@@ -735,22 +675,22 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     legend->AddEntry(gr_responseBALANCINGMC_vs_pt, "#gamma+Jet Balancing (MC)", "P");
     legend->AddEntry(gr_responseMPF_vs_pt, "#gamma+Jet MPF", "P");
     legend->AddEntry(gr_responseMPFMC_vs_pt, "#gamma+Jet MPF (MC)", "P");
-    if (drawStars)
+    /*    if (drawStars)
       legend->AddEntry(gr_responseGEN_vs_pt, legendTrue.c_str(), "P");
     else
       legend->AddEntry(fit_responseGEN, legendTrue.c_str(), "L");
-
+    */
     c1->cd();
     c1->SetLogx();
     axes->Draw();
 
     line_one->Draw("same");
-
+    /*
     if (drawStars)
       gr_responseGEN_vs_pt->Draw("psame");
     else
       fit_responseGEN->Draw("same");
-
+    */
     gr_responseMPF_vs_pt->Draw("psame");
     gr_responseMPFMC_vs_pt->Draw("psame");
 

@@ -1304,7 +1304,7 @@ TGraphErrors* fitTools::get_graphRatio(TGraphErrors* gr_data, TGraphErrors* gr_M
 
     Double_t datax, datay;
     gr_data->GetPoint(i, datax, datay);
-    Double_t dataxerr = gr_data->GetErrorX(i);
+    //    Double_t dataxerr = gr_data->GetErrorX(i);
     Double_t datayerr = gr_data->GetErrorY(i);
 
     //    std::cout<< "fitTools ---->  xData= "<< datax << " yData= "<<datay<<std::endl;
