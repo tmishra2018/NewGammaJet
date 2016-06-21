@@ -1,1 +1,0 @@
-/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM 0.00682981 10 80X_mcRun2_asymptotic_2016_v3
