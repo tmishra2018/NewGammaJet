@@ -31,22 +31,21 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
-        'file:../tuples/GJET_Pythia/GJet_Pythia_80X_file1.root'
-        #'file:../tuples/QCD_Pythia/QCD_Pythia_80X_file1.root'
+        'file:../tuples/GJet_Pythia_80X_file1.root'
         )
     )
 
-xSection = 55
+crossSection = 1
 
 print("Running on sample with:")
-print("\tCross-section: %f" % xSection)
+print("\tCross-section: %f" % crossSection)
 
 process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 isMC = cms.untracked.bool(True),
                                 firstJetPtCut = cms.untracked.bool(False),
                                 
-                                crossSection = cms.double(xSection),
-                                                               
+                                crossSection = cms.double(crossSection),
+
                                 full5x5SigmaIEtaIEtaMap   = cms.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"),
                                 phoChargedIsolation           = cms.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
                                 phoNeutralHadronIsolation = cms.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
@@ -58,30 +57,38 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 photonsTag = cms.InputTag("slimmedPhotons"),
                                 jetsTag = cms.InputTag("slimmedJets"),
                                 jetsAK8Tag = cms.InputTag("slimmedJetsAK8"),
+                                jetsPUPPITag = cms.InputTag("slimmedJetsPuppi"),
                                 metTag = cms.InputTag("slimmedMETs"),
+                                metPUPPITag = cms.InputTag("slimmedMETsPuppi"),
                                 electronsTag = cms.InputTag("slimmedElectrons"),
                                 muonsTag = cms.InputTag("slimmedMuons"),
                                 rhoTag = cms.InputTag("fixedGridRhoFastjetAll"),
                                 PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
-                                pfCands = cms.InputTag("packedPFCandidates"),                                                               
-                                                                
+                                pfCands = cms.InputTag("packedPFCandidates"),
+
                                 runOnPFAK4    = cms.untracked.bool(True),
                                 runOnPFAK8    = cms.untracked.bool(False),
+                                runOnPUPPIAK4    = cms.untracked.bool(True),
                                 
                                 # MET
                                 redoTypeIMETCorrection = cms.untracked.bool(True),
-                                doFootprintMETCorrection = cms.untracked.bool(True),                             
+                                doFootprintMETCorrection = cms.untracked.bool(False),
 
                                 # JEC
                                 doJetCorrection = cms.untracked.bool(True),
                                 correctJecFromRaw = cms.untracked.bool(True),
-                                                                                               
-                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV2_MC/Spring16_25nsV2_MC_L1FastJet_AK4PFchs.txt'),
-                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV2_MC/Spring16_25nsV2_MC_L2Relative_AK4PFchs.txt'),
-                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV2_MC/Spring16_25nsV2_MC_L3Absolute_AK4PFchs.txt'),
-                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV2_MC/Spring16_25nsV2_MC_L1RC_AK4PFchs.txt')
-                               
-               )
+
+                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
+                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L2Relative_AK4PFchs.txt'),
+                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
+                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1RC_AK4PFchs.txt'),
+
+                                L1PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt'),
+                                L2PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L2Relative_AK4PFPuppi.txt'),
+                                L3PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L3Absolute_AK4PFPuppi.txt'),
+                                L1RCPUPPIcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt')
+                                
+                                )
 
 process.p = cms.Path(
     process.photonIDValueMapProducer *
@@ -92,8 +99,8 @@ process.out = cms.OutputModule("PoolOutputModule",
       fileName = cms.untracked.string("delete_me.root"),
       SelectEvents = cms.untracked.PSet(
         SelectEvents = cms.vstring('p')
-      )
-    )
+        )
+                               )
 
 process.out.outputCommands = cms.untracked.vstring('keep *',
 #    'drop *_selectedPatJets*_*_*',
@@ -101,7 +108,6 @@ process.out.outputCommands = cms.untracked.vstring('keep *',
 )
 
 process.TFileService = cms.Service("TFileService",
-#        fileName = cms.string("output_singleFile_QCD.root")
           fileName = cms.string("output_singleFile_GJet.root")
     )
 
