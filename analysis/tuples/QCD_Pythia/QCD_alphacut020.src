@@ -1,9 +1,0 @@
-#!/bin/bash                                                                                                             
-                                                                                                                        
-export SCRAM_ARCH=slc6_amd64_gcc491                                                                                     
-                                                                                                                        
-cd /cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/analysis/tuples/QCD_Pythia/
-                                                                                                                        
-eval `scramv1 runtime -sh`                                                                                              
-                                                        
-gammaJetFinalizer -i PhotonJet_2ndLevel_QCD_Pt-30toInf_2015-12-28.root -d QCD_Pythia_2015-12-28_alphacut020 --type pf --algo ak4 --chs --alpha 0.20 --mc

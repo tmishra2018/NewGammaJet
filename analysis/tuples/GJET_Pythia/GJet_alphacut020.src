@@ -1,9 +1,0 @@
-#!/bin/bash                                                                                                             
-                                                                                                                        
-export SCRAM_ARCH=slc6_amd64_gcc530                                                                                     
-                                                                                                                        
-cd /cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_6/src/JetMETCorrections/GammaJetFilter/analysis/tuples/GJET_Pythia/
-                                                                                                                        
-eval `scramv1 runtime -sh`                                                                                              
-                                                        
-gammaJetFinalizer -i PhotonJet_2ndLevel_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8__25ns_ReReco_2016-05-31.root -d GJet_Pythia_2016-05-31_alphacut020 --algo ak4 --alpha 0.20 --mc
