@@ -16,7 +16,6 @@
 #include "vertexBinning.h"
 #include "runBinning.h"
 #include "extrapBinning.h"
-#include "newExtrapBinning.h"
 #include "triggers.h"
 #include "GaussianProfile.h"
 
@@ -48,7 +47,7 @@ enum JetAlgo {
 
 enum JetType {
   PF,
-  CALO
+  PUPPI
 };
 
 template <typename T>
@@ -75,7 +74,11 @@ class GammaJetFinalizer
     }
 
     void setJetAlgo(const std::string& jetType, const std::string& jetAlgo) {
-      mJetType = PF;
+      if (jetType == "pf") {
+        mJetType = PF;
+      } else {
+        mJetType = PUPPI;
+      }
       
       if (jetAlgo == "ak4") {
         mJetAlgo = AK4;
@@ -86,10 +89,6 @@ class GammaJetFinalizer
 
     void setMC(bool isMC) {
       mIsMC = isMC;
-    }
-
-    void setMCComparison(bool mcComparison) {
-      mDoMCComparison = mcComparison;
     }
 
     void setUseExternalJEC(bool useExternalJEC) {
@@ -133,7 +132,6 @@ class GammaJetFinalizer
     void computePUWeight();
 
     void computePUWeight_NVtxBased(double ptPhot, int nvertex);
-    void computeTriggerWeight(double ptPhot, float& weight);
 
     template<typename T>
       std::vector<std::vector<T*> > buildEtaPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
@@ -158,9 +156,6 @@ class GammaJetFinalizer
       std::vector<std::vector<T*> > buildEtaRunVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<T*> buildRunVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
-
-    std::shared_ptr<GaussianProfile> buildNewExtrapolationVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
-    std::vector<std::shared_ptr<GaussianProfile>> buildNewExtrapolationEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
 
     void cloneTree(TTree* from, TTree*& to);
 
@@ -192,7 +187,6 @@ class GammaJetFinalizer
     VertexBinning mVertexBinning;
     RunBinning mRunBinning;
     ExtrapBinning mExtrapBinning;
-    NewExtrapBinning mNewExtrapBinning;
 
     std::vector<std::string> mInputFiles;
     std::string mDatasetName;
@@ -218,38 +212,28 @@ class GammaJetFinalizer
 
     float mPUWeight;
 
-    //MPF
-    float respMPF;
-    float deltaPhi_Photon_MET;
-
-    float respMPFGen;
-    float deltaPhi_Photon_MET_gen;
-
-    float respMPFRaw;
-    float deltaPhi_Photon_MET_raw;
-
-     float r_RecoPhot;
-     float r_RecoGen;
-     float r_GenPhot;
-     float r_GenGamma;
-     float r_PhotGamma;
-
     int ptBinGen;
     int etaBinGen;    
+    int extrapGenBin;    
 
+    //MPF
+    float deltaPhi_Photon_MET;
+    float respMPF;
+    float deltaPhi_Photon_MET_raw;
+    float respMPFRaw;
+    float deltaPhi_Photon_MET_gen;
+    float respMPFGen;
+            
     // Balancing
     float respBalancing;
-    float respBalancingGen;
     float respBalancingRaw;
-    float respBalancingRawGen;
+    float respBalancingGen;
 
-    // For DATA/MC comparison
-    float respGenPhoton;
-    float respGenGamma;
-    float respPhotonGamma;
-
-    // Triggers on data
-    Triggers* mTriggers;
-    MCTriggers* mMCTriggers;
-    TRandom3 mRandomGenerator;
+    float respPhotGamma;
+    float respGenPhot;
+     
+     // Triggers on data
+     Triggers* mTriggers;
+     MCTriggers* mMCTriggers;
+     TRandom3 mRandomGenerator;
 };

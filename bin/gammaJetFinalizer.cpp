@@ -364,6 +364,18 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_JetElMult_passedID = analysisDir.make<TH1F>("ElMult_passedID", "ElMult", 50, 0., 50);
   TH1F* h_JetPhMult_passedID = analysisDir.make<TH1F>("PhMult_passedID", "PhMult", 50, 0., 50);
   TH1F* h_JetMuonMult_passedID = analysisDir.make<TH1F>("MuonMult_passedID", "MuonMult", 50, 0., 50);
+  // jet composition vs pT
+  TH2F* h_JetCHEnF_vs_Pt = analysisDir.make<TH2F>("CHEnergyF_vs_Pt", "CH En F vs Pt", binnum, ptBins, 40, 0, 1);
+  TH2F* h_JetNHEnF_vs_Pt = analysisDir.make<TH2F>("NHEnergyF_vs_Pt", "NH En F vs Pt", binnum, ptBins, 40, 0, 1);
+  TH2F* h_JetCEEnF_vs_Pt = analysisDir.make<TH2F>("CEEnergyF_vs_Pt", "CE En F vs Pt", binnum, ptBins, 40, 0, 1);
+  TH2F* h_JetNEEnF_vs_Pt = analysisDir.make<TH2F>("NEEnergyF_vs_Pt", "NE En F vs Pt", binnum, ptBins, 40, 0, 1);
+  TH2F* h_JetMuEnF_vs_Pt = analysisDir.make<TH2F>("MuEnergyF_vs_Pt", "Mu En F vs Pt", binnum, ptBins, 40, 0, 1);
+  // jet composition vs Eta
+  TH2F* h_JetCHEnF_vs_Eta = analysisDir.make<TH2F>("CHEnergyF_vs_Eta",   "CH En F vs Eta", 10, 0, 5, 40, 0, 1);
+  TH2F* h_JetNHEnF_vs_Eta = analysisDir.make<TH2F>("NHEnergyF_vs_Eta",  "NH En F vs Eta", 10, 0, 5, 40, 0, 1);
+  TH2F* h_JetCEEnF_vs_Eta = analysisDir.make<TH2F>("CEEnergyF_vs_Eta",   "CE En F vs Eta", 10, 0, 5, 40, 0, 1);
+  TH2F* h_JetNEEnF_vs_Eta = analysisDir.make<TH2F>("NEEnergyF_vs_Eta",  "NE En F vs Eta", 10, 0, 5, 40, 0, 1);
+  TH2F* h_JetMuEnF_vs_Eta = analysisDir.make<TH2F>("MuEnergyF_vs_Eta", "Mu En F vs Eta", 10, 0, 5, 40, 0, 1);
   //jet composition - histos vectors
   TFileDirectory ecompositionDir = analysisDir.mkdir("ecomposition");
   std::vector<std::vector<TH1F*> > TotJetEnergy = buildEtaPtVector<TH1F>(ecompositionDir, "TotJetEnergy", 80, 0., 1000.);
@@ -836,6 +848,19 @@ void GammaJetFinalizer::runAnalysis() {
         h_JetCEEnF_passedID        -> Fill(firstJet.jet_CEmEnF, eventWeight);
         h_JetNEEnF_passedID        -> Fill(firstJet.jet_NEmEnF, eventWeight);
         h_JetMuEnF_passedID       -> Fill(firstJet.jet_MuEnF, eventWeight);
+
+	h_JetCHEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_CHEnF); 
+	h_JetNHEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_NHEnF); 
+	h_JetCEEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_CEmEnF); 
+	h_JetNEEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_NEmEnF); 
+	h_JetMuEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_MuEnF); 
+
+	h_JetCHEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_CHEnF); 
+	h_JetNHEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_NHEnF); 
+	h_JetCEEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_CEmEnF); 
+	h_JetNEEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_NEmEnF); 
+	h_JetMuEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_MuEnF); 
+
 	//First jet multiplicity
 	h_JetCHMult_passedID      -> Fill(firstJet.jet_CHMult, eventWeight);
 	h_JetNHMult_passedID      -> Fill(firstJet.jet_NHMult, eventWeight);
