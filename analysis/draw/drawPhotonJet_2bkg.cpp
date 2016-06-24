@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
   db->setFolder("analysis");
   db->set_outputdir();
   db->setOutputGraphs(true);
-  db->set_rebin(1);
+  db->set_rebin(4);
 
   // Data / MC comparison
   db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
@@ -140,14 +140,14 @@ int main(int argc, char* argv[]) {
   db->drawHisto("nvertex_reweighted", "Number of Reconstructed Vertices (after reweighting)", "", "Events", log);
   //  db->set_rebin(2);
   db->drawHisto("deltaPhi_passedID", "#Delta #varphi", "", "Events", log);  
-  db->drawHisto("hadTowOverEm", "", "", "Events", log);
-  db->drawHisto("sigmaIetaIeta", "", "", "Events", log);
+  db->drawHisto("hadTowOverEm", "H/E", "", "Events", log);
+  db->drawHisto("sigmaIetaIeta", "#sigma_{i#eta i#eta}", "", "Events", log);
   db->drawHisto("rho", "#rho", "", "Events", log);
   db->drawHisto("chargedHadronsIsolation", "Charged hadrons isolation", "", "Events", log);
   db->drawHisto("neutralHadronsIsolation", "Neutral hadrons isolation", "", "Events", log);
   db->drawHisto("photonIsolation", "Photon isolation", "", "Events", log);
-  db->drawHisto("hadTowOverEm_passedID", "", "", "Events", log);
-  db->drawHisto("sigmaIetaIeta_passedID", "", "", "Events", log);
+  db->drawHisto("hadTowOverEm_passedID", "H/E", "", "Events", log);
+  db->drawHisto("sigmaIetaIeta_passedID", "#sigma_{i#eta i#eta}", "", "Events", log);
   db->drawHisto("rho_passedID", "#rho", "", "Events", log);
   db->drawHisto("chargedHadronsIsolation_passedID", "Charged hadrons isolation", "", "Events", log);
   db->drawHisto("neutralHadronsIsolation_passedID", "Neutral hadrons isolation", "", "Events", log);

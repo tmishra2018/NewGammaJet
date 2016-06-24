@@ -1247,6 +1247,8 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
 void drawBase::drawHisto(const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText, bool add_jetAlgoText, bool drawRatio, double fitMin, double fitMax) {
 
+  std::cout<<"Sono entrato qui"<<std::endl;
+
   std::vector<TH1*> dataHistos;
   for (unsigned int iData = 0; iData < dataFiles_.size(); iData++) {
     dataHistos.push_back(static_cast<TH1*>(dataGet(iData, name)));
@@ -1390,11 +1392,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   if (dataHistos.size() == 0) {
     noDATA = true;
   }
-
   if (mcHistos.size() == 0) {
     noMC = true;
   }
-
+  
   // FIRST: SET BASIC AESTHETICS FOR DATA HISTO(S)
   int markerStyle_default = 20;
   int markerColor_default = 1;
@@ -1404,7 +1405,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     
     dataFiles_[iData].lineColor = kBlack;
     dataFiles_[iData].lineWidth = 1.;
-
+    
     if (dataFiles_[iData].markerStyle != -1) {
       dataHistos[iData]->SetMarkerStyle(dataFiles_[iData].markerStyle);
     } else {
@@ -1416,23 +1417,23 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         dataHistos[iData]->SetMarkerStyle(markerStyle_default++);  // make it change at every histo
       }
     }
-
+    
     if (dataFiles_[iData].fillStyle != -1) {
       dataHistos[iData]->SetMarkerSize(0);
       dataHistos[iData]->SetFillStyle(dataFiles_[iData].fillStyle);
       dataHistos[iData]->SetFillColor(dataFiles_[iData].fillColor);
-
+      
       dataFiles_[iData].markerSize = 0;
-
+      
       if (dataFiles_[iData].fillStyle == 1001) {
         dataHistos[iData]->SetLineColor(kBlack);
         dataHistos[iData]->SetLineWidth(0);
-
+	
         dataFiles_[iData].lineColor = kBlack;
         dataFiles_[iData].lineWidth = 0.;
       }
     }
-
+    
     if (dataFiles_[iData].fillColor != -1) {
       dataHistos[iData]->SetMarkerColor(dataFiles_[iData].fillColor);
     } else {
@@ -1440,7 +1441,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         dataHistos[iData]->SetMarkerColor(TColor::GetColor(0, 0, 153));
         dataHistos[iData]->SetLineColor(TColor::GetColor(0, 0, 153));
         dataHistos[iData]->SetLineWidth(1.);
-
+	
         dataFiles_[iData].fillColor = TColor::GetColor(0, 0, 153);
         dataFiles_[iData].lineColor = TColor::GetColor(0, 0, 153);
         dataFiles_[iData].lineWidth = 1.;
@@ -1449,14 +1450,14 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         dataHistos[iData]->SetMarkerColor(markerColor_default++);  // make it change at every histo
       }
     }
-
+    
     //if (noMC) {
-      dataHistos[iData]->SetMarkerSize(1.);
+    dataHistos[iData]->SetMarkerSize(1.);
       dataFiles_[iData].markerSize = 1.;
       dataHistos[iData]->SetLineColor(dataFiles_[iData].lineColor);
-    //}
+      //}
   }
-
+  
   // SECOND: SET BASIC AESTHETICS FOR MC HISTO(S) and CREATE MC HISTO SUM
   TH1D* mcHisto_sum = 0;
   float fillColor_default = 1;
@@ -1493,9 +1494,9 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     //federico
     mcHistos[0]->Rebin(rebin_);
     mcHistos[0]->Scale(mcFiles_[0].weight);
-
+    
     mcHisto_sum = new TH1D(*((TH1D*)mcHistos[0]->Clone()));
-
+    
     if (mcHistos.size() > 1) {
       for (unsigned i = 1; i < mcHistos.size(); ++i) {
 	//federico
@@ -1636,7 +1637,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     yMax *= 1.2;
   }
 
-  TLegend* legend = new TLegend(lb.xMin, lb.yMin, lb.xMax, lb.yMax, legendTitle_.c_str());
+  //  TLegend* legend = new TLegend(lb.xMin, lb.yMin, lb.xMax, lb.yMax, legendTitle_.c_str());
+  TLegend* legend = new TLegend(lb.xMin, lb.yMin, 1000, lb.yMax, legendTitle_.c_str());
   legend->SetTextFont(42);
   legend->SetBorderSize(0);
   legend->SetFillColor(kWhite);
@@ -1666,7 +1668,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   }
   if (xAxisMax_ != 9999.) {
     h2_axes->GetXaxis()->SetRangeUser(xMin, xAxisMax_);
-  }
+     }
   if (yAxisMax_ != 9999.) {
     h2_axes->GetYaxis()->SetRangeUser(yMin, yAxisMax_);
   }
@@ -1774,7 +1776,6 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     label_bonus->AddText(jetAlgoText.c_str());
   }
   label_bonus->AddText(labelText.c_str());
-
   TCanvas* c1 = new TCanvas("c1", "c1", 800, (drawRatio && !noDATA && !noMC) ? 1000 : 800);
   c1->SetLeftMargin(0);
   c1->cd();
@@ -1932,7 +1933,9 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     //    std::string canvasName_eps = canvasName + ".eps";
     //    c1->SaveAs(canvasName_eps.c_str());
     std::string canvasName_png = canvasName + ".png";
+    //    std::string canvasName_root = canvasName + ".root";
     c1->SaveAs(canvasName_png.c_str());
+    //c1->SaveAs(canvasName_root.c_str());
     std::string canvasName_pdf = canvasName + ".pdf";
     if (pdf_aussi_) {
       c1->SaveAs(canvasName_pdf.c_str());
@@ -1965,8 +1968,9 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         if (dataHistos[iHisto]->GetBinContent(iBin) > 0. && dataHistos[iHisto]->GetBinContent(iBin) < yMin_log) {
           yMin_log = dataHistos[iHisto]->GetBinContent(iBin);
         }
-
     TH2D* h2_axes_log = new TH2D("axes_log", "", nBinsx, xMin, xMax, 10, 0.1 * yMin_log, yAxisMaxScaleLog_ * yMax);
+    //// federico
+    ////    TH2D* h2_axes_log = new TH2D("axes_log", "", nBinsx, xMin, 1000, 10, 0.1, yAxisMaxScaleLog_ * yMax);
 
     if (drawRatio) {
       h2_axes_log->GetXaxis()->SetTitleOffset(1.3);
@@ -3779,12 +3783,17 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
   void drawBase::drawHistRatio(TPad* pad, TH1* data, TH1* mc, const std::string& xTitle, double fitMin/* = 0*/, double fitMax/* = 8000*/) {
 
+    //    std::cout<<"drawHistRatio"<<std::endl;
+
     pad->cd();
 
     pad->SetGridy();
 
     TH1* data_clone = static_cast<TH1*>(data->Clone("data_cloned"));
     data_clone->Divide(mc);
+
+    //// federico
+    ////    data_clone -> GetXaxis() ->SetRangeUser(0, 1000);
 
     //TString eq = TString::Format("[1] * (x - %f) + [0]", data->GetXaxis()->GetBinLowEdge(1));
 

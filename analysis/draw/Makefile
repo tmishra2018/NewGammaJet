@@ -42,7 +42,7 @@ SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 ###
 
 #all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_all_methods_vs_npv draw_crosschecks
-all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData
+all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData draw_DataMC_Comparison
 #get out: draw_new_extrap
 
 clean:
@@ -76,6 +76,9 @@ draw_crosschecks: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(C
 #	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 drawEnergyFractions: drawBase.o fitTools.o drawEnergyFractions.o
+	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+draw_DataMC_Comparison: drawBase.o fitTools.o draw_DataMC_Comparison.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 draw_vs_run: drawBase.o fitTools.o draw_vs_run.o

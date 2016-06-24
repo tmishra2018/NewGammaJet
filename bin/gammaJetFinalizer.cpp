@@ -386,6 +386,12 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<std::vector<TH1F*> > NEmFraction = buildEtaPtVector<TH1F>(ecompositionDir, "NEmFraction", 40, 0., 1.);
   std::vector<std::vector<TH1F*> > MuFraction = buildEtaPtVector<TH1F>(ecompositionDir, "MuFraction", 40, 0., 1.);
   std::vector<std::vector<TH1F*> > LeptFraction = buildEtaPtVector<TH1F>(ecompositionDir, "LeptFraction", 40, 0., 1.);
+  std::vector<TH1F*> ChHadronFractionEta013    = buildPtVector<TH1F>(ecompositionDir, "ChHadronFraction", "eta0013", 40, 0., 1.);
+  std::vector<TH1F*> NHadronFractionEta013    = buildPtVector<TH1F>(ecompositionDir, "NHadronFraction", "eta0013", 40, 0., 1.);
+  std::vector<TH1F*> CEmFractionEta013    = buildPtVector<TH1F>(ecompositionDir, "CEmFraction", "eta0013", 40, 0., 1.);
+  std::vector<TH1F*> NEmFractionEta013    = buildPtVector<TH1F>(ecompositionDir, "NEmFraction", "eta0013", 40, 0., 1.);
+  std::vector<TH1F*> MuFractionEta013    = buildPtVector<TH1F>(ecompositionDir, "MuFraction", "eta0013", 40, 0., 1.);
+  std::vector<TH1F*> LeptFractionEta013 = buildPtVector<TH1F>(ecompositionDir, "LeptFraction", "eta0013", 40, 0., 1.);
   //jet multiplicities
   std::vector<std::vector<TH1F*> > ChHadronMult = buildEtaPtVector<TH1F>(ecompositionDir, "ChHadronMult", 50, 0, 50);
   std::vector<std::vector<TH1F*> > NHadronMult = buildEtaPtVector<TH1F>(ecompositionDir, "NHadronMult", 50, 0, 50);
@@ -429,11 +435,10 @@ void GammaJetFinalizer::runAnalysis() {
 
   // MPF
   TFileDirectory mpfDir = analysisDir.mkdir("mpf");
-  //  std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 150, 0., 2.);
-  std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 300, 0., 4.);
-  std::vector<std::vector<TH1F*> > responseMPFRaw = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf_raw", 150, 0., 2.);
+  std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 150, 0., 2.);
+   std::vector<std::vector<TH1F*> > responseMPFRaw = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf_raw", 150, 0., 2.);
   std::vector<std::vector<TH1F*> > responseMPFGen;
-  std::vector<TH1F*> responseMPFEta013 = buildPtVector<TH1F>(mpfDir, "resp_mpf", "eta0013", 300, 0., 4.);
+  std::vector<TH1F*> responseMPFEta013 = buildPtVector<TH1F>(mpfDir, "resp_mpf", "eta0013", 150, 0., 2.);
   std::vector<TH1F*> responseMPFRawEta013 = buildPtVector<TH1F>(mpfDir, "resp_mpf_raw", "eta0013", 150, 0., 2.);
   std::vector<TH1F*> responseMPFGenEta013;
   if (mIsMC) {
@@ -563,7 +568,7 @@ void GammaJetFinalizer::runAnalysis() {
     misc.GetEntry(i);
       
     // if you want analyze a run range
-    //    if( analysis.run <260533 || analysis.run >260627 ) continue;
+    //    if( !mIsMC && analysis.run>274315 ) continue;
       
     //skip all events -- usefull to check the crab output
     // if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
@@ -906,7 +911,17 @@ void GammaJetFinalizer::runAnalysis() {
 	  NEmFraction[etaBin][ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
 	  MuFraction[etaBin][ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);
 	  LeptFraction[etaBin][ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
+	  //Special case
+	  if (fabs(firstJet.eta) <1.305) {
+	    ChHadronFractionEta013[ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
+	    NHadronFractionEta013[ptBin]->Fill(firstJet.jet_NHEnF, eventWeight);
+	    CEmFractionEta013[ptBin]->Fill(firstJet.jet_CEmEnF, eventWeight);
+	    NEmFractionEta013[ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
+	    MuFractionEta013[ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);	    
+	    LeptFractionEta013[ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
+	  }
 	}
+	
         //fill jet multiplicities histo vectors
         ChHadronMult[etaBin][ptBin]->Fill(firstJet.jet_CHMult, eventWeight);
         NHadronMult[etaBin][ptBin]->Fill(firstJet.jet_NHMult, eventWeight);

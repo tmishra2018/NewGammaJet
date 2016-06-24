@@ -1316,7 +1316,7 @@ bool GammaJetFilter::isValidJet(const pat::Jet& jet) {
       isValid &= neMult > 10; 
     }  
     return isValid;
-  } else {
+  }else{
     throw cms::Exception("UnsupportedJetType")
       << "Only PF are supported at this time" << std::endl;
   }
