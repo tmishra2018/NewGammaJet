@@ -8,4 +8,5 @@ draw_ratios_vs_pt
 draw_vs_npv
 draw_vs_run
 Plot
+draw_DataMC_Comparison
 *.d

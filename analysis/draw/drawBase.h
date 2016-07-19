@@ -73,21 +73,28 @@ public:
   void set_sameInstanceNormalization();
 
   //void drawHisto( const std::string& name, const std::string& etaRegion, const std::string& flags, const std::string& axisName="", const std::string& units="", int legendQuadrant=1, bool log_aussi=false);
-  void drawHisto_vs_pt
-(int nBinsPt, float* ptBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, std::string flags = "", const std::string& labelText = "");
+  void drawHisto_vs_pt(int nBinsPt, float* ptBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, std::string flags = "", const std::string& labelText = "");
+
   void drawHisto_vs_vertex(std::vector<std::pair<int, int> > vertexBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
+
   void drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
 
+  void drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
+
     void drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
-    // void drawHisto_vs_eta( bool draw=true);
 
   void drawHisto(const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
+
+  void drawHisto2D(const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
+
   //  void drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, std::vector<TH1*> mcHistos_superimp, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& flags = "", const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
 
   void drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH1*> mcHistos, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& flags = "", const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
 
+  void drawHisto2D_fromHistos(std::vector<TH2*> dataHistos, std::vector<TH2*> mcHistos, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& flags = "", const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
+
   void drawHisto_fromTree(const std::string& treeName, const std::string& varName, const std::string& selection, int nBins, float xMin, float xMax, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& flags = "", const std::string& labelText = "", bool add_jetAlgoText = false);
-  void drawProfile(const std::string& yVar, const std::string& xVar, int legendQuadrant = 1);
+  void drawProfile(const std::string& yVar, const std::string& xVar, const std::string& XaxisName, const std::string&YaxisName, bool log_aussi, int legendQuadrant=1);
   void drawStack(const std::string& varY, const std::string& varX, const std::string& RECO_GEN, bool isData) const {
     this->drawStack(varY, varX, "", RECO_GEN, isData);
   };

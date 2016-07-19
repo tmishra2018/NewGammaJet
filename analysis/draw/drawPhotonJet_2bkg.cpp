@@ -105,9 +105,11 @@ int main(int argc, char* argv[]) {
   db->setFolder("analysis");
   db->set_outputdir();
   db->setOutputGraphs(true);
-  db->set_rebin(4);
+  db->set_rebin(1);
 
-  // Data / MC comparison
+  // Data/MC comparison
+  db->drawHisto("ptPhoton_NoCut", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+
   db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("EtaPhoton", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton", "Photon Phi", " ", "Events" , false);
@@ -152,7 +154,10 @@ int main(int argc, char* argv[]) {
   db->drawHisto("chargedHadronsIsolation_passedID", "Charged hadrons isolation", "", "Events", log);
   db->drawHisto("neutralHadronsIsolation_passedID", "Neutral hadrons isolation", "", "Events", log);
   db->drawHisto("photonIsolation_passedID", "Photon isolation", "", "Events", log);
-  
+
+  db->drawProfile("PhotSCPt", "Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]", log, 0);
+  db->drawHisto2D("PhotonSCPt_vs_Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]","", log);
+ 
   db->set_rebin(5);
   db->setOutputGraphs(OUTPUT_GRAPHS);
 
@@ -174,6 +179,10 @@ int main(int argc, char* argv[]) {
   
   // Balancing
   db->setFolder("analysis/balancing");
+  db->drawProfile("Bal", "Pt", "p_{T} [GeV]", "Balancing Response", log, 0);
+  db->drawProfile("Bal", "Eta", "#eta", "Balancing Response", false, 0); 
+  db->drawProfile("Bal", "Nvtx", "N_{vertex}", "Balancing Response", false, 0);
+  
   for (size_t i = 0; i < etaBinningSize; i++) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
     
@@ -190,6 +199,10 @@ int main(int argc, char* argv[]) {
   
   // MPF
   db->setFolder("analysis/mpf");
+  db->drawProfile("MPF", "Pt", "p_{T} [GeV]", "MPF Response", log, 0);
+  db->drawProfile("MPF", "Eta", "#eta", "MPF Response", false, 0);
+  db->drawProfile("MPF", "Nvtx", "N_{vertex}", "MPF Response", false, 0); 
+
   for (size_t i = 0; i < etaBinningSize; i++) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
    
@@ -203,6 +216,7 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
+
 
   delete db;
   db = NULL;

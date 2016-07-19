@@ -41,9 +41,7 @@ SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 
 ###
 
-#all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_all_methods_vs_npv draw_crosschecks
-all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_all_methods_vs_pt draw_ratios_vs_pt draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData draw_DataMC_Comparison
-#get out: draw_new_extrap
+all: drawPhotonJet_2bkg drawPhotonJetExtrap draw_ratios_vs_pt draw_all_methods_vs_pt draw_vs_npv drawEnergyFractions draw_vs_run drawPhotonJet_2bkg_NOData
 
 clean:
 	@rm *.o;
@@ -51,34 +49,19 @@ clean:
 drawPhotonJet_2bkg: drawBase.o fitTools.o drawPhotonJet_2bkg.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-draw_vs_npv: drawBase.o fitTools.o draw_vs_npv.o
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
-
-#draw_new_extrap: drawBase.o fitTools.o draw_new_extrap.o
-#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
-
 drawPhotonJetExtrap: drawBase.o fitTools.o drawExtrap.o drawPhotonJetExtrap.o
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
-
-draw_all_methods_vs_pt: drawBase.o fitTools.o draw_all_methods_vs_pt.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 draw_ratios_vs_pt: drawBase.o fitTools.o draw_ratios_vs_pt.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-draw_all_methods_vs_npv: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o draw_all_methods_vs_npv.o
+draw_all_methods_vs_pt: drawBase.o fitTools.o draw_all_methods_vs_pt.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
-
-draw_crosschecks: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o draw_crosschecks.o
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
-
-#drawSystPhotonJetExtrap: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o drawSystPhotonJetExtrap.o
-#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 drawEnergyFractions: drawBase.o fitTools.o drawEnergyFractions.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-draw_DataMC_Comparison: drawBase.o fitTools.o draw_DataMC_Comparison.o
+draw_vs_npv: drawBase.o fitTools.o draw_vs_npv.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 draw_vs_run: drawBase.o fitTools.o draw_vs_run.o
@@ -86,6 +69,18 @@ draw_vs_run: drawBase.o fitTools.o draw_vs_run.o
 
 drawPhotonJet_2bkg_NOData: drawBase.o fitTools.o drawPhotonJet_2bkg_NOData.o
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+#draw_new_extrap: drawBase.o fitTools.o draw_new_extrap.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+#draw_all_methods_vs_npv: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o draw_all_methods_vs_npv.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+#draw_crosschecks: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o draw_crosschecks.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+#drawSystPhotonJetExtrap: $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/DrawBase.o $(CMSSW_BASE)/src/UserCode/SBrochet/CommonTools/fitTools.o drawSystPhotonJetExtrap.o
+#	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 
 %.o: %.cpp
