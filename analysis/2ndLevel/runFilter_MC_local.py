@@ -72,21 +72,21 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 
                                 # MET
                                 redoTypeIMETCorrection = cms.untracked.bool(True),
-                                doFootprintMETCorrection = cms.untracked.bool(False),
+                                doFootprintMETCorrection = cms.untracked.bool(True),
 
                                 # JEC
                                 doJetCorrection = cms.untracked.bool(True),
                                 correctJecFromRaw = cms.untracked.bool(True),
 
-                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
-                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L2Relative_AK4PFchs.txt'),
-                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
-                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1RC_AK4PFchs.txt'),
+                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFchs.txt'),
+                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt'),
+                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt'),
+                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1RC_AK4PFchs.txt'),
 
-                                L1PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt'),
-                                L2PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L2Relative_AK4PFPuppi.txt'),
-                                L3PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L3Absolute_AK4PFPuppi.txt'),
-                                L1RCPUPPIcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV3_MC/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt')
+                                L1PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFPuppi.txt'),
+                                L2PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L2Relative_AK4PFPuppi.txt'),
+                                L3PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L3Absolute_AK4PFPuppi.txt'),
+                                L1RCPUPPIcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFPuppi.txt')
                                 
                                 )
 

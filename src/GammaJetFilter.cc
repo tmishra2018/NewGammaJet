@@ -102,6 +102,7 @@ private:
   void correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET& met, const pat::JetCollection& jets, const JetAlgorithm algo,  edm::Event& event, pat::Photon& photon);
    
   bool isValidPhotonEB(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight);
+  bool isValidPhotonEB_DiPhotonSelection(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight);
   bool isValidJet(const pat::Jet& jet);
    
   // ----------member data ---------------------------
@@ -645,6 +646,7 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       
       pat::PhotonRef PhotonReftmp(photonsHandle, index);
       
+      //      if (isValidPhotonEB_DiPhotonSelection(PhotonReftmp, iEvent, generatorWeight)) {
       if (isValidPhotonEB(PhotonReftmp, iEvent, generatorWeight)) {
 	photonsVec.push_back(*it);
 	goodPhoIndex=index;
@@ -665,8 +667,8 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   
   pat::Photon photon = photonsVec[0];
   pat::PhotonRef GoodphotonRef(photonsHandle, goodPhoIndex);
-      
-    // Process jets
+
+  // Process jets
   edm::Handle<pat::JetCollection> jetsHandle;
   
   FOREACH(mJetCollections) {
@@ -726,8 +728,6 @@ bool GammaJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     pat::MET& rawMet = rawMets[0];
     rawMet.setP4( met.uncorP4() );
 
-    if(mVerbose) std::cout<<"rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
-    
     if (mDoJEC || mRedoTypeI) { // authomatic done if mDoJEC is done
       if (mDoFootprint && infos.algo != PUPPI) {
 	correctMETWithFootprintAndTypeI(rawMet, met, jets, infos.algo, iEvent, photon);
@@ -905,6 +905,18 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4    
   
   if(mVerbose) std::cout<<"rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
+  
+  if(algo==PUPPI){ 
+    float rawMetPx = rawMet.px();
+    float rawMetPy = rawMet.py();
+    // Re-adding  photon
+    rawMetPx += -1.* photon.px();
+    rawMetPy += -1.* photon.py();   
+    double rawMetPt = sqrt( rawMetPx * rawMetPx + rawMetPy * rawMetPy );
+    rawMet.setP4(reco::Candidate::LorentzVector(rawMetPx, rawMetPy, 0., rawMetPt));
+  }
+  
+  if(mVerbose) std::cout<<"NEW rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
   
   double deltaPx = 0., deltaPy = 0.;
   
@@ -1285,43 +1297,41 @@ bool GammaJetFilter::isValidJet(const pat::Jet& jet) {
     return false;
   }
   
-  if (jet.isPFJet()) {    
-    // Jet ID
-    // https://twiki.cern.ch/twiki/bin/view/CMS/JetID#Recommendations_for_13_TeV_data    
-    // Jet ID works on uncorrected jets. *EnergyFraction take that into account when calculating the fraction,
-    // so there's *NO* need to use an uncorrected jet
-    bool isValid = true;
+  //  if (jet.isPFJet()) {    
+  // Jet ID
+  // https://twiki.cern.ch/twiki/bin/view/CMS/JetID#Recommendations_for_13_TeV_data    
+  // Jet ID works on uncorrected jets. *EnergyFraction take that into account when calculating the fraction,
+  // so there's *NO* need to use an uncorrected jet
+  bool isValid = true;
+
+  double chf    = jet.chargedHadronEnergyFraction();
+  double nhf   = jet.neutralHadronEnergyFraction();
+  double cemf = jet.chargedEmEnergyFraction();
+  double nemf = jet.neutralEmEnergyFraction();
+  //    double muf = jet.muonEnergyFraction();  // not used in Loose Jet ID    
+  int NumConst = jet.chargedMultiplicity()+jet.neutralMultiplicity(); 
+  int neMult = jet.neutralMultiplicity(); 
+  int chMult = jet.chargedMultiplicity(); 
     
-    double chf    = jet.chargedHadronEnergyFraction();
-    double nhf   = jet.neutralHadronEnergyFraction();
-    double cemf = jet.chargedEmEnergyFraction();
-    double nemf = jet.neutralEmEnergyFraction();
-    //    double muf = jet.muonEnergyFraction();  // not used in Loose Jet ID
-    
-    int NumConst = jet.chargedMultiplicity()+jet.neutralMultiplicity(); 
-    int neMult = jet.neutralMultiplicity(); 
-    int chMult = jet.chargedMultiplicity(); 
-    
-    if (fabs(jet.eta()) < 3.0) {
-      isValid &= nhf < 0.99;
-      isValid &= nemf < 0.99;
-      isValid &= NumConst > 1;
-      if (fabs(jet.eta()) < 2.4) {
-	isValid &= chf > 0.;
-	isValid &= chMult > 0;
-	isValid &= cemf < 0.99;
-      }
-    }else{
-      isValid &= nemf < 0.90;
-      isValid &= neMult > 10; 
-    }  
-    return isValid;
+  if (fabs(jet.eta()) < 3.0) {
+    isValid &= nhf < 0.99;
+    isValid &= nemf < 0.99;
+    isValid &= NumConst > 1;
+    if (fabs(jet.eta()) < 2.4) {
+      isValid &= chf > 0.;
+      isValid &= chMult > 0;
+      isValid &= cemf < 0.99;
+    }
   }else{
-    throw cms::Exception("UnsupportedJetType")
-      << "Only PF are supported at this time" << std::endl;
-  }
-  
-  return false;
+    isValid &= nemf < 0.90;
+    isValid &= neMult > 10; 
+  }  
+  return isValid;
+  //  }else{
+  // throw cms::Exception("UnsupportedJetType")
+  // << "Only PF are supported at this time" << std::endl;
+  //}
+  // return false;
 }
 
 enum class IsolationType {
@@ -1368,7 +1378,8 @@ float getEffectiveArea(float eta, IsolationType type) {
 
       return 0.0656;
     break;
-     
+
+    /*   //Official  
   case IsolationType::PHOTONS:
     if (eta < 1.0)
       return 0.1271;
@@ -1385,6 +1396,21 @@ float getEffectiveArea(float eta, IsolationType type) {
     else
       return 0.2183;
     break;
+    */
+  case IsolationType::PHOTONS:
+    if (eta <= 0.9)
+      return 0.17;
+    else if (eta <= 1.5)
+      return 0.14;
+    else if (eta <= 2.0)
+      return 0.11;
+    else if (eta <= 2.2)
+      return 0.14;
+    else if (eta <= 2.5)
+      return 0.22;
+    else
+      return 0.22;
+    break;
   }
   
   return -1;
@@ -1392,74 +1418,124 @@ float getEffectiveArea(float eta, IsolationType type) {
 
 double getCorrectedPFIsolation(double isolation, double rho, float eta, IsolationType type) {
   float effectiveArea = getEffectiveArea(eta, type); 
-  return std::max(isolation - rho * effectiveArea, 0.);
+  //  return std::max(isolation - rho*effectiveArea, 0.);
+  return isolation - rho*effectiveArea;
 }
 
 // See https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedPhotonIdentificationRun2 -- tight WP
 bool GammaJetFilter::isValidPhotonEB(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight) {
+
+  bool isValid = true;
+  edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
+  event.getByToken(full5x5SigmaIEtaIEtaMapToken_, full5x5SigmaIEtaIEtaMap);  
   
   //  real photon matching a gen level photon 
   if (mIsMC && !photonRef->genPhoton())   
     return false;
-  
   EventCounterPhoton -> AddBinContent(4, generatorWeight );
   N_pho_genPhoton++;
   
-  bool isValid = true;
-  
-  edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
-  event.getByToken(full5x5SigmaIEtaIEtaMapToken_, full5x5SigmaIEtaIEtaMap);  
-  
+  // #1: H/E
   isValid &= photonRef->hadTowOverEm() < 0.05;
-  
   if (! isValid)
     return false;
-  
   EventCounterPhoton -> AddBinContent(5, generatorWeight );
   N_pho_HE++;
-  
-  isValid &= (*full5x5SigmaIEtaIEtaMap)[photonRef] < 0.0100;  
-  
+
+  //#2: sigma ietaieta
+  isValid &= (*full5x5SigmaIEtaIEtaMap)[photonRef] < 0.0100; //Official    
   if (! isValid)
     return false;
-  
   EventCounterPhoton -> AddBinContent(6, generatorWeight );
   N_pho_Sigma++;
-  
+
   edm::Handle<double> rhos;
   event.getByToken( rhoToken_, rhos);
   double rho = *rhos;
-  
   edm::Handle<edm::ValueMap<float> > phoChargedIsolationMap;
   event.getByToken(phoChargedIsolationToken_, phoChargedIsolationMap);
   edm::Handle<edm::ValueMap<float> > phoNeutralHadronIsolationMap;
   event.getByToken(phoNeutralHadronIsolationToken_, phoNeutralHadronIsolationMap);
   edm::Handle<edm::ValueMap<float> > phoPhotonIsolationMap;
   event.getByToken(phoPhotonIsolationToken_, phoPhotonIsolationMap);
-  
+  // #5
   isValid &= (*phoChargedIsolationMap)[photonRef] < 0.76;
   isValid &= getCorrectedPFIsolation((*phoNeutralHadronIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::NEUTRAL_HADRONS) < (0.97 + 0.014*photonRef->pt()+0.000019*(photonRef->pt()*photonRef->pt() ) );
   isValid &= getCorrectedPFIsolation((*phoPhotonIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::PHOTONS) < (0.08 + 0.0053*photonRef->pt());
-  
-  if (! isValid)
-    return false;
-  
+ 
   EventCounterPhoton -> AddBinContent(7, generatorWeight );
   N_pho_Isolation++;
-    
-  isValid &= photonRef->passElectronVeto();
   
+  isValid &= photonRef->passElectronVeto();
   if (! isValid)
     return false;
   
   EventCounterPhoton -> AddBinContent(8, generatorWeight );
   N_pho_ElecVeto++;
-  
+
   // added to emule trigger
-  isValid &= photonRef->r9() >0.9;
-  
+  isValid &= photonRef->r9() >0.90;
   if (! isValid)
     return false;
+  
+  EventCounterPhoton -> AddBinContent(9, generatorWeight );
+  N_pho_R9++;
+  
+  return isValid;
+  
+}
+/////////////
+bool GammaJetFilter::isValidPhotonEB_DiPhotonSelection(const pat::PhotonRef& photonRef, edm::Event& event, double generatorWeight) {
+
+  bool isValid = true;
+  edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
+  event.getByToken(full5x5SigmaIEtaIEtaMapToken_, full5x5SigmaIEtaIEtaMap);  
+  
+  //  real photon matching a gen level photon 
+  if (mIsMC && !photonRef->genPhoton())   
+    return false;
+  EventCounterPhoton -> AddBinContent(4, generatorWeight );
+  N_pho_genPhoton++;
+  
+  // #1: H/E   OK
+  isValid &= photonRef->hadTowOverEm() < 0.05;
+  if (! isValid)
+    return false;
+  EventCounterPhoton -> AddBinContent(5, generatorWeight );
+  N_pho_HE++;
+  
+  //#2: sigma ietaieta    OK
+  isValid &= (*full5x5SigmaIEtaIEtaMap)[photonRef] < 1.05e-02;    
+  if (! isValid)
+    return false;
+  //#3: New
+  isValid &= (*full5x5SigmaIEtaIEtaMap)[photonRef] > 0.001;
+  if (! isValid)
+    return false;
+  EventCounterPhoton -> AddBinContent(6, generatorWeight );
+  N_pho_Sigma++;
+  
+  edm::Handle<double> rhos;
+  event.getByToken( rhoToken_, rhos);
+  double rho = *rhos;
+  edm::Handle<edm::ValueMap<float> > phoChargedIsolationMap;
+  event.getByToken(phoChargedIsolationToken_, phoChargedIsolationMap);
+  edm::Handle<edm::ValueMap<float> > phoPhotonIsolationMap;
+  event.getByToken(phoPhotonIsolationToken_, phoPhotonIsolationMap);
+  // #5
+  isValid &= (*phoChargedIsolationMap)[photonRef] < 5.;
+  if (! isValid)
+    return false;
+  // #6
+  isValid &= 2.5 + getCorrectedPFIsolation((*phoPhotonIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::PHOTONS) - 0.0045*photonRef->pt() < 2.75;
+  if (! isValid)
+    return false;  
+  
+  EventCounterPhoton -> AddBinContent(7, generatorWeight );
+  N_pho_Isolation++;
+  
+  EventCounterPhoton -> AddBinContent(8, generatorWeight );
+  N_pho_ElecVeto++;
   
   EventCounterPhoton -> AddBinContent(9, generatorWeight );
   N_pho_R9++;
@@ -1483,10 +1559,10 @@ void GammaJetFilter::particleToTree(const reco::Candidate* particle, TTree* t, s
   addresses.push_back(boost::shared_ptr<void>(new float((particle) ? particle->energy() : 0)));
 
   updateBranch(t, addresses[0].get(), "is_present", "I");
-  updateBranch(t, addresses[1].get(), "et");
   updateBranch(t, addresses[2].get(), "pt");
   updateBranch(t, addresses[3].get(), "eta");
   updateBranch(t, addresses[4].get(), "phi");
+  updateBranch(t, addresses[1].get(), "et");
   updateBranch(t, addresses[5].get(), "px");
   updateBranch(t, addresses[6].get(), "py");
   updateBranch(t, addresses[7].get(), "pz");
@@ -1497,6 +1573,11 @@ void GammaJetFilter::particleToTree(const reco::Candidate* particle, TTree* t, s
 void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& photon, const edm::Event& event) {
   std::vector<boost::shared_ptr<void> > addresses;
 
+  // std::cout<<"Photon Pt = "<< photon.pt() << std::endl;
+  // std::cout<<"Photon Eta = "<< photon.eta() << std::endl;
+  // std::cout<<"Photon Phi = "<< photon.phi() << std::endl;
+  // std::cout<<"Photon En = "<< photon.energy() << std::endl;
+
   int pho_is_present =1;
   float pho_et = photon.et();
   float pho_pt = photon.pt();
@@ -1506,17 +1587,17 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   float pho_py = photon.py();
   float pho_pz = photon.pz();
   float pho_e = photon.energy();
-
-  bool hasPixelSeed = photonRef->hasPixelSeed();
-  float hadTowOverEm = photonRef->hadTowOverEm();
+  bool hasPixelSeed = photon.hasPixelSeed();
+  float hadTowOverEm = photon.hadTowOverEm();
   edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
   event.getByToken(full5x5SigmaIEtaIEtaMapToken_, full5x5SigmaIEtaIEtaMap);  
   float sigmaIetaIeta = (*full5x5SigmaIEtaIEtaMap)[photonRef] ;  
+  float r9 = photon.r9();  
   edm::Handle<double> rhos;
   event.getByToken( rhoToken_, rhos);
   float rho = *rhos;
   bool hasMatchedPromptElectron ; 
-  if (photonRef->passElectronVeto())
+  if (photon.passElectronVeto())
     hasMatchedPromptElectron = false;
   else 
     hasMatchedPromptElectron = true;
@@ -1527,16 +1608,35 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   event.getByToken(phoNeutralHadronIsolationToken_, phoNeutralHadronIsolationMap);
   edm::Handle<edm::ValueMap<float> > phoPhotonIsolationMap;
   event.getByToken(phoPhotonIsolationToken_, phoPhotonIsolationMap);  
-  //  float chargedHadronsIsolation = getCorrectedPFIsolation((*phoChargedIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::CHARGED_HADRONS);
+  //  float chargedHadronsIsolation = getCorrectedPFIsolation((*phoChargedIsolationMap)[photonRef], rho, photon.eta(), IsolationType::CHARGED_HADRONS);
   float chargedHadronsIsolation = (*phoChargedIsolationMap)[photonRef];
-  float neutralHadronsIsolation  = getCorrectedPFIsolation((*phoNeutralHadronIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::NEUTRAL_HADRONS);
-  float photonIsolation               = getCorrectedPFIsolation((*phoPhotonIsolationMap)[photonRef], rho, photonRef->eta(), IsolationType::PHOTONS);     
+  float neutralHadronsIsolation  = getCorrectedPFIsolation((*phoNeutralHadronIsolationMap)[photonRef], rho, photon.eta(), IsolationType::NEUTRAL_HADRONS);
+  float photonIsolation               = getCorrectedPFIsolation((*phoPhotonIsolationMap)[photonRef], rho, photon.eta(), IsolationType::PHOTONS);     
+  // variable for the trigger
+  float trkSumPtHollowConeDR03  = photon.trkSumPtHollowConeDR03();
+  float ecalPFClusterIso = photon.ecalPFClusterIso();
+  float hcalPFClusterIso = photon.hcalPFClusterIso();
+  // std::cout<<"trkSumPtHollowConeDR03 = "<< trkSumPtHollowConeDR03  << std::endl;
+  // std::cout<<"ecalPFClusterIso = "<< ecalPFClusterIso  << std::endl;
+  // std::cout<<"hcalPFClusterIso = "<< hcalPFClusterIso  << std::endl;
 
+  // superCluster Info
+  float phoSC_pt = photon.superCluster()->rawEnergy()/ cosh(photon.superCluster()->eta());
+  float phoSC_eta = photon.superCluster()->eta();
+  float phoSC_phi = photon.superCluster()->phi();
+  float phoSC_e = photon.superCluster()->rawEnergy();
+
+  std::cout<<"SC Photon Pt = "<< photon.superCluster()->rawEnergy()/ cosh(photon.superCluster()->eta()) << std::endl;
+  std::cout<<"SC Photon Eta = "<< photon.superCluster()->eta() << std::endl;
+  std::cout<<"SC Photon Phi = "<< photon.superCluster()->phi() << std::endl;
+  std::cout<<"SC Photon Raw En = "<< photon.superCluster()->rawEnergy() << std::endl;
+  std::cout<<"SC Photon En = "<< photon.superCluster()->energy() << std::endl;
+  
   updateBranch(mPhotonTree,&pho_is_present,"is_present","I");
-  updateBranch(mPhotonTree,&pho_et,"et");
   updateBranch(mPhotonTree,&pho_pt,"pt");
   updateBranch(mPhotonTree,&pho_eta,"eta");
   updateBranch(mPhotonTree,&pho_phi,"phi"); 
+  updateBranch(mPhotonTree,&pho_et,"et");
   updateBranch(mPhotonTree,&pho_px,"px");
   updateBranch(mPhotonTree,&pho_py,"py");
   updateBranch(mPhotonTree,&pho_pz,"pz");
@@ -1544,16 +1644,26 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   updateBranch(mPhotonTree, &hasPixelSeed, "has_pixel_seed", "O");
   updateBranch(mPhotonTree, &hadTowOverEm, "hadTowOverEm");  
   updateBranch(mPhotonTree, &sigmaIetaIeta, "sigmaIetaIeta");
+  updateBranch(mPhotonTree, &r9, "r9");
   updateBranch(mPhotonTree, &rho, "rho");  
   updateBranch(mPhotonTree, &hasMatchedPromptElectron, "hasMatchedPromptElectron", "O");  
   updateBranch(mPhotonTree, &chargedHadronsIsolation, "chargedHadronsIsolation");
   updateBranch(mPhotonTree, &neutralHadronsIsolation, "neutralHadronsIsolation");
   updateBranch(mPhotonTree, &photonIsolation, "photonIsolation");
-  
+  // info for the trigger
+  updateBranch(mPhotonTree, &trkSumPtHollowConeDR03, "trkSumPtHollowConeDR03");
+  updateBranch(mPhotonTree, &ecalPFClusterIso, "ecalPFClusterIso");
+  updateBranch(mPhotonTree, &hcalPFClusterIso, "hcalPFClusterIso");
+  // added sc info
+  updateBranch(mPhotonTree, &phoSC_pt, "SC_pt");
+  updateBranch(mPhotonTree, &phoSC_eta, "SC_eta");
+  updateBranch(mPhotonTree, &phoSC_phi, "SC_phi");
+  updateBranch(mPhotonTree, &phoSC_e, "SC_e");
+
   mPhotonTree->Fill();
   
   if (mIsMC) {
-    particleToTree(photonRef->genPhoton(), mPhotonGenTree, addresses);
+    particleToTree(photon.genPhoton(), mPhotonGenTree, addresses);
     mPhotonGenTree->Fill();
   }
 }
@@ -1606,40 +1716,48 @@ void GammaJetFilter::jetToTree(const pat::Jet* jet, bool _findNeutrinos, TTree* 
   if (jet) {
     float area = jet->jetArea();
     float qgTagLikelihood = jet->userFloat("qgLikelihood");
-    /// 
-    /*
+    ///     
     float EnergyTot = jet->chargedHadronEnergy() + jet->neutralHadronEnergy() + jet->chargedEmEnergy() + jet->neutralEmEnergy() + jet->muonEnergy();
-    float jetCHEnF_New   = jet->chargedHadronEnergy() / EnergyTot; 
-    float jetNHEnF_New   = jet->neutralHadronEnergy() / EnergyTot; 
-    float jetCEmEnF_New = jet->chargedEmEnergy() / EnergyTot; 
-    float jetNEmEnF_New = jet->neutralEmEnergy() / EnergyTot; 
-    float jetMuEnF_New   = jet->muonEnergy() / EnergyTot; 
-
-    std::cout<<"Eta Jet: " << jet->eta() << std::endl;
+    float jetCHEnF   = jet->chargedHadronEnergy() / EnergyTot; 
+    float jetNHEnF   = jet->neutralHadronEnergy() / EnergyTot; 
+    float jetCEmEnF = jet->chargedEmEnergy() / EnergyTot; 
+    float jetNEmEnF = jet->neutralEmEnergy() / EnergyTot; 
+    float jetMuEnF   = jet->muonEnergy() / EnergyTot; 
+    /*
+    float SumEnFraction_New   = jetCHEnF_New + jetNHEnF_New + jetCEmEnF_New + jetNEmEnF_New + jetMuEnF_New ;
+    float jecFactor = jet->jecFactor(0);
+    std::cout<<"Jet Eta: " << jet->eta() << std::endl;
+    std::cout<<"Jet Energy: " << jet->energy() << std::endl;
+    const pat::Jet* rawJet = jet->userData<pat::Jet>("rawJet");
+    std::cout<<"RawJet Energy: " << rawJet->energy() << std::endl;
+    std::cout<<"JEC Factor: " << jecFactor << std::endl;
     std::cout<<"Energy Tot : " << EnergyTot << std::endl;
+    std::cout<<" CH Energy : " << jet->chargedHadronEnergy() << std::endl;
+    std::cout<<" NH Energy : " << jet->neutralHadronEnergy() << std::endl;
+    std::cout<<" C Em Energy : " << jet->chargedEmEnergy() << std::endl;
+    std::cout<<" N Em Energy : " << jet->neutralEmEnergy() << std::endl;
+    std::cout<<" Mu Energy : " << jet->muonEnergy() << std::endl;
     std::cout<<"New CHEnF : " << jetCHEnF_New << std::endl;
     std::cout<<"New NHEnF : " << jetNHEnF_New << std::endl;
     std::cout<<"New CEmEnF : " << jetCEmEnF_New << std::endl;
     std::cout<<"New NEmEnF : " << jetNEmEnF_New << std::endl;
     std::cout<<"New MuEnF : " << jetMuEnF_New << std::endl;
-    std::cout<<"New HFHadronEnF : " << jetHFHadronEnF_New << std::endl;
-    std::cout<<"New HFEmEnF : " << jetHFEmEnF_New << std::endl;
-    */
-
+    std::cout<<"New SumEnFraction : " << SumEnFraction_New << std::endl;
+    
     //jet energy composition
-    float jetCHEnF   = jet->chargedHadronEnergyFraction(); 
-    float jetNHEnF   = jet->neutralHadronEnergyFraction(); 
-    float jetCEmEnF = jet->chargedEmEnergyFraction();
-    float jetNEmEnF = jet->neutralEmEnergyFraction();
-    float jetMuEnF   = jet->muonEnergyFraction();
-
-    //    std::cout<<"Old CHEnF : " << jetCHEnF << std::endl;
-    //    std::cout<<"Old NHEnF : " << jetNHEnF << std::endl;
-    //    std::cout<<"Old CEmEnF : " << jetCEmEnF << std::endl;
-    //    std::cout<<"Old NEmEnF : " << jetNEmEnF << std::endl;
-    //    std::cout<<"Old MuEnF : " << jetMuEnF << std::endl;
-
-
+    float jetCHEnF_Old   = jet->chargedHadronEnergyFraction(); 
+    float jetNHEnF_Old   = jet->neutralHadronEnergyFraction(); 
+    float jetCEmEnF_Old = jet->chargedEmEnergyFraction();
+    float jetNEmEnF_Old = jet->neutralEmEnergyFraction();
+    float jetMuEnF_Old   = jet->muonEnergyFraction();
+    float SumEnFraction_Old   = jetCHEnF + jetNHEnF + jetCEmEnF + jetNEmEnF + jetMuEnF ; 
+    std::cout<<"Old CHEnF : " << jetCHEnF_Old << std::endl;
+    std::cout<<"Old NHEnF : " << jetNHEnF_Old << std::endl;
+    std::cout<<"Old CEmEnF : " << jetCEmEnF_Old << std::endl;
+    std::cout<<"Old NEmEnF : " << jetNEmEnF_Old << std::endl;
+    std::cout<<"Old MuEnF : " << jetMuEnF_Old << std::endl;
+    std::cout<<"Old SumEnFraction : " << SumEnFraction_Old << std::endl;
+    */
     //jet constituents multiplicities
     int jetCHMult = jet->chargedHadronMultiplicity();
     int jetNHMult = jet->neutralHadronMultiplicity();

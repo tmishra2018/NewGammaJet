@@ -67,7 +67,7 @@ os.system("mkdir "+storagedir+"/"+namedir+"/workdir")
 for line in ins:
   dataset = line.split()[0]
   processedevents = line.split()[1]
-  filesperjob = line.split()[2]
+  lumisperjob = line.split()[2]
   globaltag = line.split()[3]
   globaltag = globaltag.strip()
 
@@ -81,8 +81,8 @@ for line in ins:
 
   print "line : "+line
   print "dataset : "+dataset
-  print "processedevents : "+processedevents
-  print "filesperjob : "+filesperjob
+  print "processed events : "+processedevents
+  print "lumis per job : "+lumisperjob
   print "globaltag : "+globaltag
 
   sample = dataset.split("/")[1]
@@ -92,6 +92,7 @@ for line in ins:
   dict = {
       "THISROOTFILE":"\""+sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root"+"\"",
       "THISGLOBALTAG":"\""+globaltag+"\"",
+      "LUMISPERJOB":lumisperjob,
       "WORKINGAREA":storagedir+"/"+namedir+"/workdir", 
       "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3], 
       "CMSSWCFG":storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py",

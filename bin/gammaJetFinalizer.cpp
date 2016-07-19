@@ -4,7 +4,9 @@
 #include <TSystem.h>
 #include <TTree.h>
 #include <TParameter.h>
+#include <TProfile.h>
 #include <TH2D.h>
+#include <TLorentzVector.h>
 
 #include <fstream>
 #include <sstream>
@@ -293,9 +295,11 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_ntrue_interactions_reweighted = analysisDir.make<TH1F>("ntrue_interactions_reweighted", "ntrue_interactions_reweighted", 76, 0., 75.);
 
   TH1F* h_mPUWeight = analysisDir.make<TH1F>("mPUWeight", "mPUWeight", 50, 0., 5.);
-  TH1F* h_generatorWeight = analysisDir.make<TH1F>("generatorWeight", "generatorWeight", 50, 0., 5.);
+  TH1F* h_generatorWeight = analysisDir.make<TH1F>("generatorWeight", "generatorWeight", 50, 0., 1.);
   TH1F* h_analysis_evtWeightTot = analysisDir.make<TH1F>("analysis_evtWeightTot", "analysis_evtWeightTot", 50, 0., 10.);
-  TH1F* h_event_weight_used = analysisDir.make<TH1F>("event_weight_used", "event_weight_used", 20, 0., 2.);
+  TH1F* h_event_weight_used = analysisDir.make<TH1F>("event_weight_used", "event_weight_used", 150, 0., 150.);
+
+  TH1F* h_ptPhoton_NoCut = analysisDir.make<TH1F>("ptPhoton_NoCut", "ptPhoton NoCut", 150, 0., 3000.);
 
   TH1F* h_ptPhoton = analysisDir.make<TH1F>("ptPhoton", "ptPhoton", 600, 0., 3000.);
   TH1F* h_EtaPhoton = analysisDir.make<TH1F>("EtaPhoton", "EtaPhoton", 60, -5, 5.);
@@ -323,8 +327,11 @@ void GammaJetFinalizer::runAnalysis() {
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
 
-  double ptBins[] = {0, 40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 700, 1000, 3000};
+  double ptBins[] = {40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 700, 1000, 3000};
   int  binnum = sizeof(ptBins)/sizeof(double) -1;
+  double etaBins[] = {0, 1.305, 1.93, 2.5, 2.964, 3.2, 5.191};
+  int  binnumEta = sizeof(etaBins)/sizeof(double) -1;
+
   TH1F* h_ptPhoton_Binned = new TH1F("ptPhoton_Binned","ptPhoton", binnum, ptBins); 
   TH1F* h_ptPhoton_passedID_Binned = new TH1F("ptPhoton_passedID_Binned","ptPhoton_passedID", binnum, ptBins);  
 
@@ -352,33 +359,8 @@ void GammaJetFinalizer::runAnalysis() {
   TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 50, 0, 50, 100, 0, 50);
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
 
-  //jet composition
-  TH1F* h_JetCHEnF_passedID = analysisDir.make<TH1F>("CHEnergyF_passedID", "CHEnergyFrac", 40, 0., 1.);
-  TH1F* h_JetNHEnF_passedID = analysisDir.make<TH1F>("NHEnergyF_passedID", "NHEnergyFrac", 40, 0., 1.);
-  TH1F* h_JetCEEnF_passedID = analysisDir.make<TH1F>("CEEnergyF_passedID", "CEEnergyFrac", 40, 0., 1.);
-  TH1F* h_JetNEEnF_passedID = analysisDir.make<TH1F>("NEEnergyF_passedID", "NEEnergyFrac", 40, 0., 1.);
-  TH1F* h_JetMuEnF_passedID = analysisDir.make<TH1F>("MuEnergyF_passedID", "MuEnergyFrac", 40, 0., 1.);
-  // jet multiplicity
-  TH1F* h_JetCHMult_passedID = analysisDir.make<TH1F>("CHMult_passedID", "CHMult", 50, 0., 50);
-  TH1F* h_JetNHMult_passedID = analysisDir.make<TH1F>("NHMult_passedID", "NHMult", 50, 0., 50);
-  TH1F* h_JetElMult_passedID = analysisDir.make<TH1F>("ElMult_passedID", "ElMult", 50, 0., 50);
-  TH1F* h_JetPhMult_passedID = analysisDir.make<TH1F>("PhMult_passedID", "PhMult", 50, 0., 50);
-  TH1F* h_JetMuonMult_passedID = analysisDir.make<TH1F>("MuonMult_passedID", "MuonMult", 50, 0., 50);
-  // jet composition vs pT
-  TH2F* h_JetCHEnF_vs_Pt = analysisDir.make<TH2F>("CHEnergyF_vs_Pt", "CH En F vs Pt", binnum, ptBins, 40, 0, 1);
-  TH2F* h_JetNHEnF_vs_Pt = analysisDir.make<TH2F>("NHEnergyF_vs_Pt", "NH En F vs Pt", binnum, ptBins, 40, 0, 1);
-  TH2F* h_JetCEEnF_vs_Pt = analysisDir.make<TH2F>("CEEnergyF_vs_Pt", "CE En F vs Pt", binnum, ptBins, 40, 0, 1);
-  TH2F* h_JetNEEnF_vs_Pt = analysisDir.make<TH2F>("NEEnergyF_vs_Pt", "NE En F vs Pt", binnum, ptBins, 40, 0, 1);
-  TH2F* h_JetMuEnF_vs_Pt = analysisDir.make<TH2F>("MuEnergyF_vs_Pt", "Mu En F vs Pt", binnum, ptBins, 40, 0, 1);
-  // jet composition vs Eta
-  TH2F* h_JetCHEnF_vs_Eta = analysisDir.make<TH2F>("CHEnergyF_vs_Eta",   "CH En F vs Eta", 10, 0, 5, 40, 0, 1);
-  TH2F* h_JetNHEnF_vs_Eta = analysisDir.make<TH2F>("NHEnergyF_vs_Eta",  "NH En F vs Eta", 10, 0, 5, 40, 0, 1);
-  TH2F* h_JetCEEnF_vs_Eta = analysisDir.make<TH2F>("CEEnergyF_vs_Eta",   "CE En F vs Eta", 10, 0, 5, 40, 0, 1);
-  TH2F* h_JetNEEnF_vs_Eta = analysisDir.make<TH2F>("NEEnergyF_vs_Eta",  "NE En F vs Eta", 10, 0, 5, 40, 0, 1);
-  TH2F* h_JetMuEnF_vs_Eta = analysisDir.make<TH2F>("MuEnergyF_vs_Eta", "Mu En F vs Eta", 10, 0, 5, 40, 0, 1);
   //jet composition - histos vectors
   TFileDirectory ecompositionDir = analysisDir.mkdir("ecomposition");
-  std::vector<std::vector<TH1F*> > TotJetEnergy = buildEtaPtVector<TH1F>(ecompositionDir, "TotJetEnergy", 80, 0., 1000.);
   //jet composition fractions - histos vectors
   std::vector<std::vector<TH1F*> > ChHadronFraction = buildEtaPtVector<TH1F>(ecompositionDir, "ChHadronFraction", 40, 0., 1.);
   std::vector<std::vector<TH1F*> > NHadronFraction = buildEtaPtVector<TH1F>(ecompositionDir, "NHadronFraction", 40, 0., 1.);
@@ -406,8 +388,8 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_neutralHadronsIsolation_passedID = analysisDir.make<TH1F>("neutralHadronsIsolation_passedID", "neutralHadronsIsolation", 100, 0, 100);
   TH1F* h_photonIsolation_passedID = analysisDir.make<TH1F>("photonIsolation_passedID", "photonIsolation", 100, 0, 15);
 
-  TH2D* h_METvsfirstJet = analysisDir.make<TH2D>("METvsfirstJet", "MET vs firstJet", 150, 0., 300., 150, 0., 500.);
-  TH2D* h_firstJetvsSecondJet = analysisDir.make<TH2D>("firstJetvsSecondJet", "firstJet vs secondJet", 60, 5., 100., 60, 5., 100.);
+  TH2F* h_METvsfirstJet = analysisDir.make<TH2F>("METvsfirstJet", "MET vs firstJet", 150, 0., 300., 150, 0., 500.);
+  TH2F* h_firstJetvsSecondJet = analysisDir.make<TH2F>("firstJetvsSecondJet", "firstJet vs secondJet", 60, 5., 100., 60, 5., 100.);
 
   // Balancing
   TFileDirectory balancingDir = analysisDir.mkdir("balancing");
@@ -432,7 +414,7 @@ void GammaJetFinalizer::runAnalysis() {
     responseBalancingGenPhotEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen_phot", "eta0013", 150, 0., 2.);
     responseBalancingPhotGammaEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_photGamma", "eta0013", 150, 0., 2.);
   }
-
+  
   // MPF
   TFileDirectory mpfDir = analysisDir.mkdir("mpf");
   std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 150, 0., 2.);
@@ -452,8 +434,24 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<std::vector<TH1F*> > Nvertices = buildEtaPtVector<TH1F>(vertexDir, "Nvertices", 50, 0., 50.);
   std::vector<std::vector<TH1F*>> vertex_responseBalancing = buildEtaVertexVector<TH1F>(vertexDir, "resp_balancing", 150, 0., 2.);
   std::vector<std::vector<TH1F*>> vertex_responseMPF = buildEtaVertexVector<TH1F>(vertexDir, "resp_mpf", 150, 0., 2.);
-  
-  // Extrapolation
+
+  // TProfile
+  // response vs Pt (all eta)
+  TProfile* Profile_Bal_vs_Pt = balancingDir.make<TProfile>("Bal_vs_Pt", "Balancing vs Pt", binnum, ptBins, 0, 2);
+  TProfile* Profile_MPF_vs_Pt = mpfDir.make<TProfile>("MPF_vs_Pt", "MPF vs Pt", binnum, ptBins, 0, 2);
+  // response vs Eta (all pT)
+  TProfile* Profile_Bal_vs_Eta = balancingDir.make<TProfile>("Bal_vs_Eta", "Balancing vs Eta", binnumEta, etaBins, 0, 2);
+  TProfile* Profile_MPF_vs_Eta = mpfDir.make<TProfile>("MPF_vs_Eta", "MPF vs Eta", binnumEta, etaBins, 0, 2);
+  // response vs nVtx (all pT and eta)
+  TProfile* Profile_Bal_vs_Nvtx = balancingDir.make<TProfile>("Bal_vs_Nvtx", "Balancing vs Nvtx", 10, 0, 40, 0, 2);
+  TProfile* Profile_MPF_vs_Nvtx = mpfDir.make<TProfile>("MPF_vs_Nvtx", "MPF vs Nvtx", 10, 0, 40, 0, 2);
+
+  // Phot SC vs Pho
+  // |eta| < 1.3 --- for the others? --- vector of TProfile!
+  TProfile* Profile_photon_SCPt_vs_Pt = analysisDir.make<TProfile>("PhotSCPt_vs_Pt", "SCPt vs Pt", binnum, ptBins, 0, 2000); 
+  TH2F* h_photon_SCPt_vs_Pt = analysisDir.make<TH2F>("PhotonSCPt_vs_Pt", "SCPt vs Pt", binnum, ptBins, 200, 0, 2000);  
+ 
+  //////////////////////////////////////////////////// Extrapolation
   int extrapolationBins = 50;
   double extrapolationMin = 0.;
   double extrapolationMax = 2.;
@@ -507,7 +505,7 @@ void GammaJetFinalizer::runAnalysis() {
   uint64_t rejectedEventsFromTriggers = 0;
   uint64_t rejectedEventsTriggerNotFound = 0;
   uint64_t rejectedEventsPtOut = 0;
-    
+  //  uint64_t passedEventsFromPhotonRequests = 0; 
   uint64_t passedPhotonJetCut = 0;
   uint64_t passedDeltaPhiCut = 0;
   uint64_t passedPixelSeedVetoCut = 0;
@@ -525,7 +523,7 @@ void GammaJetFinalizer::runAnalysis() {
   for (uint64_t i = from; i < to; i++) {     
       
     //test: skip bug events in MC
-    //    if( i < 3268534 ) continue;
+    // if( i < 3194920 ) continue;
       
     if ( (i - from) < 10 || (i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
@@ -536,7 +534,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs
     if( mIsMC ){ // bug in GJET Pythia
-      if ( i == 832753 || i == 1564299 || i == 2831312 || i == 3143597 || i == 3268534) continue;
+      if ( i == 475910 || i == 1215426 || i == 2634046 || i == 3016299 || i == 3194920) continue;
     }
     
     if (EXIT) {
@@ -577,21 +575,39 @@ void GammaJetFinalizer::runAnalysis() {
     if(mVerbose) std::cout<<"Event: "<< i << std::endl;          
 
     if (! photon.is_present || ! firstJet.is_present)
-      continue;
-      
-    passedPhotonJetCut++;
-      
+      continue;      
+    passedPhotonJetCut++; 
     if(mVerbose)        std::cout<<" passedPhotonJetPresence  " << std::endl;    
-      
+
+    /* // test: simulated saturation
+    // std::cout<<"H/E = " << photon.hadTowOverEm << std::endl;    
+    // std::cout<<"Photon Energy = " << photon.e << std::endl;    
+    double H = photon.hadTowOverEm * photon.e ;
+    // std::cout<<"H = " << H << std::endl;        
+    TLorentzVector Phot;
+    Phot.SetPtEtaPhiE(photon.SC_pt, photon.eta, photon.phi, photon.e);
+    Double_t theta = Phot.Theta();
+    // std::cout<<"Photon Eta = " << photon.eta << std::endl;        
+    // std::cout<<"theta = " << theta << std::endl;        
+    double Et = photon.et;
+    // std::cout<<"Photon Transverse Energy = " << Et << std::endl;    
+    double Energy = min( Et, 127.5) / sin(theta);
+    // std::cout<<"New Energy (with saturation) = " << Energy << std::endl; 
+    double new_hadTowOverEm = H/Energy;
+    // std::cout<<"New hadTowOverEm = " << new_hadTowOverEm << std::endl; 
+
+    if(new_hadTowOverEm > 0.01) continue;
+    */
+
     int checkTriggerResult = 0;
     std::string passedTrigger;
     float triggerWeight = 1.;
-    if(mVerbose) std::cout<<" finding trigger " << std::endl;
+    if(mVerbose) std::cout<<"Finding trigger... " << std::endl;
     if ((checkTriggerResult = checkTrigger(passedTrigger, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
 	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.pt << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
+	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.SC_pt << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
 	  size_t size = analysis.trigger_names->size();
 	  for (size_t i = 0; i < size; i++) {
 	    if (analysis.trigger_results->at(i)) {
@@ -603,7 +619,7 @@ void GammaJetFinalizer::runAnalysis() {
 	break;
       case TRIGGER_FOUND_BUT_PT_OUT:
 	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.pt << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
+	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.SC_pt << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
 	  size_t size = analysis.trigger_names->size();
 	  for (size_t i = 0; i < size; i++) {
 	    if (analysis.trigger_results->at(i)) {
@@ -617,22 +633,29 @@ void GammaJetFinalizer::runAnalysis() {
       rejectedEventsFromTriggers++;
       continue;
     }
-    passedEventsFromTriggers++;
-      
+
+    passedEventsFromTriggers++;    
     if(mVerbose)    std::cout<<" passedEventFromTriggers  " << std::endl;
       
+    // test: Trigger emulation
+    //    if( photon.r9 <0.93 || photon.ecalPFClusterIso > 5 || photon.hcalPFClusterIso > 10 || photon.trkSumPtHollowConeDR03 > 4 ) continue;
+    //    passedEventsFromPhotonRequests++;    
+    //    if(mVerbose)    std::cout<<" passedEventFromPhotonRequests  " << std::endl;
+
+
     if (mIsMC) {	
       // PU reweighting -- 2016 official recipe
       computePUWeight();
 	
       // N vertex based (if official recipe not available)
-      // computePUWeight_NVtxBased(photon.pt, analysis.nvertex);      
+      // computePUWeight_NVtxBased(photon.SC_pt, analysis.nvertex);      
     } else { // IsData
       // Note: if trigger bins == pT bins the prescale is not important
       // to calculate the response (they are normalized to shape)
 	
       //  OLD: get prescale from xml file
-      //  triggerWeight = 1. / triggerWeight; // in the xml file there were the inverse of prescale
+      //  in the xml file there were the inverse of prescale
+      //  triggerWeight = 1. / triggerWeight; 
 
       //  NEW: get trigger prescale from ntupla
       triggerWeight = triggerWeight;
@@ -659,6 +682,8 @@ void GammaJetFinalizer::runAnalysis() {
       std::cout<< "Final used weight   "<< eventWeight << std::endl;
     }
 
+    if(photon.is_present) h_ptPhoton_NoCut -> Fill(photon.SC_pt, eventWeight);
+
     double mu;
     if(mIsMC){
       mu = analysis.ntrue_interactions ;
@@ -669,9 +694,9 @@ void GammaJetFinalizer::runAnalysis() {
     // Event selection
     // The photon is "Good" from previous step (Filter)
     // From previous step: fabs(deltaPhi(photon, firstJet)) > PI/2
+
     double deltaPhi = fabs(reco::deltaPhi(photon.phi, firstJet.phi));
-    h_deltaPhi_NoCut -> Fill(deltaPhi, eventWeight);
-      
+    h_deltaPhi_NoCut -> Fill(deltaPhi, eventWeight);      
     bool isBack2Back = (deltaPhi >= DELTAPHI_CUT);
     if (! isBack2Back) {
       continue;
@@ -716,7 +741,7 @@ void GammaJetFinalizer::runAnalysis() {
     passedJetPtCut++;
     if(mVerbose) std::cout<<"passedJetPtCut"<<std::endl;
     
-    bool secondJetOK = !secondJet.is_present || (secondJet.pt < 10 || secondJet.pt < mAlphaCut * photon.pt);
+    bool secondJetOK = !secondJet.is_present || (secondJet.pt < 10 || secondJet.pt < mAlphaCut * photon.SC_pt);
     
     //federico -- without this cut the extrapolation is always the same to different alpha cut
     //    if( !secondJetOK) continue;
@@ -760,8 +785,8 @@ void GammaJetFinalizer::runAnalysis() {
     h_nvertex_reweighted->Fill(analysis.nvertex, eventWeight);
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
-    h_ptPhoton               ->Fill(photon.pt, eventWeight);
-    h_ptPhoton_Binned        ->Fill(photon.pt, eventWeight);
+    h_ptPhoton               ->Fill(photon.SC_pt, eventWeight);
+    h_ptPhoton_Binned        ->Fill(photon.SC_pt, eventWeight);
     h_EtaPhoton             ->Fill(photon.eta, eventWeight);
     h_PhiPhoton             ->Fill(photon.phi, eventWeight);
     h_ptFirstJet              ->Fill(firstJet.pt, eventWeight);
@@ -775,7 +800,7 @@ void GammaJetFinalizer::runAnalysis() {
     double deltaPhi_2ndJet = fabs(reco::deltaPhi(secondJet.phi, photon.phi));
     h_deltaPhi_2ndJet     ->Fill(deltaPhi_2ndJet, eventWeight); //2nd jet - photon
     
-    h_alpha                     ->Fill(secondJet.pt / photon.pt, eventWeight);
+    h_alpha                     ->Fill(secondJet.pt / photon.SC_pt, eventWeight);
     h_MET                      ->Fill(MET.pt, eventWeight);
     h_rho                          ->Fill(photon.rho, eventWeight);
     h_hadTowOverEm      ->Fill(photon.hadTowOverEm, eventWeight);
@@ -788,19 +813,19 @@ void GammaJetFinalizer::runAnalysis() {
     // MPF
     deltaPhi_Photon_MET = reco::deltaPhi(photon.phi, MET.phi);
     h_deltaPhi_Photon_MET     ->Fill(deltaPhi_Photon_MET, eventWeight); // MET - photon
-    respMPF = 1. + MET.et * photon.pt * cos(deltaPhi_Photon_MET) / (photon.pt * photon.pt);
+    respMPF = 1. + MET.et * photon.SC_pt * cos(deltaPhi_Photon_MET) / (photon.SC_pt * photon.SC_pt);
 
     if(mVerbose){
     std::cout<<"photon phi = "<< photon.phi << std::endl;
     std::cout<<"MET phi = "<< MET.phi << std::endl;
     std::cout<<"deltaPhi PhotMET = "<< deltaPhi_Photon_MET << std::endl;
-    std::cout<<"photon pT = "<< photon.pt << std::endl;
+    std::cout<<"photon pT = "<< photon.SC_pt << std::endl;
     std::cout<<"MET = "<< MET.et << std::endl;
     std::cout<<"resp MPF = "<< respMPF << std::endl;
     }
 
     deltaPhi_Photon_MET_raw = reco::deltaPhi(photon.phi, rawMET.phi);
-    respMPFRaw = 1. + rawMET.et * photon.pt * cos(deltaPhi_Photon_MET_raw) / (photon.pt * photon.pt);
+    respMPFRaw = 1. + rawMET.et * photon.SC_pt * cos(deltaPhi_Photon_MET_raw) / (photon.SC_pt * photon.SC_pt);
     
     if ( mIsMC){
       deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
@@ -808,15 +833,15 @@ void GammaJetFinalizer::runAnalysis() {
     } // true MPF response
 
     // Balancing
-    respBalancing = firstJet.pt / photon.pt;
-    respBalancingRaw = firstRawJet.pt / photon.pt;
+    respBalancing = firstJet.pt / photon.SC_pt;
+    respBalancingRaw = firstRawJet.pt / photon.SC_pt;
     if( mIsMC )    respBalancingGen = firstJet.pt / firstGenJet.pt; // true balancing response 
-    if( mIsMC )    respGenPhot = firstGenJet.pt / photon.pt; // used to constrain extrapolation fits
-    if( mIsMC )    respPhotGamma = photon.pt / genPhoton.pt; // to check photon response
+    if( mIsMC )    respGenPhot = firstGenJet.pt / photon.SC_pt; // used to constrain extrapolation fits // no more
+    if( mIsMC )    respPhotGamma = photon.SC_pt / genPhoton.pt; // to check photon response
 
-    int ptBin = mPtBinning.getPtBin(photon.pt);
+    int ptBin = mPtBinning.getPtBin(photon.SC_pt);
     if (ptBin < 0) {
-      if(mVerbose) std::cout << "Photon pt " << photon.pt << " is not covered by our pt binning. Dumping event." << std::endl;
+      if(mVerbose) std::cout << "Photon pt " << photon.SC_pt << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
     }
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(genPhoton.pt);
@@ -833,8 +858,8 @@ void GammaJetFinalizer::runAnalysis() {
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
       do {
-        h_ptPhoton_passedID                 -> Fill(photon.pt, eventWeight);
-        h_ptPhoton_passedID_Binned    -> Fill(photon.pt, eventWeight);
+        h_ptPhoton_passedID                 -> Fill(photon.SC_pt, eventWeight);
+        h_ptPhoton_passedID_Binned    -> Fill(photon.SC_pt, eventWeight);
 	h_EtaPhoton_passedID               -> Fill(photon.eta, eventWeight);
 	h_PhiPhoton_passedID               -> Fill(photon.phi, eventWeight);
         h_rho_passedID                          -> Fill(photon.rho, eventWeight);
@@ -847,31 +872,6 @@ void GammaJetFinalizer::runAnalysis() {
         h_ptFirstJet_passedID       -> Fill(firstJet.pt, eventWeight);
 	h_EtaFirstJet_passedID     -> Fill(firstJet.eta, eventWeight);
 	h_PhiFirstJet_passedID     -> Fill(firstJet.phi, eventWeight);
-	// First jet energy composition
-	h_JetCHEnF_passedID       -> Fill(firstJet.jet_CHEnF, eventWeight);
-	h_JetNHEnF_passedID       -> Fill(firstJet.jet_NHEnF, eventWeight);
-        h_JetCEEnF_passedID        -> Fill(firstJet.jet_CEmEnF, eventWeight);
-        h_JetNEEnF_passedID        -> Fill(firstJet.jet_NEmEnF, eventWeight);
-        h_JetMuEnF_passedID       -> Fill(firstJet.jet_MuEnF, eventWeight);
-
-	h_JetCHEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_CHEnF); 
-	h_JetNHEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_NHEnF); 
-	h_JetCEEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_CEmEnF); 
-	h_JetNEEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_NEmEnF); 
-	h_JetMuEnF_vs_Pt -> Fill(firstJet.pt, firstJet.jet_MuEnF); 
-
-	h_JetCHEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_CHEnF); 
-	h_JetNHEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_NHEnF); 
-	h_JetCEEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_CEmEnF); 
-	h_JetNEEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_NEmEnF); 
-	h_JetMuEnF_vs_Eta -> Fill(firstJet.eta, firstJet.jet_MuEnF); 
-
-	//First jet multiplicity
-	h_JetCHMult_passedID      -> Fill(firstJet.jet_CHMult, eventWeight);
-	h_JetNHMult_passedID      -> Fill(firstJet.jet_NHMult, eventWeight);
-	h_JetPhMult_passedID       -> Fill(firstJet.jet_PhMult, eventWeight);
-	h_JetElMult_passedID        -> Fill(firstJet.jet_ElMult, eventWeight);
-	h_JetMuonMult_passedID  -> Fill(firstJet.jet_MuonMult, eventWeight);
 
         h_deltaPhi_passedID          ->Fill(deltaPhi, eventWeight);
 
@@ -885,7 +885,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  h_PhiSecondJet_2ndJetOK     ->Fill(secondJet.phi, eventWeight);
 	}
 	
-        h_alpha_passedID            ->Fill(secondJet.pt / photon.pt, eventWeight);
+        h_alpha_passedID            ->Fill(secondJet.pt / photon.SC_pt, eventWeight);
         h_MET_passedID              ->Fill(MET.et, eventWeight);
         h_rawMET_passedID        ->Fill(rawMET.et, eventWeight);
         h_METvsfirstJet                   ->Fill(MET.et, firstJet.pt, eventWeight);
@@ -894,43 +894,55 @@ void GammaJetFinalizer::runAnalysis() {
 	h_npvGood -> Fill(analysis.nvertexGood, eventWeight);
 	h_rho_vs_mu -> Fill(mu, photon.rho, eventWeight);
 	h_npvGood_vs_mu -> Fill(mu, analysis.nvertexGood, eventWeight);
+	
+	Profile_Bal_vs_Pt     -> Fill(photon.SC_pt, respBalancing, eventWeight);
+	Profile_MPF_vs_Pt   -> Fill(photon.SC_pt, respMPF, eventWeight);
+	Profile_Bal_vs_Eta   -> Fill(fabs(firstJet.eta), respBalancing, eventWeight);
+	Profile_MPF_vs_Eta -> Fill(fabs(firstJet.eta), respMPF, eventWeight);
+	Profile_Bal_vs_Nvtx -> Fill(analysis.nvertex, respBalancing, eventWeight);
+	Profile_MPF_vs_Nvtx -> Fill(analysis.nvertex, respMPF, eventWeight);	
 
+	// to be changed with SuperCluster pT
+	if (fabs(firstJet.eta) <1.305) { //only the special case now
+	  Profile_photon_SCPt_vs_Pt -> Fill(photon.SC_pt, photon.SC_pt, eventWeight);
+	  h_photon_SCPt_vs_Pt         -> Fill(photon.SC_pt, photon.SC_pt, eventWeight);
+	}
+	
 	//fill N vertices as a function of eta/pT
 	Nvertices[etaBin][ptBin]->Fill(analysis.nvertex, eventWeight);		
         if (vertexBin >= 0) {
-          vertex_responseBalancing[etaBin][vertexBin]         -> Fill(respBalancing, eventWeight);
-          vertex_responseMPF[etaBin][vertexBin]                 -> Fill(respMPF, eventWeight);
+          vertex_responseBalancing[etaBin][vertexBin] -> Fill(respBalancing, eventWeight);
+          vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF, eventWeight);
         }
-	
+
+	double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
+	if(TotEne > 1 || TotEne < 0) continue;
+	//std::cout<< "Tot En = "<< TotEne << std::endl;
+
 	//fill jet energy composition histo vectors
-	TotJetEnergy[etaBin][ptBin]->Fill(firstJet.e, eventWeight);
-	if(firstJet.e > 0.) {
-	  ChHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
-	  NHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_NHEnF, eventWeight);
-	  CEmFraction[etaBin][ptBin]->Fill(firstJet.jet_CEmEnF, eventWeight);
-	  NEmFraction[etaBin][ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
-	  MuFraction[etaBin][ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);
-	  LeptFraction[etaBin][ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
-	  //Special case
-	  if (fabs(firstJet.eta) <1.305) {
-	    ChHadronFractionEta013[ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
-	    NHadronFractionEta013[ptBin]->Fill(firstJet.jet_NHEnF, eventWeight);
-	    CEmFractionEta013[ptBin]->Fill(firstJet.jet_CEmEnF, eventWeight);
-	    NEmFractionEta013[ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
-	    MuFractionEta013[ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);	    
-	    LeptFractionEta013[ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
-	  }
-	}
-	
+	ChHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
+	NHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_NHEnF, eventWeight);
+	CEmFraction[etaBin][ptBin]->Fill(firstJet.jet_CEmEnF, eventWeight);
+	NEmFraction[etaBin][ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
+	MuFraction[etaBin][ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);
+	LeptFraction[etaBin][ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
+
         //fill jet multiplicities histo vectors
         ChHadronMult[etaBin][ptBin]->Fill(firstJet.jet_CHMult, eventWeight);
         NHadronMult[etaBin][ptBin]->Fill(firstJet.jet_NHMult, eventWeight);
         ElMult[etaBin][ptBin]->Fill(firstJet.jet_ElMult, eventWeight);
         PhMult[etaBin][ptBin]->Fill(firstJet.jet_PhMult, eventWeight);
         MuonMult[etaBin][ptBin]->Fill(firstJet.jet_MuonMult, eventWeight);
-	
+
 	//Special case
-        if (fabs(firstJet.eta) <1.305) {
+	if (fabs(firstJet.eta) <1.305) {
+	  ChHadronFractionEta013[ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
+	  NHadronFractionEta013[ptBin]->Fill(firstJet.jet_NHEnF, eventWeight);
+	  CEmFractionEta013[ptBin]->Fill(firstJet.jet_CEmEnF, eventWeight);
+	  NEmFractionEta013[ptBin]->Fill(firstJet.jet_NEmEnF, eventWeight);
+	  MuFractionEta013[ptBin]->Fill(firstJet.jet_MuEnF, eventWeight);	    
+	  LeptFractionEta013[ptBin]->Fill((firstJet.jet_MuEnF+firstJet.jet_CEmEnF), eventWeight);
+	  
 	  responseBalancingEta013[ptBin]->Fill(respBalancing, eventWeight);
 	  responseBalancingRawEta013[ptBin]->Fill(respBalancingRaw, eventWeight);
 	  responseMPFEta013[ptBin]->Fill(respMPF, eventWeight);
@@ -940,7 +952,7 @@ void GammaJetFinalizer::runAnalysis() {
         responseBalancingRaw[etaBin][ptBin]->Fill(respBalancingRaw, eventWeight);
         responseMPF[etaBin][ptBin]->Fill(respMPF, eventWeight);
         responseMPFRaw[etaBin][ptBin]->Fill(respMPFRaw, eventWeight);	
-
+	
         // Gen MC values
 	if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0) {
 	  if (fabs(firstGenJet.eta) <1.305) {
@@ -989,19 +1001,19 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
-        int extrapBin = mExtrapBinning.getBin(photon.pt, secondJet.pt, ptBin);
+        int extrapBin = mExtrapBinning.getBin(photon.SC_pt, secondJet.pt, ptBin);
 	if(mIsMC) extrapGenBin = mExtrapBinning.getBin(genPhoton.pt, secondGenJet.pt, ptBin);
 	
 	do {
           if (extrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for extrapolation: " << secondJet.pt / photon.pt << std::endl;
+	    if(mVerbose) std::cout << "No bin found for extrapolation: " << secondJet.pt / photon.SC_pt << std::endl;
 	    break;
           }	  
-	  //   float alpha = secondJet.pt / photon.pt;
+	  //   float alpha = secondJet.pt / photon.SC_pt;
 	  //	const std::pair<float, float> ExtrapBin = mExtrapBinning.getBinValue(extrapBin);
 	  //	std::cout<< std::endl;
 	  //	std::cout<< "alpha  " << alpha << std::endl;
-	  //	std::cout<< "pTPhot  " << photon.pt << std::endl;
+	  //	std::cout<< "pTPhot  " << photon.SC_pt << std::endl;
 	  //	std::cout<< "extrapBin.getBinValue  " << ExtrapBin.first << " "<<ExtrapBin.second << std::endl;
 	  
           // Special case 
@@ -1024,11 +1036,11 @@ void GammaJetFinalizer::runAnalysis() {
 	  }
         } while (false);
 	
-        int rawExtrapBin = mExtrapBinning.getBin(photon.pt, secondRawJet.pt, ptBin);
+        int rawExtrapBin = mExtrapBinning.getBin(photon.SC_pt, secondRawJet.pt, ptBin);
 	
         do {
           if (rawExtrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << secondRawJet.pt / photon.pt << std::endl;
+	    if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << secondRawJet.pt / photon.SC_pt << std::endl;
             break;
           }
 	  
@@ -1051,6 +1063,9 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
   std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Selection efficiency for trigger selection: " << MAKE_RED << (double) passedEventsFromTriggers / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
+  // federico
+  //  std::cout << "Selection efficiency for photon requests: " << MAKE_RED << (double) passedEventsFromPhotonRequests / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
+
   std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for pixel seed veto cut: " << MAKE_RED << (double) passedPixelSeedVetoCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for muons cut: " << MAKE_RED << (double) passedMuonsCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
@@ -1062,6 +1077,9 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << "Relative efficiency --- Initial events : " << to-from << std::endl;
   std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Selection efficiency for trigger selection: " << MAKE_RED << (double) passedEventsFromTriggers / passedPhotonJetCut * 100 << "%" << RESET_COLOR << std::endl;
+  // federico
+  // std::cout << "Selection efficiency for photon requests: " << MAKE_RED << (double) passedEventsFromPhotonRequests / passedEventsFromTriggers * 100 << "%" << RESET_COLOR << std::endl;
+  // std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / passedEventsFromPhotonRequests * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / passedEventsFromTriggers * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for pixel seed veto cut: " << MAKE_RED << (double) passedPixelSeedVetoCut / passedDeltaPhiCut * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for muons cut: " << MAKE_RED << (double) passedMuonsCut / passedPixelSeedVetoCut * 100 << "%" << RESET_COLOR << std::endl;
@@ -1308,11 +1326,11 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
     
     // - With the photon p_t, find the trigger it should pass
     // - Then, look on trigger list if it pass it or not (only for data)
-    //    std::cout << "photon.pt  " << photon.pt << std::endl;
+    //    std::cout << "photon.SC_pt  " << photon.SC_pt << std::endl;
     
     const PathData* mandatoryTrigger = nullptr;
     for (auto& path: mandatoryTriggers) {
-      if (path.second.range.in(photon.pt)) {
+      if (path.second.range.in(photon.SC_pt)) {
         mandatoryTrigger = &path;
       }
     }
@@ -1334,8 +1352,8 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
       if (boost::regex_match(analysis.trigger_names->at(i), mandatoryTrigger->first)) {
         passedTrigger = mandatoryTrigger->first.str();
 	weight = analysis.trigger_prescale->at(i); // prescale from ntupla
-	//	std::cout << "Trigger name   " << analysis.trigger_names->at(i) << std::endl;
-	//	std::cout << "Trigger prescale   " << analysis.trigger_prescale->at(i) << std::endl;
+	if(mVerbose) std::cout << "Trigger name   " << analysis.trigger_names->at(i) << std::endl;
+	if(mVerbose) std::cout << "Trigger prescale   " << analysis.trigger_prescale->at(i) << std::endl;
 	//	std::cout << "Trigger OK"<<std::endl;
 	return TRIGGER_OK;
       }
@@ -1344,11 +1362,11 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
 
     const std::map<Range<float>, std::vector<MCTrigger>>& triggers = mMCTriggers->getTriggers();
 
-    //    std::cout<<photon.pt <<std::endl;
+    //    std::cout<<photon.SC_pt <<std::endl;
     
     const std::vector<MCTrigger>* mandatoryTrigger = nullptr;
     for (auto& path: triggers) {
-      if (path.first.in(photon.pt)) {
+      if (path.first.in(photon.SC_pt)) {
 	mandatoryTrigger = &path.second;
       }
     }

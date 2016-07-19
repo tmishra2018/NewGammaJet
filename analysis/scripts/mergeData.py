@@ -18,9 +18,6 @@ parser.add_argument("-i", "--inputList", type=str, dest="inputList", default="",
 parser.add_argument("-o", "--outputDir", type=str, dest="outputDir", default="./",
         help="output directory",
 	    )
-#parser.add_argument("--xsec", type=float, dest="xsec", default=1,
- #       help="cross section",
-#	    )
 parser.add_argument("--lumi_tot", type=float, dest="lumi_tot", default=1,
         help="total luminosity",
 	    )
@@ -34,47 +31,74 @@ lumi_tot = args.lumi_tot
 ###################
 #read input file
 ins = open(args.inputList,"r")
-files = " "
+files1 = " "
+files2 = " "
+
+i = 0
+
+
 
 for line in ins:
-  file = line.strip()
-  files += str(" "+file)
-  pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-  fullname = os.path.split(pathT2)[1]
-  name = fullname.split("_")
+  if i < 550:
+    file = line.strip()
+    files1 += str(" "+file)
+    pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
+    fullname = os.path.split(pathT2)[1]
+    name = fullname.split("_")
+    i= i+1
+  if i >= 550:
+    file = line.strip()
+    files2 += str(" "+file)
+    pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
+    fullname = os.path.split(pathT2)[1]
+    name = fullname.split("_")
+    i= i+1
 
+print i
+print files1
+print files2
 
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
-filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
-print filename_out
-#change name
-#filename_out = outputDir+"/PhotonJet_2ndLevel_SinglePhoton_25ns_Run2015D-09Oct2015-v2.root" 
-os.system("hadd -f "+filename_out+"  "+files )
+pwd = os.environ['PWD']
 
-# f.
-inputFile = TFile(filename_out,"UPDATE")
+if i < 550:
+  filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
+  print filename_out
+  os.system("hadd -f "+filename_out+"  "+files1 )
+else:
+  filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
+  filename_out1 = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part1.root" 
+  filename_out2 = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part2.root" 
+  print filename_out1
+  print filename_out2
+  print filename_out
+  os.system("hadd "+filename_out1+" "+files1 )
+  os.system("hadd "+filename_out2+"  "+files2 )
+  os.system("hadd "+filename_out+"  "+filename_out1+" "+filename_out2 )
 
-#h_sumOfWeights = inputFile.Get("gammaJet/h_sumW")
-#sumOfWeights = h_sumOfWeights.Integral()
+#  command1 = "hadd "+filename_out1+" "+files1 
+#  command2 = "hadd "+filename_out2+" "+files2
+#  command3 = "hadd "+filename_out+"  "+filename_out1+" "+filename_out2
+#  logfile = "logfile_Merging.log"
+#  outputname = "submit_Merging.src"
+#  outputfile = open(outputname,'w')
+#  outputfile.write('#!/bin/bash\n')
+#  outputfile.write('export SCRAM_ARCH=slc6_amd64_gcc530\n')
+#  outputfile.write('cd '+pwd+'\n')
+#  outputfile.write('eval `scramv1 runtime -sh`\n')
+#  outputfile.write(command1+"\n")
+#  outputfile.write(command2+"\n")
+#  outputfile.write(command3+"\n")
+#  print outputname 
+#  print logfile 
+#  os.system("bsub -q cmslong -o "+logfile+" source "+pwd+"/"+outputname)
 
 ##### update total luminosity ######
+inputFile = TFile(filename_out,"UPDATE")
 lumi = inputFile.Get("gammaJet/total_luminosity")
 lumi.SetVal(lumi_tot) # in /pb
-
-##### update tree with weight for total normalization #####
-#analysis_tree = inputFile.Get("gammaJet/analysis")
-#print analysis_tree
-
-#evtWeightTot = array("f", [0.] )
-#b_evtWeightTot = analysis_tree.Branch("evtWeightTot", evtWeightTot,"evtWeightTot/F")
-
-#for event in analysis_tree:
- # evtWeightTot[0] = (xsec / sumOfWeights)
-  #b_evtWeightTot.Fill()
-
 inputFile.cd("gammaJet")
-#analysis_tree.Write("",TObject.kOverwrite)
 lumi.Write()
 
