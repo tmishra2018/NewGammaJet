@@ -585,7 +585,7 @@ void GammaJetFinalizer::runAnalysis() {
     double H = photon.hadTowOverEm * photon.e ;
     // std::cout<<"H = " << H << std::endl;        
     TLorentzVector Phot;
-    Phot.SetPtEtaPhiE(photon.SC_pt, photon.eta, photon.phi, photon.e);
+    Phot.SetPtEtaPhiE(photon.pt, photon.eta, photon.phi, photon.e);
     Double_t theta = Phot.Theta();
     // std::cout<<"Photon Eta = " << photon.eta << std::endl;        
     // std::cout<<"theta = " << theta << std::endl;        
@@ -607,7 +607,7 @@ void GammaJetFinalizer::runAnalysis() {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
 	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.SC_pt << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
+	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.pt << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
 	  size_t size = analysis.trigger_names->size();
 	  for (size_t i = 0; i < size; i++) {
 	    if (analysis.trigger_results->at(i)) {
@@ -619,7 +619,7 @@ void GammaJetFinalizer::runAnalysis() {
 	break;
       case TRIGGER_FOUND_BUT_PT_OUT:
 	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.SC_pt << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
+	  std::cout << MAKE_RED << "[Run #" << analysis.run << ", pT: " << photon.pt << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
 	  size_t size = analysis.trigger_names->size();
 	  for (size_t i = 0; i < size; i++) {
 	    if (analysis.trigger_results->at(i)) {
@@ -648,7 +648,7 @@ void GammaJetFinalizer::runAnalysis() {
       computePUWeight();
 	
       // N vertex based (if official recipe not available)
-      // computePUWeight_NVtxBased(photon.SC_pt, analysis.nvertex);      
+      // computePUWeight_NVtxBased(photon.pt, analysis.nvertex);      
     } else { // IsData
       // Note: if trigger bins == pT bins the prescale is not important
       // to calculate the response (they are normalized to shape)
@@ -682,7 +682,7 @@ void GammaJetFinalizer::runAnalysis() {
       std::cout<< "Final used weight   "<< eventWeight << std::endl;
     }
 
-    if(photon.is_present) h_ptPhoton_NoCut -> Fill(photon.SC_pt, eventWeight);
+    if(photon.is_present) h_ptPhoton_NoCut -> Fill(photon.pt, eventWeight);
 
     double mu;
     if(mIsMC){
@@ -741,7 +741,7 @@ void GammaJetFinalizer::runAnalysis() {
     passedJetPtCut++;
     if(mVerbose) std::cout<<"passedJetPtCut"<<std::endl;
     
-    bool secondJetOK = !secondJet.is_present || (secondJet.pt < 10 || secondJet.pt < mAlphaCut * photon.SC_pt);
+    bool secondJetOK = !secondJet.is_present || (secondJet.pt < 10 || secondJet.pt < mAlphaCut * photon.pt);
     
     //federico -- without this cut the extrapolation is always the same to different alpha cut
     //    if( !secondJetOK) continue;
@@ -785,8 +785,8 @@ void GammaJetFinalizer::runAnalysis() {
     h_nvertex_reweighted->Fill(analysis.nvertex, eventWeight);
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
-    h_ptPhoton               ->Fill(photon.SC_pt, eventWeight);
-    h_ptPhoton_Binned        ->Fill(photon.SC_pt, eventWeight);
+    h_ptPhoton               ->Fill(photon.pt, eventWeight);
+    h_ptPhoton_Binned        ->Fill(photon.pt, eventWeight);
     h_EtaPhoton             ->Fill(photon.eta, eventWeight);
     h_PhiPhoton             ->Fill(photon.phi, eventWeight);
     h_ptFirstJet              ->Fill(firstJet.pt, eventWeight);
@@ -800,7 +800,7 @@ void GammaJetFinalizer::runAnalysis() {
     double deltaPhi_2ndJet = fabs(reco::deltaPhi(secondJet.phi, photon.phi));
     h_deltaPhi_2ndJet     ->Fill(deltaPhi_2ndJet, eventWeight); //2nd jet - photon
     
-    h_alpha                     ->Fill(secondJet.pt / photon.SC_pt, eventWeight);
+    h_alpha                     ->Fill(secondJet.pt / photon.pt, eventWeight);
     h_MET                      ->Fill(MET.pt, eventWeight);
     h_rho                          ->Fill(photon.rho, eventWeight);
     h_hadTowOverEm      ->Fill(photon.hadTowOverEm, eventWeight);
@@ -813,19 +813,19 @@ void GammaJetFinalizer::runAnalysis() {
     // MPF
     deltaPhi_Photon_MET = reco::deltaPhi(photon.phi, MET.phi);
     h_deltaPhi_Photon_MET     ->Fill(deltaPhi_Photon_MET, eventWeight); // MET - photon
-    respMPF = 1. + MET.et * photon.SC_pt * cos(deltaPhi_Photon_MET) / (photon.SC_pt * photon.SC_pt);
+    respMPF = 1. + MET.et * photon.pt * cos(deltaPhi_Photon_MET) / (photon.pt * photon.pt);
 
     if(mVerbose){
     std::cout<<"photon phi = "<< photon.phi << std::endl;
     std::cout<<"MET phi = "<< MET.phi << std::endl;
     std::cout<<"deltaPhi PhotMET = "<< deltaPhi_Photon_MET << std::endl;
-    std::cout<<"photon pT = "<< photon.SC_pt << std::endl;
+    std::cout<<"photon pT = "<< photon.pt << std::endl;
     std::cout<<"MET = "<< MET.et << std::endl;
     std::cout<<"resp MPF = "<< respMPF << std::endl;
     }
 
     deltaPhi_Photon_MET_raw = reco::deltaPhi(photon.phi, rawMET.phi);
-    respMPFRaw = 1. + rawMET.et * photon.SC_pt * cos(deltaPhi_Photon_MET_raw) / (photon.SC_pt * photon.SC_pt);
+    respMPFRaw = 1. + rawMET.et * photon.pt * cos(deltaPhi_Photon_MET_raw) / (photon.pt * photon.pt);
     
     if ( mIsMC){
       deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
@@ -833,15 +833,15 @@ void GammaJetFinalizer::runAnalysis() {
     } // true MPF response
 
     // Balancing
-    respBalancing = firstJet.pt / photon.SC_pt;
-    respBalancingRaw = firstRawJet.pt / photon.SC_pt;
+    respBalancing = firstJet.pt / photon.pt;
+    respBalancingRaw = firstRawJet.pt / photon.pt;
     if( mIsMC )    respBalancingGen = firstJet.pt / firstGenJet.pt; // true balancing response 
-    if( mIsMC )    respGenPhot = firstGenJet.pt / photon.SC_pt; // used to constrain extrapolation fits // no more
-    if( mIsMC )    respPhotGamma = photon.SC_pt / genPhoton.pt; // to check photon response
+    if( mIsMC )    respGenPhot = firstGenJet.pt / photon.pt; // used to constrain extrapolation fits // no more
+    if( mIsMC )    respPhotGamma = photon.pt / genPhoton.pt; // to check photon response
 
-    int ptBin = mPtBinning.getPtBin(photon.SC_pt);
+    int ptBin = mPtBinning.getPtBin(photon.pt);
     if (ptBin < 0) {
-      if(mVerbose) std::cout << "Photon pt " << photon.SC_pt << " is not covered by our pt binning. Dumping event." << std::endl;
+      if(mVerbose) std::cout << "Photon pt " << photon.pt << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
     }
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(genPhoton.pt);
@@ -858,8 +858,8 @@ void GammaJetFinalizer::runAnalysis() {
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
       do {
-        h_ptPhoton_passedID                 -> Fill(photon.SC_pt, eventWeight);
-        h_ptPhoton_passedID_Binned    -> Fill(photon.SC_pt, eventWeight);
+        h_ptPhoton_passedID                 -> Fill(photon.pt, eventWeight);
+        h_ptPhoton_passedID_Binned    -> Fill(photon.pt, eventWeight);
 	h_EtaPhoton_passedID               -> Fill(photon.eta, eventWeight);
 	h_PhiPhoton_passedID               -> Fill(photon.phi, eventWeight);
         h_rho_passedID                          -> Fill(photon.rho, eventWeight);
@@ -885,7 +885,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  h_PhiSecondJet_2ndJetOK     ->Fill(secondJet.phi, eventWeight);
 	}
 	
-        h_alpha_passedID            ->Fill(secondJet.pt / photon.SC_pt, eventWeight);
+        h_alpha_passedID            ->Fill(secondJet.pt / photon.pt, eventWeight);
         h_MET_passedID              ->Fill(MET.et, eventWeight);
         h_rawMET_passedID        ->Fill(rawMET.et, eventWeight);
         h_METvsfirstJet                   ->Fill(MET.et, firstJet.pt, eventWeight);
@@ -895,8 +895,8 @@ void GammaJetFinalizer::runAnalysis() {
 	h_rho_vs_mu -> Fill(mu, photon.rho, eventWeight);
 	h_npvGood_vs_mu -> Fill(mu, analysis.nvertexGood, eventWeight);
 	
-	Profile_Bal_vs_Pt     -> Fill(photon.SC_pt, respBalancing, eventWeight);
-	Profile_MPF_vs_Pt   -> Fill(photon.SC_pt, respMPF, eventWeight);
+	Profile_Bal_vs_Pt     -> Fill(photon.pt, respBalancing, eventWeight);
+	Profile_MPF_vs_Pt   -> Fill(photon.pt, respMPF, eventWeight);
 	Profile_Bal_vs_Eta   -> Fill(fabs(firstJet.eta), respBalancing, eventWeight);
 	Profile_MPF_vs_Eta -> Fill(fabs(firstJet.eta), respMPF, eventWeight);
 	Profile_Bal_vs_Nvtx -> Fill(analysis.nvertex, respBalancing, eventWeight);
@@ -904,8 +904,8 @@ void GammaJetFinalizer::runAnalysis() {
 
 	// to be changed with SuperCluster pT
 	if (fabs(firstJet.eta) <1.305) { //only the special case now
-	  Profile_photon_SCPt_vs_Pt -> Fill(photon.SC_pt, photon.SC_pt, eventWeight);
-	  h_photon_SCPt_vs_Pt         -> Fill(photon.SC_pt, photon.SC_pt, eventWeight);
+	  Profile_photon_SCPt_vs_Pt -> Fill(photon.pt, photon.SC_pt, eventWeight);
+	  h_photon_SCPt_vs_Pt         -> Fill(photon.pt, photon.SC_pt, eventWeight);
 	}
 	
 	//fill N vertices as a function of eta/pT
@@ -916,8 +916,8 @@ void GammaJetFinalizer::runAnalysis() {
         }
 
 	double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
-	if(TotEne > 1 || TotEne < 0) continue;
-	//std::cout<< "Tot En = "<< TotEne << std::endl;
+	//	if(TotEne > 1 || TotEne < 0) continue;
+	std::cout<< "Tot En = "<< TotEne << std::endl;
 
 	//fill jet energy composition histo vectors
 	ChHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);
@@ -1001,19 +1001,19 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
-        int extrapBin = mExtrapBinning.getBin(photon.SC_pt, secondJet.pt, ptBin);
+        int extrapBin = mExtrapBinning.getBin(photon.pt, secondJet.pt, ptBin);
 	if(mIsMC) extrapGenBin = mExtrapBinning.getBin(genPhoton.pt, secondGenJet.pt, ptBin);
 	
 	do {
           if (extrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for extrapolation: " << secondJet.pt / photon.SC_pt << std::endl;
+	    if(mVerbose) std::cout << "No bin found for extrapolation: " << secondJet.pt / photon.pt << std::endl;
 	    break;
           }	  
-	  //   float alpha = secondJet.pt / photon.SC_pt;
+	  //   float alpha = secondJet.pt / photon.pt;
 	  //	const std::pair<float, float> ExtrapBin = mExtrapBinning.getBinValue(extrapBin);
 	  //	std::cout<< std::endl;
 	  //	std::cout<< "alpha  " << alpha << std::endl;
-	  //	std::cout<< "pTPhot  " << photon.SC_pt << std::endl;
+	  //	std::cout<< "pTPhot  " << photon.pt << std::endl;
 	  //	std::cout<< "extrapBin.getBinValue  " << ExtrapBin.first << " "<<ExtrapBin.second << std::endl;
 	  
           // Special case 
@@ -1036,11 +1036,11 @@ void GammaJetFinalizer::runAnalysis() {
 	  }
         } while (false);
 	
-        int rawExtrapBin = mExtrapBinning.getBin(photon.SC_pt, secondRawJet.pt, ptBin);
+        int rawExtrapBin = mExtrapBinning.getBin(photon.pt, secondRawJet.pt, ptBin);
 	
         do {
           if (rawExtrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << secondRawJet.pt / photon.SC_pt << std::endl;
+	    if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << secondRawJet.pt / photon.pt << std::endl;
             break;
           }
 	  
@@ -1326,11 +1326,11 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
     
     // - With the photon p_t, find the trigger it should pass
     // - Then, look on trigger list if it pass it or not (only for data)
-    //    std::cout << "photon.SC_pt  " << photon.SC_pt << std::endl;
+    //    std::cout << "photon.pt  " << photon.pt << std::endl;
     
     const PathData* mandatoryTrigger = nullptr;
     for (auto& path: mandatoryTriggers) {
-      if (path.second.range.in(photon.SC_pt)) {
+      if (path.second.range.in(photon.pt)) {
         mandatoryTrigger = &path;
       }
     }
@@ -1362,11 +1362,11 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
 
     const std::map<Range<float>, std::vector<MCTrigger>>& triggers = mMCTriggers->getTriggers();
 
-    //    std::cout<<photon.SC_pt <<std::endl;
+    //    std::cout<<photon.pt <<std::endl;
     
     const std::vector<MCTrigger>* mandatoryTrigger = nullptr;
     for (auto& path: triggers) {
-      if (path.first.in(photon.SC_pt)) {
+      if (path.first.in(photon.pt)) {
 	mandatoryTrigger = &path.second;
       }
     }
