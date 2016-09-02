@@ -1375,11 +1375,10 @@ float getEffectiveArea(float eta, IsolationType type) {
     else if (eta < 2.4)
       return 0.0462;
     else
-
       return 0.0656;
     break;
 
-    /*   //Official  
+    //Official  
   case IsolationType::PHOTONS:
     if (eta < 1.0)
       return 0.1271;
@@ -1396,7 +1395,7 @@ float getEffectiveArea(float eta, IsolationType type) {
     else
       return 0.2183;
     break;
-    */
+    /*
   case IsolationType::PHOTONS:
     if (eta <= 0.9)
       return 0.17;
@@ -1411,6 +1410,7 @@ float getEffectiveArea(float eta, IsolationType type) {
     else
       return 0.22;
     break;
+*/
   }
   
   return -1;
@@ -1626,11 +1626,11 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   float phoSC_phi = photon.superCluster()->phi();
   float phoSC_e = photon.superCluster()->rawEnergy();
 
-  std::cout<<"SC Photon Pt = "<< photon.superCluster()->rawEnergy()/ cosh(photon.superCluster()->eta()) << std::endl;
-  std::cout<<"SC Photon Eta = "<< photon.superCluster()->eta() << std::endl;
-  std::cout<<"SC Photon Phi = "<< photon.superCluster()->phi() << std::endl;
-  std::cout<<"SC Photon Raw En = "<< photon.superCluster()->rawEnergy() << std::endl;
-  std::cout<<"SC Photon En = "<< photon.superCluster()->energy() << std::endl;
+  // std::cout<<"SC Photon Pt = "<< photon.superCluster()->rawEnergy()/ cosh(photon.superCluster()->eta()) << std::endl;
+  // std::cout<<"SC Photon Eta = "<< photon.superCluster()->eta() << std::endl;
+  // std::cout<<"SC Photon Phi = "<< photon.superCluster()->phi() << std::endl;
+  // std::cout<<"SC Photon Raw En = "<< photon.superCluster()->rawEnergy() << std::endl;
+  // std::cout<<"SC Photon En = "<< photon.superCluster()->energy() << std::endl;
   
   updateBranch(mPhotonTree,&pho_is_present,"is_present","I");
   updateBranch(mPhotonTree,&pho_pt,"pt");
