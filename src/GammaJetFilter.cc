@@ -1005,6 +1005,10 @@ void GammaJetFilter::correctMETWithFootprintAndTypeI(pat::MET& rawMet, pat::MET&
     if (std::find(footprint.begin(), footprint.end(), reco::CandidatePtr(pfs,i)) != footprint.end()) {
       continue;
     }
+    // federico
+    //    if(pf.fromPV() == 0) std::cout<<"Dropped PF candidates"<<std::endl;
+    if(pf.fromPV() == 0) continue;
+
     FootprintMEx += -1.* pf.px();
     FootprintMEy += -1.* pf.py();    
   }// loop over pfCand
