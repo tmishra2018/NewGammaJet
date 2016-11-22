@@ -10,6 +10,8 @@
 #include "Tree/MiscTree.h"
 #include "Tree/ElectronTree.h"
 #include "Tree/MuonTree.h"
+#include "Tree/rootNTupleClass.h"
+
 
 #include "etaBinning.h"
 #include "ptBinning.h"
@@ -125,6 +127,7 @@ class GammaJetFinalizer
 
     //bool passTrigger(const TRegexp& regexp) const;
     int checkTrigger(std::string& passedTrigger, float& weight);
+    int checkTriggerfulltree(std::string& passedTrigger, bool& HLT1, bool& HLT2, bool& HLT3, bool& HLT4, bool& HLT5, bool& HLT6, float& weight);
 
     void cleanTriggerName(std::string& trigger);
     // new RD PU reweighting
@@ -162,6 +165,8 @@ class GammaJetFinalizer
     std::string buildPostfix();
 
     // Datas from step 2
+    rootNtupleClass fullinfo;
+    
     AnalysisTree analysis;
     PhotonTree photon;
     GenTree genPhoton;
