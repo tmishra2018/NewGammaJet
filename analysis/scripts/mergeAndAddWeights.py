@@ -43,15 +43,15 @@ filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+
 os.system("hadd -f "+filename_out+"  "+files )
 
 inputFile = TFile(filename_out,"UPDATE")
-h_sumOfWeights = inputFile.Get("gammaJet/h_sumW")
+h_sumOfWeights = inputFile.Get("SumWeight")
 sumOfWeights = h_sumOfWeights.Integral()
 
 ##### update total luminosity ######
-lumi = inputFile.Get("gammaJet/total_luminosity")
+lumi = inputFile.Get("totallumi")
 lumi.SetVal(1) # in /pb
 
 ##### update tree with weight for total normalization #####
-analysis_tree = inputFile.Get("gammaJet/analysis")
+analysis_tree = inputFile.Get("RootTupleTree/tree")
 
 analysis_tree.GetEntry(0)
 xsec = analysis_tree.crossSection
@@ -64,6 +64,6 @@ for event in analysis_tree:
   evtWeightTot[0] = (xsec / sumOfWeights)
   b_evtWeightTot.Fill()
 
-inputFile.cd("gammaJet")
+inputFile.cd("RootTupleTree")
 analysis_tree.Write("",TObject.kOverwrite)
 lumi.Write()

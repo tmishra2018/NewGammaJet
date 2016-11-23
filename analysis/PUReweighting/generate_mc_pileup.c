@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
   //USAGE: ./generate_mc_pileup.exe [MC sample]
 
-  TChain* chain = new TChain("gammaJet/analysis", "analysis");
+  TChain* chain = new TChain("RootTupleTree", "tree");
 
   // Load MC files
   std::cout << "Loading files..." << std::endl;

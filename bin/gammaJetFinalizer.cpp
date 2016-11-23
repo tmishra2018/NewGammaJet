@@ -381,23 +381,8 @@ void GammaJetFinalizer::runAnalysis() {
    Double_t totalluminosity = 0;
   if (! mIsMC) {
     // For data, there's only one file, so open it in order to read the luminosity
-    TFile* f = TFile::Open(mInputFiles[0].c_str());
-    uint64_t totalEventslu = FullinfoChain.GetEntries();
-    uint64_t storelumi = 0;
-    uint64_t to = totalEventslu;
-    for (uint64_t i = 0; i < to; i++) 
-    {
-      fullinfo.GetEntry(i);
-      
-      if(fullinfo.lumi != storelumi)
-      {
-        totalluminosity += fullinfo.lumi ;
-      }
-      storelumi = fullinfo.lumi;
-    }
-    
-    
-    analysisDir.make<TParameter<double>>("luminosity", totalluminosity);
+    TFile* f = TFile::Open(mInputFiles[0].c_str());        
+    analysisDir.make<TParameter<double>>("luminosity", static_cast<TParameter<double>*>(f->Get("totallumi"))->GetVal());
     f->Close();
     delete f;
   }
@@ -534,15 +519,15 @@ void GammaJetFinalizer::runAnalysis() {
     double generatorWeight = (mIsMC) ? fullinfo.weight : 1.;
     if (generatorWeight == 0.)
       generatorWeight = 1.;
-  /*  double evtWeightSum = (mIsMC) ? fullinfo.weight : 1.;
+    double evtWeightSum = (mIsMC) ? fullinfo.evtWeightTot : 1.;
     if (evtWeightSum == 0.)
-      evtWeightSum = 1.;*/
-    double eventWeight = (mIsMC) ? mPUWeight * generatorWeight /** evtWeightSum*/ : triggerWeight;
+      evtWeightSum = 1.;
+    double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : triggerWeight;
       
     if(mVerbose){
       if( mIsMC){
 	std::cout << "generatorWeight   "<< generatorWeight << std::endl; 
-	//std::cout << "evtWeightTot   "<<evtWeightSum << std::endl; 
+	std::cout << "evtWeightTot   "<<evtWeightSum << std::endl; 
 	std::cout << "mPUWeight     "<< mPUWeight << std::endl; 
       }else{
 	std::cout<< "triggerWeight    "<< triggerWeight << std::endl;
@@ -629,7 +614,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     h_mPUWeight                   ->Fill(mPUWeight);
     h_generatorWeight           ->Fill(generatorWeight);
-    h_analysis_evtWeightTot  ->Fill(/*evtWeightSum*/eventWeight);
+    h_analysis_evtWeightTot  ->Fill(evtWeightSum);
     h_event_weight_used       ->Fill(eventWeight);
     
     h_nvertex->Fill(fullinfo.nVtx);

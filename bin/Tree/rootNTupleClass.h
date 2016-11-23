@@ -108,6 +108,7 @@ public :
    Double_t        sigmaietaieta_photon;
    Double_t        trueInteraction;
    Double_t        weight;
+   Float_t         evtWeightTot;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -195,6 +196,7 @@ public :
    TBranch        *b_sigmaietaieta_photon;   //!
    TBranch        *b_trueInteraction;   //!
    TBranch        *b_weight;   //!
+   TBranch        *b_evtWeightTot; //!
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -344,6 +346,7 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("sigmaietaieta_photon", &sigmaietaieta_photon, &b_sigmaietaieta_photon);
    fChain->SetBranchAddress("trueInteraction", &trueInteraction, &b_trueInteraction);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
+   fChain->SetBranchAddress("evtWeightTot", &evtWeightTot, &b_evtWeightTot);
    InitCache();
 }
 

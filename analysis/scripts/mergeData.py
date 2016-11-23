@@ -97,8 +97,8 @@ else:
 
 ##### update total luminosity ######
 inputFile = TFile(filename_out,"UPDATE")
-lumi = inputFile.Get("gammaJet/total_luminosity")
+lumi = inputFile.Get("totallumi")
 lumi.SetVal(lumi_tot) # in /pb
-inputFile.cd("gammaJet")
+inputFile.cd("RootTupleTree")
 lumi.Write()
 
