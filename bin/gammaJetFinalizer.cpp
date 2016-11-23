@@ -520,6 +520,7 @@ void GammaJetFinalizer::runAnalysis() {
     if (generatorWeight == 0.)
       generatorWeight = 1.;
     double evtWeightSum = (mIsMC) ? fullinfo.evtWeightTot : 1.;
+
     if (evtWeightSum == 0.)
       evtWeightSum = 1.;
     double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : triggerWeight;

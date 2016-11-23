@@ -99,6 +99,6 @@ else:
 inputFile = TFile(filename_out,"UPDATE")
 lumi = inputFile.Get("totallumi")
 lumi.SetVal(lumi_tot) # in /pb
-inputFile.cd("RootTupleTree")
+inputFile.cd("rootTupleTree")
 lumi.Write()
 
