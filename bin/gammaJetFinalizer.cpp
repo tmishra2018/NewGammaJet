@@ -51,7 +51,12 @@
 #define TRIGGER_NOT_FOUND            -1
 #define TRIGGER_FOUND_BUT_PT_OUT     -2
 
-boost::shared_ptr<PUReweighter> reweighter;
+boost::shared_ptr<PUReweighter> reweighter30;
+boost::shared_ptr<PUReweighter> reweighter50;
+boost::shared_ptr<PUReweighter> reweighter75;
+boost::shared_ptr<PUReweighter> reweighter90;
+boost::shared_ptr<PUReweighter> reweighter120;
+boost::shared_ptr<PUReweighter> reweighter165;
 TFile* PUFile;
 bool EXIT = false;
 
@@ -91,12 +96,56 @@ void GammaJetFinalizer::runAnalysis() {
   typedef std::chrono::high_resolution_clock clock;
   
   if (mIsMC) {
-    // PU Reweighting 
+    // PU Reweighting
+
     static std::string cmsswBase = getenv("CMSSW_BASE");
-    static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();                          
-    static std::string puMC = TString::Format("%s/computed_mc_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData = TString::Format("%s/pu_truth_data2016_100bins.root", puPrefix.c_str()).Data();                                                           
-    reweighter = boost::shared_ptr<PUReweighter>(new PUReweighter(puData, puMC));                                                                                           
+    static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
+      
+     //HLTphoton30   
+                           
+    static std::string puMC30 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30.root", puPrefix.c_str()).Data();                                                           
+    reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
+    
+    //HLTphoton50
+
+
+    static std::string puMC50 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50.root", puPrefix.c_str()).Data();                                                           
+    reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
+    
+    //HLTphoton75 
+
+
+    static std::string puMC75 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75.root", puPrefix.c_str()).Data();                                                           
+    reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
+    
+    
+    //HLTphoton90 
+
+
+    static std::string puMC90 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90.root", puPrefix.c_str()).Data();                                                           
+    reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
+    
+    //HLTphoton120 
+
+
+    static std::string puMC120 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120.root", puPrefix.c_str()).Data();                                                           
+    reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
+    
+    //HLTphoton165
+
+
+    static std::string puMC165 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165.root", puPrefix.c_str()).Data();                                                           
+    reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
+    
+    
+    
+                                                                                               
     // Trigger
     std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc.xml", cmsswBase.c_str()).Data();
     std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
@@ -1075,8 +1124,15 @@ void GammaJetFinalizer::computePUWeight() {
   
   if (mNoPUReweighting)
     return;
+    
+  if(fullinfo.Pt_photon >= 40 && fullinfo.Pt_photon < 60)             mPUWeight = reweighter30->weight(fullinfo.trueInteraction);  
+  if(fullinfo.Pt_photon >= 60 && fullinfo.Pt_photon < 85)             mPUWeight = reweighter50->weight(fullinfo.trueInteraction);  
+  if(fullinfo.Pt_photon >= 85 && fullinfo.Pt_photon < 100)            mPUWeight = reweighter75->weight(fullinfo.trueInteraction);  
+  if(fullinfo.Pt_photon >= 100 && fullinfo.Pt_photon < 130)           mPUWeight = reweighter90->weight(fullinfo.trueInteraction);  
+  if(fullinfo.Pt_photon >= 130 && fullinfo.Pt_photon < 175)           mPUWeight = reweighter120->weight(fullinfo.trueInteraction);  
+  if(fullinfo.Pt_photon >= 175 )                                      mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
   
-  mPUWeight = reweighter->weight(fullinfo.trueInteraction);
+  
   //  std::cout<<analysis.ntrue_interactions<<std::endl;  
   //  std::cout<<mPUWeight<<std::endl;
 }//end compute PUReweight

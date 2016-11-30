@@ -56,6 +56,7 @@ lumi.SetVal(1) # in /pb
 
 ##### update tree with weight for total normalization #####
 analysis_tree = inputFile.Get("rootTupleTree/tree")
+Putree = inputFile.Get("puvariable")
 
 #analysis_tree.GetEntry(0)
 #xsec = analysis_tree.crossSection
@@ -72,3 +73,16 @@ for event in analysis_tree:
 inputFile.cd("rootTupleTree")
 analysis_tree.Write("",TObject.kOverwrite)
 lumi.Write()
+inputFile.cd("../")
+evtWeightTotpu = array("f", [0.] )
+b_evtWeightTotpu = Putree.Branch("evtWeightTot", evtWeightTotpu,"evtWeightTotpu/F")
+#import pdb; pdb.set_trace()
+for event in Putree:
+  evtWeightTotpu[0] = (xsec / sumOfWeights)
+  b_evtWeightTotpu.Fill()
+
+Putree.Write("",TObject.kOverwrite)
+
+
+
+

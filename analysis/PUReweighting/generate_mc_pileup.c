@@ -20,12 +20,13 @@ int main(int argc, char* argv[]) {
   string* mc = new string(argv[1]);
 
   //USAGE: ./generate_mc_pileup.exe [MC sample]
+  std::cout<<mc->c_str()<<std::endl;
 
-  TChain* chain = new TChain("RootTupleTree", "tree");
+  TChain* chain = new TChain("puvariable","puvariable");
 
   // Load MC files
-  std::cout << "Loading files..." << std::endl;
-  TString inputFile = TString::Format("files_%s.list", mc->c_str());
+   std::cout << "Loading files..." << std::endl;
+  TString inputFile = TString::Format("%s.list", mc->c_str());
   std::ifstream file(inputFile.Data());
 
   do {
@@ -36,23 +37,23 @@ int main(int argc, char* argv[]) {
     
     chain->AddFile(f.c_str());
   } while (true);
-  std::cout << "Done." << std::endl;
+std::cout << "Done." << std::endl;
 
   int entries = chain->GetEntries();
   std::cout << "Entries: " << entries << std::endl;
   chain->SetBranchStatus("*", 0);
-  chain->SetBranchStatus("ntrue_interactions", 1);
+  chain->SetBranchStatus("TrueInteractionall", 1);
   chain->SetBranchStatus("evtWeightTot", 1);
-  chain->SetBranchStatus("generator_weight", 1);
+  chain->SetBranchStatus("Generatorweight", 1);
 
   // Connect branches
   float n_trueInteractions;
-  chain->SetBranchAddress("ntrue_interactions", &n_trueInteractions);
+  chain->SetBranchAddress("TrueInteractionall", &n_trueInteractions);
  
   float evtWeightTot;
   chain->SetBranchAddress("evtWeightTot", &evtWeightTot);
   double generatorWeight;
-  chain->SetBranchAddress("generator_weight", &generatorWeight);
+  chain->SetBranchAddress("Generatorweight", &generatorWeight);
   if (generatorWeight == 0)
     generatorWeight = 1.;
 
