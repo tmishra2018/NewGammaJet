@@ -127,7 +127,7 @@ class GammaJetFinalizer
 
     //bool passTrigger(const TRegexp& regexp) const;
     int checkTrigger(std::string& passedTrigger, float& weight);
-    int checkTriggerfulltree(std::string& passedTrigger, bool& HLT1, bool& HLT2, bool& HLT3, bool& HLT4, bool& HLT5, bool& HLT6, float& weight);
+    int checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, float& weight);
 
     void cleanTriggerName(std::string& trigger);
     // new RD PU reweighting

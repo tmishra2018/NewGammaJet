@@ -90,12 +90,12 @@ public :
    Double_t        pTAK4_j1GEN;
    Double_t        pTAK4_j2;
    Double_t        pTAK4_j2GEN;
-   bool        passHLT_Photon120;
-   bool        passHLT_Photon165;
-   bool        passHLT_Photon30;
-   bool        passHLT_Photon50;
-   bool        passHLT_Photon75;
-   bool        passHLT_Photon90;
+   Double_t        passHLT_Photon120;
+   Double_t        passHLT_Photon165;
+   Double_t        passHLT_Photon30;
+   Double_t        passHLT_Photon50;
+   Double_t        passHLT_Photon75;
+   Double_t        passHLT_Photon90;
    Double_t        phiAK4_j1;
    Double_t        phiAK4_j2;
    Double_t        photonEnFrac_j1;

@@ -453,6 +453,7 @@ void GammaJetFinalizer::runAnalysis() {
   uint64_t passedElectronsCut = 0;
   uint64_t passedJetPtCut = 0;
   uint64_t passedAlphaCut = 0;
+  int triggernotzero = 0;
     
   uint64_t from = 0;
   uint64_t to = totalEvents;
@@ -503,11 +504,13 @@ void GammaJetFinalizer::runAnalysis() {
  //     continue;
  //   }
     
+    if(fullinfo.passHLT_Photon120) triggernotzero++;
     
      int checkTriggerResult = 0;
     std::string passedTrigger;
     float triggerWeight = 1.;
     if(mVerbose) std::cout<<"Finding trigger... " << std::endl;
+   // std::cout<<"test booleen  loop "<<fullinfo.passHLT_Photon30<<" "<<fullinfo.passHLT_Photon50<<" "<<fullinfo.passHLT_Photon75<<" "<< fullinfo.passHLT_Photon90<<" "<<fullinfo.passHLT_Photon120<<" "<<fullinfo.passHLT_Photon165<<std::endl;
     if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
@@ -954,6 +957,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << std::endl;
   std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
+  std::cout<<"test booléen "<<triggernotzero<<std::endl;
 }
 
 template<typename T>
@@ -1189,7 +1193,7 @@ void GammaJetFinalizer::checkInputFiles() {
 
 
 // necessary adaptation 
-int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, bool& HLT1, bool& HLT2, bool& HLT3, bool& HLT4, bool& HLT5, bool& HLT6, float& weight) {
+int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, float& weight) {
 if (! mIsMC) {
     const PathVector& mandatoryTriggers = mTriggers->getTriggers(fullinfo.run);
     
@@ -1214,18 +1218,18 @@ if (! mIsMC) {
    // size_t size = fullinfo.trigger_names->size();
  
     
-      bool passed1 = HLT1;
-      bool passed2 = HLT2;
-      bool passed3 = HLT3;
-      bool passed4 = HLT4;
-      bool passed5 = HLT5;
-      bool passed6 = HLT6;
+      double passed1 = HLT1;
+      double passed2 = HLT2;
+      double passed3 = HLT3;
+      double passed4 = HLT4;
+      double passed5 = HLT5;
+      double passed6 = HLT6;
       
       int passedtriggerresult ;
       
-      cout<<"test trigger parsing " <<endl;
+    // cout<<" test booleen "<<passed6<<" "<<passed5<<" "<<passed4<<" "<<passed3<<" "<< passed2<<" "<<passed1<<endl;
       
-      if (   passed6 == 1 )
+       if (   passed6 == 1 )
        passedtriggerresult = 6 ;
        
        if (   passed5 == 1 )
@@ -1245,7 +1249,7 @@ if (! mIsMC) {
         if ( passed1 == 1 ) 
         passedtriggerresult = 1 ;
         
-
+   //    cout<<"test trigger parsing " <<mandatoryTrigger->first <<" "<< passedtriggerresult<< endl;
        switch( passedtriggerresult ) { 
          
       case 6:
@@ -1271,10 +1275,10 @@ if (! mIsMC) {
       break; 
       
       case 4:
-       if (boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) {
+       if (boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) {
         passedTrigger = mandatoryTrigger->first.str();
 	weight = 1; // prescale from ntupla
-	if(mVerbose) std::cout << "Trigger name   " << "HLT_Photon75_R9Id90_HE10_IsoM_v.*" << std::endl;
+	if(mVerbose) std::cout << "Trigger name   " << "HLT_Photon90_R9Id90_HE10_IsoM_v.*" << std::endl;
 	//if(mVerbose) std::cout << "Trigger prescale   " << analysis.trigger_prescale->at(i) << std::endl;
 	//	std::cout << "Trigger OK"<<std::endl;
 	return TRIGGER_OK;
