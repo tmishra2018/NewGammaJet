@@ -8,7 +8,7 @@ from ROOT import *
 from array import array
 import datetime
 
-usage = "usage:  python mergeData.py --inputList list_of_files_to_merge.txt -o ./  --lumi_tot 1000. [in /pb]"
+usage = "usage:  python mergeData.py --inputList list_of_files_to_merge.txt -o ./  --lumi_tot 1000. [in /pb] --run run era"
 
 parser = argparse.ArgumentParser(description='Process options.')
 
@@ -21,6 +21,9 @@ parser.add_argument("-o", "--outputDir", type=str, dest="outputDir", default="./
 parser.add_argument("--lumi_tot", type=float, dest="lumi_tot", default=1,
         help="total luminosity",
 	    )
+parser.add_argument("--run", type=str, dest="run", default=1,
+        help="run era",
+	    )
 
 args = parser.parse_args()
 print args 
@@ -28,6 +31,7 @@ inputList = args.inputList
 outputDir = args.outputDir
 #xsec = args.xsec
 lumi_tot = args.lumi_tot
+run = args.run
 ###################
 #read input file
 ins = open(args.inputList,"r")
@@ -42,16 +46,16 @@ for line in ins:
   if i < 550:
     file = line.strip()
     files1 += str(" "+file)
-    pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-    fullname = os.path.split(pathT2)[1]
-    name = fullname.split("_")
+   # pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
+   # fullname = os.path.split(pathT2)[1]
+   # name = fullname.split("_")
     i= i+1
   if i >= 550:
     file = line.strip()
     files2 += str(" "+file)
-    pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-    fullname = os.path.split(pathT2)[1]
-    name = fullname.split("_")
+   # pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
+   # fullname = os.path.split(pathT2)[1]
+   # name = fullname.split("_")
     i= i+1
 
 print i
@@ -64,13 +68,13 @@ today.strftime('%d-%m-%Y')
 pwd = os.environ['PWD']
 
 if i < 550:
-  filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
+  filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
   print filename_out
   os.system("hadd -f "+filename_out+"  "+files1 )
 else:
-  filename_out = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
-  filename_out1 = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part1.root" 
-  filename_out2 = outputDir+"/PhotonJet_2ndLevel_"+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part2.root" 
+  filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
+  filename_out1 = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+"_Part1.root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part1.root" 
+  filename_out2 = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+"_Part2.root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part2.root" 
   print filename_out1
   print filename_out2
   print filename_out
@@ -99,6 +103,17 @@ else:
 inputFile = TFile(filename_out,"UPDATE")
 lumi = inputFile.Get("totallumi")
 lumi.SetVal(lumi_tot) # in /pb
-inputFile.cd("rootTupleTree")
+
+print lumi.GetVal()
 lumi.Write()
+analysis_tree = inputFile.Get("rootTupleTree/tree")
+
+evtWeightTotA = array("f", [0.] )
+b_evtWeightTot = analysis_tree.Branch("evtWeightTotA", evtWeightTotA,"evtWeightTotA/F")
+for event in analysis_tree:
+  evtWeightTotA[0] = 0
+  b_evtWeightTot.Fill()
+inputFile.cd("rootTupleTree")
+analysis_tree.Write("",TObject.kOverwrite)
+
 

@@ -21,7 +21,13 @@ int main(int argc, char* argv[]) {
     jetTypes.push_back("puppi");
     TCLAP::ValuesConstraint<std::string> allowedJetTypes(jetTypes);
     
+ /*   std::vector<std::string> NormTypes;
+    jetTypes.push_back("LUMI");
+    jetTypes.push_back("SHAPE");
+    TCLAP::ValuesConstraint<std::string> allowedNormTypes(NormTypes);*/
+    
     TCLAP::ValueArg<std::string> typeArg("", "type", "jet type", true, "pf", &allowedJetTypes, cmd);
+  //  TCLAP::ValueArg<std::string> NormArg("", "norm", "Normalization", true, "LUMI", &allowedNormTypes, cmd);
     
     std::vector<std::string> algoTypes;
     algoTypes.push_back("ak4");
@@ -49,6 +55,7 @@ int main(int argc, char* argv[]) {
     std::string data_dataset = dataArg.getValue();
     std::string mc_dataset = mc1Arg.getValue();
     std::string mc2_dataset = mc2Arg.getValue();
+   // std::string normtype = NormArg.getValue();
     std::string FIT_RMS = resoArg.getValue();
     std::string jetAlgo = (algoArg.getValue() == "ak4") ? "AK4" : "AK8";
     std::string recoType = (typeArg.getValue() == "pf") ? "PFlow" : "PUPPI";
@@ -101,7 +108,7 @@ int main(int argc, char* argv[]) {
     double dLumi = 1;
     //Read luminosity
     if(dataFile) {
-    TParameter<double>* lumi = static_cast<TParameter<double>*>(dataFile->Get("analysis/luminosity"));
+    TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
     dLumi = lumi -> GetVal();
     }
     std::cout<< "Lumi  "<< dLumi << std::endl;

@@ -35,8 +35,11 @@ public :
    Double_t        IdTight_j1;
    Double_t        IdTight_j2;
    Double_t        MET;
+   Double_t        MET_Eta;
+   Double_t        MET_Phi;
+   Double_t        MET_Pt;
    Double_t        METRAW;
-   Double_t        METoverHTAK4;
+   Double_t        METoverHTAK4;   
    Double_t        NHiso_photon;
    Double_t        Nak4;
    Double_t        PassJSON;
@@ -109,6 +112,7 @@ public :
    Double_t        trueInteraction;
    Double_t        weight;
    Float_t         evtWeightTot;
+   Float_t         evtWeightTotA;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -123,6 +127,9 @@ public :
    TBranch        *b_IdTight_j1;   //!
    TBranch        *b_IdTight_j2;   //!
    TBranch        *b_MET;   //!
+   TBranch        *b_MET_Eta;   //!
+   TBranch        *b_MET_Phi;   //!
+   TBranch        *b_MET_Pt;   //!
    TBranch        *b_METRAW;    //!
    TBranch        *b_METoverHTAK4;   //!
    TBranch        *b_NHiso_photon;   //!
@@ -197,6 +204,7 @@ public :
    TBranch        *b_trueInteraction;   //!
    TBranch        *b_weight;   //!
    TBranch        *b_evtWeightTot; //!
+   TBranch        *b_evtWeightTotA; //!
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -273,6 +281,9 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("IdTight_j1", &IdTight_j1, &b_IdTight_j1);
    fChain->SetBranchAddress("IdTight_j2", &IdTight_j2, &b_IdTight_j2);
    fChain->SetBranchAddress("MET", &MET, &b_MET);
+   fChain->SetBranchAddress("MET_Eta", &MET_Eta, &b_MET_Eta);
+   fChain->SetBranchAddress("MET_Phi", &MET_Phi, &b_MET_Phi);
+   fChain->SetBranchAddress("MET_Pt", &MET_Pt, &b_MET_Pt);
    fChain->SetBranchAddress("METRAW", &METRAW, &b_METRAW);
    fChain->SetBranchAddress("METoverHTAK4", &METoverHTAK4, &b_METoverHTAK4);
    fChain->SetBranchAddress("NHiso_photon", &NHiso_photon, &b_NHiso_photon);
@@ -347,6 +358,7 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("trueInteraction", &trueInteraction, &b_trueInteraction);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("evtWeightTot", &evtWeightTot, &b_evtWeightTot);
+   fChain->SetBranchAddress("evtWeightTotA", &evtWeightTotA, &b_evtWeightTotA);
    InitCache();
 }
 

@@ -58,6 +58,8 @@ boost::shared_ptr<PUReweighter> reweighter90;
 boost::shared_ptr<PUReweighter> reweighter120;
 boost::shared_ptr<PUReweighter> reweighter165;
 TFile* PUFile;
+TFile* EoverP_dataMCRatio_File;
+TH1D *h_test=0;
 bool EXIT = false;
 
 GammaJetFinalizer::GammaJetFinalizer() {
@@ -97,50 +99,53 @@ void GammaJetFinalizer::runAnalysis() {
   
   if (mIsMC) {
     // PU Reweighting
-
+    
     static std::string cmsswBase = getenv("CMSSW_BASE");
+
+    
+   
     static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
       
      //HLTphoton30   
                            
-    static std::string puMC30 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC30 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
     
     //HLTphoton50
 
 
-    static std::string puMC50 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC50 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
     
     //HLTphoton75 
 
 
-    static std::string puMC75 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC75 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
     
     
     //HLTphoton90 
 
 
-    static std::string puMC90 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC90 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
     
     //HLTphoton120 
 
 
-    static std::string puMC120 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC120 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
     
     //HLTphoton165
 
 
-    static std::string puMC165 = TString::Format("%s/computed_mc_pathtoMCsampletest_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-    static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165.root", puPrefix.c_str()).Data();                                                           
+    static std::string puMC165 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
     
     
@@ -158,6 +163,26 @@ void GammaJetFinalizer::runAnalysis() {
     std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_data.xml", cmsswBase.c_str()).Data();
     std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
     mTriggers      = new Triggers( TriggerFile.c_str() ) ;
+    
+     // get EoverP_dataMCRatio file:
+    static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/EGamma_dataMCRatio", cmsswBase.c_str()).Data();                          
+    TString EoverP_dataMCRatio_FileName = TString::Format("%s/EoverP_vsRegrCorrEnergy_dataMCRatio_FirstVersion.root", Prefix.c_str()).Data(); //old version available
+    // TString EoverP_dataMCRatio_FileName = TString::Format("%s/RunBtoD/EoverP_vsRegrCorrEnergy_dataMCRatio.root", Prefix.c_str()).Data();   // only for BCD
+
+    EoverP_dataMCRatio_File = TFile::Open(EoverP_dataMCRatio_FileName);
+
+    // Test about the values in the TH1
+    // get histogram:
+
+    h_test = (TH1D*)EoverP_dataMCRatio_File->Get("EoverP_vsRegrCorrEnergy_dataMCRatio");
+    int NBins = h_test->GetNbinsX();
+    std::cout<< "EoverP" << std::endl;  
+    std::cout<< "NBins " << NBins << std::endl;  
+    for(int ii =1 ; ii < NBins+1 ; ii++){
+      double dataMCRatio = h_test -> GetBinContent(ii);
+      std::cout<< "data MC Ratio = " << dataMCRatio << std::endl;  
+}
+    
   }
   
   // Initialization
@@ -209,7 +234,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << "##########" << std::endl << std::endl;
 
   // Output file
-  std::string outputFile = TString::Format("PhotonJet_%s_%s.root", mDatasetName.c_str(), postFix.c_str()).Data();
+  std::string outputFile = TString::Format("PhotonJet_%s_%s_%s.root", mDatasetName.c_str(),mRunera.c_str(), postFix.c_str()).Data();
   fwlite::TFileService fs(outputFile);
 
 #if ADD_TREES
@@ -329,7 +354,33 @@ void GammaJetFinalizer::runAnalysis() {
 
   TH2F* h_METvsfirstJet = analysisDir.make<TH2F>("METvsfirstJet", "MET vs firstJet", 150, 0., 300., 150, 0., 500.);
   TH2F* h_firstJetvsSecondJet = analysisDir.make<TH2F>("firstJetvsSecondJet", "firstJet vs secondJet", 60, 5., 100., 60, 5., 100.);
-
+  
+  //Ptgamma
+  TFileDirectory PtgammaDir = analysisDir.mkdir("Ptgamma");
+  std::vector<std::vector<TH1F*> > Ptgamma = buildEtaPtVector<TH1F>(PtgammaDir, "Pt_gamma", 600, 0., 3000.);
+  std::vector<TH1F*> PtgammaEta013       = buildPtVector<TH1F>(PtgammaDir, "Pt_gamma", "eta0013", 600, 0., 3000.);
+  
+  //Pt1st jet
+  TFileDirectory Pt1stjetDir = analysisDir.mkdir("Ptfirstjets");
+  std::vector<std::vector<TH1F*> > Pt1st = buildEtaPtVector<TH1F>(Pt1stjetDir, "Pt_1stjet", 600, 0., 3000.);
+  std::vector<TH1F*> Pt1stEta013       = buildPtVector<TH1F>(Pt1stjetDir, "Pt_1stjet", "eta0013", 600, 0., 3000.);
+  //Pt2nd jet
+   TFileDirectory Pt2ndjetDir = analysisDir.mkdir("Ptsecondjets");
+   std::vector<std::vector<TH1F*> > Pt2nd = buildEtaPtVector<TH1F>(Pt2ndjetDir, "Pt_2ndjet", 600, 0., 3000.);
+   std::vector<TH1F*> Pt2ndEta013       = buildPtVector<TH1F>(Pt2ndjetDir, "Pt_2ndjet", "eta0013", 600, 0., 3000.);
+  //MET
+   TFileDirectory METDir = analysisDir.mkdir("Met");
+   std::vector<std::vector<TH1F*> > Met = buildEtaPtVector<TH1F>(METDir, "met", 300, 0., 250.);
+   std::vector<TH1F*> MetEta013       = buildPtVector<TH1F>(METDir, "met", "eta0013", 300, 0., 250.); 
+   
+    TFileDirectory trueinterDir = analysisDir.mkdir("MUDir");
+   std::vector<std::vector<TH1F*> > Mu = buildEtaPtVector<TH1F>(trueinterDir, "mu", 101, 0., 100.);
+   std::vector<TH1F*> MuEta013       = buildPtVector<TH1F>(trueinterDir, "mu", "eta0013", 101, 0., 100.);
+   
+   TFileDirectory NverticeDir = analysisDir.mkdir("nvertices");
+   std::vector<std::vector<TH1F*> > Nverticesh = buildEtaPtVector<TH1F>(NverticeDir, "nvertices", 101, 0., 100.);
+   std::vector<TH1F*> NverticeshEta013       = buildPtVector<TH1F>(NverticeDir, "nvertices", "eta0013", 101, 0., 100.);
+  
   // Balancing
   TFileDirectory balancingDir = analysisDir.mkdir("balancing");
   std::vector<std::vector<TH1F*> > responseBalancing = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing", 150, 0., 2.);
@@ -378,13 +429,22 @@ void GammaJetFinalizer::runAnalysis() {
   // response vs Pt (all eta)
   TProfile* Profile_Bal_vs_Pt = balancingDir.make<TProfile>("Bal_vs_Pt", "Balancing vs Pt", binnum, ptBins, 0, 2);
   TProfile* Profile_MPF_vs_Pt = mpfDir.make<TProfile>("MPF_vs_Pt", "MPF vs Pt", binnum, ptBins, 0, 2);
+  
+  TProfile* Profile_Pt_gamma_vs_Pt = PtgammaDir.make<TProfile>("Ptgamma_vs_Pt", "Ptgamma vs Pt", binnum, ptBins, 0., 3000.);
+  TProfile* Profile_Pt_1stjet_vs_Pt = PtgammaDir.make<TProfile>("Pt_1stjet_vs_Pt", "Pt_1stjet vs Pt", binnum, ptBins, 0., 3000.);
+  TProfile* Profile_Pt2nd_jet_vs_Pt = PtgammaDir.make<TProfile>("Pt2nd_jet_vs_Pt", "Pt2nd vs Pt", binnum, ptBins, 0., 3000.);
+  TProfile* Profile_Met_vs_Pt = PtgammaDir.make<TProfile>("Met_vs_Pt", "Met vs Pt", binnum, ptBins, 0., 3000.);  
   // response vs Eta (all pT)
   TProfile* Profile_Bal_vs_Eta = balancingDir.make<TProfile>("Bal_vs_Eta", "Balancing vs Eta", binnumEta, etaBins, 0, 2);
   TProfile* Profile_MPF_vs_Eta = mpfDir.make<TProfile>("MPF_vs_Eta", "MPF vs Eta", binnumEta, etaBins, 0, 2);
+  
+  TProfile* Profile_Pt_gamma_vs_Eta = PtgammaDir.make<TProfile>("Ptgamma_vs_Eta", "Ptgamma vs Eta", binnumEta, etaBins, 0., 3000.);
   // response vs nVtx (all pT and eta)
   TProfile* Profile_Bal_vs_Nvtx = balancingDir.make<TProfile>("Bal_vs_Nvtx", "Balancing vs Nvtx", 10, 0, 40, 0, 2);
   TProfile* Profile_MPF_vs_Nvtx = mpfDir.make<TProfile>("MPF_vs_Nvtx", "MPF vs Nvtx", 10, 0, 40, 0, 2);
-
+  
+  TProfile* Profile_Pt_gamma_vs_Nvtx = PtgammaDir.make<TProfile>("Ptgamma_vs_Nvtx", "Ptgamma vs Nvtx", 10, 0, 40, 0., 3000.);
+  
   // Phot SC vs Pho
   // |eta| < 1.3 --- for the others? --- vector of TProfile!
   TProfile* Profile_photon_SCPt_vs_Pt = analysisDir.make<TProfile>("PhotSCPt_vs_Pt", "SCPt vs Pt", binnum, ptBins, 0, 2000); 
@@ -431,7 +491,7 @@ void GammaJetFinalizer::runAnalysis() {
   if (! mIsMC) {
     // For data, there's only one file, so open it in order to read the luminosity
     TFile* f = TFile::Open(mInputFiles[0].c_str());        
-    analysisDir.make<TParameter<double>>("luminosity", static_cast<TParameter<double>*>(f->Get("totallumi"))->GetVal());
+    analysisDir.make<TParameter<float>>("luminosity", static_cast<TParameter<float>*>(f->Get("totallumi"))->GetVal());
     f->Close();
     delete f;
   }
@@ -567,11 +627,13 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose)  std::cout<< triggerWeight << std::endl;
     }
       
-    // Weights 
+    // Weights
+    
+     
     double generatorWeight = (mIsMC) ? fullinfo.weight : 1.;
     if (generatorWeight == 0.)
       generatorWeight = 1.;
-    double evtWeightSum = (mIsMC) ? fullinfo.evtWeightTot : 1.;
+    double evtWeightSum = (mIsMC) ? fullinfo.evtWeightTotA : 1.;
 
     if (evtWeightSum == 0.)
       evtWeightSum = 1.;
@@ -596,6 +658,7 @@ void GammaJetFinalizer::runAnalysis() {
     } else {
       mu = getAvgPU( fullinfo.run, fullinfo.lumi );
     }
+   // if(mu!=0.)  std::cout<<"test n true interaction : "<<mu<<std::endl;
     
     // Event selection
     // The photon is "Good" from previous step (Filter)
@@ -665,6 +728,46 @@ void GammaJetFinalizer::runAnalysis() {
     }
 #endif
     
+    double dataMCRatio;
+    if( mIsMC){
+      dataMCRatio = 1;
+    }else{
+      int bin = h_test-> FindBin( fullinfo.Energy_photon );
+      int NBins = h_test->GetNbinsX();
+      if(bin >NBins){
+	dataMCRatio = h_test -> GetBinContent( NBins );
+      }else{
+	dataMCRatio = h_test -> GetBinContent( bin );
+      }
+    }
+    //std::cout<< "photon --> pt = " << photon.pt <<" eta = "<< photon.eta << " phi = "<< photon.phi<<" e = "<< photon.e <<std::endl;
+    //std::cout<< "MET --> pt = " << MET.pt <<" eta = "<< MET.eta << " phi = "<< MET.phi<<" e = "<< MET.e <<std::endl;
+    //std::cout<< "MET et = " << MET.et <<std::endl;
+
+    //std::cout<< "SF = " << dataMCRatio <<std::endl;
+
+    TLorentzVector PhotonCorr;
+    PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
+    TLorentzVector Photon;
+    Photon.SetPtEtaPhiE( fullinfo.Pt_photon, fullinfo.Eta_photon, fullinfo.Phi_photon, fullinfo.Energy_photon );
+    TLorentzVector met;
+    met.SetPtEtaPhiE( fullinfo.MET_Pt, fullinfo.MET_Eta, fullinfo.MET_Phi, fullinfo.MET);
+
+    TLorentzVector METCorr; 
+    METCorr = met + Photon - PhotonCorr;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    if(PhotonCorr.Pt() < 175. ) continue;
+    
+    
     h_mPUWeight                   ->Fill(mPUWeight);
     h_generatorWeight           ->Fill(generatorWeight);
     h_analysis_evtWeightTot  ->Fill(evtWeightSum);
@@ -675,8 +778,8 @@ void GammaJetFinalizer::runAnalysis() {
     h_nvertex_reweighted->Fill(fullinfo.nVtx, eventWeight);
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
-    h_ptPhoton               ->Fill(fullinfo.Pt_photon, eventWeight);
-    h_ptPhoton_Binned        ->Fill(fullinfo.Pt_photon, eventWeight);
+    h_ptPhoton               ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+    h_ptPhoton_Binned        ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
     h_EtaPhoton             ->Fill(fullinfo.Eta_photon, eventWeight);
     h_PhiPhoton             ->Fill(fullinfo.Phi_photon, eventWeight);
     h_ptFirstJet              ->Fill(fullinfo.pTAK4_j1, eventWeight);
@@ -705,29 +808,29 @@ void GammaJetFinalizer::runAnalysis() {
     std::cout<<"photon phi = "<< fullinfo.Phi_photon << std::endl;
     std::cout<<"MET phi = "<< MET.phi << std::endl;
     std::cout<<"deltaPhi PhotMET = "<< deltaPhi_Photon_MET << std::endl;
-    std::cout<<"photon pT = "<< fullinfo.Pt_photon << std::endl;
+    std::cout<<"photon pT = "<< PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << std::endl;
     std::cout<<"MET = "<< fullinfo.MET << std::endl;
     std::cout<<"resp MPF = "<< fullinfo.RMPF << std::endl;
     }
 
    // deltaPhi_Photon_MET_raw = reco::deltaPhi(photon.phi, rawMET.phi);
     respMPFRaw = fullinfo.RMPFRAW;
-    
+    respMPF = 1. + METCorr.Pt() * PhotonCorr.Pt() * cos(METCorr.DeltaPhi(PhotonCorr)) / (PhotonCorr.Pt() * PhotonCorr.Pt());
     if ( mIsMC){
     //  deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
       respMPFGen = fullinfo.RMPF;
     } // true MPF response
 
     // Balancing
-    respBalancing = fullinfo.Rbalancing;
+    respBalancing = fullinfo.pTAK4_j1 / PhotonCorr.Pt();/*fullinfo.Rbalancing*/;
   //  respBalancingRaw = firstRawJet.pt / photon.pt;
     if( mIsMC && fullinfo.pTAK4_j1GEN!=0)    respBalancingGen = fullinfo.pTAK4_j1 / fullinfo.pTAK4_j1GEN; // true balancing response 
-    if( mIsMC )    respGenPhot = fullinfo.pTAK4_j1GEN / fullinfo.Pt_photon; // used to constrain extrapolation fits // no more
-    if( mIsMC )    respPhotGamma = fullinfo.Pt_photon / fullinfo.Pt_photonGEN; // to check photon response
+    if( mIsMC )    respGenPhot = fullinfo.pTAK4_j1GEN / PhotonCorr.Pt()/*fullinfo.Pt_photon*/; // used to constrain extrapolation fits // no more
+    if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
-    int ptBin = mPtBinning.getPtBin(fullinfo.Pt_photon);
+    int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
     if (ptBin < 0) {
-      if(mVerbose) std::cout << "Photon pt " << fullinfo.Pt_photon << " is not covered by our pt binning. Dumping event." << std::endl;
+      if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
     }
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(fullinfo.Pt_photonGEN);
@@ -744,8 +847,8 @@ void GammaJetFinalizer::runAnalysis() {
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
       do {
-        h_ptPhoton_passedID                 -> Fill(fullinfo.Pt_photon, eventWeight);
-        h_ptPhoton_passedID_Binned    -> Fill(fullinfo.Pt_photon, eventWeight);
+        h_ptPhoton_passedID                 -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+        h_ptPhoton_passedID_Binned    -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
 	h_EtaPhoton_passedID               -> Fill(fullinfo.Eta_photon, eventWeight);
 	h_PhiPhoton_passedID               -> Fill(fullinfo.Phi_photon, eventWeight);
         h_rho_passedID                          -> Fill(fullinfo.rho, eventWeight);
@@ -781,24 +884,34 @@ void GammaJetFinalizer::runAnalysis() {
 	h_rho_vs_mu -> Fill(mu, fullinfo.rho, eventWeight);
 	h_npvGood_vs_mu -> Fill(mu,fullinfo.nVtx, eventWeight);
 	
-	Profile_Bal_vs_Pt     -> Fill(fullinfo.Pt_photon, fullinfo.Rbalancing, eventWeight);
-	Profile_MPF_vs_Pt   -> Fill(fullinfo.Pt_photon, fullinfo.RMPF, eventWeight);
-	Profile_Bal_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), fullinfo.Rbalancing, eventWeight);
-	Profile_MPF_vs_Eta -> Fill(fabs(fullinfo.etaAK4_j1), fullinfo.RMPF, eventWeight);
-	Profile_Bal_vs_Nvtx -> Fill(fullinfo.nVtx, fullinfo.Rbalancing, eventWeight);
-	Profile_MPF_vs_Nvtx -> Fill(fullinfo.nVtx, fullinfo.RMPF, eventWeight);	
-
+	Profile_Bal_vs_Pt     -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+	Profile_MPF_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respMPF/* fullinfo.RMPF*/, eventWeight);
+	
+	Profile_Pt_gamma_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photon, eventWeight);
+	Profile_Pt_1stjet_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j1, eventWeight);
+	Profile_Pt2nd_jet_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j2, eventWeight); 
+	Profile_Met_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.MET, eventWeight);
+	Profile_Bal_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+	Profile_MPF_vs_Eta -> Fill(fabs(fullinfo.etaAK4_j1),respMPF/* fullinfo.RMPF*/, eventWeight);
+	
+        Profile_Pt_gamma_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), fullinfo.Pt_photon, eventWeight);
+        
+	Profile_Bal_vs_Nvtx -> Fill(fullinfo.nVtx, respBalancing/*fullinfo.Rbalancing*/, eventWeight);	
+	Profile_MPF_vs_Nvtx -> Fill(fullinfo.nVtx,respMPF/* fullinfo.RMPF*/, eventWeight);	
+	
+        Profile_Pt_gamma_vs_Nvtx   -> Fill(fullinfo.nVtx, PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+        
 // 	// to be changed with SuperCluster pT
  	if (fabs(fullinfo.etaAK4_j1) <1.305) { //only the special case now
- 	  Profile_photon_SCPt_vs_Pt -> Fill(fullinfo.Pt_photon, fullinfo.Pt_photonSC, eventWeight);
- 	  h_photon_SCPt_vs_Pt         -> Fill(fullinfo.Pt_photon, fullinfo.Pt_photonSC, eventWeight);
+ 	  Profile_photon_SCPt_vs_Pt -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
+ 	  h_photon_SCPt_vs_Pt         -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
 	}
 	
 	//fill N vertices as a function of eta/pT
 	Nvertices[etaBin][ptBin]->Fill(fullinfo.nVtx, eventWeight);		
         if (vertexBin >= 0) {
-          vertex_responseBalancing[etaBin][vertexBin] -> Fill(fullinfo.Rbalancing, eventWeight);
-          vertex_responseMPF[etaBin][vertexBin]         -> Fill(fullinfo.RMPF, eventWeight);
+          vertex_responseBalancing[etaBin][vertexBin] -> Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
         }
 
 	//double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
@@ -829,15 +942,29 @@ void GammaJetFinalizer::runAnalysis() {
 	  MuFractionEta013[ptBin]->Fill(fullinfo.muEnFract_j1, eventWeight);	    
 	  LeptFractionEta013[ptBin]->Fill((fullinfo.muEnFract_j1+fullinfo.chargedElectromFrac_j1), eventWeight);
 	  
-	  responseBalancingEta013[ptBin]->Fill(fullinfo.Rbalancing, eventWeight);
+	  responseBalancingEta013[ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
 	  responseBalancingRawEta013[ptBin]->Fill((fullinfo.Rbalancing)*(1./fullinfo.jetJecAK4_j1), eventWeight);
-	  responseMPFEta013[ptBin]->Fill(fullinfo.RMPF, eventWeight);
+	  responseMPFEta013[ptBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  responseMPFRawEta013[ptBin]->Fill(respMPFRaw, eventWeight);
+	  PtgammaEta013[ptBin]->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+	  Pt1stEta013[ptBin]->Fill(fullinfo.pTAK4_j1, eventWeight);
+	  Pt2ndEta013[ptBin]->Fill(fullinfo.pTAK4_j2, eventWeight);
+	  MetEta013[ptBin]->Fill(fullinfo.MET, eventWeight);
+	  MuEta013[ptBin]->Fill(mu, eventWeight);
+	  NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
+	  
 	}
-        responseBalancing[etaBin][ptBin]->Fill(fullinfo.Rbalancing, eventWeight);
+	
+        responseBalancing[etaBin][ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
         responseBalancingRaw[etaBin][ptBin]->Fill((fullinfo.Rbalancing)*(1./fullinfo.jetJecAK4_j1), eventWeight);
-        responseMPF[etaBin][ptBin]->Fill(fullinfo.RMPF, eventWeight);
+        responseMPF[etaBin][ptBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
         responseMPFRaw[etaBin][ptBin]->Fill(respMPFRaw, eventWeight);	
+	Ptgamma[etaBin][ptBin]->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+	Pt1st[etaBin][ptBin]->Fill(fullinfo.pTAK4_j1, eventWeight);
+	Pt2nd[etaBin][ptBin]->Fill(fullinfo.pTAK4_j2, eventWeight);
+	Met[etaBin][ptBin]->Fill(fullinfo.MET, eventWeight);
+	Mu[etaBin][ptBin]->Fill(mu, eventWeight);
+        Nverticesh[etaBin][ptBin]->Fill(fullinfo.nVtx, eventWeight);
 	
         // Gen MC values
 	if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0) {
@@ -881,11 +1008,11 @@ void GammaJetFinalizer::runAnalysis() {
 	  
           // Special case 
 	  if (fabs(firstJet.eta) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(fullinfo.Rbalancing, eventWeight);
-            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(fullinfo.RMPF, eventWeight);
+            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
-          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(fullinfo.Rbalancing, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(fullinfo.RMPF, eventWeight);
+          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
 	  if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
 	    if (fabs(firstGenJet.eta) < 1.305) {
@@ -910,10 +1037,10 @@ void GammaJetFinalizer::runAnalysis() {
 	  
           // Special case 
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingRawEta013[ptBin][rawExtrapBin]->Fill((fullinfo.Rbalancing)*(1./fullinfo.jetJecAK4_j1), eventWeight);
+            extrap_responseBalancingRawEta013[ptBin][rawExtrapBin]->Fill((respBalancing/*fullinfo.Rbalancing*/)*(1./fullinfo.jetJecAK4_j1), eventWeight);
             extrap_responseMPFRawEta013[ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
           }	  
-          extrap_responseBalancingRaw[etaBin][ptBin][rawExtrapBin]->Fill((fullinfo.Rbalancing)*(1./fullinfo.jetJecAK4_j1), eventWeight);
+          extrap_responseBalancingRaw[etaBin][ptBin][rawExtrapBin]->Fill((respBalancing/*fullinfo.Rbalancing*/)*(1./fullinfo.jetJecAK4_j1), eventWeight);
           extrap_responseMPFRaw[etaBin][ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
         } while (false);
 	
@@ -1462,7 +1589,7 @@ int main(int argc, char** argv) {
     TCLAP::CmdLine cmd("Step 3 of Gamma+Jet analysis", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> datasetArg("d", "dataset", "Dataset name", true, "", "string", cmd);
-
+    TCLAP::ValueArg<std::string> runarg("r", "runera", "Run era", true, "", "string", cmd);
     TCLAP::MultiArg<std::string> inputArg("i", "in", "Input file", true, "string");
     TCLAP::ValueArg<std::string> inputListArg("", "input-list", "Text file containing input files", true, "input.list", "string");
     cmd.xorAdd(inputArg, inputListArg);
@@ -1509,6 +1636,7 @@ int main(int argc, char** argv) {
     finalizer.setCHS(chsArg.getValue());
     finalizer.setVerbose(verboseArg.getValue());
     finalizer.setUncutTrees(uncutTreesArg.getValue());
+    finalizer.setRunera(runarg.getValue());
     //    if (totalJobsArg.isSet() && currentJobArg.isSet()) {
     //   finalizer.setBatchJob(currentJobArg.getValue(), totalJobsArg.getValue());
     //  }

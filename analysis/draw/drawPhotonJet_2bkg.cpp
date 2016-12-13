@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
   // MC should already be normalized to a lumi of 1 pb-1
   // Read luminosity
   double dLumi=1;
-  TParameter<double>* lumi = static_cast<TParameter<double>*>(dataFile->Get("analysis/luminosity"));
+  TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
   dLumi = lumi->GetVal();   
   std::cout<< "Lumi "<< dLumi << std::endl;  
   db->set_lumi(dLumi);
@@ -140,6 +140,9 @@ int main(int argc, char* argv[]) {
   //  db->set_rebin(1);
   db->drawHisto("nvertex", "Number of Reconstructed Vertices", "", "Events", log);
   db->drawHisto("nvertex_reweighted", "Number of Reconstructed Vertices (after reweighting)", "", "Events", log);
+  db->drawHisto("ntrue_interactions", "Number of True interaction", "", "Events", log);
+  db->drawHisto("ntrue_interactions_reweighted", "Number of True interaction (after reweighting)", "", "Events", log);
+  
   //  db->set_rebin(2);
   db->drawHisto("deltaPhi_passedID", "#Delta #varphi", "", "Events", log);  
   db->drawHisto("hadTowOverEm", "H/E", "", "Events", log);
@@ -157,6 +160,7 @@ int main(int argc, char* argv[]) {
 
   db->drawProfile("PhotSCPt", "Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]", log, 0);
   db->drawHisto2D("PhotonSCPt_vs_Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]","", log);
+  db->drawHisto2D("deltaPhi_vs_alpha", "#delta #phi ", "#alpha","", log);
  
   db->set_rebin(5);
   db->setOutputGraphs(OUTPUT_GRAPHS);
@@ -196,6 +200,118 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_eta0013", "Balancing Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", false);
+  
+  
+  
+  
+  // Pt 1st
+  db->setFolder("analysis/Ptfirstjets");
+  db->drawProfile("Pt_1stjet", "Pt", "p_{T} [GeV]", "Pt_1stjet", log, 0);
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("Pt_1stjet_%s", etaBinning.getBinName(i).c_str());
+   // bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Pt_1stjet", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "Pt_1stjet_eta0013", "Pt_1stjet", "", "Events", false);
+  
+  // Pt 2nd
+  db->setFolder("analysis/Ptsecondjets");
+  db->drawProfile("Pt2nd_jet", "Pt", "p_{T} [GeV]", "Pt2nd_jet", log, 0);
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("Pt_2ndjet_%s", etaBinning.getBinName(i).c_str());
+   // bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Pt_2ndjet", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "Pt_2ndjet_eta0013", "met", "", "Events", false);
+  ;
+  // Pt met
+  db->setFolder("analysis/Met");
+  db->drawProfile("Met", "Pt", "p_{T} [GeV]", "Met", log, 0);
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("met_%s", etaBinning.getBinName(i).c_str());
+   // bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "met", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "met_eta0013", "met", "", "Events", false);
+  
+  
+  
+  // Pt gamma
+  db->setFolder("analysis/Ptgamma");
+  db->drawProfile("Ptgamma", "Pt", "p_{T} [GeV]", "Pt gamma", log, 0);
+  db->drawProfile("Ptgamma", "Eta", "#eta", "Pt gamma", false, 0); 
+  db->drawProfile("Ptgamma", "Nvtx", "N_{vertex}", "Pt gamma", false, 0);
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("Pt_gamma_%s", etaBinning.getBinName(i).c_str());
+   // bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Pt gamma", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "Pt_gamma_eta0013", "Pt gamma", "", "Events", false);
+
+  
+  
+  // Mu
+  db->setFolder("analysis/MUDir");
+  
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("mu_%s", etaBinning.getBinName(i).c_str());
+  //  bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "mu", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "mu_eta0013", "mu", "", "Events", false);
+  
+  
+  // N vertice 
+  db->setFolder("analysis/nvertices");
+  
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("nvertices_%s", etaBinning.getBinName(i).c_str());
+  //  bool isgen = TString(etaBinning.getBinName(i).c_str()).Contains("gen", TString::kIgnoreCase);
+
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "nvertices", "", "Events", false);
+
+  }
+
+  db->set_legendTitle("|#eta| < 1.3");
+
+  db->drawHisto_vs_pt(ptBins, ptMean, "nvertices_eta0013", "mu", "", "Events", false);
   
   // MPF
   db->setFolder("analysis/mpf");

@@ -292,6 +292,13 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   
   bool isMPF  = TString(name).Contains("mpf", TString::kIgnoreCase);
   bool isRAW = TString(name).Contains("raw", TString::kIgnoreCase);
+  bool isPtgamma = TString(name).Contains("Pt_gamma", TString::kIgnoreCase);
+  bool isMet = TString(name).Contains("met", TString::kIgnoreCase);
+  bool isPt1st = TString(name).Contains("Pt_1st", TString::kIgnoreCase);
+  bool isPt2nd = TString(name).Contains("Pt_2nd", TString::kIgnoreCase);
+  bool isMU = TString(name).Contains("mu", TString::kIgnoreCase);
+  bool isNVTX = TString(name).Contains("nvertices", TString::kIgnoreCase);
+  
   // Ignore bin between 3500 - 7000 (last bin)
   //int number_of_plots = ptBins.size() - 1;
   int number_of_plots = ptBins.size();
@@ -399,7 +406,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     //      std::cout << "debug : get gen information" << std::endl;
 
-    if( !isRAW) {    
+    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX ) ) {    
     //// Get gen informations. To do that, we need to transform
     //// resp_balancing_eta* in resp_balancing_gen_eta*
     std::string responseTrueName = std::string(name + "_" + ptRange);

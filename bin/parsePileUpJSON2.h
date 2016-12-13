@@ -17,7 +17,7 @@ double getAvgPU(int run, int ls) {
 }
 
 //int parsePileUpJSON2(string filename="/cmshome/fpreiato/GammaJet/CMSSW_7_4_14/src/JetMETCorrections/GammaJetFilter/bin/nTrueInteractions_data_latest2015.txt") {
-int parsePileUpJSON2(string filename="cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_6/src/JetMETCorrections/GammaJetFilter/bin/processedLumis_SinglePhoton_JsonCertified_JEC_Spring1625nsV1_20160520_2344.txt") {
+int parsePileUpJSON2(string filename="/afs/cern.ch/user/h/hlattaud/private/tutorial/CMSSW_8_0_11/src/JetMETCorrections/GammaJetFilter/PUdataHLTphoton30.csv") {
 
   cout << "Opening " << filename << "...";
 
@@ -51,10 +51,12 @@ int parsePileUpJSON2(string filename="cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_
           else if (string_num == 7) //eighth string has pu
             PU = stod( str );
         }
-
+       
+         cout<<"test arguments for string run nb : "<<run_str << " lumi section : "<<ls_str<<" PU : "<<PU<<endl;
+       
         int run = stoi( run_str );
         int ls = stoi( ls_str );
-
+        cout<<"test arguments for stoi run nb : "<<run << " lumi section : "<<ls<<" PU : "<<PU<<endl;
         m_PU[run][ls] = PU;
       }
     }

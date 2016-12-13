@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
   TString dataFileName;
   if (flags.length() > 0) {
-    dataFileName = TString::Format("PhotonJet_%s_%s_%s.root", data_dataset.c_str(), postFix.c_str(), flags.c_str());
+    dataFileName = TString::Format("PhotonJet_%s_%s.root", data_dataset.c_str(), postFix.c_str()/*, flags.c_str()*/);
   } else {
     dataFileName = TString::Format("PhotonJet_%s_%s.root", data_dataset.c_str(), postFix.c_str());
   }
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 
   TString mc1FileName;
   if (flags.length() > 0) {
-    mc1FileName = TString::Format("PhotonJet_%s_%s_%s.root", mc_photonjet.c_str(), postFix.c_str(), flags.c_str());
+    mc1FileName = TString::Format("PhotonJet_%s_%s.root", mc_photonjet.c_str(), postFix.c_str()/*, flags.c_str()*/);
   } else {
     mc1FileName = TString::Format("PhotonJet_%s_%s.root", mc_photonjet.c_str(), postFix.c_str());
   }
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
   if (mc_QCD != "") {
     TString mc2FileName;
     if (flags.length() > 0) {
-      mc2FileName = TString::Format("PhotonJet_%s_%s_%s.root", mc_QCD.c_str(), postFix.c_str(), flags.c_str());
+      mc2FileName = TString::Format("PhotonJet_%s_%s.root", mc_QCD.c_str(), postFix.c_str()/*, flags.c_str()*/);
     } else {
       mc2FileName = TString::Format("PhotonJet_%s_%s.root", mc_QCD.c_str(), postFix.c_str());
     }
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
 
     double dLumi = 1e6;// Federico
   // MC should already be normalized to a lumi of 1 pb-1
-    TParameter<double>* lumi = static_cast<TParameter<double>*>(dataFile->Get("analysis/luminosity"));
+    TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
     //    db->set_lumi(lumi->GetVal() * 1e-6);
     db->set_lumi(lumi->GetVal());
     db->set_lumiNormalization();

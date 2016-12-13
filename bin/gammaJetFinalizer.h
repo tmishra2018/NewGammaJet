@@ -74,6 +74,10 @@ class GammaJetFinalizer
     void setDatasetName(const std::string& name) {
       mDatasetName = name;
     }
+    
+    void setRunera(const std::string& runera) {
+      mRunera = runera;
+    }
 
     void setJetAlgo(const std::string& jetType, const std::string& jetAlgo) {
       if (jetType == "pf") {
@@ -195,6 +199,7 @@ class GammaJetFinalizer
 
     std::vector<std::string> mInputFiles;
     std::string mDatasetName;
+    std::string mRunera;
     JetType mJetType;
     JetAlgo mJetAlgo;
     bool mNoPUReweighting;

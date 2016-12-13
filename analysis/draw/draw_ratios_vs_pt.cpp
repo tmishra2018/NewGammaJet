@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
   TString dataFileName;
   if (flags.length() > 0) {
-    dataFileName = TString::Format("PhotonJet_%s_%s_%s.root", data_dataset.c_str(), postFix.c_str(), flags.c_str());
+    dataFileName = TString::Format("PhotonJet_%s_%s.root", data_dataset.c_str(), postFix.c_str()/*, flags.c_str()*/);
   } else {
     dataFileName = TString::Format("PhotonJet_%s_%s.root", data_dataset.c_str(), postFix.c_str());
   }
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 
   TString mc1FileName;
   if (flags.length() > 0) {
-    mc1FileName = TString::Format("PhotonJet_%s_%s_%s.root", mc_photonjet.c_str(), postFix.c_str(), flags.c_str());
+    mc1FileName = TString::Format("PhotonJet_%s_%s.root", mc_photonjet.c_str(), postFix.c_str()/*, flags.c_str()*/);
   } else {
     mc1FileName = TString::Format("PhotonJet_%s_%s.root", mc_photonjet.c_str(), postFix.c_str());
   }
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
   if (mc_QCD != "") {
     TString mc2FileName;
     if (flags.length() > 0) {
-      mc2FileName = TString::Format("PhotonJet_%s_%s_%s.root", mc_QCD.c_str(), postFix.c_str(), flags.c_str());
+      mc2FileName = TString::Format("PhotonJet_%s_%s.root", mc_QCD.c_str(), postFix.c_str()/*, flags.c_str()*/);
     } else {
       mc2FileName = TString::Format("PhotonJet_%s_%s.root", mc_QCD.c_str(), postFix.c_str());
     }
