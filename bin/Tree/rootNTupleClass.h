@@ -113,6 +113,10 @@ public :
    Double_t        weight;
    Float_t         evtWeightTot;
    Float_t         evtWeightTotA;
+   Double_t        METGEN;
+   Double_t        METGEN_Eta;
+   Double_t        METGEN_Phi;
+   Double_t        METGEN_Pt;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -205,6 +209,10 @@ public :
    TBranch        *b_weight;   //!
    TBranch        *b_evtWeightTot; //!
    TBranch        *b_evtWeightTotA; //!
+   TBranch        *b_METGEN;
+   TBranch        *b_METGEN_Eta;
+   TBranch        *b_METGEN_Phi;
+   TBranch        *b_METGEN_Pt;
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -359,6 +367,10 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("evtWeightTot", &evtWeightTot, &b_evtWeightTot);
    fChain->SetBranchAddress("evtWeightTotA", &evtWeightTotA, &b_evtWeightTotA);
+   fChain->SetBranchAddress("METGEN", &METGEN, &b_METGEN);
+   fChain->SetBranchAddress("METGEN_Eta", &METGEN_Eta, &b_METGEN_Eta);
+   fChain->SetBranchAddress("METGEN_Phi", &METGEN_Phi, &b_METGEN_Phi);
+   fChain->SetBranchAddress("METGEN_Pt", &METGEN_Pt, &b_METGEN_Pt);
    InitCache();
 }
 

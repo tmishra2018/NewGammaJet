@@ -108,21 +108,21 @@ void GammaJetFinalizer::runAnalysis() {
       
      //HLTphoton30   
                            
-    static std::string puMC30 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC30 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
     
     //HLTphoton50
 
 
-    static std::string puMC50 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC50 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
     
     //HLTphoton75 
 
 
-    static std::string puMC75 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC75 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
     
@@ -130,21 +130,21 @@ void GammaJetFinalizer::runAnalysis() {
     //HLTphoton90 
 
 
-    static std::string puMC90 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC90 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
     
     //HLTphoton120 
 
 
-    static std::string puMC120 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC120 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
     
     //HLTphoton165
 
 
-    static std::string puMC165 = TString::Format("%s/computed_mc_files_GJET_Pythia_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC165 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
     
@@ -370,15 +370,15 @@ void GammaJetFinalizer::runAnalysis() {
    std::vector<TH1F*> Pt2ndEta013       = buildPtVector<TH1F>(Pt2ndjetDir, "Pt_2ndjet", "eta0013", 600, 0., 3000.);
   //MET
    TFileDirectory METDir = analysisDir.mkdir("Met");
-   std::vector<std::vector<TH1F*> > Met = buildEtaPtVector<TH1F>(METDir, "met", 300, 0., 250.);
-   std::vector<TH1F*> MetEta013       = buildPtVector<TH1F>(METDir, "met", "eta0013", 300, 0., 250.); 
+   std::vector<std::vector<TH1F*> > Met = buildEtaPtVector<TH1F>(METDir, "met", 250, 0., 250.);
+   std::vector<TH1F*> MetEta013       = buildPtVector<TH1F>(METDir, "met", "eta0013", 250, 0., 250.); 
    
     TFileDirectory trueinterDir = analysisDir.mkdir("MUDir");
-   std::vector<std::vector<TH1F*> > Mu = buildEtaPtVector<TH1F>(trueinterDir, "mu", 101, 0., 100.);
+   std::vector<std::vector<TH1F*> > Mu = buildEtaPtVector<TH1F>(trueinterDir, "mu", 100, 0., 100.);
    std::vector<TH1F*> MuEta013       = buildPtVector<TH1F>(trueinterDir, "mu", "eta0013", 101, 0., 100.);
    
    TFileDirectory NverticeDir = analysisDir.mkdir("nvertices");
-   std::vector<std::vector<TH1F*> > Nverticesh = buildEtaPtVector<TH1F>(NverticeDir, "nvertices", 101, 0., 100.);
+   std::vector<std::vector<TH1F*> > Nverticesh = buildEtaPtVector<TH1F>(NverticeDir, "nvertices", 100, 0., 100.);
    std::vector<TH1F*> NverticeshEta013       = buildPtVector<TH1F>(NverticeDir, "nvertices", "eta0013", 101, 0., 100.);
   
   // Balancing
@@ -757,15 +757,17 @@ void GammaJetFinalizer::runAnalysis() {
     METCorr = met + Photon - PhotonCorr;
     
     
+    TLorentzVector PhotonGen;
+    
+    PhotonGen.SetPtEtaPhiE(fullinfo.Pt_photonGEN,fullinfo.Eta_photonGEN,fullinfo.Phi_photonGEN,fullinfo.Energy_photonGEN);
+    
+    TLorentzVector MetGen;
+    MetGen.SetPtEtaPhiE( fullinfo.METGEN_Pt, fullinfo.METGEN_Eta, fullinfo.METGEN_Phi, fullinfo.METGEN);
     
     
+ //   if(PhotonCorr.Pt()>60.) continue;
     
-    
-    
-    
-    
-    
-    if(PhotonCorr.Pt() < 175. ) continue;
+   // if(PhotonCorr.Pt() < 175. ) continue;
     
     
     h_mPUWeight                   ->Fill(mPUWeight);
@@ -818,7 +820,7 @@ void GammaJetFinalizer::runAnalysis() {
     respMPF = 1. + METCorr.Pt() * PhotonCorr.Pt() * cos(METCorr.DeltaPhi(PhotonCorr)) / (PhotonCorr.Pt() * PhotonCorr.Pt());
     if ( mIsMC){
     //  deltaPhi_Photon_MET_gen = reco::deltaPhi(genPhoton.phi, genMET.phi);
-      respMPFGen = fullinfo.RMPF;
+      respMPFGen = 1. + MetGen.Pt() * PhotonGen.Pt() * cos(MetGen.DeltaPhi(PhotonGen)) / (PhotonGen.Pt() * PhotonGen.Pt());
     } // true MPF response
 
     // Balancing
@@ -1352,32 +1354,48 @@ if (! mIsMC) {
       double passed5 = HLT5;
       double passed6 = HLT6;
       
-      int passedtriggerresult ;
+   //   int passedtriggerresult ;
+      
+      
+      if (   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      
+      
+      
+      return TRIGGER_NOT_FOUND;
+      
       
     // cout<<" test booleen "<<passed6<<" "<<passed5<<" "<<passed4<<" "<<passed3<<" "<< passed2<<" "<<passed1<<endl;
-      
-       if (   passed6 == 1 )
+      /*
+       if (   passed6 == 1. )
        passedtriggerresult = 6 ;
        
-       if (   passed5 == 1 )
+       if (   passed5 == 1. && passed6 != 1. )
        passedtriggerresult = 5 ;
        
-       if (   passed4 == 1 )
+       if (   passed4 == 1. && passed6 != 1. && passed5 != 1. )
        
         passedtriggerresult = 4 ;
-         if (   passed3 == 1 )
+         if (   passed3 == 1. && passed6 != 1. && passed5 != 1. && passed4 != 1. )
        
        passedtriggerresult = 3 ;
-        if (   passed2 == 1  )
+        if (   passed2 == 1. && passed6 != 1. && passed5 != 1. && passed4 != 1. && passed3 != 1.)
        
         passedtriggerresult = 2 ;
        
      
-        if ( passed1 == 1 ) 
+        if ( passed1 == 1. && passed6 != 1. && passed5 != 1. && passed4 != 1. && passed3 != 1. && passed2 != 1. ) 
         passedtriggerresult = 1 ;
+        */
+        
+        
         
    //    cout<<"test trigger parsing " <<mandatoryTrigger->first <<" "<< passedtriggerresult<< endl;
-       switch( passedtriggerresult ) { 
+      /* switch( passedtriggerresult ) { 
          
       case 6:
       if (boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) {
@@ -1440,7 +1458,7 @@ if (! mIsMC) {
 	return TRIGGER_OK;
       }
       break;
-    }
+    }*/
   } else { // IsMC
 
     const std::map<Range<float>, std::vector<MCTrigger>>& triggers = mMCTriggers->getTriggers();
