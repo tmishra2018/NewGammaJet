@@ -31,7 +31,7 @@ outputROOT = "pu_truth_data2016_100bins_HLTphoton"+HLTsuffix+Runsuffix+".root"
 pileup_latest = "/afs/cern.ch/user/h/hlattaud/private/tutorial/CMSSW_8_0_24_patch1/src/JetMETCorrections/GammaJetFilter/PUReweightingHLT/"+Pileuplatest
  
 print("\tRunning pileupCalc...")
-cmd= "pileupCalc.py -i "+Cert_json+" --inputLumiJSON "+pileup_latest+" --calcMode true --minBiasXsec 69400 --maxPileupBin 100 --numPileupBins 100 "+outputROOT
+cmd= "pileupCalc.py -i "+Cert_json+" --inputLumiJSON "+pileup_latest+" --calcMode true --minBiasXsec 69200 --maxPileupBin 100 --numPileupBins 100 "+outputROOT
 print(cmd)
 
 os.system(cmd)

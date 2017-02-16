@@ -202,7 +202,7 @@ int main(int argc, char* argv[]) {
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", false);
   
   
-  
+  /*
   
   // Pt 1st
   db->setFolder("analysis/Ptfirstjets");
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
 
   db->drawHisto_vs_pt(ptBins, ptMean, "nvertices_eta0013", "mu", "", "Events", false);
-  
+  */
   // MPF
   db->setFolder("analysis/mpf");
   db->drawProfile("MPF", "Pt", "p_{T} [GeV]", "MPF Response", log, 0);

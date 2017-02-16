@@ -530,7 +530,7 @@ void GammaJetFinalizer::runAnalysis() {
       clock::time_point end = clock::now();
       double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
       start = end;
-      std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
+     // std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
     }
     
     //bug in crab outputs -- skip events with bugs
@@ -553,7 +553,9 @@ void GammaJetFinalizer::runAnalysis() {
     
 
     if(mVerbose) std::cout<< std::endl;          
-    if(mVerbose) std::cout<<"Event: "<< i << std::endl;          
+    if(mVerbose) std::cout<<"Event: "<< i << std::endl;  
+    
+    //if(fullinfo.Pt_photon < 175.) continue ;        
      
     passedPhotonJetCut++; 
     if(mVerbose)        std::cout<<" passedPhotonJetPresence  " << std::endl;    
@@ -710,7 +712,7 @@ void GammaJetFinalizer::runAnalysis() {
     passedJetPtCut++;
     if(mVerbose) std::cout<<"passedJetPtCut"<<std::endl;
     
-    bool secondJetOK = /* fullinfo.pTAK4_j2!=0 || (fullinfo.pTAK4_j2 < 10 || */ fullinfo.alpha < mAlphaCut ;
+    bool secondJetOK = true ; /* fullinfo.pTAK4_j2!=0 || (fullinfo.pTAK4_j2 < 10 ||  fullinfo.alpha < mAlphaCut ;*/
     
     //federico -- without this cut the extrapolation is always the same to different alpha cut
     //    if( !secondJetOK) continue;
@@ -748,6 +750,9 @@ void GammaJetFinalizer::runAnalysis() {
 
     TLorentzVector PhotonCorr;
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
+   
+     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
+    
     TLorentzVector Photon;
     Photon.SetPtEtaPhiE( fullinfo.Pt_photon, fullinfo.Eta_photon, fullinfo.Phi_photon, fullinfo.Energy_photon );
     TLorentzVector met;
@@ -848,7 +853,12 @@ void GammaJetFinalizer::runAnalysis() {
 
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
+     // std::cout<<(int) fullinfo.event<<std::endl;
       do {
+if(fullinfo.event == 9894424 ) {    // std::cout<<(int) fullinfo.event<<std::endl;
+     std::cout<<"selected event "<<(int) fullinfo.event<<" Pt(j1) : "<<fullinfo.pTAK4_j1<<" Eta : "<< fullinfo.etaAK4_j1<<" phi " << fullinfo.phiAK4_j1<<" pt photon "<<fullinfo.Pt_photon<< " delta phi "<< deltaPhi<<std::endl;
+     std::cout<<"selected event "<<(int) fullinfo.event<<" Pt(j2) : "<<fullinfo.pTAK4_j2<<" Eta : "<< fullinfo.etaAK4_j2 <<" phi " << fullinfo.phiAK4_j2<< " alpha "<< fullinfo.alpha <<std::endl;
+     std::cout<<"selected event "<<analysis.event<<" MET : "<<METCorr.Pt()<<" Eta : "<< METCorr.Eta() <<" phi " << METCorr.Phi()<<std::endl;}
         h_ptPhoton_passedID                 -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         h_ptPhoton_passedID_Binned    -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
 	h_EtaPhoton_passedID               -> Fill(fullinfo.Eta_photon, eventWeight);
@@ -936,7 +946,7 @@ void GammaJetFinalizer::runAnalysis() {
        // MuonMult[etaBin][ptBin]->Fill(fullinfo.jet_MuonMult, eventWeight);
 
 	//Special case
-	if (fabs(firstJet.eta) <1.305) {
+	if (fabs(fullinfo.etaAK4_j1) <1.305) {
 	  ChHadronFractionEta013[ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
 	  NHadronFractionEta013[ptBin]->Fill(fullinfo.neutrHadEnFrac_j1, eventWeight);
 	  CEmFractionEta013[ptBin]->Fill(fullinfo.chargedElectromFrac_j1, eventWeight);
@@ -1009,7 +1019,7 @@ void GammaJetFinalizer::runAnalysis() {
           }	  
 	  
           // Special case 
-	  if (fabs(firstJet.eta) < 1.305) {
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
@@ -1017,7 +1027,7 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
 	  if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
-	    if (fabs(firstGenJet.eta) < 1.305) {
+	    if (fabs(fullinfo.etaAK4_j1GEN) < 1.305) {
               extrap_responseBalancingGenEta013[ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
               extrap_responseMPFGenEta013[ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
 	      extrap_responseBalancingGenPhotEta013[ptBinGen][extrapGenBin]  -> Fill(respGenPhot, eventWeight);
@@ -1054,11 +1064,11 @@ void GammaJetFinalizer::runAnalysis() {
 
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
-  std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << "Selection efficiency for trigger selection: " << MAKE_RED << (double) passedEventsFromTriggers / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
+  //std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
+  std::cout << "Selection efficiency for trigger selection: " << MAKE_RED << (double) passedEventsFromTriggers  << RESET_COLOR << std::endl;
   // federico
   //  std::cout << "Selection efficiency for photon requests: " << MAKE_RED << (double) passedEventsFromPhotonRequests / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
-
+/*
   std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for pixel seed veto cut: " << MAKE_RED << (double) passedPixelSeedVetoCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for muons cut: " << MAKE_RED << (double) passedMuonsCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
@@ -1073,20 +1083,21 @@ void GammaJetFinalizer::runAnalysis() {
   // federico
   // std::cout << "Selection efficiency for photon requests: " << MAKE_RED << (double) passedEventsFromPhotonRequests / passedEventsFromTriggers * 100 << "%" << RESET_COLOR << std::endl;
   // std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / passedEventsFromPhotonRequests * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / passedEventsFromTriggers * 100 << "%" << RESET_COLOR << std::endl;
+ /* std::cout << "Efficiency for Δφ cut: " << MAKE_RED << (double) passedDeltaPhiCut / passedEventsFromTriggers * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for pixel seed veto cut: " << MAKE_RED << (double) passedPixelSeedVetoCut / passedDeltaPhiCut * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for muons cut: " << MAKE_RED << (double) passedMuonsCut / passedPixelSeedVetoCut * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for electrons cut: " << MAKE_RED << (double) passedElectronsCut / passedMuonsCut * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for pT(j1) cut: " << MAKE_RED << (double) passedJetPtCut / passedElectronsCut * 100 << "%" << RESET_COLOR << std::endl;
   std::cout << "Efficiency for α cut: " << MAKE_RED << (double) passedAlphaCut / passedJetPtCut * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << std::endl;
+  */std::cout << std::endl;
   std::cout<< "Histo entries -->    " << passedJetPtCut << std::endl;
   std::cout<< "Histo entries (passedID) -->    " << passedEvents << std::endl;
 
   std::cout << std::endl;
-  std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
+  std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound  << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout<<"test booléen "<<triggernotzero<<std::endl;
+  //std::cout<<"test booléen "<<triggernotzero<<std::endl;
+  
 }
 
 template<typename T>
