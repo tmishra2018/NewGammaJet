@@ -10,7 +10,7 @@
 
 == Presentation
 
-This is a documentation for the gamma + jets framework.
+This is a documentation for the gamma + jets framework. This Step is use to perform HLT selection, PUreweighting and plots for the tuple created at the previous steps.
 
 == New instructions (13 TeV)
 
@@ -20,69 +20,106 @@ This is a documentation for the gamma + jets framework.
 ----
 
 export SCRAM_ARCH=slc6_amd64_gcc530
-cmsrel CMSSW_8_0_8_patch1
-cd CMSSW_8_0_8_patch1/src
-git clone https://github.com/FPreiato/NewGammaJet.git JetMETCorrections/GammaJetFilter/
-scram b -j 9
+cmsrel CMSSW_8_0_25
+cd CMSSW_8_0_25/src
+git clone https://github.com/lattaud/NewGammaJet.git JetMETCorrections/GammaJetFilter/
+scram b -j 10
 
 ----
-  
 === STEP 1
 
-This step will convert MiniAOD tuples to root trees, performing a simple selection.
+==== Merging 
 
-To Test the code:
-
-----
-
-cd JetMETCorrections/GammaJetFilter/
-
-----
-
-- Download a single file (MC or Data)
+In order to produce the plots for the MC outputs from the previous steps. We have to merge and add the weight of the different files.
+The weight that to be applied at MC is defined as
+evtWeightTot = xsec / sum_of_generatorWeights
+This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights.
+In the output of DijetTreeAnalyser we stored an histogram and a TTree filled using generator weights, in order to extract the sum of weights at the end with Integral().
+The cross section is given from the outside, you can get it using DAS or MCM.
 
 ----
-
-Data:
-xrdcp root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/MINIAOD/PromptReco-v2/000/273/158/00000/1A45407E-761A-E611-AD5E-02163E013724.root analysis/tuples/Data/SinglePhoton_file1_80X.root
-
-MC:
-xrdcp root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/50000/C01E2D8A-F90F-E611-B935-00266CFCC9F8.root analysis/tuples/GJET_Pythia/GJet_Pythia_80X_file1.root
-
+python mergeAndAddWeights.py -i [list_to_merge.txt] -o [output_directory] --xsec [number_from_DAS]
 ----
 
-- Go in "analysis/2ndLevel/" and run the script +runFilter_local.py+ for the data and +runFilter_MC_local.py+ for MC
+The merging will update the tree "analysis" and  the TTree "puvariable"  with a new branch called "evtWeightTot".
+This number is used in the following steps to fill histograms, to draw plots and perform PUreweighting. 
 
-Before launch it, a general overview:
+For Data the outputs are merged and the luminosity from BrilCalc is upload.
+In order to calculate the integrated luminosity the official recipe is followed.
 
-in these scripts you can change some stuff about the configuration:
+Firstly get from crab the lumiSummary.json.
+To calculate the integrated luminosity, follow the BrilCalc recipe:
+http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
 
-- the global tag
-- the type of jets that you want in the ntuples (at the moment only the AK4chs are supported, for Puppi jets work in progress) 
-- there is a bool if you want to apply new JEC (MET will be change as well)
-- two bools to choose if you want to apply the L2Res or L2L3Res (only for data)
-- The txt files with the corrections
+1) Produce lumiSummary.json from crab
+-----
+crab report -d crab_folder
+-----
+2) Execute brilcalc
 
-These python scripts will run the code for the gamma+jets analysis in +src/GammaJetFilter.cc+
-
-Some numbers are hard-coded but you don't have to change every time:
-
-- in the class +isValidPhotonEB+ numbers for the photon ID and Isolation (tight cut based selection) 
-- in the class +getEffectiveArea+ contains the effective areas for the photon isolation
-- in the class +isValidJet+ numbers for jet Id and isolation (loose cut based selection)
-
-To run the script (default: on 1000 events)
-
+Command:
+----
+brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -u /pb -i lumi_summary.json
 ----
 
-cmsRun runFilter_local.py
-
-cmsRun runFilter_MC_local.py
+In the end you can merge the output for the data with the command:
 
 ----
+python mergeData.py -i [list_to_merge.txt] -o [output_directory] --lumi_tot [integrated_luminosity] --run [suffix for the run you process]
+----
 
-Now you should have two files in analysis/2ndLevel:
-+output_singleFile_Data.root+ and +output_singleFile_GJet.root+
+You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+.
+Copy those files somewhere else. A good place could be the folder in your working area, these are massive files.
+
+
+=== Step 2 - PileUp
+
+The MC is reweighting according to data, based on the number of vertices in the event, this is made for each different HLT path in use for the analysis, in order to take into account differences between simulation and data scenario from PU.
+All the utilities to do that are available in the folder 'analysis/PUReweighting'.
+The relevant scripts are 'ComputePU_perHLT.py' and 'generate_mc_pileup.c'.
+
+.Pile-up in MC
+****
+Firstly you have to create a list on MC sample for which you want to calculate the PU reweighting.
+This list contains all the MC files produced at the merging step.
+For example you can create a list as `files_GJet_plus_QCD.list` which contains the files
+- [path]/PhotonJet_2ndLevel_GJet_Pythia_25ns_ReReco_2016-02-15.root                                                                                             
+- [path]/PhotonJet_2ndLevel_QCD_Pt-20toInf_2016-02-26.root  
+
+Then to execute the programm generate_mc_pileup.c' you have to compile with Makefile, and then
+type the command followed by the list name (only central name)
+
+----
+./generate_mc_pileup.exe GJet_plus_QCD
+----
+
+.Pile-up in Data
+
+The pile up in data is calculated following the official recipe for different HLT path, written in ComputePU_perHLT.py that use pileupCalc.py.
+At this script must be passed the json file for which you want to calculate the pu reweighting.
+
+----
+python ComputePU_perHLT.py --Cert_json [your processed Json file from crab report] --whichrun [suffix of the data you running on] 
+----
+
+This script will download the pileuplatest.txt file and then create one Pu root file per HLT with a name begining by "pu_truth_data2016_100bins_HLTphoton". 
+
+.Trigger selection
+****
+To avoid any bias in the selection, we explicitely require that, for each bin in pt_gamma, only one trigger was active. For that, we use an XML description of the trigger of the analysis, as you can find in the 'bin/' folder. The description is file named 'triggers.xml'.
+
+The format should be straightforward: you have a separation in run ranges, as well as in triggers.
+The weight of each HLT is used to reweight various distribution for the prescale.
+The prescale is saved in the miniAOD and saved in the ntuples from step 1.
+
+You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have no run range, only a list of HLT path.
+This list is used in order to know with HLT the event should have fired if it was data.
+2012 note:
+You can also specify multiple HLT path for one pt bin if there were multiple active triggers during the data taking period.
+In this case, you'll need to provide a weight for each trigger (of course, the sum of the weight must be 1). Each trigger will be choose randolmy in order to respect the probabilities.
+****
+
+
 
 === STEP 2
 
@@ -91,12 +128,14 @@ To produce the histograms with the response you can use the macro
 
 DATA:
 gammaJetFinalizer -i output_singleFile_Data.root -d Test_Data --algo ak4 --alpha 0.30
+
 MC:
 gammaJetFinalizer -i output_singleFile_GJet.root -d Test_GJet --algo ak4 --alpha 0.30 --mc
 
 These commands will produce two files with all necessary historgrams and they will call
 
 PhotonJet_Test_MC_PFlowAK4chs.root
+
 PhotonJet_Test_Data_PFlowAK4chs.root
 
 These final are used to produce the final plots. The code to do this is in +analysis/draw+.
@@ -109,21 +148,9 @@ make all
 
 ----
 
-In our files there are too few events, so it's possible to get some errors (related to empty plots), even if
-the program doesn't crash.
-I can suggest you to use my files in order to produce some understable plots.
-You should be able to get my files from:
-
- Data:
-/cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_8_patch1/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-05-31_600pb/AlphaCut030/PhotonJet_SinglePhoton_2016-05-31_alphacut030_PFlowAK4chs.root
-
-MC:
-/cmshome/fpreiato/Test_NewGammaJet/CMSSW_8_0_8_patch1/src/JetMETCorrections/GammaJetFilter/analysis/draw/Plot/2016-05-31_600pb/AlphaCut030/PhotonJet_GJet_Pythia_2016-05-31_alphacut030_PFlowAK4chs.root
-
 
 The drawers work only if you are in the same directory of the files produce in step2 (named PhotonJet_*).
-I usually move the files in the directory +analysis/draw/Plot+ but it's not necessary for this test.
-If you have copied my files, go in the directory of these files.
+I usually move the files in the directory +analysis/draw/Plot+.
 
 The first drawer uses 1D histograms of the response and creates graphics with the response in function of pT for each bin of eta.
 To run it:
@@ -134,13 +161,7 @@ To run it:
 
 ----
 
-or, if you are using my files
 
-----
-
-<path pointing draw directory>/drawPhotonJet_2bkg SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4 LUMI
-
-----
 
 At the moment the option +pf+ and +ak4+ are mandatory, we have only those jets.
 The option LUMI is to normalize the plots at the data luminosity, while if you want to
@@ -177,13 +198,7 @@ To run it:
 
 ----
 
-or, if you are using my files
 
-----
-
-<path pointing draw directory>/draw_ratios_vs_pt SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4
-
-----
 
 The plots are saved in the directory +PhotonJetPlots_<Data>_vs_<MC>_PFlowAK4_LUMI/vs_pt+.
 
@@ -196,13 +211,7 @@ To run it:
 
 ----
 
-or, if you are using my files
 
-----
-
-<path pointing draw directory>/draw_all_methods_vs_pt SinglePhoton_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 GJet_Pythia_2016-05-31_alphacut030 pf ak4
-
-----
 
 The plots are saved in the directory +PhotonJetPlots_<Data>_vs_<MC>_PFlowAK4_LUMI/vs_pt+.
 In this last directory a root file named +plots.root+ will be also saved.
@@ -212,229 +221,17 @@ For each alpha cut you will have a plots.root that you have to merged in a singl
 
 =======================================
 
-=== RUNNING ON CRAB (work in progress)
 
-In the 'analysis/2ndLevel/submitJobWithCrab3' folder, you can find the scripts +createAndSubmit[Data][MC]+.
-These scripts read a txt file with the sample to use and submit the jobs on crab.
-The txt files have to be in this format:
-
-[for Data] dataset  files_per_job     GlobalTag
-
-The dataset is in DAS format. For example:
-
-----
-/SinglePhoton/Run2015D-PromptReco-v4/MINIAOD 300 74X_dataRun2_Prompt_v2
-----
-
-[for MC] dataset     cross_section            files_per_job               GlobalTag
-
-The dataset is in DAS format. For example:
-
-----
-/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM 365896 3 80X_mcRun2_asymptotic_2016_v3
-----
-
-The txt files
-+InputList_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_80X.txt+
-and
-+inputlist_SinglePhotonRun2016B_PromptRecov2.txt+
-are already done and they can be used to run on crab.
-
-In the directory 'Inputs', there are the template for crab: 'crab3_template_data.py' and 'crab3_template_mc.py'.
-Before launch on crab, you should edit these template files changing the storage element and, for data, the JSON file using the latest one.
-
-If it's your first time I should create a outpur directory, for example:
-
-----
-
-mkdir Output_Run2
-
-----
-
-To submit the jobs on crab:
-
-For data:
-
-----
-
-python createAndSubmitData.py -d Output_Run2/ -v SinglePhoton_<TagName> -i Inputs/inputlist_SinglePhotonRun2016B_PromptRecov2.txt -t Inputs/crab3_template_data.py -c ../runFilter.py --submit
-
-----
-
-For MC:
-
-----
-
-python createAndSubmitMC.py -d Output_Run2/ -v GJet_<TagName> -i Inputs/InputList_GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8_25ns_80X.txt -t Inputs/crab3_template_mc.py -c ../runFilter_MC.py
-
-----
-
-Don't forget to change the python scripts +runFilter.py+ and +runFilter_MC.py+ with the configuration you want
-and with the latest JECs.
-
-
-Once crab is done, the next step is to merge the output in order to have one file per dataset. 
-For that, you can used 'mergeAndAddWeight.py' and 'mergeData.py' in the folder 'scripts'.
-You can create the list with the files to merge with the script 'createList_T2.py', passing the path of crab output.
-
-[createList_T2.py] python createList_T2.py -i [pnfs_path] -o [output_directory]
-
-==== Merging 
-
-For MC the outputs are merged and the weight weight for total normalization is added.
-The weight that to be applied at MC is defined as
-evtWeightTot = xsec / sum_of_generatorWeights
-This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights.
-In the output of Step 1 we stored an histogram filled using generator weights, in order to extract the sum of weights at the end with Integral().
-The cross section is given from the outside (is an option of the code)
-
-----
-python mergeAndAddWeights.py -i [list_to_merge.txt] -o [output_directory] --xsec [number_from_DAS]
-----
-
-The merging will update the tree "analysis" with a new branch called "evtWeightTot".
-This number is used in the following steps to fill histograms and to draw plots. 
-
-For Data the outputs are merged and the luminosity from BrilCalc is upload.
-In order to calculate the integrated luminosity the official recipe is followed.
-
-Firstly get from crab the lumiSummary.json.
-To calculate the integrated luminosity, follow the BrilCalc recipe:
-http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
-
-1) Produce lumiSummary.json from crab
------
-crab report -d crab_folder
------
-2) Execute brilcalc
-
-Command:
-----
-brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -u /pb -i lumi_summary.json
-----
-
-In the end you can merge the output for the data with the command:
-
-----
-python mergeData.py -i [list_to_merge.txt] -o [output_directory] --lumi_tot [integrated_luminosity]
-----
-
-You should now have a root file for each MC dataset and one for each data dataset, with a prefix +PhotonJet_2ndLevel_+.
-Copy those files somewhere else. A good place could be the folder 'analysis/tuples/'.
-
-=== Step 2 - PileUp
-
-The MC is reweighting according to data, based on the number of vertices in the event, in order to take into account differences between simulation and data scenario wrt PU.
-All the utilities to do that are available in the folder 'analysis/PUReweighting'.
-The relevant scripts are 'generatePUProfileForData.py' and 'generate_mc_pileup.c'.
-
-.Pile-up in MC
-****
-Firstly you have to create a list on MC sample for which you want to calculate the PU reweighting.
-This list contains all the MC files produced in the step 1.
-For example you can create a list as `files_GJet_plus_QCD.list` which contains the files
-- [path]/PhotonJet_2ndLevel_GJet_Pythia_25ns_ReReco_2016-02-15.root                                                                                             
-- [path]/PhotonJet_2ndLevel_QCD_Pt-20toInf_2016-02-26.root  
-
-Then to execute the programm generate_mc_pileup.c' you have to compile with Makefile, and then
-type the command followed by the list name (only central name)
-
-----
-./generate_mc_pileup.exe GJet_plus_QCD
-----
-
-.Pile-up in Data
-
-The pile up in data is calculated following the official recipe, written in generatePUProfileForData.py that use pileupCalc.py.
-At this script must be passed the json file for which you want to calculate the pu reweighting.
-
-----
-./generatePUProfileForData.py pileup_latest.txt
-----
-
-
-.Trigger selection
-****
-To avoid any bias in the selection, we explicitely require that, for each bin in pt_gamma, only one trigger was active. For that, we use an XML description of the trigger of the analysis, as you can find in the 'bin/' folder. The description is file named 'triggers.xml'.
-
-The format should be straightforward: you have a separation in run ranges, as well as in triggers.
-The weight of each HLT is used to reweight various distribution for the prescale.
-The prescale is saved in the miniAOD and saved in the ntuples from step 1.
-
-You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have no run range, only a list of HLT path.
-This list is used in order to know with HLT the event should have fired if it was data.
-2012 note:
-You can also specify multiple HLT path for one pt bin if there were multiple active triggers during the data taking period.
-In this case, you'll need to provide a weight for each trigger (of course, the sum of the weight must be 1). Each trigger will be choose randolmy in order to respect the probabilities.
-****
-
-=== Step 3 - Finalization
-
-For this step, I'll assume you have the following folder structure
-
-----
-+ analysis
-|- tuples
- |- toFinalize (containing root files produced at step 1, with prefix PhotonJet_2ndLevel_)
- |- finalized (containing root files we will produce at this step)
-----
-
-The main utility here is the executable named 'gammaJetFinalized'. It'll produce root files containing a set of histograms for important variable like balancing or MPF.
-You can find its sources in the folder 'bin/', in the file 'gammaJetFinalizer.cc'. Let's have a look at the possible options :
-
-----
-gammaJetFinalizer  {-i <string> ... |--input-list <string>}
-                      [--chs] [--alpha <float>]
-                      [--mc-comp] [--mc] --algo <ak4|ak8> --type <pf|calo>
-                      -d <string>
-----
-
-Here's a brief description of each option :
-
-- +-i+ (multiple times): the input root files
-- +--input-list+: A text file containing a list of input root files
-- +--mc+: Tell the finalizer you run an MC sample
-- +--mc-comp+: Apply a cut on pt_gamma > 165 to get rid of trigger prescale. Useful for doing data/MC comparison
-- +--alpha+: The alpha cut to apply. 0.2 by default
-- +--chs+: Tell the finalizer you ran on a CHS sample
-- +--algo ak4 or ak8+: Tell the finalizer if we run on AK4 or AK8 jets
-- +--type pf or calo+: Tell the finalizer if we run on PF or Calo jets
-- +-d+: The output dataset name. This will create an output file named 'PhotonJet_<name>.root'
-
-An exemple of command line could be :
-
-----
-gammaJetFinalizer -i PhotonJet_2ndLevel_Data_file.root -d SinglePhoton_Run2015 --type pf --algo ak4 --chs --alpha 0.30
-----
-
-This will process the input file 'PhotonJet_2ndLevel_Data_file.root', looking for PF AK4chs jets, using alpha=0.30, and producing an output file named
-'PhotonJet_SinglePhoton_Run2015_PFlowAK4chs.root'.
-
-[NOTE]
-====
-When you have multiple input file (+GJet+ MC for example), the easiest way is to create an input list and then use the +--input-list+ option of the finalizer. For example, suppose you have some files named 'PhotonJet_2ndLevel_GJet_Pt-30to50.root', 'PhotonJet_2ndLevel_GJet_Pt50to80.root', 'PhotonJet_2ndLevel_GJet_Pt-80to120.root', ... You can create an input file list doing
-
-----
-ls PhotonJet_2ndLevel_GJet_* > mc_GJet.list
-----
-
-And them pass the 'mc_GJet.list' file to the option +--input-list+.
-====
-
-[NOTE]
-====
-You cannot use the +--input-list+ option when running on data, for file structure reasons. If you have multiple data files, you'll need first to merge them with +hadd+ in a single file, and them use the +-i+ option.
-====
 
 You should now have at least two files (three if you have run on QCD): 'PhotonJet_SinglePhoton_Run2015_PFlowAK4chs.root', 'PhotonJet_GJet_PFlowAK4chs.root', and optionnaly 'PhotonJet_QCD_PFlowAK4chs.root'. You are now ready to produce some plots!
 
 
-=== Step 4 - The plots
+===  The plots (detailed)
 
 First of all, you need to build the drawing utilities. For that, go into 'analysis/draw' and run +make all+. You should now have everything built.
 In order to produce the full set of plots, you'll have to run 4 differents utility. You need to be in the same folder where the files produced at step 2 are.
 All of these program don't use the full name of root file, but only the name assigned by the user.
-Example: Full name: 'PhotonJet_SinglePhoton_Run2015_PFlowAK4chs.root'
+Example: Full name: 'PhotonJet_SinglePhoton_Run2017_PFlowAK4chs.root'
 Name to be passed at the program (assigne by the user in the previous steps: 'SinglePhoton_Run2015'
 
 - +drawPhotonJet_2bkg+produces  some comparison plots and the most important plots that are
@@ -464,9 +261,9 @@ draw_all_methods_vs_pt Data_file GJet_file QCD_file pf ak4
 
 If everything went fine, you should now have a *lot* of plots in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI', and some more useful in the folder 'PhotonJetPlots_Data_file_vs_GJet_file_plus_QCD_file_PFlowAK4_LUMI/vs_pt'.
 
-=== Step5 -- File for the global fit
+===  File for the global fit
 
-The Finalizer (step 3) and the drawers (step 4) have to be repeated for different alpha cut: 0.10, 0.15, 0.20, 0.25. 
+The Finalizer and the drawers  have to be repeated for different alpha cut: 0.10, 0.15, 0.20, 0.25. 
 The last drawer produces in the directory "PhotonJetPlots...../vs_pt/" a root file named plots.root.
 So you will have a plots.root for each alpha cut, these for files have to be added (simple hadd) 
 and send to Mikko in order to perform the global fit.
