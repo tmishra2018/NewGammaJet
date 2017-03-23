@@ -108,21 +108,21 @@ void GammaJetFinalizer::runAnalysis() {
       
      //HLTphoton30   
                            
-    static std::string puMC30 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC30 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
     
     //HLTphoton50
 
 
-    static std::string puMC50 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC50 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
     
     //HLTphoton75 
 
 
-    static std::string puMC75 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC75 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
     
@@ -130,21 +130,21 @@ void GammaJetFinalizer::runAnalysis() {
     //HLTphoton90 
 
 
-    static std::string puMC90 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC90 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
     
     //HLTphoton120 
 
 
-    static std::string puMC120 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC120 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
     
     //HLTphoton165
 
 
-    static std::string puMC165 = TString::Format("%s/computed_mc_MC_BCD_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC165 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
     
@@ -530,7 +530,7 @@ void GammaJetFinalizer::runAnalysis() {
       clock::time_point end = clock::now();
       double elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
       start = end;
-     // std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
+      std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
     }
     
     //bug in crab outputs -- skip events with bugs
@@ -560,11 +560,6 @@ void GammaJetFinalizer::runAnalysis() {
     passedPhotonJetCut++; 
     if(mVerbose)        std::cout<<" passedPhotonJetPresence  " << std::endl;    
 
-  //  if (!(fullinfo.passHLT_Photon30)  && !(fullinfo.passHLT_Photon50) && !(fullinfo.passHLT_Photon75) && !(fullinfo.passHLT_Photon90) && !(fullinfo.passHLT_Photon120) && !(fullinfo.passHLT_Photon165) && !mIsMC) 
-  //  {            
- //     rejectedEventsFromTriggers++;
- //     continue;
- //   }
     
     if(fullinfo.passHLT_Photon120) triggernotzero++;
     
@@ -572,7 +567,6 @@ void GammaJetFinalizer::runAnalysis() {
     std::string passedTrigger;
     float triggerWeight = 1.;
     if(mVerbose) std::cout<<"Finding trigger... " << std::endl;
-   // std::cout<<"test booleen  loop "<<fullinfo.passHLT_Photon30<<" "<<fullinfo.passHLT_Photon50<<" "<<fullinfo.passHLT_Photon75<<" "<< fullinfo.passHLT_Photon90<<" "<<fullinfo.passHLT_Photon120<<" "<<fullinfo.passHLT_Photon165<<std::endl;
     if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
@@ -855,10 +849,7 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
      // std::cout<<(int) fullinfo.event<<std::endl;
       do {
-if(fullinfo.event == 9894424 ) {    // std::cout<<(int) fullinfo.event<<std::endl;
-     std::cout<<"selected event "<<(int) fullinfo.event<<" Pt(j1) : "<<fullinfo.pTAK4_j1<<" Eta : "<< fullinfo.etaAK4_j1<<" phi " << fullinfo.phiAK4_j1<<" pt photon "<<fullinfo.Pt_photon<< " delta phi "<< deltaPhi<<std::endl;
-     std::cout<<"selected event "<<(int) fullinfo.event<<" Pt(j2) : "<<fullinfo.pTAK4_j2<<" Eta : "<< fullinfo.etaAK4_j2 <<" phi " << fullinfo.phiAK4_j2<< " alpha "<< fullinfo.alpha <<std::endl;
-     std::cout<<"selected event "<<analysis.event<<" MET : "<<METCorr.Pt()<<" Eta : "<< METCorr.Eta() <<" phi " << METCorr.Phi()<<std::endl;}
+
         h_ptPhoton_passedID                 -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         h_ptPhoton_passedID_Binned    -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
 	h_EtaPhoton_passedID               -> Fill(fullinfo.Eta_photon, eventWeight);

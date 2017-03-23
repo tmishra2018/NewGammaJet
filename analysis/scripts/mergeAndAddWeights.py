@@ -49,15 +49,17 @@ os.system("hadd -f "+filename_out+"  "+files )
 inputFile = TFile(filename_out,"UPDATE")
 h_sumOfWeights = inputFile.Get("h_sumW")
 sumOfWeights = h_sumOfWeights.Integral()
+print sumOfWeights
 
 ##### update total luminosity ######
 lumi = inputFile.Get("totallumi")
 lumi.SetVal(1) # in /pb
 lumi.Write()
 ##### update tree with weight for total normalization #####
+
 analysis_tree = inputFile.Get("rootTupleTree/tree")
 Putree = inputFile.Get("puvariable")
-
+#Putree.SetBranchAdress("Generatorweight",Totweight)
 #analysis_tree.GetEntry(0)
 #xsec = analysis_tree.crossSection
  
@@ -69,6 +71,8 @@ b_evtWeightTot = analysis_tree.Branch("evtWeightTotA", evtWeightTotA,"evtWeightT
 for event in analysis_tree:
   evtWeightTotA[0] = (xsec / sumOfWeights)
   b_evtWeightTot.Fill()
+  
+
 
 inputFile.cd("rootTupleTree")
 analysis_tree.Write("",TObject.kOverwrite)
@@ -77,9 +81,14 @@ inputFile.cd("../")
 evtWeightTotpu = array("f", [0.] )
 b_evtWeightTotpu = Putree.Branch("evtWeightTot", evtWeightTotpu,"evtWeightTotpu/F")
 #import pdb; pdb.set_trace()
+
+ 
 for event in Putree:
+
   evtWeightTotpu[0] = (xsec / sumOfWeights)
   b_evtWeightTotpu.Fill()
+
+
 
 Putree.Write("",TObject.kOverwrite)
 

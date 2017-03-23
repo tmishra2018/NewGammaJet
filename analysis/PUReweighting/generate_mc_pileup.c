@@ -57,8 +57,8 @@ std::cout << "Done." << std::endl;
   if (generatorWeight == 0)
     generatorWeight = 1.;
 
-  float eventWeight;  
-  eventWeight=  evtWeightTot * generatorWeight;
+  float eventWeight = 0 ;  
+  
   
   // PU histogram
   TH1F* pu = new TH1F("pileup", "MC Pileup truth", 100, 0, 100);
@@ -69,7 +69,7 @@ std::cout << "Done." << std::endl;
     if (i % 50000 == 0) {
       std::cout << "Iteration " << i << " over " << entries << "; " << (float) i / entries * 100 << "%" << std::endl;
     }
-
+    eventWeight=  evtWeightTot * generatorWeight;
     pu->Fill(n_trueInteractions, eventWeight);
   }
 
