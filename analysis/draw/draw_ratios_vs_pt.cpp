@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <sstream>
 #include <TFile.h>
+#include <TF1.h>
 #include <TGraphErrors.h>
 #include <TParameter.h>
 #include <TVirtualFitter.h>
 #include <TColor.h>
+#include <TLatex.h>
 #include "drawBase.h"
 #include "fitTools.h"
 #include "ptBinning.h"
@@ -45,8 +47,8 @@ void saveCanvas(TCanvas* canvas, const std::string& name) {
 }
 
 
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile);
-
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile  , double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr);
+void draw_scalefactorVsEta( drawBase* db, double sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint);
 
 int main(int argc, char* argv[]) {
 
@@ -114,7 +116,7 @@ int main(int argc, char* argv[]) {
   }
 
   // MC should already be normalized to a lumi of 1 pb-1
-    TParameter<double>* lumi = static_cast<TParameter<double>*>(dataFile->Get("analysis/luminosity"));
+    TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
     db->set_lumi(lumi->GetVal());
     db->set_lumiNormalization();
 
@@ -123,7 +125,7 @@ int main(int argc, char* argv[]) {
   ss << ((int) (alpha_cut * 100));
   std::string alphaCut = ss.str();
 
-  std::string fit_rms = "RMS99";
+  std::string fit_rms = "RMS985";
   std::string outputDir = "PhotonJetPlots_" + db->get_fullSuffix() + "_vs_pt";
   // std::string outputDir = "Plot_vs_pt";
   db->set_outputdir(outputDir);
@@ -133,20 +135,30 @@ int main(int argc, char* argv[]) {
 
   TFile* output = TFile::Open(std::string(outputDir + "/plots.root").c_str(), "recreate");
   TFile* output_raw = TFile::Open(std::string(outputDir + "/plots_raw.root").c_str(), "recreate");
+  double SF_data[s] = {0.};
+  double SF_MC[s]= {0.};
+  double SF_dataerr[s]= {0.};
+  double SF_MCerr[s]= {0.};
+  
+  double SF_dataspe =  0 ;
+  double SF_MCspe =  0 ;
+  double SF_dataerrspe =  0 ;
+  double SF_MCerrspe =  0 ;
+
 
   for (size_t i = 0; i < s-1; i++) { //fixing 
     std::string etaBin = etaBinning.getBinName(i);
     std::string etaBinTitle = etaBinning.getBinTitle(i);
 
-    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output); //bool for raw study
-    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output);
+    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i]); //bool for raw study
+    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i]);
   }
 
   //special case
   std::string etaBinTitle = "|#eta| #leq 1.3";
-  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output);
-  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output);
-  
+  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe);
+  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe);
+  draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s);
   output->Close();
   output_raw->Close();
 
@@ -369,7 +381,17 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
 }
 
 
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile) {
+
+
+
+
+
+
+
+
+
+
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile, double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr) {
 
   //  std::string output = db->get_outputdir();
   //  TFile * outputFile = TFile::Open(TString::Format("%s/plots.root", output.c_str()).Data(), "update");
@@ -421,9 +443,14 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   int markerSize = 1.85;
 
   std::string intrName = "gr_intr";
-  if (resp_reso == "response")
+  if (resp_reso == "response"){
     intrName += "Resp";
-  else
+    sf_data = 1;
+    
+    sf_mc = 1;
+    sf_dataerr = 1;
+    sf_mcerr = 1;
+  }else
     intrName += "Reso";
 
   intrName += "_vs_pt";
@@ -460,6 +487,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     responseMPF_name += "_raw";
   }
   responseMPF_name += "_" + etaRegion + "_data_vs_pt";
+
   gr_responseMPF_vs_pt = (TGraphErrors*)file_noextrap->Get(responseMPF_name.c_str());
   gr_responseMPF_vs_pt->SetMarkerStyle(20);
   gr_responseMPF_vs_pt->SetMarkerSize(markerSize);
@@ -478,24 +506,36 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   std::string resp_reso_short = (resp_reso == "response") ? "Resp" : "Reso";
 
   std::string responseEXTRAP_name = "gr_DATA" + resp_reso_short + "_vs_pt";
-
+  
+  
+    
+    
   TGraphErrors* gr_responseEXTRAP_vs_pt = (TGraphErrors*)file_extrap->Get(responseEXTRAP_name.c_str());
   gr_responseEXTRAP_vs_pt->SetMarkerStyle(22);
   gr_responseEXTRAP_vs_pt->SetMarkerSize(markerSize);
   gr_responseEXTRAP_vs_pt->SetMarkerColor(46);
   gr_responseEXTRAP_vs_pt->SetName(TString::Format("%s_PtBalchs_extrap_DATA_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
-
+  //
   //  gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove first point (cant extrapolate at such low pt)
   //  gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove second point also
 
   std::string responseEXTRAPMC_name = "gr_extrap" + resp_reso_short + "_vs_pt";
+
+   /* TF1* reso_mc_Fit = new TF1("reso_mc", "[0]", 40., 3000.);
+    reso_mc_Fit->SetParameter(1,0.);
+    reso_mc_Fit->SetLineColor(46);
+    reso_mc_Fit->SetLineWidth(2);*/
+
 
   TGraphErrors* gr_responseEXTRAPMC_vs_pt = (TGraphErrors*)file_extrap->Get(responseEXTRAPMC_name.c_str());
   gr_responseEXTRAPMC_vs_pt->SetMarkerStyle(26);
   gr_responseEXTRAPMC_vs_pt->SetMarkerSize(markerSize);
   gr_responseEXTRAPMC_vs_pt->SetMarkerColor(46);
   gr_responseEXTRAPMC_vs_pt->SetName(TString::Format("%s_PtBalchs_extrap_MC_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
-
+ // if (resp_reso != "response"){gr_responseEXTRAPMC_vs_pt->Fit(reso_mc_Fit,"RQ");}
+  
+    
+   
   //  gr_responseEXTRAPMC_vs_pt->RemovePoint(0); //remove first point (cant extrapolate at such low pt)
   //  gr_responseEXTRAPMC_vs_pt->RemovePoint(0); //remove second point also
 
@@ -563,12 +603,30 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_dataMC_MPF->SetMarkerSize(markerSize);
   gr_dataMC_MPF->SetMarkerColor(38);
   gr_dataMC_MPF->SetName(TString::Format("%s_MPFchs_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  
+  
+  TF1* reso_data_Fit = new TF1("reso", "[0]", 40., 3000.);
+  reso_data_Fit->SetParameter(1,0.);
+  reso_data_Fit->SetLineColor(46);
+  reso_data_Fit->SetLineWidth(2);
 
+ 
   TGraphErrors* gr_dataMC_EXTRAP = fitTools::get_graphRatio(gr_responseEXTRAP_vs_pt, gr_responseEXTRAPMC_vs_pt);
   gr_dataMC_EXTRAP->SetMarkerStyle(22);
   gr_dataMC_EXTRAP->SetMarkerSize(markerSize);
   gr_dataMC_EXTRAP->SetMarkerColor(46);
   gr_dataMC_EXTRAP->SetName(TString::Format("%s_PtBalchs_extrap_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  if (resp_reso != "response"){ gr_dataMC_EXTRAP->Fit(reso_data_Fit,"RQ");}
+  
+  // JER (scale factor)
+  if (resp_reso != "response"){ sf_data = reso_data_Fit->GetParameter(0);
+   sf_mc   = 1;
+   sf_dataerr = reso_data_Fit->GetParError(0);
+   sf_mcerr   = 1;}
+   
+   
+   std::cout<<" SF  : " <<sf_data<<" ERRORS : "<< sf_dataerr<<std::endl;
+   //std::cout<<" SF MC : " <<sf_mc<<" ERRORS : "<< sf_mcerr<<std::endl; 
 
   TGraphErrors* gr_dataMC_MPF_EXTRAP = fitTools::get_graphRatio(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt);
   gr_dataMC_MPF_EXTRAP->SetMarkerStyle(23);
@@ -601,4 +659,71 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
 
   file_noextrap->Close();
   file_extrap->Close();
+}
+
+void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint)
+{
+
+    double Scalefactor [Npoint-1]    = {0.}; 
+    double Scalefactorerr [Npoint-1] = {0.};
+    double x[Npoint] = {0.};
+    x[0] = 0.4;
+    x[1] = 1.05;
+    x[2] = 1.6;
+    x[3] = 2.2;
+    x[4] = 2.7;
+    x[5] = 3.1;
+   // x[6] = 4.2;
+    
+    
+    double x_err[Npoint-1] = {0.};
+    for(int i =0 ; i < Npoint-1 ; i++){
+    
+      Scalefactor [i]    = sfDATA[i]  ;
+      Scalefactorerr [i] = sfDATAerr[i];
+      
+    }
+    
+   TLatex* box = new TLatex();
+  box->SetNDC();
+  box->SetTextSize(0.04);
+  box->SetTextAlign(31);
+  box->SetTextFont(42);
+  box->SetLineWidth(2);
+ 
+  TLatex* boxcms = new TLatex();
+  boxcms->SetNDC();
+  boxcms->SetTextFont(61);
+  boxcms->SetLineWidth(2);
+  boxcms->SetTextSize(0.05);
+  
+  TLatex* boxprel = new TLatex();
+  
+  boxprel->SetNDC();
+  boxprel->SetTextAlign(13);
+  boxprel->SetTextFont(52);
+  boxprel->SetTextSize(0.04);
+  boxprel->SetLineWidth(2);
+    
+
+  TGraphErrors* gr_sf = new TGraphErrors(Npoint-1, x, Scalefactor , x_err, Scalefactorerr);
+    
+
+  gr_sf->SetLineWidth(2);
+  gr_sf->SetLineColor(4);
+  gr_sf->SetMarkerSize(2);
+  gr_sf->SetMarkerStyle(8);
+  gr_sf->SetMarkerColor(kBlue);
+  
+  gr_sf->SetTitle("   ");
+  gr_sf->GetXaxis()->SetTitle("#eta");
+  gr_sf->GetYaxis()->SetTitle("Resolution Scale Factor");
+
+  TCanvas *screen_1 = new TCanvas("screen1", "screen1", 800, 800);
+  gr_sf->Draw("APE");
+  box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
+  boxcms->DrawLatex(0.12,0.91,"CMS");
+  boxprel->DrawLatex(0.24,0.935,"Preliminary");
+  screen_1->SaveAs("Scale_factor_res_vs_ETA.pdf");
+  delete screen_1;
 }

@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
   ss << ((int) (alpha_cut * 100));
   std::string alphaCut = ss.str();
   
-  std::string fit_rms = "RMS99";
+  std::string fit_rms = "RMS985";
   std::string outputDir = "PhotonJetPlots_" + db->get_fullSuffix() + "/vs_pt";
   db->set_outputdir(outputDir);
 

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <TGaxis.h>
+#include "etaBinning.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -1029,7 +1030,7 @@ void drawBase::drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, 
 
 
 //////////////////////////////////
-void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
+void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& name, const std::string& axisName, const std::string& units, const std::string& instanceName, bool log_aussi, int legendQuadrant, const std::string& labelText) {
 
 
   //federico
@@ -1044,31 +1045,48 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
   // Ignore bin between 3500 - 7000
   //int number_of_plots = ptBins.size() - 1;
 
-  int number_of_plots = etaBins.size();
 
+  bool isMPF  = TString(name).Contains("mpf", TString::kIgnoreCase);
+  bool isRAW = TString(name).Contains("raw", TString::kIgnoreCase);
+  int number_of_plots = etaBins.size();
+  
+  
+  
+  
   TGraphErrors* gr_response_vs_eta = new TGraphErrors(0);
   gr_response_vs_eta->SetName("response_vs_eta");
 
   TGraphErrors* gr_responseMC_vs_eta = new TGraphErrors(0);
   gr_responseMC_vs_eta->SetName("responseMC_vs_eta");
+  
+  
+  TGraphErrors* gr_resolution_vs_eta = new TGraphErrors(0);
+  gr_resolution_vs_eta->SetName("resolution_vs_eta");
+  TGraphErrors* gr_resolutionMC_vs_eta = new TGraphErrors(0);
+  gr_resolutionMC_vs_eta->SetName("resolutionMC_vs_eta");
+ 
+  
+  
 
   std::string histoName = name;
 
   for (int iplot = 0; iplot < number_of_plots; ++iplot) {
 
-    std::pair<float, float> currentBin = etaBins[iplot];
+    std::pair<float, float> currentBin = etaBins[iplot].bin;
     float etaMean = (currentBin.first + currentBin.second) / 2.;
-
-    TString etaRange = TString::Format("eta_%d_%d", (int) currentBin.first, (int) currentBin.second);
-
+    
+    
+    
+    TString  etaRange = etaBins[iplot].name;
+    
     // Set shape normalization for comparing shapes, even if we are in
     // prescaled region
     double oldScaleFactor = scaleFactor_;
     //    scaleFactor_ = -1;
-    // federico
-    // pt phot cut label
-    //    TString labelPtPhot = TString::Format("%d < p_{T}^{#gamma} < %d GeV/c", (int) currentBin.first, (int) currentBin.second);
-    //    drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
+
+    // eta phot cut label
+        TString labelPtPhot = etaBins[iplot].title;
+        drawHisto(std::string(name + "_" + etaRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
 
     scaleFactor_ = oldScaleFactor;
 
@@ -1093,8 +1111,8 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);
     }
 
-    //    Float_t dataResolution = (hasData) ? dataRMS / dataResponse : 0.;
-    //    Float_t dataResolutionErr = (hasData) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
+        Float_t dataResolution = (hasData) ? dataRMS / dataResponse : 0.;
+        Float_t dataResolutionErr = (hasData) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
 
 
     if (hasData) {
@@ -1102,6 +1120,8 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
       //if (h1_thisPhotPt_data->GetEntries() > 4) {
         gr_response_vs_eta->SetPoint(iplot, etaMean, dataResponse);
         gr_response_vs_eta->SetPointError(iplot, 0., dataResponseErr);
+        gr_resolution_vs_eta->SetPoint(iplot, etaMean, dataResolution);
+        gr_resolution_vs_eta->SetPointError(iplot, 0., dataResolutionErr);
       //}
 
     }
@@ -1123,35 +1143,80 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
     std::cout<< "mc Response   "<< mcResponse << std::endl;
 
-    //    Float_t mcResolution = (!hasMC) ? 0. : mcRMS / mcResponse;
-    //    Float_t mcResolutionErr = (!hasMC) ? 0. : sqrt(mcRMSErr * mcRMSErr / (mcResponse * mcResponse) + mcResolution * mcResolution * mcResponseErr * mcResponseErr / (mcResponse * mcResponse * mcResponse * mcResponse));
+        Float_t mcResolution = (!hasMC) ? 0. : mcRMS / mcResponse;
+        Float_t mcResolutionErr = (!hasMC) ? 0. : sqrt(mcRMSErr * mcRMSErr / (mcResponse * mcResponse) + mcResolution * mcResolution * mcResponseErr * mcResponseErr / (mcResponse * mcResponse * mcResponse * mcResponse));
 
-    if (hasMC) {
+    
 
-      std::cout << "debug: set points on the graph" << std::endl;
-      std::cout << etaMean << "  " << mcResponse << std::endl;
+      
       gr_responseMC_vs_eta->SetPoint(iplot, etaMean, mcResponse);
       gr_responseMC_vs_eta->SetPointError(iplot, 0., mcResponseErr);
+      gr_resolutionMC_vs_eta->SetPoint(iplot, etaMean, mcResolution);
+      gr_resolutionMC_vs_eta->SetPointError(iplot, 0., mcResolutionErr);
+    
+      std::cout << "debug: set points on the graph" << std::endl;
+      std::cout <<"eta: "<< etaMean << "  Data Response:  " << dataResponse << std::endl;
+      std::cout <<"eta: "<< etaMean << "  MC Response:  " << mcResponse << std::endl;
+    
 
-    }
-
-  } // for pt bins
+  } // for eta bins
 
   std::cout << "debug: now do plots" << std::endl;
 
   std::string graphFileName = "PhotonJetGraphs_" + get_fullSuffix() + ".root";
+  
   TFile* graphFile = TFile::Open(graphFileName.c_str(), "update");
   graphFile->cd();
 
   TString graphName = TString::Format("%s_data_vs_eta", name.c_str()); // something like resp_balancing_eta011_data_vs_pt
+  bool isvseta  = TString(graphFileName).Contains("_pt175", TString::kIgnoreCase);
+
+  
+  if(isvseta ){
+  
+
+   boost::replace_all(graphFileName, "balancing", "BAL");
+  }
+  
+  if(isvseta && isMPF){
+  
+   
+   boost::replace_all(graphFileName, "mpf", "MPF");
+  }
+  
+  
   gr_response_vs_eta->SetName(graphName);
   gr_response_vs_eta->Write();
 
   graphName = TString::Format("%s_mc_vs_eta", name.c_str());
   gr_responseMC_vs_eta->SetName(graphName);
   gr_responseMC_vs_eta->Write();
+  
+  
+  std::string resolutionName = name;
+  boost::replace_all(resolutionName, "resp", "resolution");
+  
+  if(isvseta ){
+  
 
-  graphFile->Close();
+   boost::replace_all(resolutionName, "balancing", "BAL");
+  }
+  
+  if(isvseta && isMPF){
+  
+   
+   boost::replace_all(resolutionName, "mpf", "MPF");
+  }
+  
+  graphName = TString::Format("%s_data_vs_eta", resolutionName.c_str());
+  gr_resolution_vs_eta->SetName(graphName);
+  gr_resolution_vs_eta->Write();
+  
+  graphName = TString::Format("%s_mc_vs_eta", resolutionName.c_str()); 
+  gr_resolutionMC_vs_eta->SetName(graphName);
+  gr_resolutionMC_vs_eta->Write();
+
+ // graphFile->Close();
   
 //gStyle->SetPadTickX(1);
 //gStyle->SetPadTickY(1);
@@ -1178,11 +1243,11 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
   pad_lo->SetTopMargin(1.);
   pad_lo->SetBottomMargin(0.3);
 
-  float etaMax = etaBins[etaBins.size() - 1].second;
-  float etaMin =  etaBins[0].first;
+  float etaMax = etaBins[etaBins.size() - 1].bin.second;
+  float etaMin =  etaBins[0].bin.first;
 
   TGraphErrors* gr_resp_ratio = 0;
-  //  Float_t scale_uncert = (recoType_ == "Calo") ? 0.1 : 0.1;
+  Float_t scale_uncert = (recoType_ == "Calo") ? 0.1 : 0.1;
 
   TH2* h2_axes_lo_resp = NULL;
 
@@ -1196,7 +1261,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     
     h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 10, etaMin, etaMax, 10, 0.86, 1.14);
 
-    h2_axes_lo_resp->SetXTitle("|#eta (jet)|");
+    h2_axes_lo_resp->SetXTitle("|#eta (1^{st}jet)|");
     h2_axes_lo_resp->SetYTitle("Data / MC");
     h2_axes_lo_resp->GetXaxis()->SetTitleOffset(1.2);
     h2_axes_lo_resp->GetYaxis()->SetTitleOffset(0.55);
@@ -1233,12 +1298,13 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     ratioFit->SetParameter(0, 0.);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(2);
-    gr_resp_ratio->Fit(ratioFit, "RQ");
+    TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
+    //gr_resp_ratio->Fit(ratioFit, "RQ");
     //std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
 
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
-
+    std::cout<<"Data/MC: Parameter [0] = "<< fitValue <<" #pm "<<fitError<< std::endl;
     //federico -- linear fit
     //    double fitValue_m = ratioFit->GetParameter(1);
     //    double fitError_m = ratioFit->GetParError(1);
@@ -1257,7 +1323,6 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     fitlabel->SetTextSize(0.08);
     fitlabel->SetFillColor(0);
     TString fitLabelText = TString::Format("Fit: %.3f #pm %.3f", fitValue, fitError);
-    // TString fitLabelText = TString::Format("Fit: y= %.3f x + %.3f", fitValue_m, fitValue);
     fitlabel->AddText(fitLabelText);
     fitlabel->Draw("same");
 
@@ -1276,7 +1341,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
   } // if !nodata && !nomc
 
   TH2D* h2_axes = new TH2D("axes_again", "", 10, etaMin, etaMax, 10, 0.4, 1.25);
-  h2_axes->SetXTitle("|#eta (jet)|");
+  h2_axes->SetXTitle("|#eta (1^st}jet)|");
   h2_axes->SetYTitle("Jet p_{T} response");
   //h2_axes->SetYTitle("< p_{T}^{jet} / p_{T}^{#gamma} >");
   h2_axes->GetXaxis()->SetTitleOffset(1.1);
@@ -1290,7 +1355,7 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
   h2_axes->Draw();
 
-  //  Float_t labelTextSize = 0.035;
+  Float_t labelTextSize = 0.035;
   TPaveText* label_algo = get_labelAlgo(2);
 
   TLegend* legend = new TLegend(0.55, 0.15, 0.92, 0.38, legendTitle_.c_str());
@@ -1350,10 +1415,26 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
 
     gr_response_vs_eta->Draw("Psame");
   }
+  
+
+  
+  
 
   gPad->RedrawAxis();
 
   std::string canvName = outputdir_ + "/" + name + "_vs_eta";
+  
+  if(isvseta ){
+  
+
+   boost::replace_all(canvName, "balancing", "BAL");
+  }
+  
+  if(isvseta && isMPF){
+  
+   
+   boost::replace_all(canvName, "mpf", "MPF");
+  }
 
   if (noMC) {
     //    std::string canvName_eps = canvName + ".eps";
@@ -1367,16 +1448,194 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
   std::string canvName_fit_png = canvName + "_FITLINE.png";
   c1->SaveAs(canvName_fit_png.c_str());
 
+  //gStyle->SetPadTickX(0);
+  //gStyle->SetPadTickY(0);*/
+  
+  
+  TH2* h2_axes_lo_reso = new TH2D("axes_lo_reso", "", 10,etaMin, etaMax, 10, (1. - 6.*scale_uncert), (1. + 6.*scale_uncert));
+  
+  if (!noDATA && !noMC) {
+    
+    pad_lo->cd();
 
+    h2_axes_lo_reso->SetXTitle("#eta(1^{st}jet)");
+    h2_axes_lo_reso->SetYTitle("Data / MC");
+    h2_axes_lo_reso->GetXaxis()->SetTitleOffset(1.2);
+    h2_axes_lo_reso->GetYaxis()->SetTitleOffset(0.55);
+    h2_axes_lo_reso->GetXaxis()->SetTickLength(0.06);
+    h2_axes_lo_reso->GetXaxis()->SetMoreLogLabels();
+    h2_axes_lo_reso->GetXaxis()->SetNoExponent();
+    h2_axes_lo_reso->GetXaxis()->SetLabelSize(0.085);
+    h2_axes_lo_reso->GetYaxis()->SetLabelSize(0.07);
+    h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
+    h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
+    h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
+    h2_axes_lo_reso->Draw("");
+
+    line_one->Draw("same");
+
+    TLine* line_plus_reso = new TLine(etaMin, 1. + 2.*scale_uncert, etaMax, 1. + 2.*scale_uncert);
+    //line_plus_reso->SetLineColor(46);
+    //line_plus_reso->SetLineWidth(2);
+    line_plus_reso->SetLineStyle(2);
+    line_plus_reso->Draw("same");
+
+    TLine* line_minus_reso = new TLine(etaMin, 1. - 2.*scale_uncert, etaMax, 1. - 2.*scale_uncert);
+    //line_minus_reso->SetLineColor(46);
+    //line_minus_reso->SetLineWidth(2);
+    line_minus_reso->SetLineStyle(2);
+    line_minus_reso->Draw("same");
+
+    TGraphErrors* gr_reso_ratio = this->get_graphRatio(gr_resolution_vs_eta, gr_resolutionMC_vs_eta);
+    gr_reso_ratio->SetName("reso_ratio");
+    gr_reso_ratio->SetMarkerStyle(20);
+    gr_reso_ratio->SetMarkerSize(1.8);
+    gr_reso_ratio->Draw("P");
+
+    TF1* constline = new TF1("constline", "[0]", etaMin, etaMax);
+    constline->SetParameter(0, 1.);
+    //constline->SetLineColor(8);
+    //constline->SetLineColor(38);
+    constline->SetLineColor(46);
+    //constline->SetLineStyle(3);
+    constline->SetLineWidth(3);
+    gr_reso_ratio->Fit(constline, "RQ");
+    //std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
+
+    TPaveText* fitlabel = new TPaveText(0.55, 0.4, 0.88, 0.45, "brNDC");
+    fitlabel->SetTextSize(0.08);
+    fitlabel->SetFillColor(0);
+    char fitLabelText[150];
+    sprintf(fitLabelText, "[0]: %.3f #pm %.3f", constline->GetParameter(0), constline->GetParError(0));
+    fitlabel->AddText(fitLabelText);
+    fitlabel->Draw("same");
+    //line_plus_resp->Draw("same");
+    constline->Draw("same");
+    gr_reso_ratio->Draw("P same");
+    gPad->RedrawAxis();
+
+    pad_hi->cd();
+
+  } // if !nodata and !nomc
+
+  TH2D* h2_axes2 = new TH2D("axes_again2", "", 10, etaMin, etaMax, 10, 0., 1.);
+  h2_axes->SetXTitle("#eta(1^{st}jet)");
+  if(! isMPF){
+    h2_axes2->SetYTitle("p_{T} Balance Resolution");
+  }else{
+    h2_axes2->SetYTitle("MPF Resolution");    
+  }
+  //h2_axes2->GetXaxis()->SetTitleOffset(1.1);
+  h2_axes2->GetYaxis()->SetTitleOffset(1.5);
+  //h2_axes2->GetXaxis()->SetMoreLogLabels();
+  //h2_axes2->GetXaxis()->SetNoExponent();
+
+  if (! noMC) {
+    h2_axes2->GetXaxis()->SetLabelSize(0.);
+  }
+
+  h2_axes2->Draw();
+
+  TPaveText* label_cms2 = get_labelCMS(1);
+  label_cms2->SetTextSize(cmsTextSize);
+  //TPaveText* label_cms2 = new TPaveText(0.58, 0.83, 0.75, 0.87, "brNDC");
+  //label_cms2->SetFillColor(kWhite);
+  //label_cms2->SetTextSize(cmsTextSize);
+  //label_cms2->SetTextFont(62);
+  //label_cms2->AddText(label_CMS_text.c_str());
+
+  TPaveText* label_sqrt2 = get_labelSqrt(1);
+  //TPaveText* label_sqrt2 = new TPaveText(0.58, 0.78, 0.75, 0.82, "brNDC");
+  //label_sqrt2->SetFillColor(kWhite);
+  //label_sqrt2->SetTextSize(sqrtTextSize);
+  //label_sqrt2->SetTextFont(42);
+  //label_sqrt2->AddText(label_sqrt_text.c_str());
+
+  TPaveText* label_algo2 = get_labelAlgo(2);
+  //TPaveText* label_algo2 = new TPaveText(0.27, 0.82, 0.32, 0.86, "brNDC");
+  //label_algo2->SetFillColor(kWhite);
+  //label_algo2->SetTextSize(labelTextSize);
+  //label_algo2->AddText(jetAlgoName.c_str());
+
+  TLegend* legend2 = new TLegend(0.5, 0.5, 0.85, 0.73, legendTitle_.c_str());
+  legend2->SetTextFont(42);
+  legend2->SetBorderSize(0);
+  legend2->SetFillColor(kWhite);
+  legend2->SetFillStyle(0);
+  legend2->SetTextSize(labelTextSize);
+  if (!noDATA) {
+    legend2->AddEntry(gr_resolution_vs_eta, "Data", "P");
+  }
+  if (!noMC) {
+    legend2->AddEntry(gr_resolutionMC_vs_eta, "MC", "P");
+  }
+  
+  
+
+  legend2->Draw("same");
+
+  if (!noMC) {
+    
+    gr_resolutionMC_vs_eta->SetMarkerStyle(24);
+    gr_resolutionMC_vs_eta->SetMarkerSize(1.8);
+    gr_resolutionMC_vs_eta->SetMarkerColor(kBlack);
+    gr_resolutionMC_vs_eta->SetLineColor(kBlack);
+    gr_resolutionMC_vs_eta->Draw("Psame");
+  }
+
+  if (!noDATA) {
+    if (noMC) {
+      gr_resolution_vs_eta->SetMarkerColor(TColor::GetColor(0, 0, 153));
+      gr_resolution_vs_eta->SetLineColor(TColor::GetColor(0, 0, 153));
+      gr_resolution_vs_eta->SetLineWidth(1.);
+      gr_resolution_vs_eta->SetMarkerStyle(21);
+      gr_resolution_vs_eta->SetMarkerSize(1.);
+    } else {
+      gr_resolution_vs_eta->SetMarkerStyle(20);
+      gr_resolution_vs_eta->SetMarkerSize(1.8);
+      gr_resolution_vs_eta->SetMarkerColor(kBlack);
+    }
+    
+    gr_resolution_vs_eta->Draw("Psame");
+  }
+  
+  label_cms2->Draw("same");
+  label_sqrt2->Draw("same");
+  label_algo2->Draw("same");
+  gPad->RedrawAxis();
+  
+  canvName = outputdir_ + "/" + resolutionName + "_vs_eta";
+  
+  if(isvseta ){
+  
+
+   boost::replace_all(canvName, "balancing", "BAL");
+  }
+  
+  if(isvseta && isMPF){
+  
+   
+   boost::replace_all(canvName, "mpf", "MPF");
+  }
+  
+  if (outputGraphs_) {
+    //    std::string canvName_eps = canvName + ".eps";
+    //    c1->SaveAs(canvName_eps.c_str());
+    std::string canvName_png = canvName + ".png";
+    c1->SaveAs(canvName_png.c_str());
+  }
+  
   delete h2_axes;
   h2_axes = 0;
+  delete h2_axes2;
+  h2_axes2 = 0;
   delete h2_axes_lo_resp;
   h2_axes_lo_resp = 0;
+  delete h2_axes_lo_reso;
+  h2_axes_lo_reso = 0;
   delete c1;
   c1 = 0;
 
-  //gStyle->SetPadTickX(0);
-  //gStyle->SetPadTickY(0);*/
 
 }
 
@@ -1413,7 +1672,24 @@ void drawBase::drawHisto(const std::string& name, const std::string& axisName, c
   */
 
   //   drawHisto_fromHistos(dataHistos, mcHistos, mcHistos_superimp, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
-  drawHisto_fromHistos(dataHistos, mcHistos, name, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
+  
+  bool isMPF  = TString(name).Contains("mpf", TString::kIgnoreCase);
+  
+  bool isvseta  = TString(name).Contains("_pt175", TString::kIgnoreCase);
+  std::string VsetaName = name;
+  
+  if(isvseta ){
+  
+
+   boost::replace_all(VsetaName, "balancing", "BAL");
+  }
+  if(isvseta && isMPF){
+  
+   
+   boost::replace_all(VsetaName, "mpf", "MPF");
+  }
+  
+  drawHisto_fromHistos(dataHistos, mcHistos, VsetaName, axisName, units, instanceName, log_aussi, legendQuadrant, "", labelText, add_jetAlgoText, drawRatio, fitMin, fitMax);
 
 } //drawhisto
 //////////////////////// federico
@@ -3955,10 +4231,13 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       Point mc;
       bool found = false;
       for (Point foo: mc_points) {
-        if (abs(foo.x - data.x) < 1e-6) {
+        //if (abs(foo.x - data.x) < 1e-6) {
+        if (foo.x == data.x) {
           found = true;
           mc = foo;
+//debugg : no accurate ratio in vs eta plots
 
+	  std::cout<<" x graph ratio mc : "<<foo.x<<" data : "<<data.x<<std::endl;
           break;
         }
       }
@@ -3972,6 +4251,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       double ratio_y = data.y / mc.y;
       double ratio_y_err = sqrt(data.y_err * data.y_err / (mc.y * mc.y) + data.y * data.y * mc.y_err * mc.y_err / (mc.y * mc.y * mc.y * mc.y));
 
+     // std::cout<<" x graph ratio : "<<ratio_x<<" y : "<<ratio_y<<std::endl;
+       
       if (std::isnan(ratio_y))
         continue;
 
@@ -4045,8 +4326,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     double fitValue = ratioFit->GetParameter(0);
     double fitError = ratioFit->GetParError(0);
 
-    data_clone->SetMaximum(2);
-    data_clone->SetMinimum(0);
+    //here to modify the data/MC axis
+    
+    data_clone->SetMaximum(1.5);
+    data_clone->SetMinimum(0.5);
 
     data_clone->SetXTitle(xTitle.c_str());
     data_clone->SetYTitle("Data / MC");

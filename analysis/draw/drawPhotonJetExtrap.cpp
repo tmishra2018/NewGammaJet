@@ -42,9 +42,10 @@ int main(int argc, char* argv[]) {
     resoTypes.push_back("RMS70");
     resoTypes.push_back("RMS95");
     resoTypes.push_back("RMS99");
+    resoTypes.push_back("RMS985");
     TCLAP::ValuesConstraint<std::string> allowedResoTypes(resoTypes);
     
-    TCLAP::ValueArg<std::string> resoArg("", "reso-algo", "algo for resolution calculation", false, "RMS99", &allowedResoTypes, cmd);
+    TCLAP::ValueArg<std::string> resoArg("", "reso-algo", "algo for resolution calculation", false, "RMS985", &allowedResoTypes, cmd);
 
     TCLAP::UnlabeledValueArg<std::string> dataArg("data_dataset", "data dataset name", true, "Photon_Run2011", "string", cmd);
     TCLAP::UnlabeledValueArg<std::string> mc1Arg("mc1_dataset", "first MC dataset name", true, "G", "string", cmd);
@@ -143,6 +144,11 @@ int main(int argc, char* argv[]) {
     //special case
     db->set_legendTitle("|#eta| < 1.3");
     db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
+
+   
+   
+
+
 
     delete db;
   } catch (TCLAP::ArgException &e) {

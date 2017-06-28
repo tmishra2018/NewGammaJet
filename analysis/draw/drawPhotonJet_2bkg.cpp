@@ -11,6 +11,7 @@
 #include "etaBinning.h"
 #include "ptBinning.h"
 
+
 bool OUTPUT_GRAPHS = true;
 bool RAW = false;
 
@@ -136,12 +137,14 @@ int main(int argc, char* argv[]) {
   db->drawHisto("EtaSecondJet_2ndJetOK", "2nd Jet Eta", " ", "Events" , log);
   db->drawHisto("PhiSecondJet_2ndJetOK", "2nd Jet Phi", " ", "Events" , false);
   db->drawHisto("MET_passedID", "Missing E_{T}", "GeV", "Events", log);
+  db->drawHisto("MET_parr", "Missing E_{T //} ", "GeV", "Events", log);
+  db->drawHisto("MET_ortho", "Missing E_{T #perp}", "GeV", "Events", log);
   db->drawHisto("alpha_passedID", "#alpha", "", "Events", log);
   //  db->set_rebin(1);
   db->drawHisto("nvertex", "Number of Reconstructed Vertices", "", "Events", log);
   db->drawHisto("nvertex_reweighted", "Number of Reconstructed Vertices (after reweighting)", "", "Events", log);
-  db->drawHisto("ntrue_interactions", "Number of True interaction", "", "Events", log);
-  db->drawHisto("ntrue_interactions_reweighted", "Number of True interaction (after reweighting)", "", "Events", log);
+ // db->drawHisto("ntrue_interactions", "Number of True interaction", "", "Events", log);
+  //db->drawHisto("ntrue_interactions_reweighted", "Number of True interaction (after reweighting)", "", "Events", log);
   
   //  db->set_rebin(2);
   db->drawHisto("deltaPhi_passedID", "#Delta #varphi", "", "Events", log);  
@@ -180,6 +183,11 @@ int main(int argc, char* argv[]) {
 
   EtaBinning etaBinning;
   size_t etaBinningSize = etaBinning.size();
+  std::vector<EtaBin > etaBins = etaBinning.getBinning();
+
+  
+  
+  
   
   // Balancing
   db->setFolder("analysis/balancing");
@@ -202,7 +210,48 @@ int main(int argc, char* argv[]) {
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", false);
   
   
-  /*
+  
+  
+  
+  
+  // MPF
+  db->setFolder("analysis/mpf");
+  db->drawProfile("MPF", "Pt", "p_{T} [GeV]", "MPF Response", log, 0);
+  db->drawProfile("MPF", "Eta", "#eta", "MPF Response", false, 0);
+  db->drawProfile("MPF", "Nvtx", "N_{vertex}", "MPF Response", false, 0); 
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+   
+    TString responseName = TString::Format("resp_mpf_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response", "", "Events", false);
+    if(RAW){ // Raw jets
+      responseName = TString::Format("resp_mpf_raw_%s", etaBinning.getBinName(i).c_str());
+      db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response (raw MET)", "", "Events", false);
+    }
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
+  if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
+  
+  
+  db->setFolder("analysis/balancing_vs_eta");
+  db->set_legendTitle("p_{T}^{#gamma} > 175 GeV ");
+  db->drawHisto_vs_eta(etaBins, "resp_balancing_pt175", "Balancing Response", "", "Events", false);
+  
+  db->setFolder("analysis/mpf_vs_eta");
+  db->set_legendTitle("p_{T}^{#gamma} > 175 GeV ");
+  db->drawHisto_vs_eta(etaBins, "resp_mpf_pt175", "MPF Response", "", "Events", false);
+
+  delete db;
+  db = NULL;
+
+  return 0;
+
+}
+
+
+/*
   
   // Pt 1st
   db->setFolder("analysis/Ptfirstjets");
@@ -313,30 +362,3 @@ int main(int argc, char* argv[]) {
 
   db->drawHisto_vs_pt(ptBins, ptMean, "nvertices_eta0013", "mu", "", "Events", false);
   */
-  // MPF
-  db->setFolder("analysis/mpf");
-  db->drawProfile("MPF", "Pt", "p_{T} [GeV]", "MPF Response", log, 0);
-  db->drawProfile("MPF", "Eta", "#eta", "MPF Response", false, 0);
-  db->drawProfile("MPF", "Nvtx", "N_{vertex}", "MPF Response", false, 0); 
-
-  for (size_t i = 0; i < etaBinningSize; i++) {
-    db->set_legendTitle(etaBinning.getBinTitle(i));
-   
-    TString responseName = TString::Format("resp_mpf_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response", "", "Events", false);
-    if(RAW){ // Raw jets
-      responseName = TString::Format("resp_mpf_raw_%s", etaBinning.getBinName(i).c_str());
-      db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response (raw MET)", "", "Events", false);
-    }
-  }
-  db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
-  if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
-
-
-  delete db;
-  db = NULL;
-
-  return 0;
-
-}

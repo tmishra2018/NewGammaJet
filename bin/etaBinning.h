@@ -46,6 +46,14 @@ class EtaBinning {
     size_t size() const {
       return mEtaBins.size();
     }
+    
+    std::vector< EtaBin > getBinning(int n = -1) const {
+      if (n < 0) {
+        n = size();
+      }
+      return std::vector<EtaBin >(mEtaBins.begin(), mEtaBins.begin() + n);
+    }
+    
 
   private:
     std::vector<EtaBin> mEtaBins;

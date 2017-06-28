@@ -22,6 +22,7 @@
 #include "TLegend.h"
 #include "TPaveText.h"
 #include "TDirectory.h"
+#include "etaBinning.h"
 //#include "TLatex.h"
 
 
@@ -81,7 +82,7 @@ public:
 
   void drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, std::vector<float> ptMeanVec, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
 
-    void drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
+    void drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "");
 
   void drawHisto(const std::string& name, const std::string& axisName, const std::string& units = "", const std::string& instanceName = "Entries", bool log_aussi = false, int legendQuadrant = 1, const std::string& labelText = "", bool add_jetAlgoText = false, bool drawRatio = true, double fitMin = 0, double fitMax = 8000);
 
@@ -274,6 +275,8 @@ private:
   std::vector< TH1* > lastHistos_data_;
   std::vector< TH1* > lastHistos_mc_;
   std::vector< TH1* > lastHistos_mc_superimp_;
+  
+  //--- vector of rms and err for resp  
 
   Float_t scaleFactor_;
 
