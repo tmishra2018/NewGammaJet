@@ -358,6 +358,9 @@ void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t
 
   //first: find maximum
 //  std::cout << "N: " << gaussian->GetParameter(0) << "\tmu: " << gaussian->GetParameter(1) << "\tsigma: " << gaussian->GetParameter(2) << std::endl;
+
+
+
   Int_t maxBin;
   if (useMode) {
     maxBin = h1_projection->GetMaximumBin();
@@ -400,9 +403,11 @@ void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t
   Int_t iBin = maxBin;
   Int_t delta_iBin = 1;
   Int_t sign  = 1;
+  Int_t limit_iteration = 0 ; 
 //  std::cout << "iBin: " << iBin << "\tint: " << newHisto->Integral()/integral << std::endl;
-
-  while (newHisto->Integral() < percentIntegral_RMS * integral) {
+  Double_t integraldebug = 0.;
+  while (newHisto->Integral() < percentIntegral_RMS * integral /*newHisto->Integral() != integraldebug */ && limit_iteration < 100) {
+  integraldebug = newHisto->Integral();
 
     iBin += sign * delta_iBin;
 
@@ -412,6 +417,13 @@ void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t
 
     delta_iBin += 1;
     sign *= -1;
+   /* if ( newHisto->Integral() == integraldebug){ 
+    limit_iteration ++; 
+     if(newHisto->Integral() <= -2.30926e-06 && limit_iteration < 10) std::cout<<" integral : "<<newHisto->Integral()<<" threshold "<<percentIntegral_RMS * integral<<std::endl;
+    }*/
+    
+    
+    //if(newHisto->Integral() == integraldebug  && limit_iteration > 10) 
 
   }
 
@@ -429,8 +441,9 @@ if(rms<0.000001) {
  rms_err = newHisto->GetMean();
 }
 
+limit_iteration = 0; 
 //std::cout << "rms: " << rms << std::endl;
-  while (newHisto->Integral() < percentIntegral_MEAN * integral) {
+  while (newHisto->Integral() < percentIntegral_MEAN * integral /*newHisto->Integral() != integraldebug */ && limit_iteration < 100) {
 //  std::cout << "iBin: " << iBin << "\tint: " << newHisto->Integral()/integral << std::endl;
 
     iBin += sign * delta_iBin;
@@ -440,6 +453,7 @@ if(rms<0.000001) {
 
     delta_iBin += 1;
     sign *= -1;
+    if ( newHisto->Integral() == integraldebug) limit_iteration ++;
 
   }
 

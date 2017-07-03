@@ -139,7 +139,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     float ptPhotReco_thisBin =  ptMeanVec.at(iPtBin);
     float ptPhotReco_err_thisBin = 0;
 
-    // npoints in alpha : scan in alpha -- con -XX non considera gli ultimi XX bin
+    // npoints in alpha : scan in alpha
     int nPoints = mExtrapBinning.size();
     std::cout<<"binning size : "<<nPoints<<std::endl;
     float x[nPoints];
@@ -179,16 +179,20 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     Float_t y_reso_MPFMC_err[nPoints];
 
     TString yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_balancing%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
+    
+    // infinite loop for amc at NLO start
     getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_DATA, y_resp_err_DATA,  y_reso_DATA, y_reso_err_DATA);
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MC, y_resp_MC_err,  y_reso_MC, y_reso_MC_err);
-
+    // infinite loop for amc at NLO stop
     yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_mpf%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_MPFDATA, y_resp_err_MPFDATA,  y_reso_MPFDATA, y_reso_err_MPFDATA);
+    
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MPFMC, y_resp_MPFMC_err,  y_reso_MPFMC, y_reso_MPFMC_err);
 
      //PLI
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
+    
     
     //draw response histograms:
     TGraphErrors* gr_resp_DATA = new TGraphErrors(nPoints, x, y_resp_DATA, x_err, y_resp_err_DATA);
@@ -228,6 +232,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
     std::string fitFunct_name;
     fitFunct_name = "[0] + x*[1]";
+
 
     // MC Balancing
     TF1* fit_resp = new TF1("fit_resp", fitFunct_name.c_str());
@@ -1194,6 +1199,8 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
     }
 
     //this ugly fix saves from empty relative pt binning plots
+    
+    
     if (h1_r->GetEntries() == 0) {
       y_resp[i] = -1.;
       y_resp_err[i] = 1000000000.;
@@ -1243,8 +1250,11 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
       exit(66);
     }
 
-    if (rmsFactor > 0) {
+    if (rmsFactor > 0  && h1_r -> Integral()  > 0. ) {
+      
+
       fitTools::getTruncatedMeanAndRMS(h1_r, mean, mean_err, rms, rms_err, rmsFactor, rmsFactor);
+
     }
 
     y_resp[i] = mean;

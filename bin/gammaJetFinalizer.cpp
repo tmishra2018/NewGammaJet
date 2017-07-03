@@ -1080,7 +1080,7 @@ void GammaJetFinalizer::runAnalysis() {
 	    }}
 	  
 	  
-	   //bin 9 0 to 0.27 :
+	   //bin 9 0 to 0.25 :
 
 	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon < 0.25){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
@@ -1098,7 +1098,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  }}
 	  
 	  
-	  //bin 9 0 to 0.24 :
+	  //bin 9 0 to 0.20 :
 
 	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon<0.2){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
@@ -1117,7 +1117,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  
 	  
-	  //bin 9 0 to 0.27 :
+	  //bin 9 0 to 0.15 :
 
 	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon<0.15){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
@@ -1134,9 +1134,9 @@ void GammaJetFinalizer::runAnalysis() {
 	    }
 	  }}
 	  
-	  //bin 9 0 to 0.27 :
+	  //bin 9 0 to 0.1 :
 
-	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon<0.1){
+	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon < 0.1 ){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
