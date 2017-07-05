@@ -99,6 +99,12 @@ public :
    Double_t        passHLT_Photon50;
    Double_t        passHLT_Photon75;
    Double_t        passHLT_Photon90;
+   Double_t        phomatchHLT_Photon120; // trigger object matching
+   Double_t        phomatchHLT_Photon165;
+   Double_t        phomatchHLT_Photon30;
+   Double_t        phomatchHLT_Photon50;
+   Double_t        phomatchHLT_Photon75;
+   Double_t        phomatchHLT_Photon90;
    Double_t        phiAK4_j1;
    Double_t        phiAK4_j2;
    Double_t        photonEnFrac_j1;
@@ -195,6 +201,12 @@ public :
    TBranch        *b_passHLT_Photon50;   //!
    TBranch        *b_passHLT_Photon75;   //!
    TBranch        *b_passHLT_Photon90;   //!
+   TBranch        *b_phomatchHLT_Photon120;//!
+   TBranch        *b_phomatchHLT_Photon165;//!
+   TBranch        *b_phomatchHLT_Photon30;//!
+   TBranch        *b_phomatchHLT_Photon50;//!
+   TBranch        *b_phomatchHLT_Photon75;//!
+   TBranch        *b_phomatchHLT_Photon90;//!
    TBranch        *b_phiAK4_j1;   //!
    TBranch        *b_phiAK4_j2;   //!
    TBranch        *b_photonEnFrac_j1;   //!
@@ -353,6 +365,12 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("passHLT_Photon50", &passHLT_Photon50, &b_passHLT_Photon50);
    fChain->SetBranchAddress("passHLT_Photon75", &passHLT_Photon75, &b_passHLT_Photon75);
    fChain->SetBranchAddress("passHLT_Photon90", &passHLT_Photon90, &b_passHLT_Photon90);
+   fChain->SetBranchAddress("phomatchHLT_Photon120", &phomatchHLT_Photon120, &b_phomatchHLT_Photon120);//!
+   fChain->SetBranchAddress("phomatchHLT_Photon165", &phomatchHLT_Photon165, &b_phomatchHLT_Photon165);//!
+   fChain->SetBranchAddress("phomatchHLT_Photon30",  &phomatchHLT_Photon30,  &b_phomatchHLT_Photon30);//!
+   fChain->SetBranchAddress("phomatchHLT_Photon50",  &phomatchHLT_Photon50,  &b_phomatchHLT_Photon50);//!
+   fChain->SetBranchAddress("phomatchHLT_Photon75",  &phomatchHLT_Photon75,  &b_phomatchHLT_Photon75);//!
+   fChain->SetBranchAddress("phomatchHLT_Photon90",  &phomatchHLT_Photon90,  &b_phomatchHLT_Photon90);//!
    fChain->SetBranchAddress("phiAK4_j1", &phiAK4_j1, &b_phiAK4_j1);
    fChain->SetBranchAddress("phiAK4_j2", &phiAK4_j2, &b_phiAK4_j2);
    fChain->SetBranchAddress("photonEnFrac_j1", &photonEnFrac_j1, &b_photonEnFrac_j1);

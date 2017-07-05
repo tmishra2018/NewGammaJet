@@ -108,21 +108,21 @@ void GammaJetFinalizer::runAnalysis() {
       
      //HLTphoton30   
                            
-    static std::string puMC30 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC30 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
     
     //HLTphoton50
 
 
-    static std::string puMC50 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC50 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
     static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
     
     //HLTphoton75 
 
 
-    static std::string puMC75 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC75 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
     static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
     
@@ -130,21 +130,21 @@ void GammaJetFinalizer::runAnalysis() {
     //HLTphoton90 
 
 
-    static std::string puMC90 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC90 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();  
     static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
     
     //HLTphoton120 
 
 
-    static std::string puMC120 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC120 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
     static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
     
     //HLTphoton165
 
 
-    static std::string puMC165 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC165 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
     static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
     
@@ -595,7 +595,7 @@ void GammaJetFinalizer::runAnalysis() {
     std::string passedTrigger;
     float triggerWeight = 1.;
     if(mVerbose) std::cout<<"Finding trigger... " << std::endl;
-    if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
+    if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, fullinfo.phomatchHLT_Photon30, fullinfo.phomatchHLT_Photon50, fullinfo.phomatchHLT_Photon75, fullinfo.phomatchHLT_Photon90, fullinfo.phomatchHLT_Photon120, fullinfo.phomatchHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
 	if (mVerbose) {
@@ -1462,7 +1462,7 @@ void GammaJetFinalizer::checkInputFiles() {
 
 
 // necessary adaptation 
-int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, float& weight) {
+int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, double& triggHLT1, double& triggHLT2, double& triggHLT3, double& triggHLT4, double& triggHLT5, double& triggHLT6, float& weight) {
 if (! mIsMC) {
     const PathVector& mandatoryTriggers = mTriggers->getTriggers(fullinfo.run);
     
@@ -1494,15 +1494,22 @@ if (! mIsMC) {
       double passed5 = HLT5;
       double passed6 = HLT6;
       
+      double triggpassed1 = 1.;//triggHLT1;
+      double triggpassed2 = 1.;//triggHLT2;
+      double triggpassed3 = 1.;//triggHLT3;
+      double triggpassed4 = 1.;//triggHLT4;
+      double triggpassed5 = 1.;//triggHLT5;
+      double triggpassed6 = 1.;//triggHLT6;
+      
    //   int passedtriggerresult ;
       
       
-      if (   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed5 == 1. &&  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed3 == 1. &&  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       
       
       
@@ -1530,6 +1537,13 @@ if (! mIsMC) {
       double passed5 = HLT5;
       double passed6 = HLT6;
       
+      double triggpassed1 = 1.;//triggHLT1;
+      double triggpassed2 = 1.;//triggHLT2;
+      double triggpassed3 = 1.;//triggHLT3;
+      double triggpassed4 = 1.;//triggHLT4;
+      double triggpassed5 = 1.;//triggHLT5;
+      double triggpassed6 = 1.;//triggHLT6;
+      
    //   int passedtriggerresult ;
       std::string p = mandatoryTrigger->at(0).name.str() ;
       std::string H1 = "HLT_Photon165_R9Id90_HE10_IsoM_v.*";
@@ -1540,12 +1554,12 @@ if (! mIsMC) {
       std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
       
       
-      if (   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-      if (   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-      if (   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-      if (   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-      if (   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-      if (   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed6 == 1. &&   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed5 == 1. &&   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed4 == 1. &&   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed3 == 1. &&   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed2 == 1. &&   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+      if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
       
      /* 
       

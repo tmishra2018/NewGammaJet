@@ -373,7 +373,10 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t mcRMSErr = 0.;
     
     if (hasMC) {
+    
+
       fitTools::getTruncatedMeanAndRMS(lastHistos_mcHistoSum_, mcResponse, mcResponseErr, mcRMS, mcRMSErr, meanTruncFraction, rmsTruncFraction);
+
     }
     
     Float_t mcResolution = (!hasMC) ? 0. : mcRMS / mcResponse;
@@ -429,8 +432,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t genRMSErr = 0.;
     
     //    std::cout << "do fitTools::getTruncatedMeanAndRMS for gen" << std::endl;  
+         // std::cout<<"test infinite loop start "<<responseTrue->Integral()<<std::endl;
+         
+     if(responseTrue->Integral()> 0.)    {
     fitTools::getTruncatedMeanAndRMS(responseTrue, genResponse, genResponseErr, genRMS, genRMSErr, meanTruncFraction, rmsTruncFraction);
-    
+           //   std::cout<<"test infinite loop end"<<std::endl;
+              
     Float_t genResolution = genRMS / genResponse;
     Float_t genResolutionErr = sqrt(genRMSErr * genRMSErr / (genResponse * genResponse) + genResolution * genResolution * genResponseErr * genResponseErr / (genResponse * genResponse * genResponse * genResponse));
     
@@ -441,7 +448,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     gr_responseTrue_vs_pt->SetPoint(iplot, ptMean, genResponse);
     gr_responseTrue_vs_pt->SetPointError(iplot, 0, genResponseErr);
     gr_resolutionTrue_vs_pt->SetPoint(iplot, ptMean, genResolution);
-    gr_resolutionTrue_vs_pt->SetPointError(iplot, 0, genResolutionErr);
+    gr_resolutionTrue_vs_pt->SetPointError(iplot, 0, genResolutionErr);}
     
     }// !isRAW 
   } // for pt bins
@@ -543,6 +550,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7, kTRUE);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
     h2_axes_lo_resp->Draw("");
     
     line_one->Draw("same");
@@ -733,6 +741,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
+    
     h2_axes_lo_reso->Draw("");
 
     line_one->Draw("same");
@@ -1274,6 +1284,7 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7, kTRUE);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
     h2_axes_lo_resp->Draw("");
 
     line_one->Draw("same");
@@ -1470,6 +1481,7 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
     h2_axes_lo_reso->Draw("");
 
     line_one->Draw("same");
@@ -2685,6 +2697,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo->GetYaxis()->SetNdivisions(7, kTRUE);
+    h2_axes_lo->GetYaxis()->SetRangeUser(0.95,1.05);
 
     TLine* line_one = new TLine(xMin, 1., xMax, 1.);
     TLine* line_plus = new TLine(xMin, 1.05, xMax, 1.05);
@@ -4645,6 +4658,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7,true);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
     h2_axes_lo_resp->Draw();
 
     line_one->Draw("same");
@@ -4860,6 +4874,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
     h2_axes_lo_reso->Draw("");
 
     line_one->Draw("same");
