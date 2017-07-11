@@ -10,6 +10,7 @@
 #include <TColor.h>
 #include "etaBinning.h"
 #include "ptBinning.h"
+#include "HLTptBinning.h"
 
 
 bool OUTPUT_GRAPHS = true;
@@ -95,6 +96,12 @@ int main(int argc, char* argv[]) {
   std::cout<< "Lumi "<< dLumi << std::endl;  
   db->set_lumi(dLumi);
   
+  
+  
+  
+  
+  
+  
   if (norm == "LUMI") {
     db->set_lumiNormalization();
   } else {
@@ -110,8 +117,6 @@ int main(int argc, char* argv[]) {
 
   // Data/MC comparison
   db->drawHisto("ptPhoton_NoCut", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
-
-  db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("EtaPhoton", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton", "Photon Phi", " ", "Events" , false);
   db->drawHisto("ptFirstJet", "Jet Transverse Momentum", "GeV", "Events", log);
@@ -184,9 +189,165 @@ int main(int argc, char* argv[]) {
   EtaBinning etaBinning;
   size_t etaBinningSize = etaBinning.size();
   std::vector<EtaBin > etaBins = etaBinning.getBinning();
+  
+  
+  HLTPtBinning hltptBinning;
+  size_t hltptBinningSize = hltptBinning.size();
+  std::vector<std::pair<float, float> > hltptBins = hltptBinning.getBinning();
+  std::vector<float> hltptMean;
+  for( size_t i = 0 ; i< hltptBinningSize ; i++){ 
+    std::pair<float, float> currentBin = hltptBinning.getBinValue(i);
+    ptPhot ->GetXaxis()->SetRangeUser(currentBin.first, currentBin.second);
+    double Mean = ptPhot->GetMean();
+    std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second<<" -> Mean  "<< Mean << std::endl; 
+    hltptMean.push_back(Mean);
+  }
+  
+  
+  // HLT plots
+  
+  db->setFolder("analysis/HLT_CH_iso");
 
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("ChHadronisoHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Charge hadron isolation", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "ChHadronisoHLT_eta0013", "Charge hadron isolation", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_NH_iso");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("NhHadronisoHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Neutral hadron isolation", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "NhHadronisoHLT_eta0013", "Neutral hadron isolation", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_Photon_iso");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("PhotonisoHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Photon isolation", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "PhotonisoHLT_eta0013", "Photon isolation", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_sigieta");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("sigmaIetaIetaHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "#sigma _{i#etai#eta}", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "sigmaIetaIetaHLT_eta0013", "#sigma _{i#etai#eta}", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_HoverE");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("HoverEHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "#frac{H}{E}", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "HoverEHLT_eta0013", "#frac{H}{E}", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_rho");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("rhoHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "rho", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "rhoHLT_eta0013", "rho", "", "Events", false);
   
   
+  db->setFolder("analysis/HLT_metparr");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("metparrHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "metparr", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "metparrHLT_eta0013", "metparr", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_metperp");
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("metperpHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "metperp", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "metperpHLT_eta0013", "metperp", "", "Events", false);
+  
+  
+  db->setFolder("analysis/HLT_jetpt");
+   for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("jetptHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "jet pt", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "jetptHLT_eta0013", "jet pt", "", "Events", false);
+  
+  
+  db->setFolder("analysis/HLT_met");
+   for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("metpHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "MET ", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "metpHLT_eta0013", "MET", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_Nvertex");
+   for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("NvertexHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "npv ", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "NvertexHLT_eta0013", "npv", "", "Events", false);
+  
+  db->setFolder("analysis/HLT_alpha");
+   for (size_t i = 0; i < etaBinningSize; i++) {
+    db->set_legendTitle(etaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("alphaHLT_%s", etaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "#alpha ", "", "Events", false);
+    
+  }
+  db->set_legendTitle("|#eta| < 1.3");
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
   
   
   // Balancing
@@ -234,6 +395,17 @@ int main(int argc, char* argv[]) {
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
   
+  db->setFolder("analysis");
+  db->set_shapeNormalization();
+  db->drawHisto("ptPhoton_175_3000", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  db->drawHisto("ptPhoton_130_175", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  db->drawHisto("ptPhoton_105_130", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  db->drawHisto("ptPhoton_85_105", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  db->drawHisto("ptPhoton_60_85", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  db->drawHisto("ptPhoton_40_60", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+  
+  
+  db->set_lumiNormalization();
   
   db->setFolder("analysis/balancing_vs_eta");
   db->set_legendTitle("p_{T}^{#gamma} > 175 GeV ");
@@ -242,6 +414,9 @@ int main(int argc, char* argv[]) {
   db->setFolder("analysis/mpf_vs_eta");
   db->set_legendTitle("p_{T}^{#gamma} > 175 GeV ");
   db->drawHisto_vs_eta(etaBins, "resp_mpf_pt175", "MPF Response", "", "Events", false);
+  
+  
+  
 
   delete db;
   db = NULL;

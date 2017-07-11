@@ -299,11 +299,13 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   bool isPt2nd = TString(name).Contains("Pt_2nd", TString::kIgnoreCase);
   bool isMU = TString(name).Contains("mu", TString::kIgnoreCase);
   bool isNVTX = TString(name).Contains("nvertices", TString::kIgnoreCase);
-  
+  bool isBal  = TString(name).Contains("balancing", TString::kIgnoreCase);
+  bool isHLT  = TString(name).Contains("HLT", TString::kIgnoreCase);
   // Ignore bin between 3500 - 7000 (last bin)
   //int number_of_plots = ptBins.size() - 1;
+  
   int number_of_plots = ptBins.size();
-
+  
   TGraphErrors* gr_response_vs_pt = new TGraphErrors(0);
   gr_response_vs_pt->SetName("response_vs_pt");
   TGraphErrors* gr_responseMC_vs_pt = new TGraphErrors(0);
@@ -329,15 +331,21 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     float ptMean = ptMeanVec.at(iplot); // weighted mean
 
     TString ptRange = TString::Format("ptPhot_%d_%d", (int) currentBin.first, (int) currentBin.second);
-
+    if(isHLT) ptRange = TString::Format("HLTptPhot_%d_%d", (int) currentBin.first, (int) currentBin.second);
+    
     // Set shape normalization for comparing shapes, even if we are in prescaled region
     double oldScaleFactor = scaleFactor_;
     scaleFactor_ = -1;
 
     // pt phot cut label
     TString labelPtPhot = TString::Format("%d < p_{T}^{#gamma} < %d GeV/c", (int) currentBin.first, (int) currentBin.second);
+    if(isHLT){
+      drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, true);
+    }else{
     drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
-
+    } // set the last bool to false to remove the ratio
+    //if( isHLT ) continue ;
+    
     scaleFactor_ = oldScaleFactor;
 
     // save vs pt info:
@@ -348,17 +356,17 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t meanTruncFraction = 0.99;
     Float_t rmsTruncFraction = 0.99;
 
-    Float_t dataResponse = (!hasData) ? 0. : lastHistos_data_[0]->GetMean();
-    Float_t dataResponseErr = (!hasData) ? 0. : lastHistos_data_[0]->GetMeanError();
-    Float_t dataRMS = (!hasData) ? 0. : lastHistos_data_[0]->GetRMS();
-    Float_t dataRMSErr = (!hasData) ? 0. : lastHistos_data_[0]->GetRMSError();
+    Float_t dataResponse = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMean();
+    Float_t dataResponseErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMeanError();
+    Float_t dataRMS = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMS();
+    Float_t dataRMSErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMSError();
 
-    if (hasData) {
+    if (hasData && !isHLT) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);
     }
     
-    Float_t dataResolution = (hasData) ? dataRMS / dataResponse : 0.;
-    Float_t dataResolutionErr = (hasData) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
+    Float_t dataResolution = (hasData && !isHLT) ? dataRMS / dataResponse : 0.;
+    Float_t dataResolutionErr = (hasData && !isHLT) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
     
     gr_response_vs_pt->SetPoint(iplot, ptMean, dataResponse);
     gr_response_vs_pt->SetPointError(iplot, 0., dataResponseErr);
@@ -372,15 +380,15 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t mcRMS = 0.;
     Float_t mcRMSErr = 0.;
     
-    if (hasMC) {
+    if (hasMC && !isHLT) {
     
 
       fitTools::getTruncatedMeanAndRMS(lastHistos_mcHistoSum_, mcResponse, mcResponseErr, mcRMS, mcRMSErr, meanTruncFraction, rmsTruncFraction);
 
     }
     
-    Float_t mcResolution = (!hasMC) ? 0. : mcRMS / mcResponse;
-    Float_t mcResolutionErr = (!hasMC) ? 0. : sqrt(mcRMSErr * mcRMSErr / (mcResponse * mcResponse) + mcResolution * mcResolution * mcResponseErr * mcResponseErr / (mcResponse * mcResponse * mcResponse * mcResponse));
+    Float_t mcResolution = (!hasMC || isHLT) ? 0. : mcRMS / mcResponse;
+    Float_t mcResolutionErr = (!hasMC || isHLT) ? 0. : sqrt(mcRMSErr * mcRMSErr / (mcResponse * mcResponse) + mcResolution * mcResolution * mcResponseErr * mcResponseErr / (mcResponse * mcResponse * mcResponse * mcResponse));
     
     gr_responseMC_vs_pt->SetPoint(iplot, ptMean, mcResponse);
     gr_responseMC_vs_pt->SetPointError(iplot, 0., mcResponseErr);    
@@ -410,7 +418,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     //      std::cout << "debug : get gen information" << std::endl;
 
-    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX ) ) {    
+    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX && !isHLT) ) {    
     //// Get gen informations. To do that, we need to transform
     //// resp_balancing_eta* in resp_balancing_gen_eta*
     std::string responseTrueName = std::string(name + "_" + ptRange);
@@ -456,10 +464,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   //  std::cout << "debug: now do plots" << std::endl;
   
   std::string graphFileName = "PhotonJetGraphs_" + get_fullSuffix() + ".root";
-  TFile* graphFile = TFile::Open(graphFileName.c_str(), "update");
-  graphFile->cd();
-
+  TFile* graphFile ;
   TString graphName = TString::Format("%s_data_vs_pt", name.c_str());
+  std::string resolutionName = name;
+  if(! isHLT){
+  graphFile = TFile::Open(graphFileName.c_str(), "update");
+  graphFile->cd();
   gr_response_vs_pt->SetName(graphName);
   gr_response_vs_pt->Write();
 
@@ -477,7 +487,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   gr_purity_vs_pt->SetName(graphName);
   gr_purity_vs_pt->Write();
   
-  std::string resolutionName = name;
+  
   boost::replace_all(resolutionName, "resp", "resolution");
   
   graphName = TString::Format("%s_data_vs_pt", resolutionName.c_str());
@@ -492,7 +502,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     graphName = TString::Format("%s_gen_vs_pt", resolutionName.c_str());
     gr_resolutionTrue_vs_pt->SetName(graphName);
     gr_resolutionTrue_vs_pt->Write();
-  }
+  }}
   //  graphFile->Close(); // want to save also the ratio
   
 //gStyle->SetPadTickX(1);
@@ -531,7 +541,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   TLine* line_plus_resp = new TLine(ptPhotMin, 1.05, ptPhotMax, 1.05);
   TLine* line_minus_resp = new TLine(ptPhotMin, 0.95, ptPhotMax, 0.95);
   
-  if (!noDATA && !noMC) {  //ugly will have to fix (cloning the TCanvas?)
+  if (!noDATA && !noMC &&  !isHLT) {  //ugly will have to fix (cloning the TCanvas?)
     
     pad_lo->cd(); // data/MC ratio
     
@@ -673,7 +683,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   label_algo->Draw("same");
 
 
-  if (!noMC) {
+  if (!noMC ) {
     if(!isRAW){
       gr_responseTrue_vs_pt->SetMarkerStyle(29);
       gr_responseTrue_vs_pt->SetMarkerColor(46);
@@ -687,7 +697,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     gr_responseMC_vs_pt->Draw("Psame");
   }
   
-  if (!noDATA) {
+  if (!noDATA &&  !isHLT ) {
     if (noMC) {
       gr_response_vs_pt->SetMarkerColor(TColor::GetColor(0, 0, 153));
       gr_response_vs_pt->SetLineColor(TColor::GetColor(0, 0, 153));
@@ -725,7 +735,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
   TH2* h2_axes_lo_reso = new TH2D("axes_lo_reso", "", 10, ptPhotMin, ptPhotMax, 10, (1. - 6.*scale_uncert), (1. + 6.*scale_uncert));
   
-  if (!noDATA && !noMC) {
+  if (!noDATA && !noMC &&  !isHLT) {
     
     pad_lo->cd();
 
@@ -849,7 +859,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
   legend2->Draw("same");
 
-  if (!noMC) {
+  if (!noMC &&  !isHLT ) {
     if(!isRAW){
       gr_resolutionTrue_vs_pt->SetMarkerStyle(29);
       gr_resolutionTrue_vs_pt->SetMarkerColor(46);
@@ -863,7 +873,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     gr_resolutionMC_vs_pt->Draw("Psame");
   }
 
-  if (!noDATA) {
+  if (!noDATA &&  !isHLT) {
     if (noMC) {
       gr_resolution_vs_pt->SetMarkerColor(TColor::GetColor(0, 0, 153));
       gr_resolution_vs_pt->SetLineColor(TColor::GetColor(0, 0, 153));
@@ -934,7 +944,7 @@ void drawBase::drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, 
 
     // pt phot cut label
     TString labelPtPhot = TString::Format("%d < p_{T}^{#gamma} < %d GeV/c", (int) currentBin.first, (int) currentBin.second);
-    drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
+    drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, true); // set the last bool to false to remove the ratio
 
     scaleFactor_ = oldScaleFactor;
 
