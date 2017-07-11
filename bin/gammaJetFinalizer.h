@@ -15,6 +15,7 @@
 
 #include "etaBinning.h"
 #include "ptBinning.h"
+#include "HLTptBinning.h"
 #include "vertexBinning.h"
 #include "runBinning.h"
 #include "extrapBinning.h"
@@ -143,11 +144,20 @@ class GammaJetFinalizer
     template<typename T>
       std::vector<std::vector<T*> > buildEtaPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
     template<typename T>
+      std::vector<std::vector<T*> > buildEtaHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
+      
+    template<typename T>
       std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
-      std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
-
+      std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
+      template<typename T>
+      std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
+    template<typename T>
       std::vector<T*> buildEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
 
     template<typename T>
@@ -193,6 +203,7 @@ class GammaJetFinalizer
 
     EtaBinning mEtaBinning;
     PtBinning mPtBinning;
+    HLTPtBinning mHLTPtBinning;
     VertexBinning mVertexBinning;
     RunBinning mRunBinning;
     ExtrapBinning mExtrapBinning;

@@ -58,8 +58,10 @@ boost::shared_ptr<PUReweighter> reweighter90;
 boost::shared_ptr<PUReweighter> reweighter120;
 boost::shared_ptr<PUReweighter> reweighter165;
 TFile* PUFile;
-TFile* EoverP_dataMCRatio_File;
-TH1D *h_test=0;
+//TFile* EoverP_dataMCRatio_File;
+//TH1D *h_test=0;
+TFile* EtaPhiCleaning_File;
+TH2D *h_hotjets=0;
 bool EXIT = false;
 
 GammaJetFinalizer::GammaJetFinalizer() {
@@ -164,6 +166,16 @@ void GammaJetFinalizer::runAnalysis() {
     std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
     mTriggers      = new Triggers( TriggerFile.c_str() ) ;
     
+    static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/data", cmsswBase.c_str()).Data();
+    TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
+    EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
+    assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
+    h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
+    assert(h_hotjets);
+    
+    
+    
+   /* 
      // get EoverP_dataMCRatio file:
     static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/EGamma_dataMCRatio", cmsswBase.c_str()).Data();                          
     TString EoverP_dataMCRatio_FileName = TString::Format("%s/EoverP_vsRegrCorrEnergy_dataMCRatio_FirstVersion.root", Prefix.c_str()).Data(); //old version available
@@ -181,7 +193,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(int ii =1 ; ii < NBins+1 ; ii++){
       double dataMCRatio = h_test -> GetBinContent(ii);
       std::cout<< "data MC Ratio = " << dataMCRatio << std::endl;  
-}
+}*/
     
   }
   
@@ -266,7 +278,12 @@ void GammaJetFinalizer::runAnalysis() {
 
   TH1F* h_ptPhoton_NoCut = analysisDir.make<TH1F>("ptPhoton_NoCut", "ptPhoton NoCut", 150, 0., 3000.);
 
-  TH1F* h_ptPhoton = analysisDir.make<TH1F>("ptPhoton", "ptPhoton", 50, 175., 2000.);
+  TH1F* h_ptPhoton = analysisDir.make<TH1F>("ptPhoton_175_3000", "ptPhoton_175_3000", 50, 175., 2000.);
+  TH1F* h_ptPhoton_1 = analysisDir.make<TH1F>("ptPhoton_130_175", "ptPhoton_130_175", 50, 130., 175.);
+  TH1F* h_ptPhoton_2 = analysisDir.make<TH1F>("ptPhoton_105_130", "ptPhoton_105_130", 50, 105., 130.);
+  TH1F* h_ptPhoton_3 = analysisDir.make<TH1F>("ptPhoton_85_105", "ptPhoton_85_105", 50, 85., 105.);
+  TH1F* h_ptPhoton_4 = analysisDir.make<TH1F>("ptPhoton_60_85", "ptPhoton_60_85", 50, 60., 85.);
+  TH1F* h_ptPhoton_5 = analysisDir.make<TH1F>("ptPhoton_40_60", "ptPhoton_40_60", 50, 40., 60.);
   TH1F* h_EtaPhoton = analysisDir.make<TH1F>("EtaPhoton", "EtaPhoton", 60, -5, 5.);
   TH1F* h_PhiPhoton = analysisDir.make<TH1F>("PhiPhoton", "PhiPhoton", 60, -3.5, 3.5);
   TH1F* h_ptFirstJet = analysisDir.make<TH1F>("ptFirstJet", "ptFirstJet", 200, 0., 2000.);
@@ -328,6 +345,72 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_npvGood = analysisDir.make<TH1F>("npvGood", "npvGood", 50, 0, 50);
   TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 50, 0, 50, 100, 0, 50);
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
+  
+  
+  //plots per HLT for control 
+  
+  //isolation variables : 
+  TFileDirectory HLTDirCHiso = analysisDir.mkdir("HLT_CH_iso");
+  std::vector<std::vector<TH1F*> > HLTChHadronIso = buildEtaHLTPtVector<TH1F>(HLTDirCHiso, "ChHadronisoHLT", 50, 0., 2.);
+  std::vector<TH1F*>      HLTChHadronIsoEta013    = buildHLTPtVector<TH1F>(HLTDirCHiso, "ChHadronisoHLT", "eta0013", 50, 0., 2.);
+  
+  TFileDirectory HLTDirNHiso = analysisDir.mkdir("HLT_NH_iso");
+  std::vector<std::vector<TH1F*> > HLTNhHadronIso = buildEtaHLTPtVector<TH1F>(HLTDirNHiso, "NhHadronisoHLT", 50, 0., 15.);
+  std::vector<TH1F*>      HLTNhHadronIsoEta013    = buildHLTPtVector<TH1F>(HLTDirNHiso, "NhHadronisoHLT", "eta0013", 50, 0., 15.);
+  
+  TFileDirectory HLTDirphoiso = analysisDir.mkdir("HLT_Photon_iso");
+  std::vector<std::vector<TH1F*> > HLTPhotonIso = buildEtaHLTPtVector<TH1F>(HLTDirphoiso, "PhotonisoHLT", 30, 0., 4.);
+  std::vector<TH1F*>      HLTPhotonIsoEta013    = buildHLTPtVector<TH1F>(HLTDirphoiso, "PhotonisoHLT", "eta0013", 30, 0., 4.);
+  
+  // selection variables : 
+  TFileDirectory HLTDirsigieta = analysisDir.mkdir("HLT_sigieta");
+  std::vector<std::vector<TH1F*> > HLTsigieta = buildEtaHLTPtVector<TH1F>(HLTDirsigieta, "sigmaIetaIetaHLT", 100, 0, 0.011);
+  std::vector<TH1F*>      HLTsigietaEta013    = buildHLTPtVector<TH1F>(HLTDirsigieta, "sigmaIetaIetaHLT", "eta0013", 100, 0, 0.011);
+  
+  
+  TFileDirectory HLTDirHoverE = analysisDir.mkdir("HLT_HoverE");
+  std::vector<std::vector<TH1F*> > HLTHoverE = buildEtaHLTPtVector<TH1F>(HLTDirHoverE, "HoverEHLT", 50, 0, 0.035);
+  std::vector<TH1F*>      HLTHoverEEta013    = buildHLTPtVector<TH1F>(HLTDirHoverE, "HoverEHLT", "eta0013", 50, 0, 0.035);
+  
+  //other : 
+  
+  TFileDirectory HLTDirrho = analysisDir.mkdir("HLT_rho");
+  std::vector<std::vector<TH1F*> > HLTrho = buildEtaHLTPtVector<TH1F>(HLTDirrho, "rhoHLT",100, 0, 50);
+  std::vector<TH1F*>      HLTrhoEta013    = buildHLTPtVector<TH1F>(HLTDirrho, "rhoHLT", "eta0013", 100, 0, 50);
+  
+  
+  TFileDirectory HLTDirmetparr = analysisDir.mkdir("HLT_metparr");
+  std::vector<std::vector<TH1F*> > HLTmetparr = buildEtaHLTPtVector<TH1F>(HLTDirmetparr, "metparrHLT",50, 0., 300.);
+  std::vector<TH1F*>      HLTmetparrEta013    = buildHLTPtVector<TH1F>(HLTDirmetparr, "metparrHLT", "eta0013", 50, 0., 200.);
+  
+  
+  TFileDirectory HLTDirmetperp = analysisDir.mkdir("HLT_metperp");
+  std::vector<std::vector<TH1F*> > HLTmetperp = buildEtaHLTPtVector<TH1F>(HLTDirmetperp, "metperpHLT",50, 0., 200.);
+  std::vector<TH1F*>      HLTmetperpEta013    = buildHLTPtVector<TH1F>(HLTDirmetperp, "metperpHLT", "eta0013", 50, 0., 200.);
+  
+  
+  
+  TFileDirectory HLTDirmet = analysisDir.mkdir("HLT_met");
+  std::vector<std::vector<TH1F*> > HLTmet = buildEtaHLTPtVector<TH1F>(HLTDirmet, "metpHLT",50, 0., 300.);
+  std::vector<TH1F*>      HLTmetEta013    = buildHLTPtVector<TH1F>(HLTDirmet, "metpHLT", "eta0013", 50, 0., 300.);
+  
+  TFileDirectory HLTDirNvertex = analysisDir.mkdir("HLT_Nvertex");
+  std::vector<std::vector<TH1F*> > HLTNvertex = buildEtaHLTPtVector<TH1F>(HLTDirNvertex, "NvertexHLT",50, 0., 50.);
+  std::vector<TH1F*>      HLTNvertexEta013    = buildHLTPtVector<TH1F>(HLTDirNvertex, "NvertexHLT", "eta0013", 50, 0., 50.);
+  
+  TFileDirectory HLTDiralpha = analysisDir.mkdir("HLT_alpha");
+  std::vector<std::vector<TH1F*> > HLTalpha = buildEtaHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT",50, 0., 0.5);
+  std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 0.5);
+  
+  
+  //jet variables
+  
+  
+  TFileDirectory HLTDirjetpt = analysisDir.mkdir("HLT_jetpt");
+  std::vector<std::vector<TH1F*> > HLTjetpt = buildEtaHLTPtVector<TH1F>(HLTDirjetpt, "jetptHLT",75, 0., 600.);
+  std::vector<TH1F*>      HLTjetptEta013    = buildHLTPtVector<TH1F>(HLTDirjetpt, "jetptHLT", "eta0013", 1000, 0., 2000.);
+  
+  //end per HLT plots
 
   //jet composition - histos vectors
   TFileDirectory ecompositionDir = analysisDir.mkdir("ecomposition");
@@ -356,7 +439,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_sigmaIetaIeta_passedID = analysisDir.make<TH1F>("sigmaIetaIeta_passedID", "sigmaIetaIeta", 100, 0, 0.011);
   TH1F* h_chargedHadronsIsolation_passedID = analysisDir.make<TH1F>("chargedHadronsIsolation_passedID", "chargedHadronsIsolation", 100, 0, 2.0);
   TH1F* h_neutralHadronsIsolation_passedID = analysisDir.make<TH1F>("neutralHadronsIsolation_passedID", "neutralHadronsIsolation", 100, 0, 100);
-  TH1F* h_photonIsolation_passedID = analysisDir.make<TH1F>("photonIsolation_passedID", "photonIsolation", 100, 0, 15);
+  TH1F* h_photonIsolation_passedID = analysisDir.make<TH1F>("photonIsolation_passedID", "photonIsolation", 100, 0, 3);
 
   TH2F* h_METvsfirstJet = analysisDir.make<TH2F>("METvsfirstJet", "MET vs firstJet", 150, 0., 300., 150, 0., 500.);
   TH2F* h_firstJetvsSecondJet = analysisDir.make<TH2F>("firstJetvsSecondJet", "firstJet vs secondJet", 60, 5., 100., 60, 5., 100.);
@@ -524,6 +607,15 @@ void GammaJetFinalizer::runAnalysis() {
     delete f;
   }
   
+  TFile* f = TFile::Open(mInputFiles[0].c_str());
+  
+  TH2F * Hdeltaphi_all = static_cast<TH2F*>(f->Get("DeltaPhi_vs_alpha"));
+  f->Close();
+  delete f;
+  
+ // TH2F* Hdeltaphi_ = analysisDir.make<TH2F>(*Hdeltaphi_all);
+  
+ 
   // Store alpha cut
   analysisDir.make<TParameter<double>>("alpha_cut", mAlphaCut);
     
@@ -721,6 +813,10 @@ void GammaJetFinalizer::runAnalysis() {
   //      break;
   //    }
   //  }
+  
+  //etaphi cleaning
+  
+    if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
     
     if (! keepEvent)
       continue;
@@ -754,8 +850,8 @@ void GammaJetFinalizer::runAnalysis() {
     }
 #endif
     
-    double dataMCRatio;
-    if( mIsMC){
+    double dataMCRatio = 1;
+   /* if( mIsMC){
       dataMCRatio = 1;
     }else{
       int bin = h_test-> FindBin( fullinfo.Energy_photon );
@@ -765,7 +861,7 @@ void GammaJetFinalizer::runAnalysis() {
       }else{
 	dataMCRatio = h_test -> GetBinContent( bin );
       }
-    }
+    }*/
     //std::cout<< "photon --> pt = " << photon.pt <<" eta = "<< photon.eta << " phi = "<< photon.phi<<" e = "<< photon.e <<std::endl;
     //std::cout<< "MET --> pt = " << MET.pt <<" eta = "<< MET.eta << " phi = "<< MET.phi<<" e = "<< MET.e <<std::endl;
     //std::cout<< "MET et = " << MET.et <<std::endl;
@@ -777,8 +873,13 @@ void GammaJetFinalizer::runAnalysis() {
    
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
     
+   // PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
+    
+    
     TLorentzVector Photon;
     Photon.SetPtEtaPhiE( fullinfo.Pt_photon, fullinfo.Eta_photon, fullinfo.Phi_photon, fullinfo.Energy_photon );
+  //   Photon.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
+    
     TLorentzVector met;
     met.SetPtEtaPhiE( fullinfo.MET_Pt, fullinfo.MET_Eta, fullinfo.MET_Phi, fullinfo.MET);
 
@@ -864,6 +965,7 @@ void GammaJetFinalizer::runAnalysis() {
     if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
     int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
+    int HLTptBin = mHLTPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
@@ -973,6 +1075,43 @@ void GammaJetFinalizer::runAnalysis() {
         PhMult[etaBin][ptBin]->Fill(fullinfo.photonMult_j1, eventWeight);
        // MuonMult[etaBin][ptBin]->Fill(fullinfo.jet_MuonMult, eventWeight);
        
+       //HLT plots;
+       
+       HLTChHadronIso[etaBin][HLTptBin]->Fill(fullinfo.CHiso_photon, eventWeight);
+       HLTNhHadronIso[etaBin][HLTptBin]->Fill(fullinfo.NHiso_photon, eventWeight);
+       HLTPhotonIso[etaBin][HLTptBin]->Fill(fullinfo.Photoniso_photon, eventWeight);
+       HLTsigieta[etaBin][HLTptBin]->Fill(fullinfo.sigmaietaieta_photon, eventWeight);
+       HLTHoverE[etaBin][HLTptBin]->Fill(fullinfo.hadTowOverEm, eventWeight);
+       HLTrho[etaBin][HLTptBin]->Fill(fullinfo.rho, eventWeight);
+       HLTmetparr[etaBin][HLTptBin]->Fill(Met_para, eventWeight);
+       HLTmetperp[etaBin][HLTptBin]->Fill(Met_perp, eventWeight);
+       HLTjetpt[etaBin][HLTptBin]->Fill(fullinfo.pTAK4_j1, eventWeight);
+       HLTmet[etaBin][HLTptBin] ->Fill(fullinfo.MET, eventWeight);
+       HLTNvertex[etaBin][HLTptBin] ->Fill(fullinfo.nVtx, eventWeight);
+       HLTalpha[etaBin][HLTptBin]->Fill(fullinfo.alpha, eventWeight);
+       // special case 
+       if(fabs(fullinfo.etaAK4_j1) <1.305){
+        
+         HLTChHadronIsoEta013[HLTptBin] ->Fill(fullinfo.CHiso_photon, eventWeight);
+         HLTNhHadronIsoEta013[HLTptBin] ->Fill(fullinfo.NHiso_photon, eventWeight);
+         HLTPhotonIsoEta013[HLTptBin] ->Fill(fullinfo.Photoniso_photon, eventWeight);
+         HLTsigietaEta013[HLTptBin] ->Fill(fullinfo.sigmaietaieta_photon, eventWeight);
+         HLTHoverEEta013[HLTptBin] ->Fill(fullinfo.hadTowOverEm, eventWeight);
+         HLTrhoEta013[HLTptBin] ->Fill(fullinfo.rho, eventWeight);
+         HLTmetparrEta013[HLTptBin] ->Fill(Met_para, eventWeight);
+         HLTmetperpEta013[HLTptBin] ->Fill(Met_perp, eventWeight);
+         HLTjetptEta013[HLTptBin] ->Fill(fullinfo.pTAK4_j1, eventWeight);
+         HLTmetEta013[HLTptBin] ->Fill(fullinfo.MET, eventWeight);
+         HLTNvertexEta013[HLTptBin] ->Fill(fullinfo.nVtx, eventWeight);
+         HLTalphaEta013[HLTptBin]->Fill(fullinfo.alpha, eventWeight);
+       }
+   if(PhotonCorr.Pt() >= 175.) h_ptPhoton ->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) h_ptPhoton_1->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() < 130. && PhotonCorr.Pt() >105.) h_ptPhoton_2 ->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) h_ptPhoton_3 ->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.) h_ptPhoton_4 ->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.) h_ptPhoton_5 ->Fill(PhotonCorr.Pt(), eventWeight);
+       
        
        //versus eta plots pt > 175  : 
         if( PhotonCorr.Pt() > 175.){
@@ -1004,6 +1143,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  MetEta013[ptBin]->Fill(fullinfo.MET, eventWeight);
 	  MuEta013[ptBin]->Fill(mu, eventWeight);
 	  NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
+
 	  
 	}
 	
@@ -1082,7 +1222,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	   //bin 9 0 to 0.25 :
 
-	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon < 0.25){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1100,7 +1240,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  //bin 9 0 to 0.20 :
 
-	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon<0.2){
+	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1119,7 +1259,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  //bin 9 0 to 0.15 :
 
-	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon<0.15){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1136,7 +1276,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  //bin 9 0 to 0.1 :
 
-	  if(fullinfo.pTAK4_j2/fullinfo.Pt_photon < 0.1 ){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 ){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1260,6 +1400,42 @@ std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::
   return buildPtVector<T>(dir, branchName + "_" + etaName, nBins, xMin, xMax);
 }
 
+
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
+
+  bool appendText = (xMin >= 0 && xMax >= 0);
+  std::vector<T*> vector;
+  size_t ptBinningSize = mHLTPtBinning.size();
+  for (size_t j = 0; j < ptBinningSize; j++) {
+
+    const std::pair<float, float> bin = mHLTPtBinning.getBinValue(j);
+    std::stringstream ss;
+    if (appendText)
+      ss << branchName << "_HLTptPhot_" << (int) bin.first << "_" << (int) bin.second;
+    else
+      ss << branchName << "_" << (int) bin.first << "_" << (int) bin.second;
+
+    if (!appendText) {
+      xMin = bin.first;
+    }
+
+    if (!appendText) {
+      xMax = bin.second;
+    }
+
+    T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, xMin, xMax);
+    vector.push_back(object);
+  }
+
+  return vector;
+}
+
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildHLTPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax) {
+  return buildHLTPtVector<T>(dir, branchName + "_" + etaName, nBins, xMin, xMax);
+}
+
 template<typename T>
 std::vector<T*> GammaJetFinalizer::buildEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
 
@@ -1298,6 +1474,20 @@ std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaPtVector(TFileDirectory
   for (size_t i = 0; i < etaBinningSize; i++) {
     const std::string etaName = mEtaBinning.getBinName(i);
     etaBinning.push_back(buildPtVector<T>(dir, branchName, etaName, nBins, xMin, xMax));
+  }
+
+  return etaBinning;
+}
+
+
+template<typename T>
+std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
+  size_t etaBinningSize = mEtaBinning.size();
+  std::vector<std::vector<T*> > etaBinning;
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    const std::string etaName = mEtaBinning.getBinName(i);
+    etaBinning.push_back(buildHLTPtVector<T>(dir, branchName, etaName, nBins, xMin, xMax));
   }
 
   return etaBinning;
