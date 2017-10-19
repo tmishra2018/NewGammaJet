@@ -13,7 +13,7 @@ class ExtrapBinning {
 
     void initialize(PtBinning ptBinning, const std::string& recoType) {
       
-      size_t s = ptBinning.size();
+      /*size_t s = ptBinning.size();
       for (size_t i = 0; i < s; i++) {
 
 	//        std::pair<float, float> bin = ptBinning.getBinValue(i);
@@ -33,7 +33,7 @@ class ExtrapBinning {
             minPt = 2.;
             ptStep = 2.;
           }
-*/
+
         // In percent -- federico
 	  minPt = 0.0;
 	  ptStep = 3.0;
@@ -44,17 +44,33 @@ class ExtrapBinning {
 
 	mMapping.push_back(std::make_pair(minPt, maxPt));
 
-      }//end ciclo su ptBin	
+      }*///end ciclo su ptBin
+      
+      mMapping.push_back(std::make_pair(0.,0.1));
+      mMapping.push_back(std::make_pair(0.,0.15));
+      mMapping.push_back(std::make_pair(0.,0.2));
+      mMapping.push_back(std::make_pair(0.,0.25));
+      mMapping.push_back(std::make_pair(0.,0.3));	
     } //end initialize
 
     int getBin(float ptPhoton, float ptSecondJet, int ptBin) const {
 
-      std::pair<float, float> mapping = mMapping[ptBin]; // mPtBinning.getBinValue(ptBin);
+
+      
+     // std::pair<float, float> mapping = mMapping[ptBin]; // mPtBinning.getBinValue(ptBin);
 
       double alpha = ptSecondJet / ptPhoton;
-      size_t extrapBin = (size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
-
-      return (extrapBin >= size()) ? -1 : extrapBin;
+     
+      
+      size_t extrapBin = 0 ;//(size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
+      if(alpha < 0.3) extrapBin = 4 ;
+      if(alpha < 0.25) extrapBin = 3 ;
+      if(alpha < 0.20) extrapBin = 2 ;
+      if(alpha < 0.15) extrapBin = 1 ;
+      if(alpha < 0.1) extrapBin = 0 ;
+      
+      
+      return /*(extrapBin >= size()) ? -1 :*/ extrapBin;
     }
 
     size_t size() const {

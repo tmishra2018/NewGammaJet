@@ -21,6 +21,7 @@
 #include "extrapBinning.h"
 #include "triggers.h"
 #include "GaussianProfile.h"
+#include "fineetaBinning.h"
 
 #include <vector>
 #include <memory>
@@ -132,7 +133,7 @@ class GammaJetFinalizer
 
     //bool passTrigger(const TRegexp& regexp) const;
     int checkTrigger(std::string& passedTrigger, float& weight);
-    int checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, double& triggHLT1, double& triggHLT2, double& triggHLT3, double& triggHLT4, double& triggHLT5, double& triggHLT6, float& weight);
+    int checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, double& HLT7, double& triggHLT1, double& triggHLT2, double& triggHLT3, double& triggHLT4, double& triggHLT5, double& triggHLT6, float& weight);
 
     void cleanTriggerName(std::string& trigger);
     // new RD PU reweighting
@@ -143,6 +144,10 @@ class GammaJetFinalizer
 
     template<typename T>
       std::vector<std::vector<T*> > buildEtaPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
+    template<typename T>
+      std::vector<std::vector<T*> > buildfineEtaPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
     template<typename T>
       std::vector<std::vector<T*> > buildEtaHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
       
@@ -166,13 +171,17 @@ class GammaJetFinalizer
       std::vector<T*> buildVertexVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<std::vector<std::vector<T*> > > buildExtrapolationEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      
+   template<typename T>
+      std::vector<std::vector<std::vector<T*> > > buildExtrapolationfineEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<std::vector<T*> > buildExtrapolationVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     // federico
     template<typename T>
-      std::vector<std::vector<T*> > buildEtaRunVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
-    template<typename T>
       std::vector<T*> buildRunVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
+    template<typename T>
+      std::vector<std::vector<T*> > buildEtaRunVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+    
 
     void cloneTree(TTree* from, TTree*& to);
 
@@ -202,6 +211,7 @@ class GammaJetFinalizer
     MiscTree misc;
 
     EtaBinning mEtaBinning;
+    fineEtaBinning mfineEtaBinning;
     PtBinning mPtBinning;
     HLTPtBinning mHLTPtBinning;
     VertexBinning mVertexBinning;

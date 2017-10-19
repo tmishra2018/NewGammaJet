@@ -266,6 +266,7 @@ void GammaJetFinalizer::runAnalysis() {
 
   // Init some analysis variables
   TFileDirectory analysisDir = fs.mkdir("analysis");
+  TH1F* h_inst_Lumi = analysisDir.make<TH1F>("Lumi_inst", "luminosity", 100, 0., 2600.);
   TH1F* h_nvertex = analysisDir.make<TH1F>("nvertex", "nvertex", 51, 0., 50.);
   TH1F* h_nvertex_reweighted = analysisDir.make<TH1F>("nvertex_reweighted", "nvertex_reweighted", 51, 0., 50.);
   TH1F* h_ntrue_interactions = analysisDir.make<TH1F>("ntrue_interactions", "ntrue_interactions", 76, 0., 75.);
@@ -345,6 +346,12 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_npvGood = analysisDir.make<TH1F>("npvGood", "npvGood", 50, 0, 50);
   TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 50, 0, 50, 100, 0, 50);
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
+  
+  
+  
+  
+ 
+  
   
   
   //plots per HLT for control 
@@ -470,6 +477,19 @@ void GammaJetFinalizer::runAnalysis() {
    std::vector<std::vector<TH1F*> > Nverticesh = buildEtaPtVector<TH1F>(NverticeDir, "nvertices", 100, 0., 100.);
    std::vector<TH1F*> NverticeshEta013       = buildPtVector<TH1F>(NverticeDir, "nvertices", "eta0013", 101, 0., 100.);
   
+  
+  //plot fine eta binning.
+  
+  TFileDirectory fine_eta   = analysisDir.mkdir("fine_eta_binning");
+  TFileDirectory balancing_fine  = fine_eta.mkdir("balancing");
+  TFileDirectory mpf_fine        = fine_eta.mkdir("mpf");
+  
+  std::vector<std::vector<TH1F*> > responseBalancing_fine = buildfineEtaPtVector<TH1F>(balancing_fine, "resp_balancing_fine_bining", 150, 0., 2.);
+  std::vector<std::vector<TH1F*> > responseMPF_fine = buildfineEtaPtVector<TH1F>(mpf_fine, "resp_mpf_fine_bining", 150, 0., 2.);
+  
+  
+  
+  
   // Balancing
   TFileDirectory balancingDir = analysisDir.mkdir("balancing");
   std::vector<std::vector<TH1F*> > responseBalancing = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing", 150, 0., 2.);
@@ -493,6 +513,7 @@ void GammaJetFinalizer::runAnalysis() {
     responseBalancingGenPhotEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen_phot", "eta0013", 150, 0., 2.);
     responseBalancingPhotGammaEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_photGamma", "eta0013", 150, 0., 2.);
   }
+   
   
   
   //plot versus ETA
@@ -530,7 +551,38 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<std::vector<TH1F*> > Nvertices = buildEtaPtVector<TH1F>(vertexDir, "Nvertices", 50, 0., 50.);
   std::vector<std::vector<TH1F*>> vertex_responseBalancing = buildEtaVertexVector<TH1F>(vertexDir, "resp_balancing", 150, 0., 2.);
   std::vector<std::vector<TH1F*>> vertex_responseMPF = buildEtaVertexVector<TH1F>(vertexDir, "resp_mpf", 150, 0., 2.);
+  
+  //vs run number
+  
+  TFileDirectory Rundir = analysisDir.mkdir("run");
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT30 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT30",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT50 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT50",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT75 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT75",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT90 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT90",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT120 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT120",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseBalancingHLT165 = buildEtaRunVector<TH1F>(Rundir,"resp_balancing_HLT165",100,0.,2.);
+  
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT30 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT30",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT50 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT50",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT75 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT75",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT90 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT90",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT120 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT120",100,0.,2.);
+  std::vector<std::vector<TH1F*>> run_responseMpfHLT165 = buildEtaRunVector<TH1F>(Rundir,"resp_mpf_HLT165",100,0.,2.);
 
+
+  std::vector<TH1F*> run_responseBalancing_0013HLT30 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT30", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseBalancing_0013HLT50 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT50", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseBalancing_0013HLT75 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT75", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseBalancing_0013HLT90 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT90", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseBalancing_0013HLT120 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT120","eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseBalancing_0013HLT165 = buildRunVector<TH1F>(Rundir,"resp_balancing_HLT165", "eta0013",100,0.,2.);
+  
+  std::vector<TH1F*> run_responseMpf_0013HLT30 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT30", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseMpf_0013HLT50 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT50", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseMpf_0013HLT75 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT75", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseMpf_0013HLT90 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT90", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseMpf_0013HLT120 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT120", "eta0013",100,0.,2.);
+  std::vector<TH1F*> run_responseMpf_0013HLT165 = buildRunVector<TH1F>(Rundir,"resp_mpf_HLT165", "eta0013",100,0.,2.);
   // TProfile
   // response vs Pt (all eta)
   TProfile* Profile_Bal_vs_Pt = balancingDir.make<TProfile>("Bal_vs_Pt", "Balancing vs Pt", binnum, ptBins, 0, 2);
@@ -561,6 +613,14 @@ void GammaJetFinalizer::runAnalysis() {
   double extrapolationMin = 0.;
   double extrapolationMax = 2.;
   TFileDirectory extrapDir = analysisDir.mkdir("extrapolation");
+  ExtrapolationVectors<TH1F>::type extrap_responseBalancing_finebin = buildExtrapolationfineEtaVector<TH1F>(extrapDir, "extrap_resp_balancing_fine_bining", extrapolationBins, extrapolationMin, extrapolationMax);
+  ExtrapolationVectors<TH1F>::type extrap_responseMPF_finebin = buildExtrapolationfineEtaVector<TH1F>(extrapDir, "extrap_resp_mpf_fine_bining", extrapolationBins, extrapolationMin, extrapolationMax);
+
+  ExtrapolationVectors<TH1F>::type extrap_PLI_fine;  
+  if (mIsMC) {
+    extrap_PLI_fine  = buildExtrapolationfineEtaVector<TH1F>(extrapDir, "extrap_PLI_fine", extrapolationBins, extrapolationMin, extrapolationMax);
+  }
+  
   ExtrapolationVectors<TH1F>::type extrap_responseBalancing = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_balancing", extrapolationBins, extrapolationMin, extrapolationMax);
   ExtrapolationVectors<TH1F>::type extrap_responseBalancingRaw = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_balancing_raw", extrapolationBins, extrapolationMin, extrapolationMax);
   ExtrapolationVectors<TH1F>::type extrap_responseBalancingGen;
@@ -687,7 +747,7 @@ void GammaJetFinalizer::runAnalysis() {
     std::string passedTrigger;
     float triggerWeight = 1.;
     if(mVerbose) std::cout<<"Finding trigger... " << std::endl;
-    if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, fullinfo.phomatchHLT_Photon30, fullinfo.phomatchHLT_Photon50, fullinfo.phomatchHLT_Photon75, fullinfo.phomatchHLT_Photon90, fullinfo.phomatchHLT_Photon120, fullinfo.phomatchHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
+    if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, fullinfo.passHLT_Photon200, fullinfo.phomatchHLT_Photon30, fullinfo.phomatchHLT_Photon50, fullinfo.phomatchHLT_Photon75, fullinfo.phomatchHLT_Photon90, fullinfo.phomatchHLT_Photon120, fullinfo.phomatchHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
 	if (mVerbose) {
@@ -816,8 +876,8 @@ void GammaJetFinalizer::runAnalysis() {
   
   //etaphi cleaning
   
-    if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
-    
+   // if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
+   // if( mIsMC && fullinfo.PassGenmatching == 0) continue;
     if (! keepEvent)
       continue;
 
@@ -910,7 +970,7 @@ void GammaJetFinalizer::runAnalysis() {
     h_nvertex_reweighted->Fill(fullinfo.nVtx, eventWeight);
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
-    h_ptPhoton               ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+   // h_ptPhoton               ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
     h_ptPhoton_Binned        ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
     h_EtaPhoton             ->Fill(fullinfo.Eta_photon, eventWeight);
     h_PhiPhoton             ->Fill(fullinfo.Phi_photon, eventWeight);
@@ -973,6 +1033,8 @@ void GammaJetFinalizer::runAnalysis() {
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(fullinfo.Pt_photonGEN);
     
     int etaBin = mEtaBinning.getBin(fullinfo.etaAK4_j1);
+    int etafineBin = mfineEtaBinning.getBin(fullinfo.etaAK4_j1);
+    int runBinning = mRunBinning.getRunBin(fullinfo.run);
     if (etaBin < 0) {
       if(mVerbose) std::cout << "Jet Bin " << fullinfo.etaAK4_j1 << " is not covered by our eta binning. Dumping event." << std::endl;
       continue;
@@ -985,8 +1047,10 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
      // std::cout<<(int) fullinfo.event<<std::endl;
       do {
+      
+      //  std::cout<<" value of alpha  : "<<fullinfo.alpha<<std::endl;
 
-
+        h_inst_Lumi                         -> Fill(fullinfo.lumi, eventWeight);
         h_MET_ortho                         -> Fill(Met_perp, eventWeight);
         h_MET_parr                          -> Fill(Met_para, eventWeight);
         h_ptPhoton_passedID                 -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
@@ -1076,7 +1140,7 @@ void GammaJetFinalizer::runAnalysis() {
        // MuonMult[etaBin][ptBin]->Fill(fullinfo.jet_MuonMult, eventWeight);
        
        //HLT plots;
-       
+     /*/ 
        HLTChHadronIso[etaBin][HLTptBin]->Fill(fullinfo.CHiso_photon, eventWeight);
        HLTNhHadronIso[etaBin][HLTptBin]->Fill(fullinfo.NHiso_photon, eventWeight);
        HLTPhotonIso[etaBin][HLTptBin]->Fill(fullinfo.Photoniso_photon, eventWeight);
@@ -1111,6 +1175,76 @@ void GammaJetFinalizer::runAnalysis() {
    if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) h_ptPhoton_3 ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.) h_ptPhoton_4 ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.) h_ptPhoton_5 ->Fill(PhotonCorr.Pt(), eventWeight);
+       
+       
+       if(PhotonCorr.Pt() >= 175.) {
+    run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT165[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT165[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT165[runBinning]->Fill(respMPF,eventWeight);
+    }
+    }
+    
+   if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) {
+    run_responseBalancingHLT120[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT120[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    	run_responseBalancing_0013HLT120[runBinning]->Fill(respBalancing,eventWeight);
+        run_responseMpf_0013HLT120[runBinning]->Fill(respMPF,eventWeight);
+    }
+    }
+   
+   if(PhotonCorr.Pt() < 130. && PhotonCorr.Pt() >105.) {
+    run_responseBalancingHLT90[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT90[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT90[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT90[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }
+   
+   if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) {
+    run_responseBalancingHLT75[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT75[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT75[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT75[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }
+    
+   if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.){
+    run_responseBalancingHLT50[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT50[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    
+    run_responseBalancing_0013HLT50[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT50[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    } 
+   
+   if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.){
+    run_responseBalancingHLT30[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT30[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    
+    run_responseBalancing_0013HLT30[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT30[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }*/
+    
+    
+    
        
        
        //versus eta plots pt > 175  : 
@@ -1179,13 +1313,15 @@ void GammaJetFinalizer::runAnalysis() {
         fullinfoTree->Fill();
       }
 #endif
-      
+      //plot fine eta bin baland mpf
+    responseBalancing_fine [etafineBin][ptBin]->Fill(respBalancing,eventWeight);
+    responseMPF_fine[etafineBin][ptBin]->Fill(respMPF,eventWeight);
       passedEvents++;
       if(mVerbose) std::cout<<"passedEvents"<<std::endl;
       
     }// if secondJetOK
 
-    if (fullinfo.pTAK4_j2 !=0) { //extrapolation if second jet is present
+    if (fullinfo.pTAK4_j2 > 0) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1197,14 +1333,14 @@ void GammaJetFinalizer::runAnalysis() {
 	
 	do {
           if (extrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for extrapolation: " << fullinfo.pTAK4_j2 / fullinfo.Pt_photonGEN << std::endl;
+	    if(mVerbose) std::cout << "No bin found for extrapolation: " << fullinfo.pTAK4_j2 / fullinfo.Pt_photon << std::endl;
 	    break;
           }	  
 	  
 	  // Ugly code to make inclusive extrapolation bin for response and PLI
 	  
 	  //bin 9 0 to 0.3 :
-
+       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
 	  
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
@@ -1213,12 +1349,17 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseBalancing[etaBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
+          extrap_responseBalancing_finebin[etafineBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
 	    }}
-	  
+
 	  
 	   //bin 9 0 to 0.25 :
 
@@ -1230,8 +1371,12 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseBalancing[etaBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
+          extrap_responseBalancing_finebin[etafineBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    }
@@ -1248,8 +1393,14 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseBalancing[etaBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
+          extrap_responseBalancing_finebin[etafineBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    }
@@ -1258,6 +1409,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  
 	  //bin 9 0 to 0.15 :
+	  
 
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
@@ -1267,8 +1419,14 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseBalancing[etaBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
+          extrap_responseBalancing_finebin[etafineBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    }
@@ -1284,8 +1442,12 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
+          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    }
@@ -1293,19 +1455,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  
 	
-         /* // Special case 
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing, eventWeight);
-            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }}}*/ 
+         
 	    
 
 	  if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
@@ -1479,6 +1629,19 @@ std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaPtVector(TFileDirectory
   return etaBinning;
 }
 
+template<typename T>
+std::vector<std::vector<T*> > GammaJetFinalizer::buildfineEtaPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
+  size_t etaBinningSize = mfineEtaBinning.size();
+  std::vector<std::vector<T*> > etaBinning;
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    const std::string etaName = mfineEtaBinning.getBinName(i);
+    etaBinning.push_back(buildPtVector<T>(dir, branchName, etaName, nBins, xMin, xMax));
+  }
+
+  return etaBinning;
+}
+
 
 template<typename T>
 std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
@@ -1523,6 +1686,44 @@ std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaVertexVector(TFileDirec
 
   return etaBinning;
 }
+
+
+template<typename T>
+      std::vector<T*> GammaJetFinalizer::buildRunVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax){
+
+
+     std::vector<T*> vector;
+     size_t runBinningSize = mRunBinning.size();
+     for (size_t j = 0; j < runBinningSize; j++) {
+
+      const std::pair<int, int> bin = mRunBinning.getBinValue(j);
+      std::stringstream ss;
+      ss << branchName << "_" << etaName << "_Run_" << bin.first << "_" << bin.second;
+
+      T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, xMin, xMax);
+      vector.push_back(object);
+  }
+
+  return vector;
+
+   }
+
+
+template<typename T>
+      std::vector<std::vector<T*> > GammaJetFinalizer::buildEtaRunVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax){
+      
+      size_t etaBinningSize = mEtaBinning.size();
+      std::vector<std::vector<T*> > etaBinning;
+      for (size_t i = 0; i < etaBinningSize; i++) {
+    const std::string etaName = mEtaBinning.getBinName(i);
+
+   
+    etaBinning.push_back(buildRunVector<T>(dir, branchName, etaName, nBins, xMin, xMax));
+  }
+
+  return etaBinning;
+      
+    }
 
 template<typename T>
 std::vector<std::vector<T*> > GammaJetFinalizer::buildExtrapolationVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax) {
@@ -1573,6 +1774,30 @@ std::vector<std::vector<std::vector<T*> > > GammaJetFinalizer::buildExtrapolatio
   return etaBinning;
 }
 
+
+
+
+
+
+
+
+
+
+template<typename T>
+std::vector<std::vector<std::vector<T*> > > GammaJetFinalizer::buildExtrapolationfineEtaVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
+
+  size_t etaBinningSize = mfineEtaBinning.size();
+  std::vector<std::vector<std::vector<T*> > > etaBinning;
+
+  for (size_t i = 0; i < etaBinningSize; i++) {
+    const std::string etaName = mfineEtaBinning.getBinName(i);
+
+    std::vector<std::vector<T*> > vector = buildExtrapolationVector<T>(dir, branchName, etaName, nBins, xMin, xMax);
+    etaBinning.push_back(vector);
+  }
+
+  return etaBinning;
+}
 
 
 void GammaJetFinalizer::cleanTriggerName(std::string& trigger) {
@@ -1652,7 +1877,7 @@ void GammaJetFinalizer::checkInputFiles() {
 
 
 // necessary adaptation 
-int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, double& triggHLT1, double& triggHLT2, double& triggHLT3, double& triggHLT4, double& triggHLT5, double& triggHLT6, float& weight) {
+int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& HLT1, double& HLT2, double& HLT3, double& HLT4, double& HLT5, double& HLT6, double& HLT7, double& triggHLT1, double& triggHLT2, double& triggHLT3, double& triggHLT4, double& triggHLT5, double& triggHLT6, float& weight) {
 if (! mIsMC) {
     const PathVector& mandatoryTriggers = mTriggers->getTriggers(fullinfo.run);
     
@@ -1683,23 +1908,34 @@ if (! mIsMC) {
       double passed4 = HLT4;
       double passed5 = HLT5;
       double passed6 = HLT6;
+      double passed7 = HLT7;
       
-      double triggpassed1 = 1.;//triggHLT1;
-      double triggpassed2 = 1.;//triggHLT2;
-      double triggpassed3 = 1.;//triggHLT3;
-      double triggpassed4 = 1.;//triggHLT4;
-      double triggpassed5 = 1.;//triggHLT5;
-      double triggpassed6 = 1.;//triggHLT6;
+      
+      //to change only for 2017 datas
+     /* 
+      double passed1 = HLT6;
+      double passed2 = HLT1;
+      double passed3 = HLT2;
+      double passed4 = HLT3;
+      double passed5 = HLT4;
+      double passed6 = HLT5;
+     */ 
+      double triggpassed1 = triggHLT1;//1.;//
+      double triggpassed2 = triggHLT2;//1.;//
+      double triggpassed3 = triggHLT3;//1.;//
+      double triggpassed4 = triggHLT4;//1.;//
+      double triggpassed5 = triggHLT5;//1.;//
+      double triggpassed6 = triggHLT6;//1.;//
       
    //   int passedtriggerresult ;
       
-      
+      if ( passed7 == 1. && boost::regex_match("HLT_Photon200.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed5 == 1. &&  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed3 == 1. &&  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       
       
       
@@ -1727,12 +1963,12 @@ if (! mIsMC) {
       double passed5 = HLT5;
       double passed6 = HLT6;
       
-      double triggpassed1 = 1.;//triggHLT1;
-      double triggpassed2 = 1.;//triggHLT2;
-      double triggpassed3 = 1.;//triggHLT3;
-      double triggpassed4 = 1.;//triggHLT4;
-      double triggpassed5 = 1.;//triggHLT5;
-      double triggpassed6 = 1.;//triggHLT6;
+      double triggpassed1 = triggHLT1;//1.;//
+      double triggpassed2 = triggHLT2;//1.;//
+      double triggpassed3 = triggHLT3;//1.;//
+      double triggpassed4 = triggHLT4;//1.;//
+      double triggpassed5 = triggHLT5;//1.;//
+      double triggpassed6 = triggHLT6;//1.;//
       
    //   int passedtriggerresult ;
       std::string p = mandatoryTrigger->at(0).name.str() ;

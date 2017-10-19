@@ -95,6 +95,7 @@ public :
    Double_t        pTAK4_j2GEN;
    Double_t        passHLT_Photon120;
    Double_t        passHLT_Photon165;
+   Double_t        passHLT_Photon200;
    Double_t        passHLT_Photon30;
    Double_t        passHLT_Photon50;
    Double_t        passHLT_Photon75;
@@ -123,6 +124,7 @@ public :
    Double_t        METGEN_Eta;
    Double_t        METGEN_Phi;
    Double_t        METGEN_Pt;
+   Double_t        PassGenmatching;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -197,6 +199,7 @@ public :
    TBranch        *b_pTAK4_j2GEN;   //!
    TBranch        *b_passHLT_Photon120;   //!
    TBranch        *b_passHLT_Photon165;   //!
+   TBranch        *b_passHLT_Photon200;   //!
    TBranch        *b_passHLT_Photon30;   //!
    TBranch        *b_passHLT_Photon50;   //!
    TBranch        *b_passHLT_Photon75;   //!
@@ -225,6 +228,7 @@ public :
    TBranch        *b_METGEN_Eta;
    TBranch        *b_METGEN_Phi;
    TBranch        *b_METGEN_Pt;
+   TBranch        *b_PassGenmatching;
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -361,6 +365,7 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("pTAK4_j2GEN", &pTAK4_j2GEN, &b_pTAK4_j2GEN);
    fChain->SetBranchAddress("passHLT_Photon120", &passHLT_Photon120, &b_passHLT_Photon120);
    fChain->SetBranchAddress("passHLT_Photon165", &passHLT_Photon165, &b_passHLT_Photon165);
+   fChain->SetBranchAddress("passHLT_Photon200", &passHLT_Photon200, &b_passHLT_Photon200);
    fChain->SetBranchAddress("passHLT_Photon30", &passHLT_Photon30, &b_passHLT_Photon30);
    fChain->SetBranchAddress("passHLT_Photon50", &passHLT_Photon50, &b_passHLT_Photon50);
    fChain->SetBranchAddress("passHLT_Photon75", &passHLT_Photon75, &b_passHLT_Photon75);
@@ -389,6 +394,7 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("METGEN_Eta", &METGEN_Eta, &b_METGEN_Eta);
    fChain->SetBranchAddress("METGEN_Phi", &METGEN_Phi, &b_METGEN_Phi);
    fChain->SetBranchAddress("METGEN_Pt", &METGEN_Pt, &b_METGEN_Pt);
+   fChain->SetBranchAddress("PassGenmatching",&PassGenmatching,&b_PassGenmatching);
    InitCache();
 }
 
