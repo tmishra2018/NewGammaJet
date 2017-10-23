@@ -346,14 +346,42 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_npvGood = analysisDir.make<TH1F>("npvGood", "npvGood", 50, 0, 50);
   TH2F* h_rho_vs_mu = analysisDir.make<TH2F>("rho_vs_mu", "Rho vs mu", 50, 0, 50, 100, 0, 50);
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
-  
-  
-  
-  
  
+
+//viola histos for testing new method a la andrey
+
+TLorentzVector* fvec_photon_tmp = new TLorentzVector;
+TLorentzVector* fvec_jet_tmp = new TLorentzVector;
+
+  TFileDirectory NewMethodDir = analysisDir.mkdir("NewMethod"); 
+  std::vector<TH1F*>      PhotonPtForNM    = buildPhotonPtVector<TH1F>(NewMethodDir, "PhotonPtForNM", "eta0013", 50);
+//To be improved: make a buildphotonptvector that creates histos with different ranges and with e.g. a fixed binning  
   
-  
-  
+ double photonPtBins4h[mPhotonPtBinning.size()];
+ double jetPtBins4h[mJetPtBinning.size()];
+
+  for (size_t j = 0; j < mPhotonPtBinning.size(); j++) {
+  const std::pair<float, float> phobin = mPhotonPtBinning.getBinValue(j);
+  photonPtBins4h[j]=phobin.first;
+  if(j==mPhotonPtBinning.size()-1) photonPtBins4h[j+1]=phobin.second;
+ }
+
+  for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+  const std::pair<float, float> jetbin = mJetPtBinning.getBinValue(j);
+  jetPtBins4h[j]=jetbin.first;
+  if(j==mJetPtBinning.size()-1) jetPtBins4h[j+1]=jetbin.second;
+ }
+  int  phobinnum = sizeof(photonPtBins4h)/sizeof(double) -1;
+  int  jetbinnum = sizeof(jetPtBins4h)/sizeof(double) -1;
+
+  TH2F* h_Skl_phopt_vs_jetpt = new TH2F("Skl_phopt_vs_jetpt", "Skl in photon pt vs jet pt", phobinnum, photonPtBins4h,jetbinnum,jetPtBins4h);
+  double Skl_array[mPhotonPtBinning.size()][mJetPtBinning.size()];
+  for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
+   for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+   Skl_array[g][j]=0.;
+   }
+  } 
+
   //plots per HLT for control 
   
   //isolation variables : 
@@ -934,7 +962,8 @@ void GammaJetFinalizer::runAnalysis() {
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
     
    // PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
-    
+   
+   fvec_photon_tmp->SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  ); 
     
     TLorentzVector Photon;
     Photon.SetPtEtaPhiE( fullinfo.Pt_photon, fullinfo.Eta_photon, fullinfo.Phi_photon, fullinfo.Energy_photon );
@@ -1025,7 +1054,9 @@ void GammaJetFinalizer::runAnalysis() {
     if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
     int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
+    int photonptBin = mPhotonPtBinning.getPtBin(PhotonCorr.Pt());
     int HLTptBin = mHLTPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
+
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
@@ -1278,7 +1309,17 @@ void GammaJetFinalizer::runAnalysis() {
 	  MuEta013[ptBin]->Fill(mu, eventWeight);
 	  NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
 
-	  
+//viola try new method a la andrey
+        PhotonPtForNM[photonptBin]->Fill(PhotonCorr.Pt(), eventWeight); 
+
+
+	//loop over all jets in the event
+	for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
+		//sum pt*cos
+		fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
+		Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] += (fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
+	}
+	//fill the histo -- should be done after loop over all photons/events ?!?!
 	}
 	
         responseBalancing[etaBin][ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
@@ -1499,6 +1540,14 @@ void GammaJetFinalizer::runAnalysis() {
      
   }
 
+//viola try new method a la andrey, now fill 2D histo
+
+  for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
+   for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+   h_Skl_phopt_vs_jetpt->SetBinContent(g,j,Skl_array[g][j]);
+   }
+  }
+
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
   //std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
@@ -1548,6 +1597,32 @@ std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::
 template<typename T>
 std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax) {
   return buildPtVector<T>(dir, branchName + "_" + etaName, nBins, xMin, xMax);
+}
+
+
+//viola try the new method a la andrey
+
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins) {
+
+  std::vector<T*> vector;
+  size_t ptBinningSize = mPhotonPtBinning.size();
+  for (size_t j = 0; j < ptBinningSize; j++) {
+
+    const std::pair<float, float> bin = mPhotonPtBinning.getBinValue(j);
+    std::stringstream ss;
+      ss << branchName << "_ptPhot_" << (int) bin.first << "_" << (int) bin.second;
+
+    T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, (int) bin.first, (int) bin.second);
+    vector.push_back(object);
+  }
+
+  return vector;
+}
+
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins) {
+  return buildPhotonPtVector<T>(dir, branchName + "_" + etaName, nBins);
 }
 
 

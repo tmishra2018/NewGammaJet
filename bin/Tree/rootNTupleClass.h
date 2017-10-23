@@ -15,6 +15,7 @@ using namespace std;
 #include <TFile.h>
 
 // Header file for the classes stored in the TTree if any.
+#include "vector"
 
 class rootNtupleClass {
 public :
@@ -125,6 +126,10 @@ public :
    Double_t        METGEN_Phi;
    Double_t        METGEN_Pt;
    Double_t        PassGenmatching;
+   vector<float>   *pT_jets;
+   vector<float>   *Eta_jets;
+   vector<float>   *Phi_jets;
+   vector<float>   *Mass_jets;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -229,6 +234,11 @@ public :
    TBranch        *b_METGEN_Phi;
    TBranch        *b_METGEN_Pt;
    TBranch        *b_PassGenmatching;
+   TBranch        *b_pT_jets;   //!
+   TBranch        *b_Eta_jets;   //!
+   TBranch        *b_Phi_jets;   //!
+   TBranch        *b_Mass_jets;   //!
+
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -287,6 +297,12 @@ void rootNtupleClass::Init(TTree *tree)
    // code, but the routine can be extended by the user if needed.
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
+
+   // Set object pointer
+   pT_jets = 0;
+   Eta_jets = 0;
+   Phi_jets = 0;
+   Mass_jets = 0;
 
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -395,6 +411,10 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("METGEN_Phi", &METGEN_Phi, &b_METGEN_Phi);
    fChain->SetBranchAddress("METGEN_Pt", &METGEN_Pt, &b_METGEN_Pt);
    fChain->SetBranchAddress("PassGenmatching",&PassGenmatching,&b_PassGenmatching);
+   fChain->SetBranchAddress("pT_jets", &pT_jets, &b_pT_jets);
+   fChain->SetBranchAddress("Eta_jets", &Eta_jets, &b_Eta_jets);
+   fChain->SetBranchAddress("Phi_jets", &Phi_jets, &b_Phi_jets);
+   fChain->SetBranchAddress("Mass_jets", &Mass_jets, &b_Mass_jets);
    InitCache();
 }
 
