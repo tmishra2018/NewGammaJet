@@ -301,6 +301,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   bool isNVTX = TString(name).Contains("nvertices", TString::kIgnoreCase);
   bool isBal  = TString(name).Contains("balancing", TString::kIgnoreCase);
   bool isHLT  = TString(name).Contains("HLT", TString::kIgnoreCase);
+  bool isfinebin = TString(name).Contains("_fine_bining", TString::kIgnoreCase);
   // Ignore bin between 3500 - 7000 (last bin)
   //int number_of_plots = ptBins.size() - 1;
   
@@ -340,7 +341,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     // pt phot cut label
     TString labelPtPhot = TString::Format("%d < p_{T}^{#gamma} < %d GeV/c", (int) currentBin.first, (int) currentBin.second);
     if(isHLT){
-      drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, true);
+      drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
     }else{
     drawHisto(std::string(name + "_" + ptRange), axisName, units, instanceName, log_aussi, legendQuadrant, labelPtPhot.Data(), true, false);
     } // set the last bool to false to remove the ratio
@@ -353,8 +354,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     bool hasData = (lastHistos_data_.size() > 0);
     bool hasMC = (lastHistos_mc_.size() > 0);
 
-    Float_t meanTruncFraction = 0.99;
-    Float_t rmsTruncFraction = 0.99;
+    Float_t meanTruncFraction = 0.985;
+    Float_t rmsTruncFraction = 0.985;
 
     Float_t dataResponse = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMean();
     Float_t dataResponseErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMeanError();
@@ -418,7 +419,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     //      std::cout << "debug : get gen information" << std::endl;
 
-    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX && !isHLT) ) {    
+    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX && !isHLT && !isfinebin) ) {    
     //// Get gen informations. To do that, we need to transform
     //// resp_balancing_eta* in resp_balancing_gen_eta*
     std::string responseTrueName = std::string(name + "_" + ptRange);
@@ -477,7 +478,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   gr_responseMC_vs_pt->SetName(graphName);
   gr_responseMC_vs_pt->Write();
   
-  if( !isRAW ){  
+  if( !isRAW && !isfinebin ){  
     graphName = TString::Format("%s_gen_vs_pt", name.c_str());
     gr_responseTrue_vs_pt->SetName(graphName);
     gr_responseTrue_vs_pt->Write();
@@ -498,7 +499,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   gr_resolutionMC_vs_pt->SetName(graphName);
   gr_resolutionMC_vs_pt->Write();
   
-  if( !isRAW ){
+  if( !isRAW && !isfinebin){
     graphName = TString::Format("%s_gen_vs_pt", resolutionName.c_str());
     gr_resolutionTrue_vs_pt->SetName(graphName);
     gr_resolutionTrue_vs_pt->Write();
@@ -688,7 +689,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
       gr_responseTrue_vs_pt->SetMarkerStyle(29);
       gr_responseTrue_vs_pt->SetMarkerColor(46);
       gr_responseTrue_vs_pt->SetMarkerSize(2.);
-      gr_responseTrue_vs_pt->Draw("Psame");
+     // gr_responseTrue_vs_pt->Draw("Psame");
     }    
     gr_responseMC_vs_pt->SetMarkerStyle(24);
     gr_responseMC_vs_pt->SetMarkerSize(1.5);
@@ -860,11 +861,11 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   legend2->Draw("same");
 
   if (!noMC &&  !isHLT ) {
-    if(!isRAW){
+    if(!isRAW && !isfinebin){
       gr_resolutionTrue_vs_pt->SetMarkerStyle(29);
       gr_resolutionTrue_vs_pt->SetMarkerColor(46);
       gr_resolutionTrue_vs_pt->SetMarkerSize(2.);
-      gr_resolutionTrue_vs_pt->Draw("Psame");
+    //  gr_resolutionTrue_vs_pt->Draw("Psame");
     }
     gr_resolutionMC_vs_pt->SetMarkerStyle(24);
     gr_resolutionMC_vs_pt->SetMarkerSize(1.8);
@@ -2450,9 +2451,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   }
 
   // Draw ratio
-  if (drawRatio && !noDATA && !noMC)
+  if (drawRatio && !noDATA && !noMC && mcHisto_sum->Integral() != 0){
+   // std::cout<<" integral MC hist test : "<<mcHisto_sum->Integral()<<std::endl;
     drawHistRatio(pad_lo, dataHistos[0], mcHisto_sum, xAxis.c_str(), fitMin, fitMax);
-
+   }
   if (outputdir_ == "") {
     this->set_outputdir();
   }
