@@ -22,6 +22,8 @@
 #include "triggers.h"
 #include "GaussianProfile.h"
 #include "fineetaBinning.h"
+#include "photonptBinning.h"
+#include "jetptBinning.h"
 
 #include <vector>
 #include <memory>
@@ -158,7 +160,15 @@ class GammaJetFinalizer
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
-      
+     
+//viola try new method a la andrey
+    template<typename T>
+      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins);
+    template<typename T>
+      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins);
+
+
+ 
       template<typename T>
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
       
@@ -217,6 +227,9 @@ class GammaJetFinalizer
     VertexBinning mVertexBinning;
     RunBinning mRunBinning;
     ExtrapBinning mExtrapBinning;
+//viola try new method a la andrey
+    PhotonPtBinning mPhotonPtBinning;
+    JetPtBinning mJetPtBinning;
 
     std::vector<std::string> mInputFiles;
     std::string mDatasetName;

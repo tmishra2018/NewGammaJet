@@ -20,7 +20,6 @@ class ExtrapBinning {
         float minPt = 0.;
         float ptStep = 0.;
 
-	/*
 	//old binning
         // In percent 
           if (bin.first <= 80.) {
