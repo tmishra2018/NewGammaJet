@@ -95,7 +95,9 @@ int main(int argc, char* argv[]) {
   etaBinsError.push_back( 0.9955 );    
   
   TLegend *leg;
-  TGraphErrors* gr_response_vs_run[runBinningSize] ;
+  TGraphErrors* gr_response_vs_run[6] ;
+  
+  
   TCanvas *c = new TCanvas("c","",800,800);
   
   // methods: Bal or MPF
@@ -106,84 +108,149 @@ int main(int argc, char* argv[]) {
     
     c->cd();
     
-    leg=new TLegend(0.15,0.15,0.45,0.45);
+    leg=new TLegend(0.2,0.7,0.8,0.9);
     leg->SetFillColor(0);
     //  leg->SetTextFont(42);                                                                                                                                                    
     leg->SetBorderSize(0);                                                                                                                                                   
     leg->SetFillColor(kWhite);                                                                                                                                               
-    leg->SetFillStyle(0);                                                                                                                                                    
+    leg->SetFillStyle(0);
+    leg->SetNColumns(6);                                                                                                                                                    
     //  leg->SetTextSize(0.036);                                                                                                                                                 
     
+    TH2D* h2_axes = new TH2D("axes_again", "", 14, 0., 14., 10, 0.7, 1.);
+   // h2_axes->SetXTitle("p_{T}(#gamma) [GeV/c]");
+    if(kk == 0){
+      h2_axes->SetYTitle("p_{T} Balance");
+     }else{
+    h2_axes->GetYaxis()->SetRangeUser(0.85,1.05); 
+    h2_axes->SetYTitle("MPF response");    
+    }
+    
+  h2_axes->SetXTitle("Run Ranges");
+  h2_axes->SetStats(0);
+  h2_axes->GetXaxis()->SetTitleOffset(1.1);
+  h2_axes->GetYaxis()->SetTitleOffset(1.2);
+  h2_axes->GetYaxis()->SetTitleSize(0.045);
+  //h2_axes->GetXaxis()->SetMoreLogLabels();
+  //h2_axes->GetXaxis()->SetNoExponent();
+    h2_axes->GetXaxis()->SetLabelSize(0.);
+
     
     // Balancing && MPF
+    for(int ii = 0 ; ii < 6 ; ii++){
+    int HLTnumber = 0 ;
+    gr_response_vs_run[ii] = new TGraphErrors(0);
     for (size_t jj = 0; jj < runBinningSize; jj++) {
       const std::pair<int, int>  runBin = runBinning.getBinValue(jj);
       
-      if(jj == runBinningSize -1 ) continue;      
+     // if(jj == runBinningSize -1 ) continue;      
 
-      gr_response_vs_run[jj] = new TGraphErrors(0);
+      int run_low = runBin.first;
+      int run_high = runBin.second;
       
-
-      std::cout<<"Bin run number "<< jj+1 << std::endl;
+      TString runBinName;
+      runBinName = TString::Format("%i", run_low);
+      h2_axes->GetXaxis()->SetBinLabel(jj + 1 , runBinName);
       
-      int run_low  = runBin.first ;
-      int run_high = runBin.second ;
-
       std::cout<<"Run range "<< run_low <<"-"<< run_high << std::endl;
-      
-      for (size_t i = 0; i < etaBinningSize; i++) {
-	
-	std::pair<float, float> currentBin =etaBinning.getBinValue(i) ;
-	float etaMean = (currentBin.first + currentBin.second) / 2.;
 	
 	TString responseName;
+	if(ii == 0){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT30_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT30_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber = 30;
+	}
+	if(ii == 1){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT50_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT50_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber =50;
+	}
+	if(ii == 2){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT75_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT75_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber = 75 ;
+	}
+	if(ii == 3){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT90_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT90_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber = 90 ; 
+	}
+	if(ii == 4){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT120_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT120_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber = 120 ;
+	}
+	if(ii == 5){
+	if(kk==0)  responseName = TString::Format("resp_balancing_HLT165_eta0013_Run_%i_%i", run_low, run_high );
+	if(kk==1)  responseName = TString::Format("resp_mpf_HLT165_eta0013_Run_%i_%i", run_low, run_high );
+	HLTnumber = 165 ;
+	}
 	
-	if(kk==0)  responseName = TString::Format("resp_balancing_%s_run_%i_%i", etaBinning.getBinName(i).c_str(), run_low, run_high );
-	if(kk==1)  responseName = TString::Format("resp_mpf_%s_run_%i_%i", etaBinning.getBinName(i).c_str(), run_low, run_high );
+	
 	
 	TH1F *h = (TH1F*)dataFile->Get("analysis/run/"+responseName);
+	std::cout<<"histo name "<< responseName << std::endl;
+	Double_t Mean = 0;
+	Double_t MeanError = 0 ;
 	
-	double Mean = h->GetMean();
-	double MeanError = h->GetMeanError();
+	if ( h->GetEntries() != 0 ) Mean = h->GetMean();
+	if ( h->GetEntries() != 0 ) MeanError = h->GetMeanError();
+	Double_t highrun =  run_high;
+	Double_t lowrun  =  run_low;
+	Double_t meanrunBin = (highrun - lowrun)/2. + lowrun ;
 	
-	std::cout<< "Set point "<< i << " :   "<< etaMean << "  " << Mean<< std::endl;      
+	std::cout<<" graph number "<<ii<< " Set point "<< jj   << " :   "<< meanrunBin << "  " << Mean<< " +- "<<MeanError<< std::endl;      
 	
-	gr_response_vs_run[jj]-> SetPoint(i, etaMean, Mean);
-	gr_response_vs_run[jj]-> SetPointError(i, etaBinsError.at(i), MeanError);
+	gr_response_vs_run[ii]-> SetPoint(jj , jj+0.5 , Mean);
+	gr_response_vs_run[ii]-> SetPointError(jj , 0., MeanError);
 	
-      }//for eta
-      
-      std::cout<< "Drawing graph"<< std::endl; 
-      if(jj < 4){
-      gr_response_vs_run[jj] -> SetLineColor(jj+1);
-      gr_response_vs_run[jj] -> SetMarkerColor(jj+1);
-      }else{
-      gr_response_vs_run[jj] -> SetLineColor(jj+2);
-      gr_response_vs_run[jj] -> SetMarkerColor(jj+2);
-      }
-      
-      leg->AddEntry(gr_response_vs_run[jj] ,Form("Run %d - %d", run_low, run_high) ,"l");
-      
-      
-      if(jj == 0){
-	//      std::cout << jj << std::endl;
-	gr_response_vs_run[jj] -> SetTitle();
-	gr_response_vs_run[jj] -> GetHistogram()-> SetXTitle("#eta (jet)");  
-	if(kk ==0)      gr_response_vs_run[jj] -> GetHistogram()-> SetYTitle("Balancing Response");  
-	if(kk ==1)      gr_response_vs_run[jj] -> GetHistogram()-> SetYTitle("MPF Response");  
-	gr_response_vs_run[jj] -> GetYaxis()-> SetTitleOffset(1.4);  
-	gr_response_vs_run[jj] -> GetYaxis()->SetRangeUser(0.3, 1.2);  
-	gr_response_vs_run[jj] -> GetXaxis()->SetRangeUser(0., 5.2);  
-	gr_response_vs_run[jj] -> Draw("ZAP");
-      }else{
-	gr_response_vs_run[jj] ->Draw("PSAME");
-    }  
+
+        
       
     }// for run
     
-    leg -> Draw() ;
+    
+    std::cout<< "Drawing graph  "<<gr_response_vs_run[ii]->GetN()<< std::endl; 
+    leg->AddEntry(gr_response_vs_run[ii] ,Form("HLT%d ", HLTnumber ) ,"p");
+    
+    }
+  
+ 
+       h2_axes->Draw();
+    
+    for(size_t ii = 0; ii<6  ;ii++){
+    
+      if(ii < 4){
+      gr_response_vs_run[ii] -> SetLineColor(ii+1);
+      gr_response_vs_run[ii] -> SetMarkerColor(ii+1);
+      gr_response_vs_run[ii] -> SetMarkerStyle(ii+20);
+      gr_response_vs_run[ii] -> SetMarkerSize(2);
+      }else{
+      gr_response_vs_run[ii] -> SetLineColor(ii+2);
+      gr_response_vs_run[ii] -> SetMarkerColor(ii+2);
+      gr_response_vs_run[ii] -> SetMarkerStyle(ii+20);
+      gr_response_vs_run[ii] -> SetMarkerSize(1);
+      }
+      
+      
+      
+      
+      
+	//      std::cout << jj << std::endl;
+	//gr_response_vs_run[ii] -> SetTitle();
+	//gr_response_vs_run[ii] -> GetHistogram()-> SetXTitle("Run Number");  
+	//if(kk ==0)      gr_response_vs_run[ii] -> GetHistogram()-> SetYTitle("Balancing Response");  
+	//if(kk ==1)      gr_response_vs_run[ii] -> GetHistogram()-> SetYTitle("MPF Response");  
+	//gr_response_vs_run[ii] -> GetYaxis()-> SetTitleOffset(1.4);  
+	//gr_response_vs_run[ii] -> GetYaxis()->SetRangeUser(0.8, 0.95);  
+	//gr_response_vs_run[ii] -> GetXaxis()->SetRangeUser(297045, 300575);  
+	gr_response_vs_run[ii] -> Draw("ZPSAME");
+      
+    }
+    leg -> Draw("P") ;
      
-    //  c->SaveAs("vs_run/Balancing_vs_run.png");
+
+
     if(kk == 0)  c->SaveAs("vs_run/Balancing_vs_run.png");
     if(kk == 1)  c->SaveAs("vs_run/MPF_vs_run.png");
   }

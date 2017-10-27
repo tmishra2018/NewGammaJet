@@ -13,6 +13,7 @@
 #include "ptBinning.h"
 #include "etaBinning.h"
 #include "extrapBinning.h"
+#include "fineetaBinning.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -47,8 +48,8 @@ void saveCanvas(TCanvas* canvas, const std::string& name) {
 }
 
 
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile  , double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr);
-void draw_scalefactorVsEta( drawBase* db, double sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint);
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile  , double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning);
+void draw_scalefactorVsEta( drawBase* db, double sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint, TFile* outputFile);
 
 int main(int argc, char* argv[]) {
 
@@ -130,11 +131,14 @@ int main(int argc, char* argv[]) {
   // std::string outputDir = "Plot_vs_pt";
   db->set_outputdir(outputDir);
 
-  EtaBinning etaBinning;
-  size_t s = etaBinning.size();
+  
 
   TFile* output = TFile::Open(std::string(outputDir + "/plots.root").c_str(), "recreate");
   TFile* output_raw = TFile::Open(std::string(outputDir + "/plots_raw.root").c_str(), "recreate");
+  
+  
+  EtaBinning etaBinning;
+  size_t s = etaBinning.size();
   double SF_data[s] = {0.};
   double SF_MC[s]= {0.};
   double SF_dataerr[s]= {0.};
@@ -144,21 +148,47 @@ int main(int argc, char* argv[]) {
   double SF_MCspe =  0 ;
   double SF_dataerrspe =  0 ;
   double SF_MCerrspe =  0 ;
+  
+  
+  
+  //scale factor fine eta binning
+  
+  fineEtaBinning fineetaBinning;
+  size_t sfine = fineetaBinning.size();
+  double SF_datafine[sfine] = {0.};
+  double SF_MCfine[sfine]= {0.};
+  double SF_dataerrfine[sfine]= {0.};
+  double SF_MCerrfine[sfine]= {0.};
+  
 
 
-  for (size_t i = 0; i < s-1; i++) { //fixing 
+  for (size_t i = 0; i < s/*-1*/; i++) { //fixing  // previously excluding the last eta bin ?? why ? 
     std::string etaBin = etaBinning.getBinName(i);
     std::string etaBinTitle = etaBinning.getBinTitle(i);
 
-    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i]); //bool for raw study
-    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i]);
+    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false); //bool for raw study
+    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false);
   }
+  
+  
+  
 
   //special case
   std::string etaBinTitle = "|#eta| #leq 1.3";
-  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe);
-  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe);
-  draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s);
+  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
+  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
+  draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s,output);
+  
+  
+ /* for (size_t i = 0; i < sfine; i++) { //fixing 
+    std::string etaBin = fineetaBinning.getBinName(i);
+    std::string etaBinTitle = fineetaBinning.getBinTitle(i);
+
+    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true); //bool for raw study
+    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true);
+  }
+    draw_scalefactorVsEta(  db, SF_MCfine, SF_datafine, SF_MCerrfine, SF_dataerrfine, sfine,output);*/
+  
   output->Close();
   output_raw->Close();
 
@@ -392,7 +422,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
 
 
 
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile, double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr) {
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile, double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning) {
 
   //  std::string output = db->get_outputdir();
   //  TFile * outputFile = TFile::Open(TString::Format("%s/plots.root", output.c_str()).Data(), "update");
@@ -406,6 +436,26 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   else if (etaRegion == "eta2530") fullEtaRegion = "eta25_30";
   else if (etaRegion == "eta3032") fullEtaRegion = "eta30_32";
   else if (etaRegion == "eta3252") fullEtaRegion = "eta32_52";
+  else if (etaRegion == "eta3252") fullEtaRegion = "eta32_52";
+  
+  else if (etaRegion == "eta0003") fullEtaRegion = "eta00_03";
+  else if (etaRegion == "eta0305") fullEtaRegion = "eta03_05";
+  else if (etaRegion == "eta0508") fullEtaRegion = "eta05_08";
+  else if (etaRegion == "eta0810") fullEtaRegion = "eta08_10";
+  else if (etaRegion == "eta1013") fullEtaRegion = "eta10_13";
+  else if (etaRegion == "eta1315") fullEtaRegion = "eta13_15";
+  else if (etaRegion == "eta1517") fullEtaRegion = "eta15_17";
+  else if (etaRegion == "eta1719") fullEtaRegion = "eta17_19";
+  else if (etaRegion == "eta1922") fullEtaRegion = "eta19_22";
+  else if (etaRegion == "eta2223") fullEtaRegion = "eta22_23";
+  else if (etaRegion == "eta2325") fullEtaRegion = "eta23_25";
+  else if (etaRegion == "eta2526") fullEtaRegion = "eta25_26";
+  else if (etaRegion == "eta2629") fullEtaRegion = "eta26_29";
+  else if (etaRegion == "eta2930") fullEtaRegion = "eta29_30";
+  else if (etaRegion == "eta3031") fullEtaRegion = "eta30_31";
+  else if (etaRegion == "eta3135") fullEtaRegion = "eta31_35";
+  else if (etaRegion == "eta3538") fullEtaRegion = "eta35_38";
+  else if (etaRegion == "eta3852") fullEtaRegion = "eta38_52";
   else fullEtaRegion = "eta_unknown";
 
   if (resp_reso != "response" && resp_reso != "resolution") {
@@ -413,8 +463,18 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     exit(776);
   }
 
+  
+  
+  
   std::string file_noextrap_name = "PhotonJetGraphs_" + db->get_fullSuffix() + ".root";
   std::string file_extrap_name = "PhotonJetExtrapGraphs_" + db->get_fullSuffix();
+  
+  if(isfinebinning){
+  
+    //file_noextrap_name = "PhotonJetGraphs_fineetabin_" + db->get_fullSuffix() + ".root";
+    file_extrap_name = "PhotonJetExtrapGraphs_fineetabin_" + db->get_fullSuffix();
+  
+  }
   if (etaRegion != "") file_extrap_name += "_" + etaRegion;
   if (rawJets) {
     file_extrap_name += "RAW";
@@ -459,6 +519,9 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   std::string prefix = (resp_reso == "response") ? "resp" : "resolution";
 
   std::string responseBALANCING_name = prefix + "_balancing";
+  
+  if(isfinebinning) responseBALANCING_name +="_fine_bining";
+  
   if (rawJets) {
     responseBALANCING_name += "_raw";
   }
@@ -484,6 +547,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   TGraphErrors* gr_responseMPFMC_vs_pt = NULL;
 
   std::string responseMPF_name = prefix + "_mpf";
+  if(isfinebinning) responseMPF_name +="_fine_bining";
   if (rawJets) {
     responseMPF_name += "_raw";
   }
@@ -662,26 +726,56 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   file_extrap->Close();
 }
 
-void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint)
+void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint, TFile* outputFile)
 {
-
-    double Scalefactor [Npoint-1]    = {0.}; 
-    double Scalefactorerr [Npoint-1] = {0.};
+      std::string name_base = db->get_outputdir();
+      std::string graph_name ;
+      name_base += "/";
+    
+    double Scalefactor [Npoint]    = {0.}; 
+    double Scalefactorerr [Npoint] = {0.};
     double x[Npoint] = {0.};
-    x[0] = 0.4;
+    
+    
+      fineEtaBinning fineetaBinning;
+      EtaBinning     etaBinning;
+    
+    if(Npoint <= 7 ){
+    name_base += "wide_eta_binning_";
+    graph_name += "wide_eta_binning_"; 
+   /* x[0] = 0.4;
     x[1] = 1.05;
     x[2] = 1.6;
     x[3] = 2.2;
     x[4] = 2.7;
-    x[5] = 3.1;
+    x[5] = 3.1;*/
+    for(size_t i = 0 ; i < etaBinning.size() ; ++i){
+     
+     x[i] = etaBinning.getBinValue(i).first + ( etaBinning.getBinValue(i).second - etaBinning.getBinValue(i).first)/2. ;
+     std::cout<<" wide eta bin "<<x[i]<<std::endl;
+    }
+    
+    }else{
+    name_base += "fine_eta_binning_";
+    graph_name += "fine_eta_binning_";
+    for(size_t i = 0 ; i < fineetaBinning.size() ; ++i){
+     
+     x[i] = fineetaBinning.getBinValue(i).first + ( fineetaBinning.getBinValue(i).second - fineetaBinning.getBinValue(i).first)/2. ;
+     std::cout<<" fine eta bin "<<x[i]<<std::endl;
+    }
+    
+    
+    }
    // x[6] = 4.2;
     
     
-    double x_err[Npoint-1] = {0.};
-    for(int i =0 ; i < Npoint-1 ; i++){
+    double x_err[Npoint] = {0.};
+    for(int i =0 ; i < Npoint ; i++){
     
       Scalefactor [i]    = sfDATA[i]  ;
       Scalefactorerr [i] = sfDATAerr[i];
+      
+       std::cout<<" eta SF "<<Scalefactor [i]<<" +- "<<Scalefactorerr [i]<<std::endl;      
       
     }
     
@@ -706,25 +800,44 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   boxprel->SetTextSize(0.04);
   boxprel->SetLineWidth(2);
     
-
-  TGraphErrors* gr_sf = new TGraphErrors(Npoint-1, x, Scalefactor , x_err, Scalefactorerr);
+  graph_name += "Scale_factor_res_vs_ETA";
+  name_base  +="Scale_factor_res_vs_ETA.pdf";
+  TGraphErrors* gr_sf = new TGraphErrors(Npoint, x, Scalefactor , x_err, Scalefactorerr);
     
-
+  gr_sf->SetTitle(graph_name.c_str());
   gr_sf->SetLineWidth(2);
   gr_sf->SetLineColor(4);
-  gr_sf->SetMarkerSize(2);
-  gr_sf->SetMarkerStyle(8);
+  gr_sf->SetMarkerSize(1);
+  gr_sf->SetMarkerStyle(34);
   gr_sf->SetMarkerColor(kBlue);
   
-  gr_sf->SetTitle("   ");
+  gr_sf->SetName("   ");
   gr_sf->GetXaxis()->SetTitle("#eta");
   gr_sf->GetYaxis()->SetTitle("Resolution Scale Factor");
+  
+  
+  if (outputFile) {
+    outputFile->cd();
+    gr_sf->Write();
+    
+    }
+  
+  float cmsTextSize = 0.043;
+  TPaveText* label_cms = db->get_labelCMS(1);
+  label_cms->SetTextSize(cmsTextSize);
+
+  TPaveText* label_sqrt = db->get_labelSqrt(1);
+
+  
+  
 
   TCanvas *screen_1 = new TCanvas("screen1", "screen1", 800, 800);
   gr_sf->Draw("APE");
-  box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
-  boxcms->DrawLatex(0.12,0.91,"CMS");
-  boxprel->DrawLatex(0.24,0.935,"Preliminary");
-  screen_1->SaveAs("Scale_factor_res_vs_ETA.pdf");
+  //box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
+  //boxcms->DrawLatex(0.12,0.91,"CMS");
+  //boxprel->DrawLatex(0.24,0.935,"Preliminary");
+  label_cms->Draw("same");
+  label_sqrt->Draw("same");
+  screen_1->SaveAs(name_base.c_str());
   delete screen_1;
 }

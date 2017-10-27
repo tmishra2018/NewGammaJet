@@ -1929,13 +1929,13 @@ if (! mIsMC) {
       
    //   int passedtriggerresult ;
       
-      if ( passed7 == 1. && boost::regex_match("HLT_Photon200.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (                       passed7 == 1. && boost::regex_match("HLT_Photon200.*"                   , mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed5 == 1. &&  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (triggpassed3 == 1. &&  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
-      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
+      if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
+      if (triggpassed3 == 1. &&  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
+      if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
+      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*"                 , mandatoryTrigger->first))  return TRIGGER_OK;
       
       
       

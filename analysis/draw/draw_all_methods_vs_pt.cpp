@@ -10,6 +10,7 @@
 #include "fitTools.h"
 #include "ptBinning.h"
 #include "etaBinning.h"
+#include "fineetaBinning.h"
 #include "extrapBinning.h"
 
 #include <boost/algorithm/string.hpp>

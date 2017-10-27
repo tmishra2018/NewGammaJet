@@ -301,6 +301,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   bool isNVTX = TString(name).Contains("nvertices", TString::kIgnoreCase);
   bool isBal  = TString(name).Contains("balancing", TString::kIgnoreCase);
   bool isHLT  = TString(name).Contains("HLT", TString::kIgnoreCase);
+  bool isFinebin= TString(name).Contains("fine", TString::kIgnoreCase);
   // Ignore bin between 3500 - 7000 (last bin)
   //int number_of_plots = ptBins.size() - 1;
   
@@ -322,7 +323,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
   TGraphErrors* gr_purity_vs_pt = new TGraphErrors(0);
   gr_purity_vs_pt->SetName("purity_vs_pt");
-
+  
+  TH1F* H_count_vs_pt = new TH1F("h2", "Count_vs_pt", 13, 0., 3000.);
+  H_count_vs_pt->SetName("Count_vs_pt");
+  
+  TH1F* H_countMC_vs_pt = new TH1F("h1", "CountMC_vs_pt", 13, 0., 3000.);
+  H_countMC_vs_pt->SetName("CountMC_vs_pt");
   std::string histoName = name;
 
   for (int iplot = 0; iplot < number_of_plots; ++iplot) {
@@ -360,7 +366,19 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t dataResponseErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMeanError();
     Float_t dataRMS = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMS();
     Float_t dataRMSErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMSError();
-
+    
+    
+    H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
+    H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
+    
+    
+    H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->Integral());
+    H_countMC_vs_pt->SetBinContent(iplot+1, lastHistos_mcHistoSum_->Integral());
+    
+    
+    
+    std::cout<<" hist coun debugg : bin : "<<iplot+1<<" borne inf "<<  currentBin.first << " sup "<<currentBin.second<<" content data "<<lastHistos_data_[0]->Integral()<<" MC "<<lastHistos_mcHistoSum_->Integral()<<" bin low edge "<<H_count_vs_pt->GetBinLowEdge(iplot+1)<<" bin content "<<H_count_vs_pt->GetBinContent(iplot+1) <<std::endl;
+    
     if (hasData && !isHLT) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);
     }
@@ -418,7 +436,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     //      std::cout << "debug : get gen information" << std::endl;
 
-    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX && !isHLT) ) {    
+    if( !isRAW && (!isPtgamma && !isMet && !isPt1st && !isPt2nd && !isMU && !isNVTX && !isHLT && !isFinebin) ) {    
     //// Get gen informations. To do that, we need to transform
     //// resp_balancing_eta* in resp_balancing_gen_eta*
     std::string responseTrueName = std::string(name + "_" + ptRange);
@@ -466,18 +484,26 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   std::string graphFileName = "PhotonJetGraphs_" + get_fullSuffix() + ".root";
   TFile* graphFile ;
   TString graphName = TString::Format("%s_data_vs_pt", name.c_str());
+  TString graphcountName = TString::Format("%s_RawNEvents_data_vs_pt", name.c_str());
+  
   std::string resolutionName = name;
   if(! isHLT){
   graphFile = TFile::Open(graphFileName.c_str(), "update");
   graphFile->cd();
   gr_response_vs_pt->SetName(graphName);
   gr_response_vs_pt->Write();
+  H_count_vs_pt->SetName(graphcountName);
+  H_count_vs_pt->Write();
 
   graphName = TString::Format("%s_mc_vs_pt", name.c_str());
+  graphcountName = TString::Format("%s_RawNEvents_mc_vs_pt", name.c_str());
   gr_responseMC_vs_pt->SetName(graphName);
   gr_responseMC_vs_pt->Write();
   
-  if( !isRAW ){  
+  H_countMC_vs_pt->SetName(graphcountName);
+  H_countMC_vs_pt->Write();
+  
+  if( !isRAW && !isFinebin){  
     graphName = TString::Format("%s_gen_vs_pt", name.c_str());
     gr_responseTrue_vs_pt->SetName(graphName);
     gr_responseTrue_vs_pt->Write();
@@ -498,7 +524,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   gr_resolutionMC_vs_pt->SetName(graphName);
   gr_resolutionMC_vs_pt->Write();
   
-  if( !isRAW ){
+  if( !isRAW && !isFinebin ){
     graphName = TString::Format("%s_gen_vs_pt", resolutionName.c_str());
     gr_resolutionTrue_vs_pt->SetName(graphName);
     gr_resolutionTrue_vs_pt->Write();
@@ -666,8 +692,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   if (!noMC) {
       legend->AddEntry(gr_responseMC_vs_pt, "MC", "P");
   } 
-  if (!noMC && !isRAW) {
-    legend->AddEntry(gr_responseTrue_vs_pt, "True Response", "P");
+  if (!noMC && !isRAW ) {
+  //  legend->AddEntry(gr_responseTrue_vs_pt, "True Response", "P");
   }
   legend->Draw("same");
 
@@ -684,7 +710,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
 
 
   if (!noMC ) {
-    if(!isRAW){
+    if(!isRAW && !isFinebin){
       gr_responseTrue_vs_pt->SetMarkerStyle(29);
       gr_responseTrue_vs_pt->SetMarkerColor(46);
       gr_responseTrue_vs_pt->SetMarkerSize(2.);
@@ -854,13 +880,13 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   }
   
   if (! noMC && !isRAW) {
-    legend2->AddEntry(gr_resolutionTrue_vs_pt, "True Resolution", "P");
+   // legend2->AddEntry(gr_resolutionTrue_vs_pt, "True Resolution", "P");
   }
 
   legend2->Draw("same");
 
   if (!noMC &&  !isHLT ) {
-    if(!isRAW){
+    if(!isRAW && !isFinebin){
       gr_resolutionTrue_vs_pt->SetMarkerStyle(29);
       gr_resolutionTrue_vs_pt->SetMarkerColor(46);
       gr_resolutionTrue_vs_pt->SetMarkerSize(2.);
@@ -903,6 +929,9 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
   }
+  
+ // delete H_count_vs_pt;
+  //delete H_countMC_vs_pt;
   
   delete h2_axes;
   h2_axes = 0;

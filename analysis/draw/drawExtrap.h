@@ -10,6 +10,8 @@
 #include "ptBinning.h"
 #include "etaBinning.h"
 #include "extrapBinning.h"
+#include "fineetaBinning.h"
+
 
 class drawExtrap : public drawBase {
 
@@ -35,7 +37,7 @@ public:
   };
 
   void drawResponseExtrap(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
-
+  void drawResponseExtrapfine(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
 
 private:
 
@@ -55,4 +57,5 @@ private:
   PtBinning mPtBinning;
   EtaBinning mEtaBinning;
   ExtrapBinning mExtrapBinning;
+  fineEtaBinning mfineEtaBinning;  
 };

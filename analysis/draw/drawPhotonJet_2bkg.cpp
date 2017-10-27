@@ -11,6 +11,7 @@
 #include "etaBinning.h"
 #include "ptBinning.h"
 #include "HLTptBinning.h"
+#include "fineetaBinning.h"
 
 
 bool OUTPUT_GRAPHS = true;
@@ -190,6 +191,10 @@ int main(int argc, char* argv[]) {
   size_t etaBinningSize = etaBinning.size();
   std::vector<EtaBin > etaBins = etaBinning.getBinning();
   
+  fineEtaBinning fineetaBinning;
+  size_t fineetaBinningSize = fineetaBinning.size();
+  std::vector<fineEtaBin > fineetaBins = fineetaBinning.getBinning();
+  
   
   HLTPtBinning hltptBinning;
   size_t hltptBinningSize = hltptBinning.size();
@@ -205,7 +210,7 @@ int main(int argc, char* argv[]) {
   
   
   // HLT plots
-  
+  /*
   db->setFolder("analysis/HLT_CH_iso");
 
   for (size_t i = 0; i < etaBinningSize; i++) {
@@ -347,7 +352,31 @@ int main(int argc, char* argv[]) {
     
   }
   db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);*/
+  
+  // fine binning eta plots
+  
+  db->setFolder("analysis/fine_eta_binning/balancing");
+  
+  for (size_t i = 0; i < fineetaBinningSize; i++) {
+    db->set_legendTitle(fineetaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("resp_balancing_fine_bining_%s", fineetaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "Balancing Response", "", "Events", false);
+   
+  }
+  
+  db->setFolder("analysis/fine_eta_binning/mpf");
+  
+  for (size_t i = 0; i < fineetaBinningSize; i++) {
+    db->set_legendTitle(fineetaBinning.getBinTitle(i));
+    
+    TString responseName = TString::Format("resp_mpf_fine_bining_%s", fineetaBinning.getBinName(i).c_str());
+    db->drawHisto_vs_pt(ptBins, ptMean, responseName.Data(), "MPF Response", "", "Events", false);
+   
+  }
+  
+  
   
   
   // Balancing

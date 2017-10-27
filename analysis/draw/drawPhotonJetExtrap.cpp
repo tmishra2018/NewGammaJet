@@ -144,6 +144,19 @@ int main(int argc, char* argv[]) {
     //special case
     db->set_legendTitle("|#eta| < 1.3");
     db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
+    
+    fineEtaBinning fineetaBinning;
+    size_t fineetaBinningSize = fineetaBinning.size();
+
+    for (size_t i = 0; i < fineetaBinningSize; i++) {
+      db->set_legendTitle(fineetaBinning.getBinTitle(i)); 
+
+      db->drawResponseExtrapfine(ptMean, fineetaBinning.getBinName(i), fineetaBinning.getBinTitle(i), false); // bool for raw quantities
+    }
+    
+    
+    
+    
 
    
    

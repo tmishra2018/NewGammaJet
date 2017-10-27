@@ -445,7 +445,7 @@ limit_iteration = 0;
 //std::cout << "rms: " << rms << std::endl;
   while (newHisto->Integral() < percentIntegral_MEAN * integral /*newHisto->Integral() != integraldebug */ && limit_iteration < 100) {
 //  std::cout << "iBin: " << iBin << "\tint: " << newHisto->Integral()/integral << std::endl;
-
+    integraldebug = newHisto->Integral();
     iBin += sign * delta_iBin;
 
     newHisto->SetBinContent(iBin, h1_projection->GetBinContent(iBin));

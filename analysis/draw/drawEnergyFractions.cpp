@@ -7,6 +7,7 @@
 #include <THStack.h>
 #include <TPad.h>
 #include <TAttFill.h>
+#include <TLegend.h>
 
 #include "TParameter.h"
 #include "TError.h"
@@ -191,6 +192,8 @@ int main(int argc, char* argv[]) {
       hsum[i]->Add(hElFrac[i]);
       hsum[i]->Add(hMuFrac[i]);     
       
+      hsum[i]->Draw("hist");
+
       TCanvas *c = new TCanvas("c","c",600,600);    
       gPad->SetLogx();
       if(type == "mc") {
@@ -198,7 +201,7 @@ int main(int argc, char* argv[]) {
       }else{
 	hsum[i]->Draw();
       }
-      c->SaveAs(outputDir+"/"+type+"_"+stackName+".png");
+      c->SaveAs(outputDir+"/"+type+"_"+stackName+".pdf");
       c->Destructor();
 	 
     }// eta bins
@@ -236,7 +239,58 @@ int main(int argc, char* argv[]) {
   TString histoNameEnFrac;
   TH1F *h_dataEnFrac;
   TH1F *h_mcEnFrac;
-  
+//define and fill fake Legend
+//uglu hack, should spend some time in working out a better way and fixing the aesthetics
+  TLegend *leg = new TLegend(0.2, 0.1, .4, .4);; 
+TH1F *hMuFrac_mc = new TH1F("hMuFrac_mc","",10,0.,1.);
+TH1F *hElFrac_mc = new TH1F("hElFrac_mc","",10,0.,1.);
+TH1F *hNHFrac_mc = new TH1F("hNHFrac_mc","",10,0.,1.);
+TH1F *hPhFrac_mc = new TH1F("hPhFrac_mc","",10,0.,1.);
+TH1F *hCHFrac_mc = new TH1F("hCHFrac_mc","",10,0.,1.);
+TH1F *hMuFrac_data = new TH1F("hMuFrac_data","",10,0.,1.);
+TH1F *hElFrac_data = new TH1F("hElFrac_data","",10,0.,1.);
+TH1F *hNHFrac_data = new TH1F("hNHFrac_data","",10,0.,1.);
+TH1F *hPhFrac_data = new TH1F("hPhFrac_data","",10,0.,1.);
+TH1F *hCHFrac_data = new TH1F("hCHFrac_data","",10,0.,1.);
+hMuFrac_mc->SetFillColor(7);
+hMuFrac_mc->SetFillStyle(1001);
+hElFrac_mc->SetFillColor(4);
+hElFrac_mc->SetFillStyle(1001);
+hNHFrac_mc->SetFillColor(8);
+hNHFrac_mc->SetFillStyle(1001);
+hPhFrac_mc->SetFillColor(6);
+hPhFrac_mc->SetFillStyle(1001);
+hCHFrac_mc->SetFillColor(2);
+hCHFrac_mc->SetFillStyle(1001);
+hMuFrac_data->SetMarkerStyle(29);
+hElFrac_data->SetMarkerStyle(22);
+hNHFrac_data->SetMarkerStyle(21);
+hPhFrac_data->SetMarkerStyle(23);
+hCHFrac_data->SetMarkerStyle(20);
+
+//leg->SetBorderSize(0);
+leg-> SetNColumns(3);
+
+leg->AddEntry(hMuFrac_mc,"", "");
+leg->AddEntry(hMuFrac_mc, "MC", "");
+leg->AddEntry(hMuFrac_mc, "Data", "");
+leg->AddEntry(hMuFrac_mc, "#mu", "");
+leg->AddEntry(hMuFrac_mc,"","f");
+leg->AddEntry(hMuFrac_data,"","p");
+leg->AddEntry(hMuFrac_mc, "e", "");
+leg->AddEntry(hElFrac_mc,"","f");
+leg->AddEntry(hElFrac_data,"","p");
+leg->AddEntry(hMuFrac_mc, "NH", "");
+leg->AddEntry(hNHFrac_mc,"","f");
+leg->AddEntry(hNHFrac_data,"","p");
+leg->AddEntry(hMuFrac_mc, "#gamma", "");
+leg->AddEntry(hPhFrac_mc,"","f");
+leg->AddEntry(hPhFrac_data,"","p");
+leg->AddEntry(hMuFrac_mc, "CH", "");
+leg->AddEntry(hCHFrac_mc,"","f");
+leg->AddEntry(hCHFrac_data,"","p");
+
+
   for (size_t i = 0; i < etaBinningSize; i++) {
 
     if(i == etaBinningSize-1){
@@ -271,6 +325,7 @@ int main(int argc, char* argv[]) {
     h_mc-> GetXaxis()->SetLabelColor(kWhite);
     h_mc->Draw("hist");
     h_data->Draw("same");
+    leg->Draw("same");
     pad_lo->cd();
      
     for(int frac=0; frac<5; frac++) {
@@ -319,7 +374,7 @@ int main(int argc, char* argv[]) {
 	  h_diff -> SetXTitle("p_{T} [GeV]");
 	  h_diff -> SetStats(kFALSE);
 	  h_diff -> SetMarkerColor(2);
-	  h_diff -> GetYaxis()->SetRangeUser(-10., 10.);
+	  h_diff -> GetYaxis()->SetRangeUser(-6., 6.);
 	  h_diff -> Draw();
 	}else{
 	  if(frac==1) h_diff->SetMarkerColor(8);
@@ -330,12 +385,10 @@ int main(int argc, char* argv[]) {
 	}
       }
      
-      c->SaveAs(outputDir+"/dataMC_"+histoName+".png");
+      c->SaveAs(outputDir+"/dataMC_"+histoName+".pdf");
       c->Destructor();
      
   }// eta bins
 
 
 }
-
-
