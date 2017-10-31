@@ -492,7 +492,7 @@ void GammaJetFinalizer::runAnalysis() {
   
   // Balancing
   TFileDirectory balancingDir = analysisDir.mkdir("balancing");
-  std::vector<std::vector<TH1F*> > responseBalancing = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing", 150, 0., 2.);
+  std::vector<std::vector<TH1F*> > responseBalancing = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing", 100, 0., 2.);//to change to 150 bin
   std::vector<std::vector<TH1F*> > responseBalancingRaw = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing_raw", 150, 0., 2.);
   std::vector<std::vector<TH1F*> > responseBalancingGen;
   std::vector<TH1F*> responseBalancingEta013       = buildPtVector<TH1F>(balancingDir, "resp_balancing", "eta0013", 150, 0., 2.);
@@ -1929,7 +1929,7 @@ if (! mIsMC) {
       
    //   int passedtriggerresult ;
       
-      if (                       passed7 == 1. && boost::regex_match("HLT_Photon200.*"                   , mandatoryTrigger->first)) return TRIGGER_OK;
+    //  if (                       passed7 == 1. && boost::regex_match("HLT_Photon200.*"                   , mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed5 == 1. &&  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)) return TRIGGER_OK;
       if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;

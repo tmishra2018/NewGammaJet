@@ -324,6 +324,11 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   TGraphErrors* gr_purity_vs_pt = new TGraphErrors(0);
   gr_purity_vs_pt->SetName("purity_vs_pt");
   
+  
+  double PtBins4h[ptBins.size()];
+  
+  int  binnum = sizeof(PtBins4h)/sizeof(double) -1;
+  
   TH1F* H_count_vs_pt = new TH1F("h2", "Count_vs_pt", 13, 0., 3000.);
   H_count_vs_pt->SetName("Count_vs_pt");
   
@@ -367,17 +372,18 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t dataRMS = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMS();
     Float_t dataRMSErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMSError();
     
-    
+    if(hasData && !isHLT){
     H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
-    H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
-    
-    
     H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->Integral());
+    }
+    
+    if(hasMC && !isHLT){
+    H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
     H_countMC_vs_pt->SetBinContent(iplot+1, lastHistos_mcHistoSum_->Integral());
+    }
     
     
-    
-    std::cout<<" hist coun debugg : bin : "<<iplot+1<<" borne inf "<<  currentBin.first << " sup "<<currentBin.second<<" content data "<<lastHistos_data_[0]->Integral()<<" MC "<<lastHistos_mcHistoSum_->Integral()<<" bin low edge "<<H_count_vs_pt->GetBinLowEdge(iplot+1)<<" bin content "<<H_count_vs_pt->GetBinContent(iplot+1) <<std::endl;
+    std::cout<<" hist coun debugg : bin : "<<iplot+1<<" borne inf "<<  currentBin.first << " sup "<<currentBin.second<<" content data "<<lastHistos_data_[0]->Integral()<<" MC "<<lastHistos_mcHistoSum_->GetIntegral()<<" bin low edge "<<H_count_vs_pt->GetBinLowEdge(iplot+1)<<" bin content "<<H_count_vs_pt->GetBinContent(iplot+1) <<std::endl;
     
     if (hasData && !isHLT) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);

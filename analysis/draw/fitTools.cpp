@@ -336,7 +336,7 @@ void fitTools::fitProjection_sameArea(TH1* h1_projection, TF1* gaussian, TH1** n
 void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t& mean_err, Float_t& rms, Float_t& rms_err, Double_t percentIntegral_MEAN, Double_t percentIntegral_RMS) {
 //TCanvas* getTruncatedMeanAndRMS(TH1D* h1_projection, Float_t& mean, Float_t& mean_err, Float_t& rms, Float_t& rms_err, Double_t percentIntegral_MEAN=0.9, Double_t percentIntegral_RMS=0.68) {
 
-  bool useMode = false;
+  bool useMode = true;
 
 
   if (percentIntegral_MEAN < 0. || percentIntegral_MEAN > 1.) {
