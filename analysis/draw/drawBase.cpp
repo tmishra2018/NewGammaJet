@@ -325,14 +325,24 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   gr_purity_vs_pt->SetName("purity_vs_pt");
   
   
-  double PtBins4h[ptBins.size()];
+  double PtBins4h[ptBins.size()+1];
   
-  int  binnum = sizeof(PtBins4h)/sizeof(double) -1;
   
-  TH1F* H_count_vs_pt = new TH1F("h2", "Count_vs_pt", 13, 0., 3000.);
+  size_t  binnum = ptBins.size();
+  
+  for(size_t i = 0 ; i < binnum ; i++){
+    
+    PtBins4h[i] = ptBins.at(i).first;
+    std::cout<<" binning for raw event counter : "<<PtBins4h[i]<<std::endl;
+    if(i == binnum -1) PtBins4h[i+1] = ptBins.at(i).second ; 
+  }
+  
+  TH1F* H_count_vs_pt = new TH1F("h2", "Count_vs_pt", binnum, PtBins4h);
+  H_count_vs_pt->SetName("count_data");
   H_count_vs_pt->SetName("Count_vs_pt");
   
-  TH1F* H_countMC_vs_pt = new TH1F("h1", "CountMC_vs_pt", 13, 0., 3000.);
+  TH1F* H_countMC_vs_pt = new TH1F("h1", "CountMC_vs_pt", binnum, PtBins4h);
+   H_count_vs_pt->SetName("count_mc");
   H_countMC_vs_pt->SetName("CountMC_vs_pt");
   std::string histoName = name;
 
@@ -364,8 +374,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     bool hasData = (lastHistos_data_.size() > 0);
     bool hasMC = (lastHistos_mc_.size() > 0);
 
-    Float_t meanTruncFraction = 0.99;
-    Float_t rmsTruncFraction = 0.99;
+    Float_t meanTruncFraction = 0.985;
+    Float_t rmsTruncFraction = 0.985;
 
     Float_t dataResponse = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMean();
     Float_t dataResponseErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetMeanError();
@@ -373,17 +383,21 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     Float_t dataRMSErr = (!hasData || isHLT) ? 0. : lastHistos_data_[0]->GetRMSError();
     
     if(hasData && !isHLT){
-    H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
+   // H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
     H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->Integral());
-    }
+    }else{
+    H_count_vs_pt->SetBinContent  (iplot+1,0.);
+     }
     
     if(hasMC && !isHLT){
-    H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
+   // H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
     H_countMC_vs_pt->SetBinContent(iplot+1, lastHistos_mcHistoSum_->Integral());
+    }else{
+    H_countMC_vs_pt->SetBinContent(iplot+1,0.);
     }
     
     
-    std::cout<<" hist coun debugg : bin : "<<iplot+1<<" borne inf "<<  currentBin.first << " sup "<<currentBin.second<<" content data "<<lastHistos_data_[0]->Integral()<<" MC "<<lastHistos_mcHistoSum_->GetIntegral()<<" bin low edge "<<H_count_vs_pt->GetBinLowEdge(iplot+1)<<" bin content "<<H_count_vs_pt->GetBinContent(iplot+1) <<std::endl;
+    std::cout<<" hist  debugg : Nbin : "<<H_count_vs_pt->GetNbinsX()<<" bin "<<iplot+1<<" borne inf "<<  currentBin.first << " sup "<<currentBin.second<<" content data "<<lastHistos_data_[0]->Integral()<<" MC "<<lastHistos_mcHistoSum_->Integral()<<" bin low edge "<<H_count_vs_pt->GetBinLowEdge(iplot+1)<<" bin content "<<H_count_vs_pt->GetBinContent(iplot+1)<< " MC "<<H_countMC_vs_pt->GetBinContent(iplot+1) <<std::endl;
     
     if (hasData && !isHLT) {
       fitTools::getTruncatedMeanAndRMS(lastHistos_data_[0], dataResponse, dataResponseErr, dataRMS, dataRMSErr, meanTruncFraction, rmsTruncFraction);
@@ -391,6 +405,9 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     Float_t dataResolution = (hasData && !isHLT) ? dataRMS / dataResponse : 0.;
     Float_t dataResolutionErr = (hasData && !isHLT) ? sqrt(dataRMSErr * dataRMSErr / (dataResponse * dataResponse) + dataResolution * dataResolution * dataResponseErr * dataResponseErr / (dataResponse * dataResponse * dataResponse * dataResponse)) : 0.;
+    
+    
+    if(dataResponse == 0.) continue;
     
     gr_response_vs_pt->SetPoint(iplot, ptMean, dataResponse);
     gr_response_vs_pt->SetPointError(iplot, 0., dataResponseErr);
@@ -490,24 +507,35 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   std::string graphFileName = "PhotonJetGraphs_" + get_fullSuffix() + ".root";
   TFile* graphFile ;
   TString graphName = TString::Format("%s_data_vs_pt", name.c_str());
-  TString graphcountName = TString::Format("%s_RawNEvents_data_vs_pt", name.c_str());
+  
   
   std::string resolutionName = name;
-  if(! isHLT){
+  if(!isHLT){
   graphFile = TFile::Open(graphFileName.c_str(), "update");
   graphFile->cd();
+  
+    TString graphcountName = TString::Format("%s_RawNEvents_data_vs_pt", name.c_str());
+    
+    H_count_vs_pt->SetName(graphcountName);
+    H_count_vs_pt->SetTitle(graphcountName);
+    H_count_vs_pt->Write();
+    
+    graphcountName = TString::Format("%s_RawNEvents_mc_vs_pt", name.c_str());
+    H_countMC_vs_pt->SetName(graphcountName);
+    H_countMC_vs_pt->SetTitle(graphcountName);
+    H_countMC_vs_pt->Write();
+  
+  
   gr_response_vs_pt->SetName(graphName);
   gr_response_vs_pt->Write();
-  H_count_vs_pt->SetName(graphcountName);
-  H_count_vs_pt->Write();
+  
 
   graphName = TString::Format("%s_mc_vs_pt", name.c_str());
-  graphcountName = TString::Format("%s_RawNEvents_mc_vs_pt", name.c_str());
+
   gr_responseMC_vs_pt->SetName(graphName);
   gr_responseMC_vs_pt->Write();
   
-  H_countMC_vs_pt->SetName(graphcountName);
-  H_countMC_vs_pt->Write();
+  
   
   if( !isRAW && !isFinebin){  
     graphName = TString::Format("%s_gen_vs_pt", name.c_str());
@@ -1970,7 +1998,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   int markerColor_default = 1;
   for (unsigned iData = 0; iData < dataHistos.size(); ++iData) {
     
-    dataHistos[iData]->Rebin(rebin_);    
+   // dataHistos[iData]->Rebin(rebin_);    
     dataFiles_[iData].lineColor = kBlack;
     dataFiles_[iData].lineWidth = 1.;
     
@@ -2060,7 +2088,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       mcHistos[0]->SetLineWidth(0);
     }
     //federico
-    mcHistos[0]->Rebin(rebin_);
+    //mcHistos[0]->Rebin(rebin_);
     mcHistos[0]->Scale(mcFiles_[0].weight);
     
     mcHisto_sum = new TH1D(*((TH1D*)mcHistos[0]->Clone()));
@@ -2068,7 +2096,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     if (mcHistos.size() > 1) {
       for (unsigned i = 1; i < mcHistos.size(); ++i) {
 	//federico
-	mcHistos[i]->Rebin(rebin_);
+	//mcHistos[i]->Rebin(rebin_);
         mcHistos[i]->Scale(mcFiles_[i].weight);
         mcHisto_sum->Add((TH1D*)(mcHistos[i]->Clone()));
         if (mcFiles_[i].fillColor == -1) {

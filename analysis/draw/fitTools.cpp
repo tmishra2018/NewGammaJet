@@ -337,7 +337,7 @@ void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t
 //TCanvas* getTruncatedMeanAndRMS(TH1D* h1_projection, Float_t& mean, Float_t& mean_err, Float_t& rms, Float_t& rms_err, Double_t percentIntegral_MEAN=0.9, Double_t percentIntegral_RMS=0.68) {
 
   bool useMode = true;
-
+ // std::cout<<" Truncated RmS function : "<<h1_projection->GetMean()<<std::endl;
 
   if (percentIntegral_MEAN < 0. || percentIntegral_MEAN > 1.) {
     std::cout << "WARNING! percentIntegral_MEAN is " << percentIntegral_MEAN << "!! Setting it to 90%." << std::endl;
@@ -414,6 +414,9 @@ void fitTools::getTruncatedMeanAndRMS(TH1* h1_projection, Float_t& mean, Float_t
 //  std::cout << "iBin: " << iBin << "\tint: " << newHisto->Integral()/integral << std::endl;
     newHisto->SetBinContent(iBin, h1_projection->GetBinContent(iBin));
     newHisto->SetBinError(iBin, h1_projection->GetBinError(iBin));
+    
+   // std::cout<<" trunc Bin number "<<36<<" bin content "<<  newHisto->GetBinContent(36) <<" bin center "<<newHisto->GetBinCenter(36) << std::endl;
+   // std::cout<<" trunc Bin number "<<iBin<<" bin content "<<  newHisto->GetBinContent(iBin)<<" bin center "<< newHisto->GetBinCenter(iBin)<<" number of bins "<<nBins <<" maxBin " << maxBin<< std::endl; 
 
     delta_iBin += 1;
     sign *= -1;
@@ -460,7 +463,7 @@ limit_iteration = 0;
 //    newHisto->SetFillStyle(3004);
 //    newHisto->SetFillColor(kBlue);
 //    newHisto->DrawClone("HISTO same");
-
+  std::cout<<" Truncated Mean Value : "<<newHisto->GetMean()<<std::endl;
   mean = newHisto->GetMean();
   mean_err = newHisto->GetMeanError();
 if (mean_err<0.000001) {

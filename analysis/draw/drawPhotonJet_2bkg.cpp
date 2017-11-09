@@ -356,7 +356,7 @@ int main(int argc, char* argv[]) {
   
   // fine binning eta plots
   
-  db->setFolder("analysis/fine_eta_binning/balancing");
+/*  db->setFolder("analysis/fine_eta_binning/balancing");
   
   for (size_t i = 0; i < fineetaBinningSize; i++) {
     db->set_legendTitle(fineetaBinning.getBinTitle(i));
@@ -376,7 +376,7 @@ int main(int argc, char* argv[]) {
    
   }
   
-  
+  */
   
   
   // Balancing
@@ -424,7 +424,7 @@ int main(int argc, char* argv[]) {
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
   
-  db->setFolder("analysis");
+ /* db->setFolder("analysis");
   db->set_shapeNormalization();
   db->drawHisto("ptPhoton_175_3000", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_130_175", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
@@ -432,8 +432,8 @@ int main(int argc, char* argv[]) {
   db->drawHisto("ptPhoton_85_105", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_60_85", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_40_60", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
-  
-  
+  */
+  /*
   db->set_lumiNormalization();
   
   db->setFolder("analysis/balancing_vs_eta");
@@ -443,7 +443,7 @@ int main(int argc, char* argv[]) {
   db->setFolder("analysis/mpf_vs_eta");
   db->set_legendTitle("p_{T}^{#gamma} > 175 GeV ");
   db->drawHisto_vs_eta(etaBins, "resp_mpf_pt175", "MPF Response", "", "Events", false);
-  
+  */
   
   
 

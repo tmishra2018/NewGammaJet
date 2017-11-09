@@ -110,21 +110,21 @@ void GammaJetFinalizer::runAnalysis() {
       
      //HLTphoton30   
                            
-    static std::string puMC30 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+    static std::string puMC30 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();    
     static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
     
     //HLTphoton50
 
 
-    static std::string puMC50 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
+    static std::string puMC50 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
     static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
     
     //HLTphoton75 
 
 
-    static std::string puMC75 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+    static std::string puMC75 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
     static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
     
@@ -132,21 +132,21 @@ void GammaJetFinalizer::runAnalysis() {
     //HLTphoton90 
 
 
-    static std::string puMC90 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();  
+    static std::string puMC90 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();  
     static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
     
     //HLTphoton120 
 
 
-    static std::string puMC120 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
+    static std::string puMC120 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();
     static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
     
     //HLTphoton165
 
 
-    static std::string puMC165 = TString::Format("%s/computed_mc_madgraphHt_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+    static std::string puMC165 = TString::Format("%s/computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_MC_summer_datalike_pu_truth_100bins.root", puPrefix.c_str()).Data();   
     static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
     reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
     
@@ -523,7 +523,7 @@ void GammaJetFinalizer::runAnalysis() {
   
   // MPF
   TFileDirectory mpfDir = analysisDir.mkdir("mpf");
-  std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 150, 0., 2.);
+  std::vector<std::vector<TH1F*> > responseMPF = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf", 100, 0., 2.);
    std::vector<std::vector<TH1F*> > responseMPFRaw = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf_raw", 150, 0., 2.);
   std::vector<std::vector<TH1F*> > responseMPFGen;
   std::vector<TH1F*> responseMPFEta013 = buildPtVector<TH1F>(mpfDir, "resp_mpf", "eta0013", 150, 0., 2.);
@@ -876,7 +876,7 @@ void GammaJetFinalizer::runAnalysis() {
   
   //etaphi cleaning
   
-   // if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
+    if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
    // if( mIsMC && fullinfo.PassGenmatching == 0) continue;
     if (! keepEvent)
       continue;
@@ -996,7 +996,7 @@ void GammaJetFinalizer::runAnalysis() {
     h_deltaPhi_vs_alpha    ->Fill(deltaPhi,fullinfo.alpha,eventWeight);
    
 
-    if(mVerbose){
+    if(mVerbose && PhotonCorr.Pt() < 60.){
     std::cout<<"photon phi = "<< fullinfo.Phi_photon << std::endl;
     std::cout<<"MET phi = "<< MET.phi << std::endl;
     std::cout<<"deltaPhi PhotMET = "<< deltaPhi_Photon_MET << std::endl;
@@ -1935,7 +1935,7 @@ if (! mIsMC) {
       if (triggpassed4 == 1. &&  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
       if (triggpassed3 == 1. &&  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
       if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
-      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*"                 , mandatoryTrigger->first))  return TRIGGER_OK;
+      if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first))  return TRIGGER_OK;
       
       
       
