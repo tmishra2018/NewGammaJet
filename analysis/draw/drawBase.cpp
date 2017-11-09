@@ -4333,7 +4333,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
       double ratio_x = data.x;
       double ratio_x_err = data.x_err;
-
+      if( mc.y == 0. || std::isnan(data.y) || std::isnan(mc.y) ) continue ;
       double ratio_y = data.y / mc.y;
       double ratio_y_err = sqrt(data.y_err * data.y_err / (mc.y * mc.y) + data.y * data.y * mc.y_err * mc.y_err / (mc.y * mc.y * mc.y * mc.y));
 
