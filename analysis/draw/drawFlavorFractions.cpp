@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
 //	c->Destructor();
 
 
-TFile out(outputDir+"/"+type+"_FlavorComposition.root","recreate");
+TFile out(outputDir+"/"+type+"_alpha"+alphaCut+"_FlavorComposition.root","recreate");
 out.cd();
 for (size_t i = 0; i < etaBinningSize-1; i++) {
 hudFrac[i]->Write();
