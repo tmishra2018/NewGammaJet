@@ -44,7 +44,8 @@ int main(int argc, char* argv[]) {
 
 	TString outputDir = TString::Format("PhotonJetPlots_%s_%s_FlavorFractions", mc_photonjet.c_str(), postFix.c_str());
 	mkdir(outputDir, 0777);
-
+        TString PlotsoutputDir = TString::Format("PhotonJetPlots_%s_%s_FlavorFractions/Plots/", mc_photonjet.c_str(), postFix.c_str());
+        mkdir(PlotsoutputDir, 0777);
 	TFile * inputfile;
 	TString type;  
 	EtaBinning etaBinning;
@@ -89,7 +90,12 @@ int main(int argc, char* argv[]) {
 	float glufraction  = -999.;
 	float undeffraction = -999.;
 	float totalevts = -999;
-
+        float udfractionerr = -999.;
+        float sfractionerr = -999.;
+        float cfractionerr = -999.;
+        float bfractionerr = -999.;
+        float glufractionerr  = -999.;
+        float undeffractionerr = -999.;
 
 	for (size_t i = 0; i < etaBinningSize-1; i++) {
 
@@ -116,18 +122,31 @@ int main(int argc, char* argv[]) {
 			totalevts=h_tmp->GetEntries();
 			if(totalevts>0.) {
 				udfraction = (h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))/totalevts;
+				udfractionerr = sqrt(pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))/totalevts,2)+pow(((h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))*sqrt(totalevts))/pow(totalevts,2),2));
 				sfraction = (h_tmp->GetBinContent(h_tmp->FindBin(3)))/totalevts;
+				sfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(3)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(3)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
 				cfraction = (h_tmp->GetBinContent(h_tmp->FindBin(4)))/totalevts;
+                                cfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(4)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(4)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
 				bfraction = (h_tmp->GetBinContent(h_tmp->FindBin(5)))/totalevts;
+                                bfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(5)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(5)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
 				glufraction = (h_tmp->GetBinContent(h_tmp->FindBin(21)))/totalevts;
+                                glufractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(21)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(21)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
 				undeffraction = (h_tmp->GetBinContent(h_tmp->FindBin(0)))/totalevts;
+                                undeffractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(0)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(0)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+
 			}
 			hudFrac[i]->SetBinContent(j+1,udfraction);
+                        hudFrac[i]->SetBinError(j+1,udfractionerr);
 			hsFrac[i]->SetBinContent(j+1,sfraction);
+                        hsFrac[i]->SetBinError(j+1,sfractionerr);
 			hcFrac[i]->SetBinContent(j+1,cfraction);
+                        hcFrac[i]->SetBinError(j+1,cfractionerr);
 			hbFrac[i]->SetBinContent(j+1,bfraction);
+                        hbFrac[i]->SetBinError(j+1,bfractionerr);
 			hgluFrac[i]->SetBinContent(j+1,glufraction);
+                        hgluFrac[i]->SetBinError(j+1,glufractionerr);
 			hundefFrac[i]->SetBinContent(j+1,undeffraction);
+                        hundefFrac[i]->SetBinError(j+1,undeffractionerr);
 
 		}//loop on pt bins
 
@@ -139,12 +158,55 @@ int main(int argc, char* argv[]) {
  hgluFrac[i]->SetMarkerStyle(33);
  hundefFrac[i]->SetMarkerStyle(34);
 
-	}      
+ hudFrac[i]->SetMarkerColor(1);
+ hsFrac[i]->SetMarkerColor(2);
+ hcFrac[i]->SetMarkerColor(8);
+ hbFrac[i]->SetMarkerColor(4);
+ hgluFrac[i]->SetMarkerColor(6);
+ hundefFrac[i]->SetMarkerColor(92);
 
-//	TCanvas *c = new TCanvas("c","c",600,600);    
-//	c->SaveAs(outputDir+"/"+type+"_"+stackName+".pdf");
-//	c->Destructor();
+ hudFrac[i]->SetLineColor(1);
+ hsFrac[i]->SetLineColor(2);
+ hcFrac[i]->SetLineColor(8);
+ hbFrac[i]->SetLineColor(4);
+ hgluFrac[i]->SetLineColor(6);
+ hundefFrac[i]->SetLineColor(92);
+        }
 
+
+      TCanvas *c = new TCanvas("c","c",600,600);  
+
+  TLegend *legend = new TLegend(.6,.7,.95,.9);
+  legend->SetBorderSize(0);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(0);
+  legend->SetTextFont(42);
+  legend->SetTextSizePixels(24);
+  legend->AddEntry(hudFrac[0],"ud","p");
+  legend->AddEntry(hsFrac[0],"s","p");
+  legend->AddEntry(hcFrac[0],"c","p");
+  legend->AddEntry(hbFrac[0],"b","p");
+  legend->AddEntry(hgluFrac[0],"Gluon","p");
+  legend->AddEntry(hundefFrac[0],"Undefined","p");
+
+
+for (size_t i = 0; i < etaBinningSize-1; i++) {
+hudFrac[i]->SetMinimum(0.);
+hudFrac[i]->SetMaximum(1.);
+hudFrac[i]->SetStats(false);
+hudFrac[i]->SetTitle("");
+hudFrac[i]->SetXTitle("p_{T}(#gamma)");
+hudFrac[i]->SetYTitle("fraction");
+hudFrac[i]->Draw("pe");
+hsFrac[i]->Draw("pesame");
+hcFrac[i]->Draw("pesame");
+hbFrac[i]->Draw("pesame");
+hgluFrac[i]->Draw("pesame");
+hundefFrac[i]->Draw("pesame");
+legend->Draw("same");
+     c->SaveAs(PlotsoutputDir+"FlavorComposition_eta_"+etaBinning.getBinName(i)+"_alpha"+alphaCut+"_FlavorComposition.pdf");
+}
+     c->Destructor();
 
 TFile out(outputDir+"/"+type+"_alpha"+alphaCut+"_FlavorComposition.root","recreate");
 out.cd();
