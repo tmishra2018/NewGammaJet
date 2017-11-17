@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	TString histoName;
+        TString histoTitle;
 	TString histoName_tmp;
 	TH1F *h_tmp;
 
@@ -99,17 +100,17 @@ int main(int argc, char* argv[]) {
 
 	for (size_t i = 0; i < etaBinningSize-1; i++) {
 
-		histoName = TString::Format("flavorFraction_ud_a%s_%s",  alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_ud_a%s_%s",  alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hudFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
-		histoName = TString::Format("flavorFraction_s_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_s_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hsFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
-		histoName = TString::Format("flavorFraction_c_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_c_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hcFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
-		histoName = TString::Format("flavorFraction_b_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_b_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hbFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
-		histoName = TString::Format("flavorFraction_glu_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_glu_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hgluFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
-		histoName = TString::Format("flavorFraction_Undefined_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
+		histoName = TString::Format("flavFraction_Undefined_a%s_%s", alphaCut.c_str(), etaBinning.getBinName(i).c_str());
 		hundefFrac[i] = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
 
 		for(size_t j = 0; j<ptBinningSize; j++) {
@@ -209,8 +210,31 @@ legend->Draw("same");
      c->Destructor();
 
 TFile out(outputDir+"/"+type+"_alpha"+alphaCut+"_FlavorComposition.root","recreate");
-out.cd();
+out.mkdir("MC");
+out.cd("MC");
 for (size_t i = 0; i < etaBinningSize-1; i++) {
+out.cd("MC");
+gDirectory->mkdir(etaBinning.getBinName(i).c_str());
+gDirectory->cd(etaBinning.getBinName(i).c_str());
+
+histoName = TString::Format("flavFraction_ud_a%s",  alphaCut.c_str());
+hudFrac[i]->SetName(histoName);                
+hudFrac[i]->SetTitle(histoName);
+histoName = TString::Format("flavFraction_s_a%s",  alphaCut.c_str());
+hsFrac[i]->SetName(histoName);
+hsFrac[i]->SetTitle(histoName);
+histoName = TString::Format("flavFraction_c_a%s",  alphaCut.c_str());
+hcFrac[i]->SetName(histoName);
+hcFrac[i]->SetTitle(histoName);
+histoName = TString::Format("flavFraction_b_a%s",  alphaCut.c_str());
+hbFrac[i]->SetName(histoName);
+hbFrac[i]->SetTitle(histoName);
+histoName = TString::Format("flavFraction_glu_a%s",  alphaCut.c_str());
+hgluFrac[i]->SetName(histoName);
+hgluFrac[i]->SetTitle(histoName);
+histoName = TString::Format("flavFraction_Undefined_a%s",  alphaCut.c_str());
+hundefFrac[i]->SetName(histoName);
+hundefFrac[i]->SetTitle(histoName);
 hudFrac[i]->Write();
 hsFrac[i]->Write();
 hcFrac[i]->Write();
