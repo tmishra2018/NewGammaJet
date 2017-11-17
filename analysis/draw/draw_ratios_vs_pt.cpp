@@ -180,14 +180,14 @@ int main(int argc, char* argv[]) {
   draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s,output);
   
   
- /* for (size_t i = 0; i < sfine; i++) { //fixing 
+  for (size_t i = 0; i < sfine; i++) { //fixing 
     std::string etaBin = fineetaBinning.getBinName(i);
     std::string etaBinTitle = fineetaBinning.getBinTitle(i);
 
     draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true); //bool for raw study
     draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true);
   }
-    draw_scalefactorVsEta(  db, SF_MCfine, SF_datafine, SF_MCerrfine, SF_dataerrfine, sfine,output);*/
+    draw_scalefactorVsEta(  db, SF_MCfine, SF_datafine, SF_MCerrfine, SF_dataerrfine, sfine,output);
   
   output->Close();
   output_raw->Close();
@@ -518,15 +518,28 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
 
   std::string prefix = (resp_reso == "response") ? "resp" : "resolution";
 
-  std::string responseBALANCING_name = prefix + "_balancing";
+  std::string responseBALANCING_name      = prefix + "_balancing";
+  std::string responseBALANCINGcount_name = prefix + "_balancing";
   
-  if(isfinebinning) responseBALANCING_name +="_fine_bining";
+  if(isfinebinning){
+   responseBALANCING_name +="_fine_bining";
+   responseBALANCINGcount_name+="_fine_bining";
+   }
   
   if (rawJets) {
     responseBALANCING_name += "_raw";
   }
   responseBALANCING_name += "_" + etaRegion + "_data_vs_pt";
-  std::cout << responseBALANCING_name << std::endl;
+  responseBALANCINGcount_name+= "_" + etaRegion + "_RawNEvents_data_vs_pt";
+  
+  TH1F* H_count_vs_pt   = NULL;
+  TH1F* H_countMC_vs_pt = NULL;
+  
+  std::cout << responseBALANCING_name<<" " << responseBALANCINGcount_name << std::endl;
+  if(resp_reso == "response"){
+  H_count_vs_pt =(TH1F*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
+  H_count_vs_pt->SetName(TString::Format("%s_PtBalchs_DATA_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  }
 
   TGraphErrors* gr_responseBALANCING_vs_pt = (TGraphErrors*)file_noextrap->Get(responseBALANCING_name.c_str());
   gr_responseBALANCING_vs_pt->SetMarkerStyle(21);
@@ -535,7 +548,14 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   gr_responseBALANCING_vs_pt->SetName(TString::Format("%s_PtBalchs_DATA_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
 
   std::string responseBALANCINGMC_name = responseBALANCING_name;
+  std::string responseBALANCINGcountMC_name = responseBALANCINGcount_name;
   boost::replace_all(responseBALANCINGMC_name, "data", "mc");
+  boost::replace_all(responseBALANCINGcountMC_name, "data", "mc");
+  
+  if(resp_reso == "response"){
+  H_countMC_vs_pt =(TH1F*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
+  H_countMC_vs_pt->SetName(TString::Format("%s_PtBalchs_MC_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  }
 
   TGraphErrors* gr_responseBALANCINGMC_vs_pt = (TGraphErrors*)file_noextrap->Get(responseBALANCINGMC_name.c_str());
   gr_responseBALANCINGMC_vs_pt->SetMarkerStyle(25);
@@ -552,6 +572,20 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     responseMPF_name += "_raw";
   }
   responseMPF_name += "_" + etaRegion + "_data_vs_pt";
+  
+  boost::replace_all(responseBALANCING_name, "balancing", "mpf");
+  boost::replace_all(responseBALANCINGMC_name, "balancing", "mpf");
+  
+  TH1F* H_count_vs_pt_mpf   = NULL;
+  TH1F* H_countMC_vs_pt_mpf = NULL;
+  
+  if(resp_reso == "response"){
+  H_count_vs_pt_mpf =(TH1F*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
+  H_count_vs_pt_mpf->SetName(TString::Format("%s_MPFchs_DATA_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  
+  H_countMC_vs_pt_mpf =(TH1F*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
+  H_countMC_vs_pt_mpf->SetName(TString::Format("%s_MPFchs_MC_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  }
 
   gr_responseMPF_vs_pt = (TGraphErrors*)file_noextrap->Get(responseMPF_name.c_str());
   gr_responseMPF_vs_pt->SetMarkerStyle(20);
@@ -714,6 +748,12 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     gr_responseEXTRAPMC_vs_pt->Write();
     gr_responseMPFExtrap_vs_pt->Write();
     gr_responseMPFExtrapMC_vs_pt->Write();
+    if(resp_reso == "response"){
+    H_countMC_vs_pt_mpf->Write();
+    H_count_vs_pt_mpf->Write();
+    H_count_vs_pt->Write();
+    H_countMC_vs_pt->Write();
+    }
   }
   
   drawGraphs(gr_responseBALANCING_vs_pt, gr_responseBALANCINGMC_vs_pt, xMin, xMax, "p_{T} Balance", db, etaRegion, legendTitle, resp_reso, "balancing", rawJets);

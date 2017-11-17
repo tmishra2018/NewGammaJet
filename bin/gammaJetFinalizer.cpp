@@ -417,6 +417,10 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<std::vector<TH1F*> > HLTjetpt = buildEtaHLTPtVector<TH1F>(HLTDirjetpt, "jetptHLT",75, 0., 600.);
   std::vector<TH1F*>      HLTjetptEta013    = buildHLTPtVector<TH1F>(HLTDirjetpt, "jetptHLT", "eta0013", 1000, 0., 2000.);
   
+  
+  std::vector<std::vector<TH1F*> > HLTjet_2pt = buildEtaHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT",75, 0., 600.);
+  std::vector<TH1F*>      HLTjet_2ptEta013    = buildHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT", "eta0013", 1000, 0., 2000.);
+  
   //end per HLT plots
 
   //jet composition - histos vectors
@@ -657,6 +661,15 @@ void GammaJetFinalizer::runAnalysis() {
     extrap_responseBalancingGenPhotEta013 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_gen_phot", "eta0013", extrapolationBins, extrapolationMin, extrapolationMax);
   }
   
+  
+  //control plots for HCAL eta phi cleaning :
+  
+  TFileDirectory HCAL_cleaning_dir = analysisDir.mkdir("HCAL_cleaning_directory");
+  std::vector<std::vector<TH1F*> > Etafirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_nocleaning", 100, -5., 5.);
+  std::vector<std::vector<TH1F*> > Phifirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_nocleaning", 100, -3.5, 3.5);
+  std::vector<std::vector<TH1F*> > Etafirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_cleaning", 100, -5., 5.);
+  std::vector<std::vector<TH1F*> > Phifirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_cleaning", 100, -3.5, 3.5);
+  
   // Luminosity
    Double_t totalluminosity = 0;
   if (! mIsMC) {
@@ -694,6 +707,7 @@ void GammaJetFinalizer::runAnalysis() {
   uint64_t passedJetPtCut = 0;
   uint64_t passedAlphaCut = 0;
   int triggernotzero = 0;
+  int nEvent_rejected = 0 ;
     
   uint64_t from = 0;
   uint64_t to = totalEvents;
@@ -712,11 +726,7 @@ void GammaJetFinalizer::runAnalysis() {
       start = end;
       std::cout << "Processing event #" << (i - from + 1) << " of " << (to - from) << " (" << (float) (i - from) / (to - from) * 100 << "%) - " << elapsedTime << " s" << std::endl;
     }
-    
-    //bug in crab outputs -- skip events with bugs
-    if( mIsMC ){ // bug in GJET Pythia
-      if ( i == 475910 || i == 1215426 || i == 2634046 || i == 3016299 || i == 3194920) continue;
-    }
+   
     
     if (EXIT) {
       break;
@@ -890,6 +900,10 @@ void GammaJetFinalizer::runAnalysis() {
     passedJetPtCut++;
     if(mVerbose) std::cout<<"passedJetPtCut"<<std::endl;
     
+    
+    
+    
+    
     bool secondJetOK =  fullinfo.pTAK4_j2==0 || (fullinfo.pTAK4_j2 < 10 ||  fullinfo.alpha < mAlphaCut );
     
   //  std::cout<<" alpha : "<<fullinfo.alpha<<" secondJetOK "<< secondJetOK << std::endl;
@@ -954,7 +968,58 @@ void GammaJetFinalizer::runAnalysis() {
     TLorentzVector MetGen;
     MetGen.SetPtEtaPhiE( fullinfo.METGEN_Pt, fullinfo.METGEN_Eta, fullinfo.METGEN_Phi, fullinfo.METGEN);
     
-
+    bool skip_event_Hcalveto = false ;
+    
+    if(!mIsMC){
+    if(fullinfo.run >=272007 && fullinfo.run <=  275376 ){
+    
+    for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
+    
+    
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -2.043 && fullinfo.Phi_jets->at(ijet) >= 2.290 && fullinfo.Phi_jets->at(ijet) <= 2.422){
+      
+      skip_event_Hcalveto = true ;
+      continue;
+      
+      }
+    }
+    
+    }
+    
+    
+    if (fullinfo.run >=275657 && fullinfo.run <=  276283 ){
+    
+    for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
+    
+    
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.314 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      
+      skip_event_Hcalveto = true ;
+      continue;
+      
+      }
+    }
+    
+    }
+    
+    if(fullinfo.run >=276315 && fullinfo.run <=  276811){
+    
+    for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
+    
+    
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      
+      skip_event_Hcalveto = true ;
+      continue;
+      
+      }
+    }
+    
+    }
+    }
+ int HLTptBin = mHLTPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);   
+ int etaBin = mEtaBinning.getBin(fullinfo.etaAK4_j1);   
+ 
  //   if(PhotonCorr.Pt()>60.) continue;
     
    //if( /* PhotonCorr.Pt() < 130. ||*/ PhotonCorr.Pt() < 175. ) continue;
@@ -1025,16 +1090,98 @@ void GammaJetFinalizer::runAnalysis() {
     if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
     int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
-    int HLTptBin = mHLTPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
+    
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
     }
     if ( mIsMC)   ptBinGen = mPtBinning.getPtBin(fullinfo.Pt_photonGEN);
     
-    int etaBin = mEtaBinning.getBin(fullinfo.etaAK4_j1);
+   // int etaBin = mEtaBinning.getBin(fullinfo.etaAK4_j1);
     int etafineBin = mfineEtaBinning.getBin(fullinfo.etaAK4_j1);
-    int runBinning = mRunBinning.getRunBin(fullinfo.run);
+    int runBinning = 0;
+    
+    if(!mIsMC) runBinning = mRunBinning.getRunBin(fullinfo.run);
+    
+    
+    
+    
+    
+    if(!mIsMC){
+       if(PhotonCorr.Pt() >= 175.) {
+    run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT165[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT165[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT165[runBinning]->Fill(respMPF,eventWeight);
+    }
+    }
+    
+   if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) {
+    run_responseBalancingHLT120[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT120[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    	run_responseBalancing_0013HLT120[runBinning]->Fill(respBalancing,eventWeight);
+        run_responseMpf_0013HLT120[runBinning]->Fill(respMPF,eventWeight);
+    }
+    }
+   
+   if(PhotonCorr.Pt() < 130. && PhotonCorr.Pt() >105.) {
+    run_responseBalancingHLT90[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT90[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT90[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT90[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }
+   
+   if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) {
+    run_responseBalancingHLT75[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT75[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    run_responseBalancing_0013HLT75[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT75[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }
+    
+   if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.){
+    run_responseBalancingHLT50[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT50[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    
+    run_responseBalancing_0013HLT50[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT50[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    } 
+   
+   if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.){
+    run_responseBalancingHLT30[etaBin][runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpfHLT30[etaBin][runBinning]->Fill(respMPF,eventWeight);
+    
+    if(fabs(fullinfo.etaAK4_j1) <1.305) {
+    
+    run_responseBalancing_0013HLT30[runBinning]->Fill(respBalancing,eventWeight);
+    run_responseMpf_0013HLT30[runBinning]->Fill(respMPF,eventWeight);
+    
+    }
+    }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     if (etaBin < 0) {
       if(mVerbose) std::cout << "Jet Bin " << fullinfo.etaAK4_j1 << " is not covered by our eta binning. Dumping event." << std::endl;
       continue;
@@ -1046,7 +1193,17 @@ void GammaJetFinalizer::runAnalysis() {
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
      // std::cout<<(int) fullinfo.event<<std::endl;
+        Etafirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
+        Phifirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
+        if(skip_event_Hcalveto && !mIsMC) continue ;
+        nEvent_rejected ++;
+ 
+       
       do {
+      
+       Etafirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
+       Phifirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
+        
       
       //  std::cout<<" value of alpha  : "<<fullinfo.alpha<<std::endl;
 
@@ -1140,7 +1297,7 @@ void GammaJetFinalizer::runAnalysis() {
        // MuonMult[etaBin][ptBin]->Fill(fullinfo.jet_MuonMult, eventWeight);
        
        //HLT plots;
-     /*/ 
+      
        HLTChHadronIso[etaBin][HLTptBin]->Fill(fullinfo.CHiso_photon, eventWeight);
        HLTNhHadronIso[etaBin][HLTptBin]->Fill(fullinfo.NHiso_photon, eventWeight);
        HLTPhotonIso[etaBin][HLTptBin]->Fill(fullinfo.Photoniso_photon, eventWeight);
@@ -1153,6 +1310,7 @@ void GammaJetFinalizer::runAnalysis() {
        HLTmet[etaBin][HLTptBin] ->Fill(fullinfo.MET, eventWeight);
        HLTNvertex[etaBin][HLTptBin] ->Fill(fullinfo.nVtx, eventWeight);
        HLTalpha[etaBin][HLTptBin]->Fill(fullinfo.alpha, eventWeight);
+       HLTjet_2pt[etaBin][HLTptBin]->Fill(fullinfo.pTAK4_j2, eventWeight);
        // special case 
        if(fabs(fullinfo.etaAK4_j1) <1.305){
         
@@ -1168,6 +1326,7 @@ void GammaJetFinalizer::runAnalysis() {
          HLTmetEta013[HLTptBin] ->Fill(fullinfo.MET, eventWeight);
          HLTNvertexEta013[HLTptBin] ->Fill(fullinfo.nVtx, eventWeight);
          HLTalphaEta013[HLTptBin]->Fill(fullinfo.alpha, eventWeight);
+         HLTjet_2ptEta013[HLTptBin]->Fill(fullinfo.pTAK4_j2, eventWeight);
        }
    if(PhotonCorr.Pt() >= 175.) h_ptPhoton ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) h_ptPhoton_1->Fill(PhotonCorr.Pt(), eventWeight);
@@ -1175,73 +1334,10 @@ void GammaJetFinalizer::runAnalysis() {
    if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) h_ptPhoton_3 ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.) h_ptPhoton_4 ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.) h_ptPhoton_5 ->Fill(PhotonCorr.Pt(), eventWeight);
+     
+     
+     
        
-       
-       if(PhotonCorr.Pt() >= 175.) {
-    run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT165[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    run_responseBalancing_0013HLT165[runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpf_0013HLT165[runBinning]->Fill(respMPF,eventWeight);
-    }
-    }
-    
-   if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) {
-    run_responseBalancingHLT120[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT120[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    	run_responseBalancing_0013HLT120[runBinning]->Fill(respBalancing,eventWeight);
-        run_responseMpf_0013HLT120[runBinning]->Fill(respMPF,eventWeight);
-    }
-    }
-   
-   if(PhotonCorr.Pt() < 130. && PhotonCorr.Pt() >105.) {
-    run_responseBalancingHLT90[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT90[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    run_responseBalancing_0013HLT90[runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpf_0013HLT90[runBinning]->Fill(respMPF,eventWeight);
-    
-    }
-    }
-   
-   if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) {
-    run_responseBalancingHLT75[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT75[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    run_responseBalancing_0013HLT75[runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpf_0013HLT75[runBinning]->Fill(respMPF,eventWeight);
-    
-    }
-    }
-    
-   if(PhotonCorr.Pt() < 85. && PhotonCorr.Pt() >60.){
-    run_responseBalancingHLT50[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT50[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    
-    run_responseBalancing_0013HLT50[runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpf_0013HLT50[runBinning]->Fill(respMPF,eventWeight);
-    
-    }
-    } 
-   
-   if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.){
-    run_responseBalancingHLT30[etaBin][runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpfHLT30[etaBin][runBinning]->Fill(respMPF,eventWeight);
-    
-    if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    
-    run_responseBalancing_0013HLT30[runBinning]->Fill(respBalancing,eventWeight);
-    run_responseMpf_0013HLT30[runBinning]->Fill(respMPF,eventWeight);
-    
-    }
-    }*/
     
     
     
@@ -1320,7 +1416,7 @@ void GammaJetFinalizer::runAnalysis() {
       if(mVerbose) std::cout<<"passedEvents"<<std::endl;
       
     }// if secondJetOK
-
+    if(skip_event_Hcalveto) continue ;
     if (fullinfo.pTAK4_j2 > 0) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
@@ -1511,6 +1607,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << std::endl;
   std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound  << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
+  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) to-from - nEvent_rejected  << RESET_COLOR << std::endl;
   //std::cout<<"test booléen "<<triggernotzero<<std::endl;
   
 }

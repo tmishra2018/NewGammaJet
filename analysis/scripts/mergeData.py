@@ -110,9 +110,15 @@ analysis_tree = inputFile.Get("rootTupleTree/tree")
 
 evtWeightTotA = array("f", [0.] )
 b_evtWeightTot = analysis_tree.Branch("evtWeightTotA", evtWeightTotA,"evtWeightTotA/F")
+
+PassGenmatching = array("f", [0.] )
+b_PassGenmatching = analysis_tree.Branch("PassGenmatching", PassGenmatching,"PassGenmatching/D")
+
 for event in analysis_tree:
   evtWeightTotA[0] = 0
+  PassGenmatching[0] = 0
   b_evtWeightTot.Fill()
+  b_PassGenmatching.Fill()
 inputFile.cd("rootTupleTree")
 analysis_tree.Write("",TObject.kOverwrite)
 

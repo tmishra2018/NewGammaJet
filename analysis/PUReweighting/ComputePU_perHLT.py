@@ -20,7 +20,8 @@ if not os.path.exists(Cert_json):
   
 print("\tDownloading the latest pileup file")
 cmd_1="rm pileup_latest.txt"
-cmd_2="wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/pileup_latest.txt"
+#cmd_2="wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PileUp/pileup_latest.txt"
+cmd_2="cp /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PileUp/pileup_latest.txt ."
 print(cmd_2)
 
 os.system(cmd_1)
@@ -28,7 +29,7 @@ os.system(cmd_2)
 pileup_latest = "pileup_latest.txt"
   
     
-HLT_list=['HLT_Photon30_R9Id90_HE10_IsoM_v*','HLT_Photon50_R9Id90_HE10_IsoM_v*','HLT_Photon75_R9Id90_HE10_IsoM_v*','HLT_Photon90_R9Id90_HE10_IsoM_v*','HLT_Photon120_R9Id90_HE10_IsoM_v*','HLT_Photon165_R9Id90_HE10_IsoM_v*']
+HLT_list=['HLT_Photon33_v*','HLT_Photon50_R9Id90_HE10_IsoM_v*','HLT_Photon75_R9Id90_HE10_IsoM_v*','HLT_Photon90_R9Id90_HE10_IsoM_v*','HLT_Photon120_R9Id90_HE10_IsoM_v*','HLT_Photon165_R9Id90_HE10_IsoM_v*']
 HLT_prefix_list=['30','50','75','90','120','165']
 
 today = datetime.date.today()
@@ -45,7 +46,7 @@ for iHLT in HLT_list:
 	
 	YourOutput="PUdataHLTphoton"+HLT_prefix_list[i_HLT]+Runsuffix
 	print("\tRunning brilcalc for"+HLT_prefix_list[i_HLT])
-	cmd1="brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/2016normtags/normtag_BRIL.json -i "+Cert_json+" --hltpath "+iHLT+" --byls -o "+outputdirectory+"/"+YourOutput+".csv"
+	cmd1="brilcalc lumi -i "+Cert_json+" --hltpath "+iHLT+" --byls -o "+outputdirectory+"/"+YourOutput+".csv"
 	print(cmd1)
 	os.system(cmd1)
 	print("\tRunning pileupReCalc_HLTpaths.py for"+HLT_prefix_list[i_HLT])

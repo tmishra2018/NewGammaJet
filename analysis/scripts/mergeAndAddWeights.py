@@ -21,13 +21,17 @@ parser.add_argument("-o", "--outputDir", type=str, dest="outputDir", default="./
 parser.add_argument("--xsec", "--xsec", type=float, dest="Xsec", default="0",
         help="output directory",
 	    )
+parser.add_argument("--JEC", type=str, dest="jec", default=1,
+        help="JEC applied",
+	    )
 
 args = parser.parse_args()
 print args 
 
 inputList = args.inputList
 outputDir = args.outputDir
-xsec=args.Xsec
+xsec      = args.Xsec
+jec       = args.jec
 ###################
 #read input file
 ins = open(args.inputList,"r")
@@ -43,7 +47,7 @@ for line in ins:
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
-filename_out = outputDir+"/PhotonJet_2ndLevel_MC_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+str(today)+".root" 
+filename_out = outputDir+"/PhotonJet_2ndLevel_MC_"+jec+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+str(today)+".root" 
 os.system("hadd -f "+filename_out+"  "+files )
 
 inputFile = TFile(filename_out,"UPDATE")

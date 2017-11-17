@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
   
   
   // HLT plots
-  /*
+  
   db->setFolder("analysis/HLT_CH_iso");
 
   for (size_t i = 0; i < etaBinningSize; i++) {
@@ -314,11 +314,14 @@ int main(int argc, char* argv[]) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
     
     TString responseName = TString::Format("jetptHLT_%s", etaBinning.getBinName(i).c_str());
+    TString responseName2 = TString::Format("jet_2ptHLT_%s", etaBinning.getBinName(i).c_str());
     db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "jet pt", "", "Events", false);
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName2.Data(), "jet pt", "", "Events", false);
     
   }
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "jetptHLT_eta0013", "jet pt", "", "Events", false);
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "jet_2ptHLT_eta0013", "jet pt", "", "Events", false);
   
   
   db->setFolder("analysis/HLT_met");
@@ -352,11 +355,11 @@ int main(int argc, char* argv[]) {
     
   }
   db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);*/
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
   
   // fine binning eta plots
   
-/*  db->setFolder("analysis/fine_eta_binning/balancing");
+  db->setFolder("analysis/fine_eta_binning/balancing");
   
   for (size_t i = 0; i < fineetaBinningSize; i++) {
     db->set_legendTitle(fineetaBinning.getBinTitle(i));
@@ -376,7 +379,7 @@ int main(int argc, char* argv[]) {
    
   }
   
-  */
+  
   
   
   // Balancing

@@ -117,24 +117,39 @@ int main(int argc, char* argv[]) {
     leg->SetNColumns(6);                                                                                                                                                    
     //  leg->SetTextSize(0.036);                                                                                                                                                 
     
-    TH2D* h2_axes = new TH2D("axes_again", "", 14, 0., 14., 10, 0.7, 1.);
+    TH2D* h2_axes = new TH2D("axes_again", "", 31, 0., 30., 10, 0.6, 1.1);
    // h2_axes->SetXTitle("p_{T}(#gamma) [GeV/c]");
     if(kk == 0){
       h2_axes->SetYTitle("p_{T} Balance");
      }else{
-    h2_axes->GetYaxis()->SetRangeUser(0.85,1.05); 
+    
     h2_axes->SetYTitle("MPF response");    
     }
-    
+  h2_axes->GetYaxis()->SetRangeUser(0.8,1.05);  
   h2_axes->SetXTitle("Run Ranges");
   h2_axes->SetStats(0);
   h2_axes->GetXaxis()->SetTitleOffset(1.1);
-  h2_axes->GetYaxis()->SetTitleOffset(1.2);
+  h2_axes->GetYaxis()->SetTitleOffset(1.1);
   h2_axes->GetYaxis()->SetTitleSize(0.045);
   //h2_axes->GetXaxis()->SetMoreLogLabels();
   //h2_axes->GetXaxis()->SetNoExponent();
-    h2_axes->GetXaxis()->SetLabelSize(0.);
-
+    h2_axes->GetXaxis()->SetLabelSize(0.015);
+    
+    TLine* BCD_iov = new TLine(9.99,0.8,10.01,1 ) ;
+    BCD_iov->SetVertical();
+    BCD_iov->SetLineStyle (9);
+    BCD_iov->SetLineColor(kBlue);
+    
+    TLine* EF_iov = new TLine(18,0.8,18,1 ) ;
+    EF_iov->SetVertical();
+    EF_iov->SetLineStyle (9);
+    EF_iov->SetLineColor(kBlue);
+    
+    TLine* FG_iov = new TLine(23,0.8,23,1 ) ;
+    FG_iov->SetVertical();
+    FG_iov->SetLineStyle (9);
+    FG_iov->SetLineColor(kBlue);
+    
     
     // Balancing && MPF
     for(int ii = 0 ; ii < 6 ; ii++){
@@ -149,7 +164,7 @@ int main(int argc, char* argv[]) {
       int run_high = runBin.second;
       
       TString runBinName;
-      runBinName = TString::Format("%i", run_low);
+      runBinName = TString::Format("%i-%i", run_low,run_high);
       h2_axes->GetXaxis()->SetBinLabel(jj + 1 , runBinName);
       
       std::cout<<"Run range "<< run_low <<"-"<< run_high << std::endl;
@@ -245,6 +260,9 @@ int main(int argc, char* argv[]) {
 	//gr_response_vs_run[ii] -> GetYaxis()->SetRangeUser(0.8, 0.95);  
 	//gr_response_vs_run[ii] -> GetXaxis()->SetRangeUser(297045, 300575);  
 	gr_response_vs_run[ii] -> Draw("ZPSAME");
+	BCD_iov->Draw("DSAME");
+	EF_iov->Draw("DSAME");
+	FG_iov->Draw("DSAME");
       
     }
     leg -> Draw("P") ;
