@@ -43,6 +43,8 @@ public :
    Double_t        METoverHTAK4;   
    Double_t        NHiso_photon;
    Double_t        Nak4;
+   Double_t        PDGIDAK4_j1;
+   Double_t        PDGIDAK4_j2;
    Double_t        PassJSON;
    Double_t        Phi_photon;
    Double_t        Phi_photonGEN;
@@ -151,6 +153,8 @@ public :
    TBranch        *b_METoverHTAK4;   //!
    TBranch        *b_NHiso_photon;   //!
    TBranch        *b_Nak4;   //!
+   TBranch        *b_PDGIDAK4_j1;   //!
+   TBranch        *b_PDGIDAK4_j2;   //!
    TBranch        *b_PassJSON;   //!
    TBranch        *b_Phi_photon;   //!
    TBranch        *b_Phi_photonGEN;   //!
@@ -327,6 +331,8 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("METoverHTAK4", &METoverHTAK4, &b_METoverHTAK4);
    fChain->SetBranchAddress("NHiso_photon", &NHiso_photon, &b_NHiso_photon);
    fChain->SetBranchAddress("Nak4", &Nak4, &b_Nak4);
+   fChain->SetBranchAddress("PDGIDAK4_j1", &PDGIDAK4_j1, &b_PDGIDAK4_j1);
+   fChain->SetBranchAddress("PDGIDAK4_j2", &PDGIDAK4_j2, &b_PDGIDAK4_j2);
    fChain->SetBranchAddress("PassJSON", &PassJSON, &b_PassJSON);
    fChain->SetBranchAddress("Phi_photon", &Phi_photon, &b_Phi_photon);
    fChain->SetBranchAddress("Phi_photonGEN", &Phi_photonGEN, &b_Phi_photonGEN);
