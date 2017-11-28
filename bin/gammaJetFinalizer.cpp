@@ -982,7 +982,7 @@ void GammaJetFinalizer::runAnalysis() {
       if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -2.043 && fullinfo.Phi_jets->at(ijet) >= 2.290 && fullinfo.Phi_jets->at(ijet) <= 2.422){
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -998,7 +998,7 @@ void GammaJetFinalizer::runAnalysis() {
       if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.314 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -1013,7 +1013,7 @@ void GammaJetFinalizer::runAnalysis() {
       if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -1198,7 +1198,7 @@ void GammaJetFinalizer::runAnalysis() {
      // std::cout<<(int) fullinfo.event<<std::endl;
         Etafirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
         Phifirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
-        if(skip_event_Hcalveto && !mIsMC) continue ;
+      //  if(skip_event_Hcalveto && !mIsMC) continue ;
         nEvent_rejected ++;
  
        
@@ -1433,7 +1433,7 @@ void GammaJetFinalizer::runAnalysis() {
       
     }// if secondJetOK
     if(skip_event_Hcalveto) continue ;
-    if (fullinfo.pTAK4_j2 > 0) { //extrapolation if second jet is present
+    if (fullinfo.pTAK4_j2 > 0.) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1453,7 +1453,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1472,7 +1472,7 @@ void GammaJetFinalizer::runAnalysis() {
 	    
 	    }}
 
-	  
+	  }
 	   //bin 9 0 to 0.25 :
 
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25){

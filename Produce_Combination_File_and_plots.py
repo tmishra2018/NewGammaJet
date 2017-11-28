@@ -44,6 +44,9 @@ for alpha in List_alpha:
 	cmd5 = "../analysis/draw/draw_ratios_vs_pt "+dataname+" "+mcname+" "+mcname+"  pf ak4"
 	os.system(cmd5)
 	
+	cmd6 = "../analysis/draw/draw_ratios_vs_pt "+mcname+"  pf ak4"
+	os.system(cmd6)
+	
 	#cmd6 = "analysis/draw/draw_all_methods_vs_pt "+dataname+" "+mcname+" "+mcname+"  pf ak4"
 	#os.system(cmd6)
 	
