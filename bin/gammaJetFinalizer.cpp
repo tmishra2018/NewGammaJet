@@ -61,7 +61,7 @@ TFile* PUFile;
 //TFile* EoverP_dataMCRatio_File;
 //TH1D *h_test=0;
 TFile* EtaPhiCleaning_File;
-TH2D *h_hotjets=0;
+//TH2D *h_hotjets=0;
 bool EXIT = false;
 
 GammaJetFinalizer::GammaJetFinalizer() {
@@ -168,10 +168,10 @@ void GammaJetFinalizer::runAnalysis() {
 
                 static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/data", cmsswBase.c_str()).Data();
                 TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
-                EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
-                assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
-                h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
-                assert(h_hotjets);
+                //EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
+               // assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
+               // h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
+               // assert(h_hotjets);
 
 
 
@@ -890,7 +890,7 @@ void GammaJetFinalizer::runAnalysis() {
   
   //etaphi cleaning
   
-    if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
+  //  if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
    // if( mIsMC && fullinfo.PassGenmatching == 0) continue;
     if (! keepEvent)
       continue;
@@ -1453,7 +1453,7 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1470,7 +1470,7 @@ void GammaJetFinalizer::runAnalysis() {
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
-	    }}
+	    }}}
 
 	  
 	   //bin 9 0 to 0.25 :
