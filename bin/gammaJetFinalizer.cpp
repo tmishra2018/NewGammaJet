@@ -414,6 +414,16 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 0.5);
   
   
+  TFileDirectory HLTDirHCCalPrecleaning = analysisDir.mkdir("HLT_Hcalpreclean");
+  std::vector<std::vector<TH1F*> > HLTphiprecleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPrecleaning, "etaHLTpreclean",50, -4., 0.);
+  std::vector<std::vector<TH1F*> > HLTetaprecleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPrecleaning, "phiHLTpreclean",50, 0., 3.);
+  
+  TFileDirectory HLTDirHCCalPostcleaning = analysisDir.mkdir("HLT_Hcalpostclean");
+  std::vector<std::vector<TH1F*> > HLTphipostcleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPostcleaning, "etaHLTpostclean",50, -4., 0.);
+  std::vector<std::vector<TH1F*> > HLTetapostcleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPostcleaning, "phiHLTpostclean",50, 0., 3.);
+
+  
+  
   //jet variables
   
   
@@ -424,6 +434,8 @@ void GammaJetFinalizer::runAnalysis() {
   
   std::vector<std::vector<TH1F*> > HLTjet_2pt = buildEtaHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT",75, 0., 600.);
   std::vector<TH1F*>      HLTjet_2ptEta013    = buildHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT", "eta0013", 1000, 0., 2000.);
+  
+  
   
   //end per HLT plots
 
@@ -666,13 +678,7 @@ void GammaJetFinalizer::runAnalysis() {
   }
   
   
-  //control plots for HCAL eta phi cleaning :
   
-  TFileDirectory HCAL_cleaning_dir = analysisDir.mkdir("HCAL_cleaning_directory");
-  std::vector<std::vector<TH1F*> > Etafirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_nocleaning", 100, -5., 5.);
-  std::vector<std::vector<TH1F*> > Phifirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_nocleaning", 100, -3.5, 3.5);
-  std::vector<std::vector<TH1F*> > Etafirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_cleaning", 100, -5., 5.);
-  std::vector<std::vector<TH1F*> > Phifirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_cleaning", 100, -3.5, 3.5);
   
   // Luminosity
    Double_t totalluminosity = 0;
@@ -979,7 +985,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -2.043 && fullinfo.Phi_jets->at(ijet) >= 2.290 && fullinfo.Phi_jets->at(ijet) <= 2.422){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -1.93 && fullinfo.Phi_jets->at(ijet) >= 2.2 && fullinfo.Phi_jets->at(ijet) <= 2.5){
       
       skip_event_Hcalveto = true ;
       break;
@@ -995,7 +1001,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.314 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
       break;
@@ -1194,20 +1200,20 @@ void GammaJetFinalizer::runAnalysis() {
     int vertexBin = mVertexBinning.getVertexBin(fullinfo.nVtx);
 
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
+    
+       HLTphiprecleaning[etaBin][HLTptBin]->Fill(fullinfo.phiAK4_j1, eventWeight);
+       HLTetaprecleaning[etaBin][HLTptBin]->Fill(fullinfo.etaAK4_j1, eventWeight);
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
-     // std::cout<<(int) fullinfo.event<<std::endl;
-        Etafirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
-        Phifirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
-      //  if(skip_event_Hcalveto && !mIsMC) continue ;
+        if(skip_event_Hcalveto && !mIsMC){ 
         nEvent_rejected ++;
+        continue ;}
+        
  
        
       do {
-      
-       Etafirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
-       Phifirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
         
-      
+      HLTphipostcleaning[etaBin][HLTptBin]->Fill(fullinfo.phiAK4_j1, eventWeight);
+      HLTetapostcleaning[etaBin][HLTptBin]->Fill(fullinfo.etaAK4_j1, eventWeight);
       //  std::cout<<" value of alpha  : "<<fullinfo.alpha<<std::endl;
 
         h_inst_Lumi                         -> Fill(fullinfo.lumi, eventWeight);
@@ -1312,7 +1318,7 @@ void GammaJetFinalizer::runAnalysis() {
 }
        
        //HLT plots;
-      
+
        HLTChHadronIso[etaBin][HLTptBin]->Fill(fullinfo.CHiso_photon, eventWeight);
        HLTNhHadronIso[etaBin][HLTptBin]->Fill(fullinfo.NHiso_photon, eventWeight);
        HLTPhotonIso[etaBin][HLTptBin]->Fill(fullinfo.Photoniso_photon, eventWeight);
@@ -1433,7 +1439,7 @@ void GammaJetFinalizer::runAnalysis() {
       
     }// if secondJetOK
     if(skip_event_Hcalveto) continue ;
-    if (fullinfo.pTAK4_j2 > 0.) { //extrapolation if second jet is present
+    if (fullinfo.pTAK4_j2 > 15.) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1623,7 +1629,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << std::endl;
   std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound  << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) to-from - nEvent_rejected  << RESET_COLOR << std::endl;
+  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double)  nEvent_rejected  << RESET_COLOR << std::endl;
   //std::cout<<"test booléen "<<triggernotzero<<std::endl;
   
 
@@ -1668,26 +1674,26 @@ std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::
 template<typename T>
 std::vector<T*> GammaJetFinalizer::buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
 
-        bool appendText = (xMin >= 0 && xMax >= 0);
+      //  bool appendText = (xMin >= 0 && xMax >= 0);
         std::vector<T*> vector;
         size_t ptBinningSize = mHLTPtBinning.size();
         for (size_t j = 0; j < ptBinningSize; j++) {
 
                 const std::pair<float, float> bin = mHLTPtBinning.getBinValue(j);
                 std::stringstream ss;
-                if (appendText)
+             //   if (appendText)
                         ss << branchName << "_HLTptPhot_" << (int) bin.first << "_" << (int) bin.second;
-                else
-                        ss << branchName << "_" << (int) bin.first << "_" << (int) bin.second;
+             //   else
+             //           ss << branchName << "_" << (int) bin.first << "_" << (int) bin.second;
 
-                if (!appendText) {
+               /* if (!appendText) {
                         xMin = bin.first;
                 }
 
                 if (!appendText) {
                         xMax = bin.second;
                 }
-
+*/
                 T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, xMin, xMax);
                 vector.push_back(object);
         }
