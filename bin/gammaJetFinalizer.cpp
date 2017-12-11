@@ -167,7 +167,7 @@ void GammaJetFinalizer::runAnalysis() {
                 mTriggers      = new Triggers( TriggerFile.c_str() ) ;
 
                 static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/data", cmsswBase.c_str()).Data();
-                TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
+            //    TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
                 //EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
                // assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
                // h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
@@ -979,7 +979,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -2.043 && fullinfo.Phi_jets->at(ijet) >= 2.290 && fullinfo.Phi_jets->at(ijet) <= 2.422){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.25 && fullinfo.Eta_jets->at(ijet) <= -1.93 && fullinfo.Phi_jets->at(ijet) >= 2.2 && fullinfo.Phi_jets->at(ijet) <= 2.5){
       
       skip_event_Hcalveto = true ;
       break;
@@ -995,7 +995,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.314 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
       break;
@@ -1010,7 +1010,7 @@ void GammaJetFinalizer::runAnalysis() {
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.60 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
       break;
@@ -1198,9 +1198,10 @@ void GammaJetFinalizer::runAnalysis() {
      // std::cout<<(int) fullinfo.event<<std::endl;
         Etafirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
         Phifirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
-      //  if(skip_event_Hcalveto && !mIsMC) continue ;
+        if(skip_event_Hcalveto && !mIsMC){ 
         nEvent_rejected ++;
- 
+        continue ;
+        }
        
       do {
       
@@ -1472,7 +1473,7 @@ void GammaJetFinalizer::runAnalysis() {
 	    
 	    }}}
 
-	  }
+	  
 	   //bin 9 0 to 0.25 :
 
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25){
@@ -1623,7 +1624,7 @@ void GammaJetFinalizer::runAnalysis() {
   std::cout << std::endl;
   std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound  << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) to-from - nEvent_rejected  << RESET_COLOR << std::endl;
+  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) nEvent_rejected << RESET_COLOR << std::endl;
   //std::cout<<"test booléen "<<triggernotzero<<std::endl;
   
 
