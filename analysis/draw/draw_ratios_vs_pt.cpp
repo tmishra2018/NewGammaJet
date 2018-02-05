@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
   // MC should already be normalized to a lumi of 1 pb-1
     TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-    db->set_lumi(lumi->GetVal());
+    db->set_lumi(1./*lumi->GetVal()*/);
     db->set_lumiNormalization();
 
   double alpha_cut = static_cast<TParameter<double>*>(dataFile->Get("analysis/alpha_cut"))->GetVal();
@@ -178,7 +178,7 @@ int main(int argc, char* argv[]) {
   draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
   draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
   draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s,output);
-  
+  /*
   
   for (size_t i = 0; i < sfine; i++) { //fixing 
     std::string etaBin = fineetaBinning.getBinName(i);
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
     draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true);
   }
     draw_scalefactorVsEta(  db, SF_MCfine, SF_datafine, SF_MCerrfine, SF_dataerrfine, sfine,output);
-  
+  */
   output->Close();
   output_raw->Close();
 
@@ -277,7 +277,8 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   gr_resp_ratio->Fit(ratioFit, "RQNF EX0");
 
   TH1D* errors = new TH1D("errors", "errors", xMax - xMin, xMin, xMax);
-  (TVirtualFitter::GetFitter())->GetConfidenceIntervals(errors, 0.68);
+  //std::cout<<" value of the fit for debugging : "<<ratioFit->GetParameter(0)<<" error : "<<ratioFit->GetParError(0)<<std::endl;
+  if(ratioFit->GetParError(0) != 0. ) (TVirtualFitter::GetFitter())->GetConfidenceIntervals(errors, 0.68);
   errors->SetStats(false);
   //errors->SetFillColor(TColor::GetColor("#556270"));
   errors->SetFillColor(TColor::GetColor("#ECD078"));
