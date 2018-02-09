@@ -5,6 +5,7 @@
 #include <TTree.h>
 #include <TParameter.h>
 #include <TProfile.h>
+#include <TProfile2D.h>
 #include <TH2D.h>
 #include <TLorentzVector.h>
 
@@ -349,7 +350,46 @@ void GammaJetFinalizer::runAnalysis() {
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
   
   
-  
+ TLorentzVector* fvec_photon_tmp = new TLorentzVector;
+TLorentzVector* fvec_jet_tmp = new TLorentzVector;
+
+//Binned method
+  TFileDirectory BinnedMethodDir = analysisDir.mkdir("BinnedMethod");
+  TH1F* h_dummy = BinnedMethodDir.make<TH1F>("dummy", "dummy", 10, 0, 1);
+
+ double photonPtBins4h[mPhotonPtBinning.size()];
+ double jetPtBins4h[mJetPtBinning.size()];
+
+  for (size_t j = 0; j < mPhotonPtBinning.size(); j++) {
+  const std::pair<float, float> phobin = mPhotonPtBinning.getBinValue(j);
+  photonPtBins4h[j]=phobin.first;
+  if(j==mPhotonPtBinning.size()-1) photonPtBins4h[j+1]=phobin.second;
+ }
+
+  for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+  const std::pair<float, float> jetbin = mJetPtBinning.getBinValue(j);
+  jetPtBins4h[j]=jetbin.first;
+  if(j==mJetPtBinning.size()-1) jetPtBins4h[j+1]=jetbin.second;
+ }
+  int  phobinnum = sizeof(photonPtBins4h)/sizeof(double) -1;
+  int  jetbinnum = sizeof(jetPtBins4h)/sizeof(double) -1;
+
+  double newBal;
+  double newMPFdiff=0.;
+  TH1F* h_phopt_for_nevts = new TH1F("phopt_for_nevts", "photon pt", phobinnum, photonPtBins4h);
+
+  TH2D* h_Skl_phopt_vs_jetpt = new TH2D("h_Skl_phopt_vs_jetpt","h_Skl_phopt_vs_jetpt",phobinnum, photonPtBins4h, jetbinnum,jetPtBins4h);
+  TProfile2D* h_jetpt_phopt_vs_jetpt = new TProfile2D("h_jetpt_phopt_vs_jetpt","jetpt_in_ptphoton_vs_ptjet", phobinnum, photonPtBins4h, jetbinnum,jetPtBins4h, "");
+  TProfile* ptphoton_vs_ptphoton = new TProfile("ptphoton_vs_ptphoton","ptphoton_vs_ptphoton", phobinnum, photonPtBins4h, photonPtBins4h[0], photonPtBins4h[mPhotonPtBinning.size()]);
+  TProfile* newBal_vs_ptphoton = new TProfile("newBal_vs_ptphoton","newBal_vs_ptphoton", phobinnum, photonPtBins4h,0.,4.);
+  TProfile* newMPF_vs_ptphoton = new TProfile("newMPF_vs_ptphoton","newMPF_vs_ptphoton", phobinnum, photonPtBins4h,0.,4.);
+
+  double Skl_array[mPhotonPtBinning.size()][mJetPtBinning.size()];
+  for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
+          for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+                  Skl_array[g][j]=0.;
+          }
+  } 
   
  //flavor composition
         TFileDirectory FcompositionDir = analysisDir.mkdir("flavorcomposition");
@@ -949,7 +989,10 @@ void GammaJetFinalizer::runAnalysis() {
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
    
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
-    
+ 
+//used for binned method  
+   fvec_photon_tmp->SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
+ 
    // PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
     
     
@@ -1093,7 +1136,8 @@ void GammaJetFinalizer::runAnalysis() {
     if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
     int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
-    
+    int photonptBin = mPhotonPtBinning.getPtBin(PhotonCorr.Pt());
+ 
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
@@ -1389,7 +1433,24 @@ void GammaJetFinalizer::runAnalysis() {
                                 MuEta013[ptBin]->Fill(mu, eventWeight);
                                 NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
 
+//Implement the binned method, for the moment, only for |eta|<1.3
 
+          newBal=0;
+          newMPFdiff=0;
+          ptphoton_vs_ptphoton->Fill(PhotonCorr.Pt(), PhotonCorr.Pt(), eventWeight);
+        h_phopt_for_nevts->Fill(PhotonCorr.Pt(), eventWeight);
+        for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
+                if(fabs((fullinfo.Eta_jets)->at(njet))>5.) continue;
+                fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
+                Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] += (fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)))*eventWeight;
+                h_jetpt_phopt_vs_jetpt->Fill(PhotonCorr.Pt(),(fullinfo.pT_jets)->at(njet),(fullinfo.pT_jets)->at(njet),eventWeight);
+                if((fullinfo.pT_jets)->at(njet)>15.) {
+                        newBal+=(fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
+                        newMPFdiff+=(fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
+                }
+        }
+        newBal_vs_ptphoton->Fill(PhotonCorr.Pt(), newBal/PhotonCorr.Pt(), eventWeight);
+        newMPF_vs_ptphoton->Fill(PhotonCorr.Pt(), respMPF+newMPFdiff/PhotonCorr.Pt(), eventWeight);
                         }
 
                         responseBalancing[etaBin][ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
@@ -1611,6 +1672,14 @@ void GammaJetFinalizer::runAnalysis() {
      
   }
 
+//Binned method, now fill the 2D histo from array
+for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
+        for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+                h_Skl_phopt_vs_jetpt->SetBinContent(g,j,Skl_array[g][j]);
+        }
+}
+
+
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
   //std::cout << "Efficiency for photon/jet cut: " << MAKE_RED << (double) passedPhotonJetCut / (to - from) * 100 << "%" << RESET_COLOR << std::endl;
@@ -1664,6 +1733,29 @@ std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::
         return buildPtVector<T>(dir, branchName + "_" + etaName, nBins, xMin, xMax);
 }
 
+//PhotonPt vector used for for binned method
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins) {
+
+  std::vector<T*> vector;
+  size_t ptBinningSize = mPhotonPtBinning.size();
+  for (size_t j = 0; j < ptBinningSize; j++) {
+
+    const std::pair<float, float> bin = mPhotonPtBinning.getBinValue(j);
+    std::stringstream ss;
+      ss << branchName << "_ptPhot_" << (int) bin.first << "_" << (int) bin.second;
+
+    T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, (int) bin.first, (int) bin.second);
+    vector.push_back(object);
+  }
+
+  return vector;
+}
+
+template<typename T>
+std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins) {
+  return buildPhotonPtVector<T>(dir, branchName + "_" + etaName, nBins);
+}
 
 template<typename T>
 std::vector<T*> GammaJetFinalizer::buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
