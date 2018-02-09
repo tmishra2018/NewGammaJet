@@ -354,7 +354,8 @@ TLorentzVector* fvec_photon_tmp = new TLorentzVector;
 TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 
   TFileDirectory NewMethodDir = analysisDir.mkdir("NewMethod"); 
-  std::vector<TH1F*>      PhotonPtForNM    = buildPhotonPtVector<TH1F>(NewMethodDir, "PhotonPtForNM", "eta0013", 50);
+  TH1F* h_dummy = NewMethodDir.make<TH1F>("dummy", "dummy", 10, 0, 1);
+//  std::vector<TH1F*>      PhotonPtForNM    = buildPhotonPtVector<TH1F>(NewMethodDir, "PhotonPtForNM", "eta0013", 50);
 //To be improved: make a buildphotonptvector that creates histos with different ranges and with e.g. a fixed binning  
   
  double photonPtBins4h[mPhotonPtBinning.size()];
@@ -374,12 +375,23 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
   int  phobinnum = sizeof(photonPtBins4h)/sizeof(double) -1;
   int  jetbinnum = sizeof(jetPtBins4h)/sizeof(double) -1;
 
+  double newBal;
+
+
+//  TProfile* ptphoton_vs_ptphoton = NewMethodDir.make<TProfile>("ptphoton_vs_ptphoton","ptphoton_vs_ptphoton", phobinnum, photonPtBins4h, photonPtBins4h[0], photonPtBins4h[mPhotonPtBinning.size()]);
+
   TH2F* h_Skl_phopt_vs_jetpt = new TH2F("Skl_phopt_vs_jetpt", "Skl in photon pt vs jet pt", phobinnum, photonPtBins4h,jetbinnum,jetPtBins4h);
+  TH1F* h_phopt_for_nevts = new TH1F("phopt_for_nevts", "photon pt", phobinnum, photonPtBins4h);
+
+  TProfile* ptphoton_vs_ptphoton = new TProfile("ptphoton_vs_ptphoton","ptphoton_vs_ptphoton", phobinnum, photonPtBins4h, photonPtBins4h[0], photonPtBins4h[mPhotonPtBinning.size()]);
+  TProfile* newBal_vs_ptphoton = new TProfile("newBal_vs_ptphoton","newBal_vs_ptphoton", phobinnum, photonPtBins4h,0.,4.);
+  TProfile* newMPF_vs_ptphoton = new TProfile("newMPF_vs_ptphoton","newMPF_vs_ptphoton", phobinnum, photonPtBins4h,0.,4.);
+
   double Skl_array[mPhotonPtBinning.size()][mJetPtBinning.size()];
   for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
-   for (size_t j = 0; j < mJetPtBinning.size(); j++) {
-   Skl_array[g][j]=0.;
-   }
+	  for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+		  Skl_array[g][j]=0.;
+	  }
   } 
 
   //plots per HLT for control 
@@ -1310,16 +1322,20 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 	  NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
 
 //viola try new method a la andrey
-        PhotonPtForNM[photonptBin]->Fill(PhotonCorr.Pt(), eventWeight); 
 
-
+	  newBal=0;
+	  ptphoton_vs_ptphoton->Fill(PhotonCorr.Pt(), PhotonCorr.Pt(), eventWeight);
+        //PhotonPtForNM[photonptBin]->Fill(PhotonCorr.Pt(), eventWeight); 
+	h_phopt_for_nevts->Fill(PhotonCorr.Pt(), eventWeight);
 	//loop over all jets in the event
 	for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
 		//sum pt*cos
 		fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
-		Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] += (fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
+		Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] += (fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)))*eventWeight;
+newBal+=(fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
 	}
-	//fill the histo -- should be done after loop over all photons/events ?!?!
+newBal_vs_ptphoton->Fill(PhotonCorr.Pt(), newBal/PhotonCorr.Pt(), eventWeight);
+newMPF_vs_ptphoton->Fill(PhotonCorr.Pt(), respMPF, eventWeight);
 	}
 	
         responseBalancing[etaBin][ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
@@ -1542,11 +1558,11 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 
 //viola try new method a la andrey, now fill 2D histo
 
-  for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
-   for (size_t j = 0; j < mJetPtBinning.size(); j++) {
-   h_Skl_phopt_vs_jetpt->SetBinContent(g,j,Skl_array[g][j]);
-   }
-  }
+for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
+	for (size_t j = 0; j < mJetPtBinning.size(); j++) {
+		h_Skl_phopt_vs_jetpt->SetBinContent(g,j,Skl_array[g][j]);
+	}
+}
 
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
