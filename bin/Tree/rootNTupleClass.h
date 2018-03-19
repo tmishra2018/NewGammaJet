@@ -128,10 +128,12 @@ public :
    Double_t        METGEN_Phi;
    Double_t        METGEN_Pt;
    Double_t        PassGenmatching;
-   vector<float>   *pT_jets;
-   vector<float>   *Eta_jets;
-   vector<float>   *Phi_jets;
-   vector<float>   *Mass_jets;
+   vector<double>   *pT_jets;
+   vector<double>   *Eta_jets;
+   vector<double>   *Phi_jets;
+   vector<double>   *Mass_jets;
+   vector<double>  *emF_jets;
+   vector<bool>    *IsID_jets;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -242,6 +244,9 @@ public :
    TBranch        *b_Eta_jets;   //!
    TBranch        *b_Phi_jets;   //!
    TBranch        *b_Mass_jets;   //!
+   TBranch        *b_emF_jets;   //!
+   TBranch        *b_IsID_jets;   //!
+
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -306,6 +311,8 @@ void rootNtupleClass::Init(TTree *tree)
    Eta_jets = 0;
    Phi_jets = 0;
    Mass_jets = 0;
+   emF_jets = 0;
+   IsID_jets = 0;
 
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -420,6 +427,8 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Eta_jets", &Eta_jets, &b_Eta_jets);
    fChain->SetBranchAddress("Phi_jets", &Phi_jets, &b_Phi_jets);
    fChain->SetBranchAddress("Mass_jets", &Mass_jets, &b_Mass_jets);
+   fChain->SetBranchAddress("emF_jets", &emF_jets, &b_emF_jets);
+   fChain->SetBranchAddress("IsID_jets", &IsID_jets, &b_IsID_jets);
    InitCache();
 }
 
