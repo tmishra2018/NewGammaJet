@@ -8,6 +8,7 @@
 #include <TH2D.h>
 #include <TLorentzVector.h>
 #include <TProfile2D.h>
+#include <TVectorD.h>
 
 #include <fstream>
 #include <sstream>
@@ -355,8 +356,17 @@ void GammaJetFinalizer::runAnalysis() {
 TLorentzVector* fvec_photon_tmp = new TLorentzVector;
 TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 
+Double_t ptMin_Bal = 30.;
+Double_t ptMin_MPF = 15.;
+
   TFileDirectory NewMethodDir = analysisDir.mkdir("BinnedMethod");
   TH1F* h_dummy = NewMethodDir.make<TH1F>("dummy", "dummy", 10, 0, 1); 
+
+  TVectorD MinPtBal(1,1,ptMin_Bal,"END");
+  TVectorD MinPtMPF(1,1,ptMin_MPF,"END");
+  MinPtBal.Write("MinPtBal");
+  MinPtMPF.Write("MinPtMPF");
+
 
  double photonPtBins4h[mPhotonPtBinning.size()];
  double jetPtBins4h[mJetPtBinning.size()];
@@ -728,7 +738,7 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
   
   // Luminosity
    Double_t totalluminosity = 0;
-  if (! mIsMC) {
+   if (! mIsMC) {
     // For data, there's only one file, so open it in order to read the luminosity
     TFile* f = TFile::Open(mInputFiles[0].c_str());        
     analysisDir.make<TParameter<float>>("luminosity", static_cast<TParameter<float>*>(f->Get("totallumi"))->GetVal());
@@ -736,8 +746,7 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     delete f;
   }
   
-  TFile* f = TFile::Open(mInputFiles[0].c_str());
-  
+  TFile* f = TFile::Open(mInputFiles[0].c_str()); 
   TH2F * Hdeltaphi_all = static_cast<TH2F*>(f->Get("DeltaPhi_vs_alpha"));
   f->Close();
   delete f;
@@ -1439,9 +1448,9 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
                 fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
                 Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] -= (fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp))*eventWeight;
                 h_jetpt_phopt_vs_jetpt->Fill(PhotonCorr.Pt(),(fullinfo.pT_jets)->at(njet),(fullinfo.pT_jets)->at(njet),eventWeight);
-                if((fullinfo.pT_jets)->at(njet)>15.) {
+                if((fullinfo.pT_jets)->at(njet)>ptMin_MPF) {
                         newMPFdiff+=(fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp));
-                if((fullinfo.pT_jets)->at(njet)>30.) newBal-=(fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp));
+                if((fullinfo.pT_jets)->at(njet)>ptMin_Bal) newBal-=(fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp));
                 }
         }
         newBal_vs_ptphoton->Fill(PhotonCorr.Pt(), newBal/PhotonCorr.Pt(), eventWeight);
