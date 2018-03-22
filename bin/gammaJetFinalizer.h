@@ -160,14 +160,7 @@ class GammaJetFinalizer
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
-
-//jet and photon pt binning - used for binned method     
-    template<typename T>
-      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins);
-    template<typename T>
-      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins);
-//
-
+      
       template<typename T>
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
       
@@ -190,7 +183,12 @@ class GammaJetFinalizer
       std::vector<T*> buildRunVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<std::vector<T*> > buildEtaRunVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
-    
+
+//Binned method: vectors for photon and jets pt bins
+    template<typename T>
+      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins);
+    template<typename T>
+      std::vector<T*> buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins);    
 
     void cloneTree(TTree* from, TTree*& to);
 
@@ -226,8 +224,8 @@ class GammaJetFinalizer
     VertexBinning mVertexBinning;
     RunBinning mRunBinning;
     ExtrapBinning mExtrapBinning;
-//jet and photon pt binning - used for binned method
-    PhotonPtBinning mPhotonPtBinning;
+//Binned method
+    PtBinning mPhotonPtBinning;
     JetPtBinning mJetPtBinning;
 
     std::vector<std::string> mInputFiles;
@@ -266,7 +264,8 @@ class GammaJetFinalizer
     float respMPFRaw;
     float deltaPhi_Photon_MET_gen;
     float respMPFGen;
-            
+    double respMPFforBinned;            
+
     // Balancing
     float respBalancing;
     float respBalancingRaw;

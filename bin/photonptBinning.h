@@ -10,10 +10,10 @@ class PhotonPtBinning {
       fillPtBins();
     }
 
-    int getPtBin(float pt) {
-      std::vector<std::pair<float, float> >::const_iterator it = mPtBins.begin();
+    int getPtBin(double pt) {
+      std::vector<std::pair<double, double> >::const_iterator it = mPtBins.begin();
       for (; it != mPtBins.end(); ++it) {
-        std::pair<float, float> bin = *it;
+        std::pair<double, double> bin = *it;
         if (pt >= bin.first && pt < bin.second) {
           return it - mPtBins.begin();
         }
@@ -26,37 +26,39 @@ class PhotonPtBinning {
       return mPtBins.size();
     }
 
-    std::pair<float, float> getBinValue(int bin) const {
+    std::pair<double, double> getBinValue(int bin) const {
       return mPtBins[bin];
     }
 
-    std::vector<std::pair<float, float> > getBinning(int n = -1) const {
+    std::vector<std::pair<double, double> > getBinning(int n = -1) const {
       if (n < 0) {
         n = size();
       }
-      return std::vector<std::pair<float, float> >(mPtBins.begin(), mPtBins.begin() + n);
+      return std::vector<std::pair<double, double> >(mPtBins.begin(), mPtBins.begin() + n);
     }
 
-    std::vector<std::pair<float, float> > getBinning(unsigned int from, unsigned int to) const {
+    std::vector<std::pair<double, double> > getBinning(unsigned int from, unsigned int to) const {
       if (to > size()) {
         to = size();
       }
 
-      return std::vector<std::pair<float, float> >(mPtBins.begin() + from, mPtBins.begin() + to);
+      return std::vector<std::pair<double, double> >(mPtBins.begin() + from, mPtBins.begin() + to);
     }
 
   private:
-    std::vector<std::pair<float, float> > mPtBins;
+    std::vector<std::pair<double, double> > mPtBins;
 
     void fillPtBins() { 
 
-    for (double ptforbins = 40; ptforbins < 400. - 2.5; ptforbins += 5.)
+//    for (double ptforbins = 40; ptforbins < 400. - 2.5; ptforbins += 5.)
+    for (double ptforbins = 60; ptforbins < 400. - 2.5; ptforbins += 5.)
             mPtBins.push_back(std::make_pair(ptforbins,ptforbins+5.));
-    for (double ptforbins = 400; ptforbins < 1000. - 5; ptforbins += 10.)
+    for (double ptforbins = 400; ptforbins < 1000. - 5.; ptforbins += 10.)
             mPtBins.push_back(std::make_pair(ptforbins,ptforbins+10.));
-    for (double ptforbins = 1000; ptforbins < 3000. - 25; ptforbins += 50.)
+    for (double ptforbins = 1000; ptforbins < 2950. - 25.; ptforbins += 50.)
             mPtBins.push_back(std::make_pair(ptforbins,ptforbins+50.));
-
+//fill last bin by hand to be sure it's exactly 3000
+            mPtBins.push_back(std::make_pair(2950.,3000.00001));
 
 /*
       mPtBins.push_back(std::make_pair(40., 45.));

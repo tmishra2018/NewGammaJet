@@ -5,9 +5,10 @@
 #include <TTree.h>
 #include <TParameter.h>
 #include <TProfile.h>
-#include <TProfile2D.h>
 #include <TH2D.h>
 #include <TLorentzVector.h>
+#include <TProfile2D.h>
+#include <TVectorD.h>
 
 #include <fstream>
 #include <sstream>
@@ -62,7 +63,7 @@ TFile* PUFile;
 //TFile* EoverP_dataMCRatio_File;
 //TH1D *h_test=0;
 TFile* EtaPhiCleaning_File;
-TH2D *h_hotjets=0;
+//TH2D *h_hotjets=0;
 bool EXIT = false;
 
 GammaJetFinalizer::GammaJetFinalizer() {
@@ -168,11 +169,11 @@ void GammaJetFinalizer::runAnalysis() {
                 mTriggers      = new Triggers( TriggerFile.c_str() ) ;
 
                 static std::string Prefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/data", cmsswBase.c_str()).Data();
-                TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
-                EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
-                assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
-                h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
-                assert(h_hotjets);
+            //    TString EtaPhiCleaning_FileName = TString::Format("%s/hotjets-runBCDEFGH.root", Prefix.c_str()).Data();  //version from Mikko https://github.com/miquork/jecsys/tree/master/rootfiles   
+                //EtaPhiCleaning_File = TFile::Open(EtaPhiCleaning_FileName);
+               // assert(EtaPhiCleaning_File && !EtaPhiCleaning_File->IsZombie());
+               // h_hotjets = (TH2D*)EtaPhiCleaning_File->Get("h2jet"); 
+               // assert(h_hotjets);
 
 
 
@@ -350,32 +351,47 @@ void GammaJetFinalizer::runAnalysis() {
   TH2F* h_npvGood_vs_mu = analysisDir.make<TH2F>("npvGood_vs_mu", "npv_good vs mu", 50, 0, 50, 50, 0, 50);
   
   
- TLorentzVector* fvec_photon_tmp = new TLorentzVector;
+//Binned method, definitions
+//
+TLorentzVector* fvec_photon_tmp = new TLorentzVector;
 TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 
-//Binned method
-  TFileDirectory BinnedMethodDir = analysisDir.mkdir("BinnedMethod");
-  TH1F* h_dummy = BinnedMethodDir.make<TH1F>("dummy", "dummy", 10, 0, 1);
+Double_t ptMin_Bal = 30.;
+Double_t ptMin_MPF = 15.;
+
+  TFileDirectory NewMethodDir = analysisDir.mkdir("BinnedMethod");
+  TH1F* h_dummy = NewMethodDir.make<TH1F>("dummy", "dummy", 10, 0, 1); 
+
+  TVectorD MinPtBal(1,1,ptMin_Bal,"END");
+  TVectorD MinPtMPF(1,1,ptMin_MPF,"END");
+  MinPtBal.Write("MinPtBal");
+  MinPtMPF.Write("MinPtMPF");
+
 
  double photonPtBins4h[mPhotonPtBinning.size()];
  double jetPtBins4h[mJetPtBinning.size()];
 
   for (size_t j = 0; j < mPhotonPtBinning.size(); j++) {
-  const std::pair<float, float> phobin = mPhotonPtBinning.getBinValue(j);
+  const std::pair<double, double> phobin = mPhotonPtBinning.getBinValue(j);
   photonPtBins4h[j]=phobin.first;
   if(j==mPhotonPtBinning.size()-1) photonPtBins4h[j+1]=phobin.second;
  }
 
+for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
+}
+
   for (size_t j = 0; j < mJetPtBinning.size(); j++) {
-  const std::pair<float, float> jetbin = mJetPtBinning.getBinValue(j);
+  const std::pair<double, double> jetbin = mJetPtBinning.getBinValue(j);
   jetPtBins4h[j]=jetbin.first;
   if(j==mJetPtBinning.size()-1) jetPtBins4h[j+1]=jetbin.second;
  }
-  int  phobinnum = sizeof(photonPtBins4h)/sizeof(double) -1;
-  int  jetbinnum = sizeof(jetPtBins4h)/sizeof(double) -1;
+  int  phobinnum = sizeof(photonPtBins4h)/sizeof(double) ;
+  int  jetbinnum = sizeof(jetPtBins4h)/sizeof(double) ;
+
 
   double newBal;
   double newMPFdiff=0.;
+
   TH1F* h_phopt_for_nevts = new TH1F("phopt_for_nevts", "photon pt", phobinnum, photonPtBins4h);
 
   TH2D* h_Skl_phopt_vs_jetpt = new TH2D("h_Skl_phopt_vs_jetpt","h_Skl_phopt_vs_jetpt",phobinnum, photonPtBins4h, jetbinnum,jetPtBins4h);
@@ -389,8 +405,8 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
           for (size_t j = 0; j < mJetPtBinning.size(); j++) {
                   Skl_array[g][j]=0.;
           }
-  } 
-  
+  }
+ 
  //flavor composition
         TFileDirectory FcompositionDir = analysisDir.mkdir("flavorcomposition");
         std::vector<std::vector<TH1F*> > fSumEntries = buildEtaPtVector<TH1F>(FcompositionDir, "fSumEntries", 23, -0.5, 22.5);
@@ -454,6 +470,16 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
   std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 0.5);
   
   
+  TFileDirectory HLTDirHCCalPrecleaning = analysisDir.mkdir("HLT_Hcalpreclean");
+  std::vector<std::vector<TH1F*> > HLTphiprecleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPrecleaning, "etaHLTpreclean",50, -4., 0.);
+  std::vector<std::vector<TH1F*> > HLTetaprecleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPrecleaning, "phiHLTpreclean",50, 0., 3.);
+  
+  TFileDirectory HLTDirHCCalPostcleaning = analysisDir.mkdir("HLT_Hcalpostclean");
+  std::vector<std::vector<TH1F*> > HLTphipostcleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPostcleaning, "etaHLTpostclean",50, -4., 0.);
+  std::vector<std::vector<TH1F*> > HLTetapostcleaning = buildEtaHLTPtVector<TH1F>(HLTDirHCCalPostcleaning, "phiHLTpostclean",50, 0., 3.);
+
+  
+  
   //jet variables
   
   
@@ -464,6 +490,8 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
   
   std::vector<std::vector<TH1F*> > HLTjet_2pt = buildEtaHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT",75, 0., 600.);
   std::vector<TH1F*>      HLTjet_2ptEta013    = buildHLTPtVector<TH1F>(HLTDirjetpt, "jet_2ptHLT", "eta0013", 1000, 0., 2000.);
+  
+  
   
   //end per HLT plots
 
@@ -706,17 +734,11 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
   }
   
   
-  //control plots for HCAL eta phi cleaning :
   
-  TFileDirectory HCAL_cleaning_dir = analysisDir.mkdir("HCAL_cleaning_directory");
-  std::vector<std::vector<TH1F*> > Etafirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_nocleaning", 100, -5., 5.);
-  std::vector<std::vector<TH1F*> > Phifirstjet_controlcleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_nocleaning", 100, -3.5, 3.5);
-  std::vector<std::vector<TH1F*> > Etafirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Etafirstjet_cleaning", 100, -5., 5.);
-  std::vector<std::vector<TH1F*> > Phifirstjet_cleaning = buildEtaHLTPtVector<TH1F>(HCAL_cleaning_dir, "Phifirstjet_cleaning", 100, -3.5, 3.5);
   
   // Luminosity
    Double_t totalluminosity = 0;
-  if (! mIsMC) {
+   if (! mIsMC) {
     // For data, there's only one file, so open it in order to read the luminosity
     TFile* f = TFile::Open(mInputFiles[0].c_str());        
     analysisDir.make<TParameter<float>>("luminosity", static_cast<TParameter<float>*>(f->Get("totallumi"))->GetVal());
@@ -724,8 +746,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     delete f;
   }
   
-  TFile* f = TFile::Open(mInputFiles[0].c_str());
-  
+  TFile* f = TFile::Open(mInputFiles[0].c_str()); 
   TH2F * Hdeltaphi_all = static_cast<TH2F*>(f->Get("DeltaPhi_vs_alpha"));
   f->Close();
   delete f;
@@ -930,7 +951,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
   
   //etaphi cleaning
   
-    if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
+  //  if (!mIsMC && h_hotjets->GetBinContent(h_hotjets->FindBin(fullinfo.etaAK4_j1, fullinfo.phiAK4_j1)) > 0) keepEvent=false; // -10 good, +10 bad
    // if( mIsMC && fullinfo.PassGenmatching == 0) continue;
     if (! keepEvent)
       continue;
@@ -947,8 +968,8 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
      
     
     
-    bool secondJetOK =  fullinfo.pTAK4_j2==0 || (fullinfo.pTAK4_j2 < 10 ||  fullinfo.alpha < mAlphaCut );
-    
+//    bool secondJetOK =  fullinfo.pTAK4_j2==0 || (fullinfo.pTAK4_j2 < 10 ||  fullinfo.alpha < mAlphaCut );
+  bool secondJetOK = true;  
   //  std::cout<<" alpha : "<<fullinfo.alpha<<" secondJetOK "<< secondJetOK << std::endl;
     
     //federico -- without this cut the extrapolation is always the same to different alpha cut
@@ -989,12 +1010,10 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
    
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
- 
-//used for binned method  
-   fvec_photon_tmp->SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  );
- 
-   // PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
     
+   // PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photonSC), fullinfo.Eta_photonSC, fullinfo.Phi_photonSC, (fullinfo.Energy_photonSC)  );
+   
+   fvec_photon_tmp->SetPtEtaPhiE( (fullinfo.Pt_photon), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon)  ); 
     
     TLorentzVector Photon;
     Photon.SetPtEtaPhiE( fullinfo.Pt_photon, fullinfo.Eta_photon, fullinfo.Phi_photon, fullinfo.Energy_photon );
@@ -1022,10 +1041,12 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.172 && fullinfo.Eta_jets->at(ijet) <= -2.043 && fullinfo.Phi_jets->at(ijet) >= 2.290 && fullinfo.Phi_jets->at(ijet) <= 2.422){
+
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -2.25 && fullinfo.Eta_jets->at(ijet) <= -1.93 && fullinfo.Phi_jets->at(ijet) >= 2.2 && fullinfo.Phi_jets->at(ijet) <= 2.5){
+
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -1038,10 +1059,10 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.314 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -1053,10 +1074,10 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     for(size_t ijet = 0 ; ijet < fullinfo.pT_jets->size() ; ++ijet){
     
     
-      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.489 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
+      if(fullinfo.pT_jets->at(ijet) >= 15. && fullinfo.Eta_jets->at(ijet) >= -3.60 && fullinfo.Eta_jets->at(ijet) <= -3.139 && fullinfo.Phi_jets->at(ijet) >= 2.237 && fullinfo.Phi_jets->at(ijet) <= 2.475){
       
       skip_event_Hcalveto = true ;
-      continue;
+      break;
       
       }
     }
@@ -1136,8 +1157,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     if( mIsMC )    respPhotGamma = PhotonCorr.Pt()/*fullinfo.Pt_photon*/ / fullinfo.Pt_photonGEN; // to check photon response
 
     int ptBin = mPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);
-    int photonptBin = mPhotonPtBinning.getPtBin(PhotonCorr.Pt());
- 
+    
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << PhotonCorr.Pt()/*fullinfo.Pt_photon*/ << " is not covered by our pt binning. Dumping event." << std::endl;
       continue;
@@ -1238,20 +1258,21 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
     int vertexBin = mVertexBinning.getVertexBin(fullinfo.nVtx);
 
     if (secondJetOK) { // ! is_present || pT < 10 || pT < 0.3*pT(pho)
+    
+       HLTphiprecleaning[etaBin][HLTptBin]->Fill(fullinfo.phiAK4_j1, eventWeight);
+       HLTetaprecleaning[etaBin][HLTptBin]->Fill(fullinfo.etaAK4_j1, eventWeight);
       if(mVerbose) std::cout << "Filling histograms passedID"<< std::endl; 
-     // std::cout<<(int) fullinfo.event<<std::endl;
-        Etafirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
-        Phifirstjet_controlcleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
-        if(skip_event_Hcalveto && !mIsMC) continue ;
+
+        if(skip_event_Hcalveto && !mIsMC){ 
         nEvent_rejected ++;
- 
+        continue ;
+        }
+
        
       do {
-      
-       Etafirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.etaAK4_j1, eventWeight);
-       Phifirstjet_cleaning[etaBin][HLTptBin] ->Fill(fullinfo.phiAK4_j1, eventWeight);
         
-      
+      HLTphipostcleaning[etaBin][HLTptBin]->Fill(fullinfo.phiAK4_j1, eventWeight);
+      HLTetapostcleaning[etaBin][HLTptBin]->Fill(fullinfo.etaAK4_j1, eventWeight);
       //  std::cout<<" value of alpha  : "<<fullinfo.alpha<<std::endl;
 
         h_inst_Lumi                         -> Fill(fullinfo.lumi, eventWeight);
@@ -1356,7 +1377,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 }
        
        //HLT plots;
-      
+
        HLTChHadronIso[etaBin][HLTptBin]->Fill(fullinfo.CHiso_photon, eventWeight);
        HLTNhHadronIso[etaBin][HLTptBin]->Fill(fullinfo.NHiso_photon, eventWeight);
        HLTPhotonIso[etaBin][HLTptBin]->Fill(fullinfo.Photoniso_photon, eventWeight);
@@ -1415,6 +1436,27 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
         }
   //Special case
                         if (fabs(fullinfo.etaAK4_j1) <1.305) {
+
+//Binned method : calculate and fill. For the moment only in special case |eta|<1.3
+
+          newBal=0;
+          newMPFdiff=0;
+          respMPFforBinned = 1. + METCorr.Pt() * PhotonCorr.Pt() * cos(METCorr.DeltaPhi(PhotonCorr)) / (PhotonCorr.Pt() * PhotonCorr.Pt());
+          ptphoton_vs_ptphoton->Fill(PhotonCorr.Pt(), PhotonCorr.Pt(), eventWeight);
+        h_phopt_for_nevts->Fill(PhotonCorr.Pt(), eventWeight);
+        for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
+                fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
+                Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] -= (fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp))*eventWeight;
+                h_jetpt_phopt_vs_jetpt->Fill(PhotonCorr.Pt(),(fullinfo.pT_jets)->at(njet),(fullinfo.pT_jets)->at(njet),eventWeight);
+                if((fullinfo.pT_jets)->at(njet)>ptMin_MPF) {
+                        newMPFdiff+=(fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp));
+                if((fullinfo.pT_jets)->at(njet)>ptMin_Bal) newBal-=(fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp));
+                }
+        }
+        newBal_vs_ptphoton->Fill(PhotonCorr.Pt(), newBal/PhotonCorr.Pt(), eventWeight);
+        newMPF_vs_ptphoton->Fill(PhotonCorr.Pt(), respMPFforBinned, eventWeight);
+
+
                                 ChHadronFractionEta013[ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
                                 NHadronFractionEta013[ptBin]->Fill(fullinfo.neutrHadEnFrac_j1, eventWeight);
                                 CEmFractionEta013[ptBin]->Fill(fullinfo.chargedElectromFrac_j1, eventWeight);
@@ -1433,24 +1475,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
                                 MuEta013[ptBin]->Fill(mu, eventWeight);
                                 NverticeshEta013[ptBin]->Fill(fullinfo.nVtx, eventWeight);
 
-//Implement the binned method, for the moment, only for |eta|<1.3
 
-          newBal=0;
-          newMPFdiff=0;
-          ptphoton_vs_ptphoton->Fill(PhotonCorr.Pt(), PhotonCorr.Pt(), eventWeight);
-        h_phopt_for_nevts->Fill(PhotonCorr.Pt(), eventWeight);
-        for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
-                if(fabs((fullinfo.Eta_jets)->at(njet))>5.) continue;
-                fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
-                Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] += (fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)))*eventWeight;
-                h_jetpt_phopt_vs_jetpt->Fill(PhotonCorr.Pt(),(fullinfo.pT_jets)->at(njet),(fullinfo.pT_jets)->at(njet),eventWeight);
-                if((fullinfo.pT_jets)->at(njet)>15.) {
-                        newBal+=(fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
-                        newMPFdiff+=(fullinfo.pT_jets)->at(njet)*fabs(cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp)));
-                }
-        }
-        newBal_vs_ptphoton->Fill(PhotonCorr.Pt(), newBal/PhotonCorr.Pt(), eventWeight);
-        newMPF_vs_ptphoton->Fill(PhotonCorr.Pt(), respMPF+newMPFdiff/PhotonCorr.Pt(), eventWeight);
                         }
 
                         responseBalancing[etaBin][ptBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
@@ -1494,7 +1519,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
       
     }// if secondJetOK
     if(skip_event_Hcalveto) continue ;
-    if (fullinfo.pTAK4_j2 > 0) { //extrapolation if second jet is present
+    if (fullinfo.pTAK4_j2 > 15.) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1514,7 +1539,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 	  
 	  //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1531,7 +1556,7 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
-	    }}
+	    }}}
 
 	  
 	   //bin 9 0 to 0.25 :
@@ -1672,13 +1697,12 @@ TLorentzVector* fvec_jet_tmp = new TLorentzVector;
      
   }
 
-//Binned method, now fill the 2D histo from array
+//Binned method: now fill 2D histo
 for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
         for (size_t j = 0; j < mJetPtBinning.size(); j++) {
                 h_Skl_phopt_vs_jetpt->SetBinContent(g,j,Skl_array[g][j]);
         }
 }
-
 
   std::cout << std::endl;
   std::cout << "Absolute efficiency : related to initial number of event =  " << to-from << std::endl;
@@ -1692,8 +1716,9 @@ for (size_t g = 0; g < mPhotonPtBinning.size(); g++) {
   std::cout << std::endl;
   std::cout << "Rejected events because trigger was not found: " << MAKE_RED << (double) rejectedEventsTriggerNotFound  << RESET_COLOR << std::endl;
   std::cout << "Rejected events because pT was out of range: " << MAKE_RED << (double) rejectedEventsPtOut / (rejectedEventsFromTriggers) * 100 << "%" << RESET_COLOR << std::endl;
-  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) to-from - nEvent_rejected  << RESET_COLOR << std::endl;
-  //std::cout<<"test booléen "<<triggernotzero<<std::endl;
+
+  std::cout << "Rejected events because HCAL cleaning: " << MAKE_RED << (double) nEvent_rejected << RESET_COLOR << std::endl;
+
   
 
 }
@@ -1733,53 +1758,30 @@ std::vector<T*> GammaJetFinalizer::buildPtVector(TFileDirectory dir, const std::
         return buildPtVector<T>(dir, branchName + "_" + etaName, nBins, xMin, xMax);
 }
 
-//PhotonPt vector used for for binned method
-template<typename T>
-std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, int nBins) {
-
-  std::vector<T*> vector;
-  size_t ptBinningSize = mPhotonPtBinning.size();
-  for (size_t j = 0; j < ptBinningSize; j++) {
-
-    const std::pair<float, float> bin = mPhotonPtBinning.getBinValue(j);
-    std::stringstream ss;
-      ss << branchName << "_ptPhot_" << (int) bin.first << "_" << (int) bin.second;
-
-    T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, (int) bin.first, (int) bin.second);
-    vector.push_back(object);
-  }
-
-  return vector;
-}
-
-template<typename T>
-std::vector<T*> GammaJetFinalizer::buildPhotonPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins) {
-  return buildPhotonPtVector<T>(dir, branchName + "_" + etaName, nBins);
-}
 
 template<typename T>
 std::vector<T*> GammaJetFinalizer::buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax) {
 
-        bool appendText = (xMin >= 0 && xMax >= 0);
+      //  bool appendText = (xMin >= 0 && xMax >= 0);
         std::vector<T*> vector;
         size_t ptBinningSize = mHLTPtBinning.size();
         for (size_t j = 0; j < ptBinningSize; j++) {
 
                 const std::pair<float, float> bin = mHLTPtBinning.getBinValue(j);
                 std::stringstream ss;
-                if (appendText)
+             //   if (appendText)
                         ss << branchName << "_HLTptPhot_" << (int) bin.first << "_" << (int) bin.second;
-                else
-                        ss << branchName << "_" << (int) bin.first << "_" << (int) bin.second;
+             //   else
+             //           ss << branchName << "_" << (int) bin.first << "_" << (int) bin.second;
 
-                if (!appendText) {
+               /* if (!appendText) {
                         xMin = bin.first;
                 }
 
                 if (!appendText) {
                         xMax = bin.second;
                 }
-
+*/
                 T* object = dir.make<T>(ss.str().c_str(), ss.str().c_str(), nBins, xMin, xMax);
                 vector.push_back(object);
         }
