@@ -773,7 +773,8 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
   uint64_t passedAlphaCut = 0;
   int triggernotzero = 0;
   int nEvent_rejected = 0 ;
-    
+  bool RejectForJetID=false;
+ 
   uint64_t from = 0;
   uint64_t to = totalEvents;
     cout<<"total number of entries  "<<totalEvents<<endl;
@@ -825,29 +826,29 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     if ((checkTriggerResult = checkTriggerfulltree(passedTrigger, fullinfo.passHLT_Photon30, fullinfo.passHLT_Photon50, fullinfo.passHLT_Photon75, fullinfo.passHLT_Photon90, fullinfo.passHLT_Photon120, fullinfo.passHLT_Photon165, fullinfo.passHLT_Photon200, fullinfo.phomatchHLT_Photon30, fullinfo.phomatchHLT_Photon50, fullinfo.phomatchHLT_Photon75, fullinfo.phomatchHLT_Photon90, fullinfo.phomatchHLT_Photon120, fullinfo.phomatchHLT_Photon165, triggerWeight)) != TRIGGER_OK) {
       switch (checkTriggerResult) {
       case TRIGGER_NOT_FOUND:
-	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << fullinfo.run << ", pT: " << fullinfo.Pt_photon << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
-	//  size_t size = analysis.trigger_names->size();
-	//  for (size_t i = 0; i < size; i++) {
-	 //   if (analysis.trigger_results->at(i)) {
-	//      std::cout << "\t" << analysis.trigger_names->at(i) << std::endl;
-	///    }
-	///  }
-	}
-	rejectedEventsTriggerNotFound++;
-	break;
+    if (mVerbose) {
+      std::cout << MAKE_RED << "[Run #" << fullinfo.run << ", pT: " << fullinfo.Pt_photon << "] Event does not pass required trigger. List of passed triggers: " << RESET_COLOR << std::endl;
+    //  size_t size = analysis.trigger_names->size();
+    //  for (size_t i = 0; i < size; i++) {
+     //   if (analysis.trigger_results->at(i)) {
+    //      std::cout << "\t" << analysis.trigger_names->at(i) << std::endl;
+    ///    }
+    ///  }
+    }
+    rejectedEventsTriggerNotFound++;
+    break;
       case TRIGGER_FOUND_BUT_PT_OUT:
-	if (mVerbose) {
-	  std::cout << MAKE_RED << "[Run #" << fullinfo.run << ", pT: " << fullinfo.Pt_photon << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
-	 // size_t size = analysis.trigger_names->size();
-	 // for (size_t i = 0; i < size; i++) {
-	  //  if (analysis.trigger_results->at(i)) {
-	   //   std::cout << "\t" << analysis.trigger_names->at(i) <<  std::endl;
-	  //  }
-	 // }
-	}
-	rejectedEventsPtOut++;
-	break;
+    if (mVerbose) {
+      std::cout << MAKE_RED << "[Run #" << fullinfo.run << ", pT: " << fullinfo.Pt_photon << "] Event does pass required trigger, but pT is out of range. List of passed triggers: " << RESET_COLOR << std::endl;
+     // size_t size = analysis.trigger_names->size();
+     // for (size_t i = 0; i < size; i++) {
+      //  if (analysis.trigger_results->at(i)) {
+       //   std::cout << "\t" << analysis.trigger_names->at(i) <<  std::endl;
+      //  }
+     // }
+    }
+    rejectedEventsPtOut++;
+    break;
       }
       rejectedEventsFromTriggers++;
       continue;
@@ -859,16 +860,16 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     if(mVerbose)    std::cout<<" passedEventFromTriggers  " << std::endl;
     
     if (mIsMC) 
-    {	
+    {   
       // PU reweighting -- 2016 official recipe
       computePUWeight();
-	
+    
       // N vertex based (if official recipe not available)
       // computePUWeight_NVtxBased(photon.pt, analysis.nvertex);      
     } else { // IsData
       // Note: if trigger bins == pT bins the prescale is not important
       // to calculate the response (they are normalized to shape)
-	
+    
       //  OLD: get prescale from xml file
       //  in the xml file there were the inverse of prescale
       //  triggerWeight = 1. / triggerWeight; 
@@ -892,11 +893,11 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
       
     if(mVerbose){
       if( mIsMC){
-	std::cout << "generatorWeight   "<< generatorWeight << std::endl; 
-	std::cout << "evtWeightTot   "<<evtWeightSum << std::endl; 
-	std::cout << "mPUWeight     "<< mPUWeight << std::endl; 
+    std::cout << "generatorWeight   "<< generatorWeight << std::endl; 
+    std::cout << "evtWeightTot   "<<evtWeightSum << std::endl; 
+    std::cout << "mPUWeight     "<< mPUWeight << std::endl; 
       }else{
-	std::cout<< "triggerWeight    "<< triggerWeight << std::endl;
+    std::cout<< "triggerWeight    "<< triggerWeight << std::endl;
       }
       std::cout<< "Final used weight   "<< eventWeight << std::endl;
     }
@@ -995,9 +996,9 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
       int bin = h_test-> FindBin( fullinfo.Energy_photon );
       int NBins = h_test->GetNbinsX();
       if(bin >NBins){
-	dataMCRatio = h_test -> GetBinContent( NBins );
+    dataMCRatio = h_test -> GetBinContent( NBins );
       }else{
-	dataMCRatio = h_test -> GetBinContent( bin );
+    dataMCRatio = h_test -> GetBinContent( bin );
       }
     }*/
     //std::cout<< "photon --> pt = " << photon.pt <<" eta = "<< photon.eta << " phi = "<< photon.phi<<" e = "<< photon.e <<std::endl;
@@ -1084,6 +1085,24 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     
     }
     }
+
+//first loop over jets in the event and reject if there is one jet with pt>15 that fails jetID.
+RejectForJetID=false;
+for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
+	fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
+	if(fabs(fvec_photon_tmp->DeltaR(*fvec_jet_tmp))<0.02) {
+		continue;
+	}
+	if((fullinfo.pT_jets)->at(njet)>15. && fabs((fullinfo.Eta_jets)->at(njet))<5. && !((fullinfo.IsID_jets)->at(njet)))
+	{
+		RejectForJetID=true;
+		break;
+	}
+}
+if(RejectForJetID) continue;
+
+
+
  int HLTptBin = mHLTPtBinning.getPtBin(PhotonCorr.Pt()/*fullinfo.Pt_photon*/);   
  int etaBin = mEtaBinning.getBin(fullinfo.etaAK4_j1);   
  
@@ -1170,10 +1189,6 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     
     if(!mIsMC) runBinning = mRunBinning.getRunBin(fullinfo.run);
     
-    
-    
-    
-    
     if(!mIsMC){
        if(PhotonCorr.Pt() >= 175.) {
     run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
@@ -1190,7 +1205,7 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     run_responseMpfHLT120[etaBin][runBinning]->Fill(respMPF,eventWeight);
     
     if(fabs(fullinfo.etaAK4_j1) <1.305) {
-    	run_responseBalancing_0013HLT120[runBinning]->Fill(respBalancing,eventWeight);
+        run_responseBalancing_0013HLT120[runBinning]->Fill(respBalancing,eventWeight);
         run_responseMpf_0013HLT120[runBinning]->Fill(respMPF,eventWeight);
     }
     }
@@ -1280,8 +1295,8 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
         h_MET_parr                          -> Fill(Met_para, eventWeight);
         h_ptPhoton_passedID                 -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         h_ptPhoton_passedID_Binned    -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
-	h_EtaPhoton_passedID               -> Fill(fullinfo.Eta_photon, eventWeight);
-	h_PhiPhoton_passedID               -> Fill(fullinfo.Phi_photon, eventWeight);
+    h_EtaPhoton_passedID               -> Fill(fullinfo.Eta_photon, eventWeight);
+    h_PhiPhoton_passedID               -> Fill(fullinfo.Phi_photon, eventWeight);
         h_rho_passedID                          -> Fill(fullinfo.rho, eventWeight);
         h_hadTowOverEm_passedID      -> Fill(fullinfo.hadTowOverEm, eventWeight);
         h_sigmaIetaIeta_passedID          -> Fill(fullinfo.sigmaietaieta_photon, eventWeight);
@@ -1290,72 +1305,72 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
         h_photonIsolation_passedID                   -> Fill(fullinfo.Photoniso_photon, eventWeight);
 
         h_ptFirstJet_passedID       -> Fill(fullinfo.pTAK4_j1, eventWeight);
-	h_EtaFirstJet_passedID     -> Fill(fullinfo.etaAK4_j1, eventWeight);
-	h_PhiFirstJet_passedID     -> Fill(fullinfo.phiAK4_j1, eventWeight);
+    h_EtaFirstJet_passedID     -> Fill(fullinfo.etaAK4_j1, eventWeight);
+    h_PhiFirstJet_passedID     -> Fill(fullinfo.phiAK4_j1, eventWeight);
 
         h_deltaPhi_passedID          ->Fill(deltaPhi, eventWeight);
 
         h_ptSecondJet_passedID       ->Fill(fullinfo.pTAK4_j2, eventWeight);
-	h_EtaSecondJet_passedID     ->Fill(fullinfo.etaAK4_j2, eventWeight);
-	h_PhiSecondJet_passedID     ->Fill(fullinfo.phiAK4_j2, eventWeight);
-	h_PtEtaSecondJet_passedID  ->Fill(fullinfo.etaAK4_j2, fullinfo.pTAK4_j2, eventWeight);	
-	if(fullinfo.pTAK4_j2 > 0) {
-	  h_ptSecondJet_2ndJetOK       ->Fill(fullinfo.pTAK4_j2, eventWeight);
-	  h_EtaSecondJet_2ndJetOK     ->Fill(fullinfo.etaAK4_j2, eventWeight);
-	  h_PhiSecondJet_2ndJetOK     ->Fill(fullinfo.phiAK4_j2, eventWeight);
-	}
-	
+    h_EtaSecondJet_passedID     ->Fill(fullinfo.etaAK4_j2, eventWeight);
+    h_PhiSecondJet_passedID     ->Fill(fullinfo.phiAK4_j2, eventWeight);
+    h_PtEtaSecondJet_passedID  ->Fill(fullinfo.etaAK4_j2, fullinfo.pTAK4_j2, eventWeight);  
+    if(fullinfo.pTAK4_j2 > 0) {
+      h_ptSecondJet_2ndJetOK       ->Fill(fullinfo.pTAK4_j2, eventWeight);
+      h_EtaSecondJet_2ndJetOK     ->Fill(fullinfo.etaAK4_j2, eventWeight);
+      h_PhiSecondJet_2ndJetOK     ->Fill(fullinfo.phiAK4_j2, eventWeight);
+    }
+    
         h_alpha_passedID            ->Fill(fullinfo.alpha, eventWeight);
         h_MET_passedID              ->Fill(fullinfo.MET, eventWeight);
         h_rawMET_passedID        ->Fill(fullinfo.METRAW, eventWeight);
         h_METvsfirstJet                   ->Fill(fullinfo.MET, fullinfo.pTAK4_j1, eventWeight);
-        h_firstJetvsSecondJet            ->Fill(fullinfo.pTAK4_j1, fullinfo.pTAK4_j2, eventWeight);      	
-	h_mu -> Fill(mu, eventWeight);
-	h_npvGood -> Fill(fullinfo.nVtx, eventWeight);
-	h_rho_vs_mu -> Fill(mu, fullinfo.rho, eventWeight);
-	h_npvGood_vs_mu -> Fill(mu,fullinfo.nVtx, eventWeight);
-	
-	Profile_Bal_vs_Pt     -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-	Profile_MPF_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respMPF/* fullinfo.RMPF*/, eventWeight);
-	
-	Profile_Pt_gamma_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photon, eventWeight);
-	Profile_Pt_1stjet_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j1, eventWeight);
-	Profile_Pt2nd_jet_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j2, eventWeight); 
-	Profile_Met_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.MET, eventWeight);
-	Profile_Bal_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-	Profile_MPF_vs_Eta -> Fill(fabs(fullinfo.etaAK4_j1),respMPF/* fullinfo.RMPF*/, eventWeight);
-	
+        h_firstJetvsSecondJet            ->Fill(fullinfo.pTAK4_j1, fullinfo.pTAK4_j2, eventWeight);         
+    h_mu -> Fill(mu, eventWeight);
+    h_npvGood -> Fill(fullinfo.nVtx, eventWeight);
+    h_rho_vs_mu -> Fill(mu, fullinfo.rho, eventWeight);
+    h_npvGood_vs_mu -> Fill(mu,fullinfo.nVtx, eventWeight);
+    
+    Profile_Bal_vs_Pt     -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+    Profile_MPF_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, respMPF/* fullinfo.RMPF*/, eventWeight);
+    
+    Profile_Pt_gamma_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photon, eventWeight);
+    Profile_Pt_1stjet_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j1, eventWeight);
+    Profile_Pt2nd_jet_vs_Pt   -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.pTAK4_j2, eventWeight); 
+    Profile_Met_vs_Pt  -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.MET, eventWeight);
+    Profile_Bal_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+    Profile_MPF_vs_Eta -> Fill(fabs(fullinfo.etaAK4_j1),respMPF/* fullinfo.RMPF*/, eventWeight);
+    
         Profile_Pt_gamma_vs_Eta   -> Fill(fabs(fullinfo.etaAK4_j1), fullinfo.Pt_photon, eventWeight);
         
-	Profile_Bal_vs_Nvtx -> Fill(fullinfo.nVtx, respBalancing/*fullinfo.Rbalancing*/, eventWeight);	
-	Profile_MPF_vs_Nvtx -> Fill(fullinfo.nVtx,respMPF/* fullinfo.RMPF*/, eventWeight);	
-	
+    Profile_Bal_vs_Nvtx -> Fill(fullinfo.nVtx, respBalancing/*fullinfo.Rbalancing*/, eventWeight);  
+    Profile_MPF_vs_Nvtx -> Fill(fullinfo.nVtx,respMPF/* fullinfo.RMPF*/, eventWeight);  
+    
         Profile_Pt_gamma_vs_Nvtx   -> Fill(fullinfo.nVtx, PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         
-// 	// to be changed with SuperCluster pT
- 	if (fabs(fullinfo.etaAK4_j1) <1.305) { //only the special case now
- 	  Profile_photon_SCPt_vs_Pt -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
- 	  h_photon_SCPt_vs_Pt         -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
-	}
-	
-	//fill N vertices as a function of eta/pT
-	Nvertices[etaBin][ptBin]->Fill(fullinfo.nVtx, eventWeight);		
+//  // to be changed with SuperCluster pT
+    if (fabs(fullinfo.etaAK4_j1) <1.305) { //only the special case now
+      Profile_photon_SCPt_vs_Pt -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
+      h_photon_SCPt_vs_Pt         -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
+    }
+    
+    //fill N vertices as a function of eta/pT
+    Nvertices[etaBin][ptBin]->Fill(fullinfo.nVtx, eventWeight);     
         if (vertexBin >= 0) {
           vertex_responseBalancing[etaBin][vertexBin] -> Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
         }
 
-	//double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
-	//	if(TotEne > 1 || TotEne < 0) continue;
-	//std::cout<< "Tot En = "<< TotEne << std::endl;
+    //double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
+    //  if(TotEne > 1 || TotEne < 0) continue;
+    //std::cout<< "Tot En = "<< TotEne << std::endl;
 
-	//fill jet energy composition histo vectors
-	ChHadronFraction[etaBin][ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
-	NHadronFraction[etaBin][ptBin]->Fill(fullinfo.neutrHadEnFrac_j1, eventWeight);
-	CEmFraction[etaBin][ptBin]->Fill(fullinfo.chargedElectromFrac_j1, eventWeight);
-	NEmFraction[etaBin][ptBin]->Fill(fullinfo.neutrElectromFrac_j1, eventWeight);
-	MuFraction[etaBin][ptBin]->Fill(fullinfo.muEnFract_j1, eventWeight);
-	LeptFraction[etaBin][ptBin]->Fill((fullinfo.muEnFract_j1+fullinfo.chargedElectromFrac_j1), eventWeight);
+    //fill jet energy composition histo vectors
+    ChHadronFraction[etaBin][ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
+    NHadronFraction[etaBin][ptBin]->Fill(fullinfo.neutrHadEnFrac_j1, eventWeight);
+    CEmFraction[etaBin][ptBin]->Fill(fullinfo.chargedElectromFrac_j1, eventWeight);
+    NEmFraction[etaBin][ptBin]->Fill(fullinfo.neutrElectromFrac_j1, eventWeight);
+    MuFraction[etaBin][ptBin]->Fill(fullinfo.muEnFract_j1, eventWeight);
+    LeptFraction[etaBin][ptBin]->Fill((fullinfo.muEnFract_j1+fullinfo.chargedElectromFrac_j1), eventWeight);
 
         //fill jet multiplicities histo vectors
         ChHadronMult[etaBin][ptBin]->Fill(fullinfo.chargedMult_j1, eventWeight);
@@ -1416,13 +1431,6 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
    if(PhotonCorr.Pt() < 60. && PhotonCorr.Pt() >40.) h_ptPhoton_5 ->Fill(PhotonCorr.Pt(), eventWeight);
      
      
-     
-       
-    
-    
-    
-       
-       
        //versus eta plots pt > 175  : 
         if( PhotonCorr.Pt() > 175.){
         
@@ -1434,11 +1442,11 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
          }
 
         }
+
   //Special case
                         if (fabs(fullinfo.etaAK4_j1) <1.305) {
 
 //Binned method : calculate and fill. For the moment only in special case |eta|<1.3
-
           newBal=0;
           newMPFdiff=0;
           respMPFforBinned = 1. + METCorr.Pt() * PhotonCorr.Pt() * cos(METCorr.DeltaPhi(PhotonCorr)) / (PhotonCorr.Pt() * PhotonCorr.Pt());
@@ -1446,6 +1454,7 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
         h_phopt_for_nevts->Fill(PhotonCorr.Pt(), eventWeight);
         for(size_t njet = 0; njet < (fullinfo.pT_jets)->size(); njet++){
                 fvec_jet_tmp->SetPtEtaPhiM((fullinfo.pT_jets)->at(njet),(fullinfo.Eta_jets)->at(njet),(fullinfo.Phi_jets)->at(njet),(fullinfo.Mass_jets)->at(njet) );
+        if(fabs(fvec_photon_tmp->DeltaR(*fvec_jet_tmp))<0.02) continue;
                 Skl_array[h_Skl_phopt_vs_jetpt->GetXaxis()->FindBin(PhotonCorr.Pt())][h_Skl_phopt_vs_jetpt->GetYaxis()->FindBin((fullinfo.pT_jets)->at(njet))] -= (fullinfo.pT_jets)->at(njet)*cos(fvec_photon_tmp->DeltaPhi(*fvec_jet_tmp))*eventWeight;
                 h_jetpt_phopt_vs_jetpt->Fill(PhotonCorr.Pt(),(fullinfo.pT_jets)->at(njet),(fullinfo.pT_jets)->at(njet),eventWeight);
                 if((fullinfo.pT_jets)->at(njet)>ptMin_MPF) {
@@ -1522,28 +1531,28 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
     if (fullinfo.pTAK4_j2 > 15.) { //extrapolation if second jet is present
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
-	
+    
         int extrapBin = mExtrapBinning.getBin(fullinfo.Pt_photon, fullinfo.pTAK4_j2, ptBin);
         
         
-	if(mIsMC) extrapGenBin = mExtrapBinning.getBin(fullinfo.Pt_photonGEN, fullinfo.pTAK4_j2GEN, ptBin);
-	
-	
-	do {
+    if(mIsMC) extrapGenBin = mExtrapBinning.getBin(fullinfo.Pt_photonGEN, fullinfo.pTAK4_j2GEN, ptBin);
+    
+    
+    do {
           if (extrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for extrapolation: " << fullinfo.pTAK4_j2 / fullinfo.Pt_photon << std::endl;
-	    break;
-          }	  
-	  
-	  // Ugly code to make inclusive extrapolation bin for response and PLI
-	  
-	  //bin 9 0 to 0.3 :
+        if(mVerbose) std::cout << "No bin found for extrapolation: " << fullinfo.pTAK4_j2 / fullinfo.Pt_photon << std::endl;
+        break;
+          }   
+      
+      // Ugly code to make inclusive extrapolation bin for response and PLI
+      
+      //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3){
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
+      }
           extrap_responseBalancing[etaBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
@@ -1551,21 +1560,21 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
           extrap_responseMPF_finebin[etafineBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    }}}
+        extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        if(fabs(fullinfo.etaAK4_j1) < 1.305){
+        extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        
+        }}}
 
-	  
-	   //bin 9 0 to 0.25 :
+      
+       //bin 9 0 to 0.25 :
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25){
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
+      }
           extrap_responseBalancing[etaBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
@@ -1573,21 +1582,21 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
           extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  //bin 9 0 to 0.20 :
+        extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        if(fabs(fullinfo.etaAK4_j1) < 1.305){
+        extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        }
+      }}
+      
+      
+      //bin 9 0 to 0.20 :
 
-	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2){
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
+      }
           extrap_responseBalancing[etaBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
@@ -1595,25 +1604,25 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
           extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  
-	  //bin 9 0 to 0.15 :
-	  
+        extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        
+        extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        
+        if(fabs(fullinfo.etaAK4_j1) < 1.305){
+        extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        }
+      }}
+      
+      
+      
+      //bin 9 0 to 0.15 :
+      
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15){
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
+      }
           extrap_responseBalancing[etaBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
@@ -1621,22 +1630,22 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
           extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  //bin 9 0 to 0.1 :
+        extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        
+        extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        
+        if(fabs(fullinfo.etaAK4_j1) < 1.305){
+        extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        }
+      }}
+      
+      //bin 9 0 to 0.1 :
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 ){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 ){
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
+      }
           extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
@@ -1644,53 +1653,53 @@ for(size_t boh=0; boh<=mPhotonPtBinning.size(); boh++){
           extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	
+        extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        if(fabs(fullinfo.etaAK4_j1) < 1.305){
+        extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+        }
+      }}
+      
+      
+    
          
-	    
+        
 
-	  if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
-	    if (fabs(fullinfo.etaAK4_j1GEN) < 1.305) {
+      if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
+        if (fabs(fullinfo.etaAK4_j1GEN) < 1.305) {
               extrap_responseBalancingGenEta013[ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
               extrap_responseMPFGenEta013[ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
-	      extrap_responseBalancingGenPhotEta013[ptBinGen][extrapGenBin]  -> Fill(respGenPhot, eventWeight);
-	      
-	    }
-	    
-	    
-	    extrap_responseBalancingGen[etaBinGen][ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
+          extrap_responseBalancingGenPhotEta013[ptBinGen][extrapGenBin]  -> Fill(respGenPhot, eventWeight);
+          
+        }
+        
+        
+        extrap_responseBalancingGen[etaBinGen][ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
             extrap_responseMPFGen[etaBinGen][ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
-	    extrap_responseBalancingGenPhot[etaBinGen][ptBinGen][extrapGenBin]  ->Fill(respGenPhot, eventWeight);
-	  }
-	  
-	  
+        extrap_responseBalancingGenPhot[etaBinGen][ptBinGen][extrapGenBin]  ->Fill(respGenPhot, eventWeight);
+      }
+      
+      
         } while (false);
-	
+    
         int rawExtrapBin = mExtrapBinning.getBin(fullinfo.Pt_photon, fullinfo.pTAK4_j2*(1./fullinfo.jetJecAK4_j2), ptBin); 
-	
-	
+    
+    
         do {
           if (rawExtrapBin < 0) {
-	    if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << fullinfo.pTAK4_j2*(1./fullinfo.jetJecAK4_j2) / fullinfo.Pt_photon << std::endl;
+        if(mVerbose) std::cout << "No bin found for RAW extrapolation: " << fullinfo.pTAK4_j2*(1./fullinfo.jetJecAK4_j2) / fullinfo.Pt_photon << std::endl;
             break;
           }
-	  
+      
           // Special case 
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+      if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingRawEta013[ptBin][rawExtrapBin]->Fill((respBalancing/*fullinfo.Rbalancing*/)*(1./fullinfo.jetJecAK4_j1), eventWeight);
             extrap_responseMPFRawEta013[ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
-          }	  
+          }   
           extrap_responseBalancingRaw[etaBin][ptBin][rawExtrapBin]->Fill((respBalancing/*fullinfo.Rbalancing*/)*(1./fullinfo.jetJecAK4_j1), eventWeight);
           extrap_responseMPFRaw[etaBin][ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
         } while (false);
-	
+    
       } while (false);
       
     } 
