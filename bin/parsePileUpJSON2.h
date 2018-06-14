@@ -51,12 +51,13 @@ int parsePileUpJSON2(string filename="/afs/cern.ch/work/h/hlattaud/private/Ploti
           else if (string_num == 7) //eighth string has pu
             PU = stod( str );
         }
-       
-         cout<<"test arguments for string run nb : "<<run_str << " lumi section : "<<ls_str<<" PU : "<<PU<<endl;
+       if(PU <= 6. && PU >= 4.){
+       //  cout<<"test arguments for string run nb : "<<run_str << " lumi section : "<<ls_str<<" PU : "<<PU<<endl;
+       }
        
         int run = stoi( run_str );
         int ls = stoi( ls_str );
-        cout<<"test arguments for stoi run nb : "<<run << " lumi section : "<<ls<<" PU : "<<PU<<endl;
+     //   cout<<"test arguments for stoi run nb : "<<run << " lumi section : "<<ls<<" PU : "<<PU<<endl;
         m_PU[run][ls] = PU;
       }
     }

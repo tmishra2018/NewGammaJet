@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
   db->drawHisto2D("PhotonSCPt_vs_Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]","", log);
   db->drawHisto2D("deltaPhi_vs_alpha", "#delta #phi ", "#alpha","", log);
  
-  db->set_rebin(5);
+ // db->set_rebin(5);
   db->setOutputGraphs(OUTPUT_GRAPHS);
 
   TH1D *ptPhot = (TH1D*)dataFile->Get("analysis/ptPhoton_passedID");
@@ -210,18 +210,18 @@ int main(int argc, char* argv[]) {
   
   
   // HLT plots
-  
+  /*
   db->setFolder("analysis/HLT_CH_iso");
 
-  for (size_t i = 0; i < etaBinningSize; i++) {
+  /*for (size_t i = 0; i < etaBinningSize; i++) {
     db->set_legendTitle(etaBinning.getBinTitle(i));
     
     TString responseName = TString::Format("ChHadronisoHLT_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Charge hadron isolation", "", "Events", false);
+    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Charge hadron isolation", "", "Events", true);
     
-  }
+  }*//*
   db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_pt(hltptBins, hltptMean, "ChHadronisoHLT_eta0013", "Charge hadron isolation", "", "Events", false);
+  db->drawHisto_vs_pt(hltptBins, hltptMean, "ChHadronisoHLT_eta0013", "Charge hadron isolation", "", "Events", true);
   
   db->setFolder("analysis/HLT_NH_iso");
 
@@ -357,6 +357,7 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
   
+  */
   // fine binning eta plots
   
   db->setFolder("analysis/fine_eta_binning/balancing");
@@ -427,7 +428,7 @@ int main(int argc, char* argv[]) {
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
   
- /* db->setFolder("analysis");
+  db->setFolder("analysis");
   db->set_shapeNormalization();
   db->drawHisto("ptPhoton_175_3000", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_130_175", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
@@ -435,7 +436,7 @@ int main(int argc, char* argv[]) {
   db->drawHisto("ptPhoton_85_105", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_60_85", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_40_60", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
-  */
+  
   /*
   db->set_lumiNormalization();
   

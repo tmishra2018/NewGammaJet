@@ -50,6 +50,9 @@ class RunBinning {
 
     void fillRunBins() {
       // bins reader: >= && <
+      
+     /*
+     2016 collisions
       mRunBins.push_back(std::make_pair(272007, 274250)); // 210.285 pb-1
       mRunBins.push_back(std::make_pair(274251, 274421)); // 223.401 pb-1
       mRunBins.push_back(std::make_pair(274422, 274999)); // 246.562 pb-1
@@ -81,22 +84,50 @@ class RunBinning {
       mRunBins.push_back(std::make_pair(283271, 283408));
       mRunBins.push_back(std::make_pair(283409, 283830));
       mRunBins.push_back(std::make_pair(283831, 284044)); // 2016 Collisions
+     */
      
-     
-     /* mRunBins.push_back(std::make_pair(297046,  297223)); // almost 1/fb in each bin
-      mRunBins.push_back(std::make_pair(297223, 297484)); // 
-      mRunBins.push_back(std::make_pair(297485, 299602)); // 
-      mRunBins.push_back(std::make_pair(297603, 299064)); // RunB
-      mRunBins.push_back(std::make_pair(299065, 299367)); //Run C starting from now on 
-      mRunBins.push_back(std::make_pair(299368, 300122)); // 
-      mRunBins.push_back(std::make_pair(300123, 300463));
-      mRunBins.push_back(std::make_pair(300464, 300575));
-      mRunBins.push_back(std::make_pair(300576, 300784));
-      mRunBins.push_back(std::make_pair(300785, 301297));
-      mRunBins.push_back(std::make_pair(301298, 301460)); 
-      mRunBins.push_back(std::make_pair(301461, 301958)); 
-      mRunBins.push_back(std::make_pair(301959, 302029)); 
-      mRunBins.push_back(std::make_pair(302030, 302343));*/ // 
+      mRunBins.push_back(std::make_pair(297046,  297219)); // almost 1/fb in each bin
+      mRunBins.push_back(std::make_pair(297220, 297435)); // 
+      mRunBins.push_back(std::make_pair(297436, 297563)); // 
+      mRunBins.push_back(std::make_pair(297564, 299061)); // RunB
+      mRunBins.push_back(std::make_pair(299062, 299368)); //Run C starting from now on 
+      mRunBins.push_back(std::make_pair(299369, 300122)); // 
+      mRunBins.push_back(std::make_pair(300123, 300237));
+      mRunBins.push_back(std::make_pair(300238, 300461));
+      mRunBins.push_back(std::make_pair(300462, 300576));
+      mRunBins.push_back(std::make_pair(300577, 300780));
+      mRunBins.push_back(std::make_pair(300781, 301298)); 
+      mRunBins.push_back(std::make_pair(301299, 301461)); 
+      mRunBins.push_back(std::make_pair(301462, 301941)); 
+      mRunBins.push_back(std::make_pair(301942, 302030));
+      mRunBins.push_back(std::make_pair(302031, 302277));
+      mRunBins.push_back(std::make_pair(302278, 302448));
+      mRunBins.push_back(std::make_pair(302449, 302572));
+      mRunBins.push_back(std::make_pair(302573, 302663));
+      mRunBins.push_back(std::make_pair(302664, 303824));
+      mRunBins.push_back(std::make_pair(303825, 304062));
+      mRunBins.push_back(std::make_pair(304063, 304144));
+      mRunBins.push_back(std::make_pair(304145, 304204));
+      mRunBins.push_back(std::make_pair(304205, 304366));
+      mRunBins.push_back(std::make_pair(304367, 304508));
+      mRunBins.push_back(std::make_pair(304509, 304655));
+      mRunBins.push_back(std::make_pair(304656, 304738));
+      mRunBins.push_back(std::make_pair(304739, 304797));
+      mRunBins.push_back(std::make_pair(304798, 305040));
+      mRunBins.push_back(std::make_pair(305041, 305188));
+      mRunBins.push_back(std::make_pair(305189, 305237));
+      mRunBins.push_back(std::make_pair(305238, 305312));
+      mRunBins.push_back(std::make_pair(305313, 305366));
+      mRunBins.push_back(std::make_pair(305367, 305406));
+      mRunBins.push_back(std::make_pair(305407, 305590));     
+      mRunBins.push_back(std::make_pair(305591, 305814));
+      mRunBins.push_back(std::make_pair(305815, 305862));
+      mRunBins.push_back(std::make_pair(305863, 306091));
+      mRunBins.push_back(std::make_pair(306092, 306135));
+      mRunBins.push_back(std::make_pair(306136, 306155));
+      mRunBins.push_back(std::make_pair(306156, 306155));
+      mRunBins.push_back(std::make_pair(306156, 306462));
+      // 
        // 2017 Collisions
      
       // end of pp collision 2015

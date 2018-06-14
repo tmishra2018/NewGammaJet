@@ -209,7 +209,7 @@ drawBase::drawBase(const std::string& analysisType, const std::string& recoType,
 
   poissonAsymmErrors_ = false;
 
-  pdf_aussi_ = false;
+  pdf_aussi_ = true;
   noStack_ = false;
   isCMSArticle_ = true;
 
@@ -572,7 +572,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   bool noMC = (gr_responseMC_vs_pt->GetN() == 0);
   
   int canvasHeight = (noMC || noDATA) ? 600 : 800;
-  TCanvas* c1 = new TCanvas("c1", "c1", 600, canvasHeight);
+  TCanvas* c1 = new TCanvas("c1", "c1", 800, 800/*canvasHeight*/);
   c1->cd();
   
   // Data / MC comparison
@@ -642,7 +642,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     graphName = TString::Format("%s_ratio_vs_pt", name.c_str());
     gr_resp_ratio ->SetName(graphName);
     gr_resp_ratio ->Write(); // saving in root file
-    graphFile->Close();
+    
     
     // Fit Function = constant function
     TF1* ratioFit = new TF1("ratioFit", "[0]", ptPhotMin, ptPhotMax); //costant function
@@ -651,7 +651,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     // ratioFit->SetParameter(1, 0.);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(2);
-    TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
+  //  TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
     // std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
     
     // Print covariance matrix && correlation matrix
@@ -680,20 +680,20 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     fitlabel->SetFillColor(0);
     TString fitLabelText = TString::Format("[0]: %.3f #pm %.3f", fitValue, fitError);
     fitlabel->AddText(fitLabelText);
-    fitlabel->Draw("same");
+   // fitlabel->Draw("same");
 
     //    std::cout << "Fit value  " << fitValue << " #pm " << fitError << std::endl;
 
-    line_plus_resp->Draw("same");
-    line_minus_resp->Draw("same");
-    errors->Draw("e3 same");
+    //line_plus_resp->Draw("same");
+    //line_minus_resp->Draw("same");
+    //errors->Draw("e3 same");
     gr_resp_ratio->Draw("P same");    
     gPad->RedrawAxis();
     pad_hi->cd();
     
   } // if !nodata && !nomc
 
-  TH2D* h2_axes = new TH2D("axes_again", "", 10, ptPhotMin, ptPhotMax, 10, 0.4, 1.25);
+  TH2D* h2_axes = new TH2D("axes_again", "", 10, ptPhotMin, ptPhotMax, 10, 0.8, 1.2);
   h2_axes->SetXTitle("p_{T}(#gamma) [GeV/c]");
   if(! isMPF){
     h2_axes->SetYTitle("p_{T} Balance");
@@ -701,7 +701,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes->SetYTitle("MPF response");    
   }
   h2_axes->GetXaxis()->SetTitleOffset(1.1);
-  h2_axes->GetYaxis()->SetTitleOffset(1.2);
+  h2_axes->GetYaxis()->SetTitleOffset(1.25);
   h2_axes->GetYaxis()->SetTitleSize(0.045);
   //h2_axes->GetXaxis()->SetMoreLogLabels();
   //h2_axes->GetXaxis()->SetNoExponent();
@@ -714,7 +714,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   Float_t labelTextSize = 0.035;
   TPaveText* label_algo = get_labelAlgo(2);
 
-  TLegend* legend = new TLegend(0.55, 0.15, 0.92, 0.38, legendTitle_.c_str());
+  TLegend* legend = new TLegend(0.55, 0.75, 0.92, 0.9, legendTitle_.c_str());
   legend->SetTextFont(42);
   legend->SetBorderSize(0);
   legend->SetFillColor(kWhite);
@@ -732,15 +732,15 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   legend->Draw("same");
 
   Float_t cmsTextSize = 0.043;
-  TPaveText* label_cms = get_labelCMS(1);
+  TPaveText* label_cms = get_labelCMStop();//get_labelCMS(1);
   label_cms->SetTextSize(cmsTextSize);
 
   //Float_t sqrtTextSize = 0.041;
-  TPaveText* label_sqrt = get_labelSqrt(1);
+  TPaveText* label_sqrt = get_labelSqrt(0);
 
   label_cms->Draw("same");
   label_sqrt->Draw("same");
-  label_algo->Draw("same");
+ // label_algo->Draw("same");
 
 
   if (!noMC ) {
@@ -748,7 +748,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
       gr_responseTrue_vs_pt->SetMarkerStyle(29);
       gr_responseTrue_vs_pt->SetMarkerColor(46);
       gr_responseTrue_vs_pt->SetMarkerSize(2.);
-      gr_responseTrue_vs_pt->Draw("Psame");
+   //   gr_responseTrue_vs_pt->Draw("Psame");
     }    
     gr_responseMC_vs_pt->SetMarkerStyle(24);
     gr_responseMC_vs_pt->SetMarkerSize(1.5);
@@ -786,7 +786,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
-  std::string canvName_fit_png = canvName + "_FITLINE.png";
+  std::string canvName_fit_png = canvName + "_FITLINE.pdf";
   c1->SaveAs(canvName_fit_png.c_str());
 
   // ----------------------------------------------------
@@ -966,7 +966,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   
  // delete H_count_vs_pt;
   //delete H_countMC_vs_pt;
-  
+  if(!isHLT){graphFile->Close();}
   delete h2_axes;
   h2_axes = 0;
   delete h2_axes2;
@@ -4001,14 +4001,14 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     //TLatex *latex = new TLatex();
     //latex->SetNDC();
-    TPaveText* label_cmstop = new TPaveText(0.10, 0.94, 0.96, 0.98, "brNDC");
+    TPaveText* label_cmstop = new TPaveText(0.15, 0.95, 0.96, 0.98, "brNDC");
     label_cmstop->SetTextSize(0.045);
     label_cmstop->SetFillColor(0);
     label_cmstop->SetTextFont(42);
 
     label_cmstop->SetTextAlign(31); // align right
     //latex->DrawLatex(wide ? 0.98 : 0.95, 0.96, "#sqrt{s} = 7 TeV");
-    label_cmstop->AddText("#sqrt{s} = 13 TeV");
+    //label_cmstop->AddText("#sqrt{s} = 13 TeV");
     std::string leftText;
     if (dataFiles_.size() == 0) {
       leftText = "CMS Simulation";
@@ -4016,7 +4016,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       if (isCMSArticle_) {
         leftText = "CMS";
       } else {
-        leftText = "CMS Preliminary";
+        leftText = "CMS #it{Preliminary}";
       }
     }
 
@@ -4140,7 +4140,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       y2 = 0.975;
     }
 
-
+   
     TPaveText* label_sqrt = new TPaveText(x1, y1, x2, y2, "brNDC");
     label_sqrt->SetFillColor(kWhite);
     label_sqrt->SetTextSize(0.038);
@@ -4150,7 +4150,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       label_sqrt->AddText(label_sqrt_text.c_str());
     } else {
       label_sqrt->SetTextAlign(31); // align right
-      label_sqrt->AddText("#sqrt{s} = 13 TeV");
+      label_sqrt->AddText("Run 2016 #sqrt{s} = 13 TeV");
     }
 
     return label_sqrt;
@@ -4198,7 +4198,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     label_algo->SetTextFont(42);
     label_algo->SetFillColor(kWhite);
     label_algo->SetTextSize(labelTextSize);
-    label_algo->AddText(jetAlgoName.c_str());
+    //label_algo->AddText(jetAlgoName.c_str());
+    label_algo->AddText("CMS Preliminary");
     //label_algo->SetTextAlign(11);
 
     return label_algo;

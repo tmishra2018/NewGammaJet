@@ -132,6 +132,7 @@ public :
    vector<float>   *Eta_jets;
    vector<float>   *Phi_jets;
    vector<float>   *Mass_jets;
+   Double_t        *Isfakephoton;
 
    // List of branches
    TBranch        *b_CHiso_photon;   //!
@@ -242,6 +243,7 @@ public :
    TBranch        *b_Eta_jets;   //!
    TBranch        *b_Phi_jets;   //!
    TBranch        *b_Mass_jets;   //!
+   TBranch        *b_Isfakephoton;
 
    rootNtupleClass(TTree *tree=0);
    virtual ~rootNtupleClass();
@@ -420,6 +422,7 @@ void rootNtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Eta_jets", &Eta_jets, &b_Eta_jets);
    fChain->SetBranchAddress("Phi_jets", &Phi_jets, &b_Phi_jets);
    fChain->SetBranchAddress("Mass_jets", &Mass_jets, &b_Mass_jets);
+   fChain->SetBranchAddress("Isfakephoton", &Isfakephoton, &b_Isfakephoton);
    InitCache();
 }
 

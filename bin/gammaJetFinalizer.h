@@ -18,7 +18,7 @@
 #include "HLTptBinning.h"
 #include "vertexBinning.h"
 #include "runBinning.h"
-#include "extrapBinning.h"
+#include "extrapBinning.h"//"extrapBinning_exclusif.h"
 #include "triggers.h"
 #include "GaussianProfile.h"
 #include "fineetaBinning.h"
@@ -98,6 +98,15 @@ class GammaJetFinalizer
     void setMC(bool isMC) {
       mIsMC = isMC;
     }
+    
+    void setEndcap(bool isEndcap) {
+      mEndcaps = isEndcap;
+    }
+    
+    void setJER(bool isJER) {
+      misJER = isJER;
+    }
+    
 
     void setUseExternalJEC(bool useExternalJEC) {
       mUseExternalJECCorrecion = useExternalJEC;
@@ -154,10 +163,14 @@ class GammaJetFinalizer
       
     template<typename T>
       std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
+      template<typename T>
+      std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax, double yMin, double yMax);
     template<typename T>
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, const std::string& etaName, int nBins, double xMin, double xMax);
     template<typename T>
       std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
+      template<typename T>
+      std::vector<T*> buildPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax, double yMin, double yMax);
       
       template<typename T>
       std::vector<T*> buildHLTPtVector(TFileDirectory dir, const std::string& branchName, int nBins, double xMin, double xMax);
@@ -229,6 +242,8 @@ class GammaJetFinalizer
     int mTotalJobs;
     int mCurrentJob;
     bool mUseExternalJECCorrecion;
+    bool mEndcaps;
+    bool misJER;
 
     float  mAlphaCut;
     bool   mDoMCComparison;

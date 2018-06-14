@@ -53,16 +53,82 @@ class fineEtaBinning {
       }
       return std::vector<fineEtaBin >(mEtaBins.begin(), mEtaBins.begin() + n);
     }
+    void Is_Jer_computation(bool is_Jer ){
+      if(is_Jer){
+        mJER_bining = true ; 
+      }else{
+        mJER_bining = false ;
+      }
+    
+    
+    }
     
 
   private:
     std::vector<fineEtaBin> mEtaBins;
-
+    bool mJER_bining = false;
     void fillEtaBins() {
 
       // official fine bin 
       fineEtaBin bin;
 
+      /*
+
+      bin.bin = std::make_pair(0., 0.522);
+      bin.name = "eta0005";
+      bin.title = "|#eta| < 0.52";  
+      mEtaBins.push_back(bin);
+      
+      
+      bin.bin = std::make_pair(0.522,0.783);
+      bin.name = "eta0508";
+      bin.title = "0.5 #leq |#eta| < 0.8";
+      mEtaBins.push_back(bin);
+
+      bin.bin = std::make_pair(0.783,1.131);
+      bin.name = "eta0811";
+      bin.title = "0.8 #leq |#eta| < 1.1";
+      mEtaBins.push_back(bin);
+
+      bin.bin = std::make_pair(1.131,1.305);
+      bin.name = "eta1113";
+      bin.title = "1.1 #leq |#eta| < 1.3";
+      mEtaBins.push_back(bin);
+
+      bin.bin = std::make_pair(1.305,1.740);
+      bin.name = "eta1317";
+      bin.title = "1.3 #leq |#eta| < 1.7";
+      mEtaBins.push_back(bin);
+
+      bin.bin = std::make_pair(1.740,2.043);
+      bin.name = "eta1720";
+      bin.title = "1.7 #leq |#eta| < 2.0";
+      mEtaBins.push_back(bin);
+          
+      bin.bin = std::make_pair(2.043,2.322);
+      bin.name = "eta2023";
+      bin.title = "2.0 #leq |#eta| < 2.3";
+      mEtaBins.push_back(bin);
+      
+      bin.bin = std::make_pair(2.322,2.853);
+      bin.name = "eta2329";
+      bin.title = "2.3 #leq |#eta| < 2.9";
+      mEtaBins.push_back(bin);
+      
+      
+      
+      bin.bin = std::make_pair(2.853,2.964);
+      bin.name = "eta2930";
+      bin.title = "2.9 #leq |#eta| < 3.0";
+      mEtaBins.push_back(bin);
+      
+      bin.bin = std::make_pair(2.964,5.191);
+      bin.name = "eta3051";
+      bin.title = "3.0 #leq |#eta| < 5.1";
+      mEtaBins.push_back(bin);
+     */
+     // if(mJER_bining){
+     
       bin.bin = std::make_pair(0., 0.261);
       bin.name = "eta0003";
       bin.title = "|#eta| < 0.26";  
@@ -152,6 +218,7 @@ class fineEtaBinning {
       bin.name = "eta3852";
       bin.title = "3.8 #leq |#eta| < 5.1";
       mEtaBins.push_back(bin);
+      
       
       
       

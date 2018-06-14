@@ -46,7 +46,7 @@ for iHLT in HLT_list:
 	
 	YourOutput="PUdataHLTphoton"+HLT_prefix_list[i_HLT]+Runsuffix
 	print("\tRunning brilcalc for"+HLT_prefix_list[i_HLT])
-	cmd1="brilcalc lumi -i "+Cert_json+" --hltpath "+iHLT+" --byls -o "+outputdirectory+"/"+YourOutput+".csv"
+	cmd1="brilcalc lumi -i "+Cert_json+" --hltpath "+iHLT+" --normtag /cvmfs/cms-bril.cern.ch/cms-lumi-pog/Normtags/normtag_PHYSICS.json --byls --minBiasXsec 69200 -o "+outputdirectory+"/"+YourOutput+".csv"
 	print(cmd1)
 	os.system(cmd1)
 	print("\tRunning pileupReCalc_HLTpaths.py for"+HLT_prefix_list[i_HLT])

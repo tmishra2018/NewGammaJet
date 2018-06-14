@@ -93,12 +93,28 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_DATAResoMPF_vs_pt->SetMarkerStyle(25);
   gr_DATAResoMPF_vs_pt->SetMarkerColor(kBlack);
   gr_DATAResoMPF_vs_pt->SetMarkerSize(1.5);
+  
+  TGraphErrors* gr_DATAReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetName("gr_DATAReso_vs_pt_PLI_not_sub");
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  
+  
   //MC
   TGraphErrors* gr_extrapReso_vs_pt = new TGraphErrors(0);
   gr_extrapReso_vs_pt->SetName("gr_extrapReso_vs_pt");
   gr_extrapReso_vs_pt->SetMarkerStyle(25);
   gr_extrapReso_vs_pt->SetMarkerColor(kBlack);
   gr_extrapReso_vs_pt->SetMarkerSize(1.5);
+  
+  TGraphErrors* gr_extrapReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetName("gr_extrapReso_vs_pt_PLI_not_sub");
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  
+  
   TGraphErrors* gr_extrapResoMPF_vs_pt = new TGraphErrors(0);
   gr_extrapResoMPF_vs_pt->SetName("gr_extrapResoMPF_vs_pt");
   gr_extrapResoMPF_vs_pt->SetMarkerStyle(25);
@@ -145,7 +161,37 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
+   /* x[0]=0.025;
+    x_err[0]=0.;
     
+    x[1]=0.075;
+    x_err[1]=0.0;
+    
+    x[2]=0.125;
+    x_err[2]=0.0;
+    
+    x[3]=0.175;
+    x_err[3]=0.0;
+    
+    x[4]=0.225;
+    x_err[4]=0.0;
+    
+    x[5]=0.275;
+    x_err[5]=0.0;*/
+    x[0]=0.1;
+    x_err[0]=0.0;
+    
+    x[1]=0.15;
+    x_err[1]=0.0;
+    
+    x[2]=0.2;
+    x_err[2]=0.0;
+    
+    x[3]=0.25;
+    x_err[3]=0.0;
+    
+    x[4]=0.3;
+    x_err[4]=0.0;
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -231,7 +277,9 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
     std::string fitFunct_name;
-    fitFunct_name = "[0] + x*[1]";
+   // fitFunct_name = "[0] + x*[1]";
+    
+    fitFunct_name = "[0] + x*[1] ";
 
 
     // MC Balancing
@@ -250,7 +298,8 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     fit_resp_DATA->SetLineWidth(1.);
     gr_resp_DATA->Fit(fit_resp_DATA, "RQ");
 
-    const std::string lineFunction = "[0] + [1]*x";
+    const std::string lineFunction = "[0] + x*[1] ";
+    //lineFunction = "[0] + x*[1] + x*x*[2]";
     // MC MPF
     TF1* fit_respMPF = new TF1("fit_respMPF", lineFunction.c_str());
     fit_respMPF->SetRange(0., xMax_fit);
@@ -660,7 +709,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   
   TGraphErrors* gr_reso_PLI = new TGraphErrors(nPoints, x, y_reso_PLI, x_err, y_reso_PLI_err);
   gr_reso_PLI->SetMarkerStyle(20);
-  gr_reso_PLI->SetMarkerColor(MC_color);
+  gr_reso_PLI->SetMarkerColor(8);
   gr_reso_PLI->SetLineColor(MC_color);
   // take out points with reso=0:
   for (int iPointDATA = 0; iPointDATA < gr_reso_PLI->GetN(); ++iPointDATA) {
@@ -669,13 +718,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     Double_t yerr = gr_reso_PLI->GetErrorY(iPointDATA);
     if (y < 0.00000001 || yerr == 0.00000000001) gr_reso_PLI->RemovePoint(iPointDATA);
   }
-  gr_reso_PLI->SetLineColor(MC_color);
+  gr_reso_PLI->SetLineColor(8);
   gr_reso_PLI->SetLineWidth(1.);
   
   TF1* fit_extrapToZero_sqrt_PLI = new TF1("fit_extrapToZero_sqrt_PLI", "[0] + [1]*x");
   fit_extrapToZero_sqrt_PLI->SetRange(0., xMax_fit);
   fit_extrapToZero_sqrt_PLI->SetParameter(0, 1.);
   fit_extrapToZero_sqrt_PLI->SetParameter(1, 0.);
+  fit_extrapToZero_sqrt_PLI->SetLineColor(8);
 
   gr_reso_PLI->Fit(fit_extrapToZero_sqrt_PLI, "RQ");
 
@@ -757,9 +807,10 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_reso_DATA->Fit(fit_extrapToZero_sqrt_DATA, "RQ");
 
   gr_DATAReso_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, std::sqrt(std::pow( fit_extrapToZero_sqrt_DATA->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2)));
-/*  
-  double errorextrapol_data =(0.5/(std::sqrt(std::pow(fit_extrapToZero_sqrt_DATA->GetParameter(0),2)-std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))* std::sqrt(std::pow( fabs((2*fit_extrapToZero_sqrt_DATA->GetParameter(0) - std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2 ))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt_DATA->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt_DATA->GetParError(0),2) + std::pow(fabs((std::pow(fit_extrapToZero_sqrt_DATA->GetParameter(0),2 ) - 2*fit_extrapToZero_sqrt_PLI->GetParameter(0))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt_DATA->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt_PLI->GetParError(0),2));
-  */
+  
+  gr_DATAReso_vs_pt_PLI_not_sub->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt_DATA->GetParameter(0));
+  gr_DATAReso_vs_pt_PLI_not_sub->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt_DATA->GetParError(0));
+
   
   double errorextrapol_data =(0.5/(std::sqrt(std::pow(fit_extrapToZero_sqrt_DATA->GetParameter(0),2)-std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*std::sqrt(std::pow(2.*fit_extrapToZero_sqrt_DATA->GetParameter(0)*fit_extrapToZero_sqrt_DATA->GetParError(0),2) + std::pow(2.*fit_extrapToZero_sqrt_PLI->GetParameter(0)*fit_extrapToZero_sqrt_PLI->GetParError(0),2));
   
@@ -767,9 +818,9 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_DATAReso_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, errorextrapol_data /*fit_extrapToZero_sqrt_DATA->GetParError(0)*/);
   
   gr_extrapReso_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin,   std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2)) );
- /* 
-  double errorextrapol_mc =(1./(std::sqrt(std::pow(fit_extrapToZero_sqrt->GetParameter(0),2)-std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2)))) * std::sqrt(std::pow( fabs((2*fit_extrapToZero_sqrt->GetParameter(0) - std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2 ))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt->GetParError(0),2) + std::pow(fabs((std::pow(fit_extrapToZero_sqrt->GetParameter(0),2 ) - 2*fit_extrapToZero_sqrt_PLI->GetParameter(0))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt_PLI->GetParError(0),2))  ;
- */
+  gr_extrapReso_vs_pt_PLI_not_sub->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt->GetParameter(0));
+  gr_extrapReso_vs_pt_PLI_not_sub->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt->GetParError(0));
+
  double errorextrapol_mc =(0.5/(std::sqrt(std::pow(fit_extrapToZero_sqrt->GetParameter(0),2)-std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*std::sqrt(std::pow(2.*fit_extrapToZero_sqrt->GetParameter(0)*fit_extrapToZero_sqrt->GetParError(0),2) + std::pow(2.*fit_extrapToZero_sqrt_PLI->GetParameter(0)*fit_extrapToZero_sqrt_PLI->GetParError(0),2)); 
   
   gr_extrapReso_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, /*fit_extrapToZero_sqrt->GetParError(0)*/errorextrapol_mc);
@@ -780,14 +831,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   std::cout<<"reso MC : "<<fit_extrapToZero_sqrt->GetParameter(0)<<" PLI : "<<fit_extrapToZero_sqrt_PLI->GetParameter(0)<<" resolution - PLI  MC : "<<std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2)) << " error : "<<errorextrapol_mc<<std::endl;
   std::cout<<"reso data : "<<fit_extrapToZero_sqrt_DATA->GetParameter(0)<<" PLI : "<<fit_extrapToZero_sqrt_PLI->GetParameter(0)<<" resolution - PLI  DATA : "<<std::sqrt(std::pow( fit_extrapToZero_sqrt_DATA->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))<< " error : "<<errorextrapol_data<<std::endl;
   // MPF
-  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA", "[0] + [1]*x", 0, xMax_fit);
+  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA", "[0] + [1]*x ", 0, xMax_fit);
   fit_reso_MPFDATA->SetLineColor(MC_color);
   fit_reso_MPFDATA->SetLineWidth(1.);
   //  fit_reso_MPFDATA->SetParameter(0, fit_reso_genMPF->GetParameter(0));
   fit_reso_MPFDATA->SetParameter(1, 0);
   gr_reso_MPFDATA->Fit(fit_reso_MPFDATA, "QR");
 
-  TF1* fit_reso_MPF = new TF1("fit_reso_MPF", "[0] + [1]*x", 0, xMax_fit);
+  TF1* fit_reso_MPF = new TF1("fit_reso_MPF", "[0] + [1]*x ", 0, xMax_fit);
   fit_reso_MPF->SetLineColor(MC_color);
   fit_reso_MPF->SetLineWidth(1.);
   //  fit_reso_MPF->SetParameter(0, fit_reso_genMPF->GetParameter(0));
@@ -825,6 +876,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   legend_reso->SetBorderSize(0);
   legend_reso->AddEntry(gr_reso_DATA, "Data", "PL");
   legend_reso->AddEntry(gr_reso_MC, "MC", "PL");
+  legend_reso->AddEntry(gr_reso_PLI, "PLI", "PL");
 
   TPaveText* label_reso = new TPaveText(0.25, 0.85, 0.47, 0.9, "brNDC");
   label_reso->SetFillColor(kWhite);
@@ -848,6 +900,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   label_algo->Draw("same");
   gr_reso_MC->Draw("Psame");
   gr_reso_DATA->Draw("Psame");
+  gr_reso_PLI->Draw("Psame");
 
   char canvasName_reso[500];
   sprintf(canvasName_reso, "%s/resolution%s_%s_ptPhot_%d_%d", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
@@ -1135,17 +1188,44 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_DATAReso_vs_pt->SetMarkerStyle(25);
   gr_DATAReso_vs_pt->SetMarkerColor(kBlack);
   gr_DATAReso_vs_pt->SetMarkerSize(1.5);
+  
+  TGraphErrors* gr_DATAkfr_vs_pt = new TGraphErrors(0);
+  gr_DATAkfr_vs_pt->SetName("gr_DATAkfr_vs_pt");
+  gr_DATAkfr_vs_pt->SetMarkerStyle(25);
+  gr_DATAkfr_vs_pt->SetMarkerColor(kBlack);
+  gr_DATAkfr_vs_pt->SetMarkerSize(1.5);
+  
+  TGraphErrors* gr_DATAReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetName("gr_DATAReso_vs_pt_PLI_not_sub");
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  
   TGraphErrors* gr_DATAResoMPF_vs_pt = new TGraphErrors(0);
   gr_DATAResoMPF_vs_pt->SetName("gr_DATAResoMPF_vs_pt");
   gr_DATAResoMPF_vs_pt->SetMarkerStyle(25);
   gr_DATAResoMPF_vs_pt->SetMarkerColor(kBlack);
   gr_DATAResoMPF_vs_pt->SetMarkerSize(1.5);
   //MC
+  TGraphErrors* gr_extrapkfr_vs_pt = new TGraphErrors(0);
+  gr_extrapkfr_vs_pt->SetName("gr_extrapkfr_vs_pt");
+  gr_extrapkfr_vs_pt->SetMarkerStyle(25);
+  gr_extrapkfr_vs_pt->SetMarkerColor(kBlack);
+  gr_extrapkfr_vs_pt->SetMarkerSize(1.5);
+  
   TGraphErrors* gr_extrapReso_vs_pt = new TGraphErrors(0);
   gr_extrapReso_vs_pt->SetName("gr_extrapReso_vs_pt");
   gr_extrapReso_vs_pt->SetMarkerStyle(25);
   gr_extrapReso_vs_pt->SetMarkerColor(kBlack);
   gr_extrapReso_vs_pt->SetMarkerSize(1.5);
+  
+  TGraphErrors* gr_extrapReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetName("gr_extrapReso_vs_pt_PLI_not_sub");
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  
+  
   TGraphErrors* gr_extrapResoMPF_vs_pt = new TGraphErrors(0);
   gr_extrapResoMPF_vs_pt->SetName("gr_extrapResoMPF_vs_pt");
   gr_extrapResoMPF_vs_pt->SetMarkerStyle(25);
@@ -1192,7 +1272,57 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
+   /* x[0]=0.025;
+    x_err[0]=0.;
     
+    x[1]=0.075;
+    x_err[1]=0.0;
+    
+    x[2]=0.125;
+    x_err[2]=0.0;
+    
+    x[3]=0.175;
+    x_err[3]=0.0;
+    
+    x[4]=0.225;
+    x_err[4]=0.0;
+    
+    x[5]=0.275;
+    x_err[5]=0.0;*/
+    /*
+    x[0]=0.0;
+    x_err[0]=0.;
+    
+    x[1]=0.1;
+    x_err[1]=0.0;
+    
+    x[2]=0.15;
+    x_err[2]=0.0;
+    
+    x[3]=0.2;
+    x_err[3]=0.0;
+    
+    x[4]=0.25;
+    x_err[4]=0.0;
+    
+    x[5]=0.3;
+    x_err[5]=0.0;
+    */
+    
+    x[0]=0.1;
+    x_err[0]=0.0;
+    
+    x[1]=0.15;
+    x_err[1]=0.0;
+    
+    x[2]=0.2;
+    x_err[2]=0.0;
+    
+    x[3]=0.25;
+    x_err[3]=0.0;
+    
+    x[4]=0.3;
+    x_err[4]=0.0;
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -1278,7 +1408,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
     std::string fitFunct_name;
-    fitFunct_name = "[0] + x*[1]";
+    fitFunct_name = "[0] + x*[1] ";//"sqrt(pow([0],2)  + x*x*pow([1],2))";
 
 
     // MC Balancing
@@ -1288,6 +1418,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     fit_resp->SetLineColor(MC_color);
     fit_resp->SetLineStyle(2);
     fit_resp->SetLineWidth(1.);
+    fit_resp->SetParameter(0,1.);
     gr_resp_MC->Fit(fit_resp, "RQ");
 
     // DATA Balancing
@@ -1295,9 +1426,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     fit_resp_DATA->SetRange(0., xMax_fit);
     fit_resp_DATA->SetLineColor(MC_color);
     fit_resp_DATA->SetLineWidth(1.);
+    fit_resp_DATA->SetParameter(0,1.);
     gr_resp_DATA->Fit(fit_resp_DATA, "RQ");
 
-    const std::string lineFunction = "[0] + [1]*x";
+    const std::string lineFunction = "[0] + x*[1] ";//"sqrt(pow([0],2)  + x*x*pow([1],2))";
     // MC MPF
     TF1* fit_respMPF = new TF1("fit_respMPF", lineFunction.c_str());
     fit_respMPF->SetRange(0., xMax_fit);
@@ -1306,6 +1438,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     fit_respMPF->SetLineColor(MC_color);
     fit_respMPF->SetLineStyle(2);
     fit_respMPF->SetLineWidth(1.);
+    fit_respMPF->SetParameter(0,1.);
     gr_resp_MPF->Fit(fit_respMPF, "RQ");
      
     // DATA MPF
@@ -1315,9 +1448,11 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     fit_resp_MPFDATA->SetParameter(1, 0);
     fit_resp_MPFDATA->SetLineColor(MC_color);
     fit_resp_MPFDATA->SetLineWidth(1.);
+    fit_resp_MPFDATA->SetParameter(0,1.);
     gr_resp_MPFDATA->Fit(fit_resp_MPFDATA, "RQ");
     
     //PLI 
+    const std::string lineFunction_PLI = "[0] + x*[1] ";//"sqrt(pow([0],2)  + x*x*pow([1],2))";
     
     TF1* fit_PLI = new TF1("fit_PLI", lineFunction.c_str());
     fit_PLI->SetRange(0., xMax_fit);
@@ -1325,6 +1460,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     fit_PLI->SetParameter(1, 0);
     fit_PLI->SetLineColor(MC_color);
     fit_PLI->SetLineWidth(1.);
+    fit_PLI->SetParameter(0,1.);
     gr_PLI->Fit(fit_PLI, "RQ");
     
    
@@ -1356,8 +1492,15 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
    //pli graph
     if (fit_PLI->GetParameter(0) > 0) {
       std::cout<< "PLI: " <<  fit_PLI->GetParameter(0)<< std::endl;
+      if(fit_PLI->GetParameter(0) > 0){
       gr_extrapPLI_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_PLI->GetParameter(0));
       gr_extrapPLI_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_PLI->GetParError(0));
+      }else{
+      gr_extrapPLI_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, 0.);
+      gr_extrapPLI_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, 0.);
+      
+      }
+      
     }
     
 
@@ -1707,8 +1850,9 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   
   TGraphErrors* gr_reso_PLI = new TGraphErrors(nPoints, x, y_reso_PLI, x_err, y_reso_PLI_err);
   gr_reso_PLI->SetMarkerStyle(20);
-  gr_reso_PLI->SetMarkerColor(MC_color);
-  gr_reso_PLI->SetLineColor(MC_color);
+  gr_reso_PLI->SetMarkerColor(8);
+  gr_reso_PLI->SetLineColor(8);
+  gr_reso_PLI->SetMarkerSize(markerSize);
   // take out points with reso=0:
   for (int iPointDATA = 0; iPointDATA < gr_reso_PLI->GetN(); ++iPointDATA) {
     Double_t x, y;
@@ -1716,24 +1860,30 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     Double_t yerr = gr_reso_PLI->GetErrorY(iPointDATA);
     if (y < 0.00000001 || yerr == 0.00000000001) gr_reso_PLI->RemovePoint(iPointDATA);
   }
-  gr_reso_PLI->SetLineColor(MC_color);
+  gr_reso_PLI->SetLineColor(8);
   gr_reso_PLI->SetLineWidth(1.);
   
-  TF1* fit_extrapToZero_sqrt_PLI = new TF1("fit_extrapToZero_sqrt_PLI", "[0] + [1]*x");
+  TF1* fit_extrapToZero_sqrt_PLI = new TF1("fit_extrapToZero_sqrt_PLI", "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/);
   fit_extrapToZero_sqrt_PLI->SetRange(0., xMax_fit);
   fit_extrapToZero_sqrt_PLI->SetParameter(0, 1.);
-  fit_extrapToZero_sqrt_PLI->SetParameter(1, 0.);
+ // fit_extrapToZero_sqrt_PLI->SetParameter(1, 0.);
+  fit_extrapToZero_sqrt_PLI->SetLineColor(8);
 
   gr_reso_PLI->Fit(fit_extrapToZero_sqrt_PLI, "RQ");
 
   if (EXCLUDE_FIRST_POINT_) {
     gr_reso_PLI->RemovePoint(0);
   }
-  
+  if(fit_extrapToZero_sqrt_PLI->GetParameter(0) > 0){
   gr_extrapPLIreso_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin,  fit_extrapToZero_sqrt_PLI->GetParameter(0));
   gr_extrapPLIreso_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt_PLI->GetParError(0));
+  }else{
   
+    gr_extrapPLIreso_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin,  0.);
+    gr_extrapPLIreso_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, 0.);
   
+  }
+ 
 
   TGraphErrors* gr_reso_DATA = new TGraphErrors(nPoints, x, y_reso_DATA, x_err, y_reso_err_DATA);
   gr_reso_DATA->SetMarkerStyle(20);
@@ -1780,10 +1930,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   //  fit_extrapToZero_sqrt->FixParameter(1, q);
   //  fit_extrapToZero_sqrt->SetParameter(2, m);
   
-  TF1* fit_extrapToZero_sqrt = new TF1("fit_extrapToZero_sqrt", "[0] + [1]*x");
+  TF1* fit_extrapToZero_sqrt = new TF1("fit_extrapToZero_sqrt",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/);
   fit_extrapToZero_sqrt->SetRange(0., xMax_fit);
   fit_extrapToZero_sqrt->SetParameter(0, 1.);
-  fit_extrapToZero_sqrt->SetParameter(1, 0.);
+ // fit_extrapToZero_sqrt->SetParameter(1, 0.);
  // fit_extrapToZero_sqrt->SetLineColor(MC_color);
  // fit_extrapToZero_sqrt->SetLineWidth(1.);
   
@@ -1814,6 +1964,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_DATAReso_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, errorextrapol_data /*fit_extrapToZero_sqrt_DATA->GetParError(0)*/);
   
   gr_extrapReso_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin,   std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2)) );
+  
+  
+  gr_DATAReso_vs_pt_PLI_not_sub->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt_DATA->GetParameter(1));
+  gr_DATAReso_vs_pt_PLI_not_sub->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt_DATA->GetParError(0));
  /* 
   double errorextrapol_mc =(1./(std::sqrt(std::pow(fit_extrapToZero_sqrt->GetParameter(0),2)-std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2)))) * std::sqrt(std::pow( fabs((2*fit_extrapToZero_sqrt->GetParameter(0) - std::pow(fit_extrapToZero_sqrt_PLI->GetParameter(0),2 ))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt->GetParError(0),2) + std::pow(fabs((std::pow(fit_extrapToZero_sqrt->GetParameter(0),2 ) - 2*fit_extrapToZero_sqrt_PLI->GetParameter(0))*(1/std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))))*fit_extrapToZero_sqrt_PLI->GetParError(0),2))  ;
  */
@@ -1823,22 +1977,30 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   //extrapReso = sqrt(fit_extrapToZero_sqrt->GetParameter(0));
   //extrapReso_err = ( 1. / (2.*sqrt(extrapReso)) * fit_extrapToZero_sqrt->GetParError(0)); //error propag
   
+   gr_extrapReso_vs_pt_PLI_not_sub->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt->GetParameter(0));
+   gr_extrapReso_vs_pt_PLI_not_sub->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt->GetParError(0));
   
   std::cout<<"reso MC : "<<fit_extrapToZero_sqrt->GetParameter(0)<<" PLI : "<<fit_extrapToZero_sqrt_PLI->GetParameter(0)<<" resolution - PLI  MC : "<<std::sqrt(std::pow( fit_extrapToZero_sqrt->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2)) << " error : "<<errorextrapol_mc<<std::endl;
   std::cout<<"reso data : "<<fit_extrapToZero_sqrt_DATA->GetParameter(0)<<" PLI : "<<fit_extrapToZero_sqrt_PLI->GetParameter(0)<<" resolution - PLI  DATA : "<<std::sqrt(std::pow( fit_extrapToZero_sqrt_DATA->GetParameter(0),2) - std::pow(  fit_extrapToZero_sqrt_PLI->GetParameter(0),2))<< " error : "<<errorextrapol_data<<std::endl;
+  //kfr vs pt 
+  gr_DATAkfr_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt_DATA->GetParameter(1));
+  gr_DATAkfr_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt_DATA->GetParError(1));
+  
+  gr_extrapkfr_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt->GetParameter(1));
+  gr_extrapkfr_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt->GetParError(1));
   // MPF
-  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA", "[0] + [1]*x", 0, xMax_fit);
+  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/, 0, xMax_fit);
   fit_reso_MPFDATA->SetLineColor(MC_color);
   fit_reso_MPFDATA->SetLineWidth(1.);
   //  fit_reso_MPFDATA->SetParameter(0, fit_reso_genMPF->GetParameter(0));
-  fit_reso_MPFDATA->SetParameter(1, 0);
+  fit_reso_MPFDATA->SetParameter(0, 1);
   gr_reso_MPFDATA->Fit(fit_reso_MPFDATA, "QR");
 
-  TF1* fit_reso_MPF = new TF1("fit_reso_MPF", "[0] + [1]*x", 0, xMax_fit);
+  TF1* fit_reso_MPF = new TF1("fit_reso_MPF",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/, 0, xMax_fit);
   fit_reso_MPF->SetLineColor(MC_color);
   fit_reso_MPF->SetLineWidth(1.);
   //  fit_reso_MPF->SetParameter(0, fit_reso_genMPF->GetParameter(0));
-  fit_reso_MPF->SetParameter(1, 0);
+  fit_reso_MPF->SetParameter(0, 1);
   gr_reso_MPF->Fit(fit_reso_MPF, "QR");
 
   gr_DATAResoMPF_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_reso_MPFDATA->GetParameter(0));
@@ -1872,6 +2034,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   legend_reso->SetBorderSize(0);
   legend_reso->AddEntry(gr_reso_DATA, "Data", "PL");
   legend_reso->AddEntry(gr_reso_MC, "MC", "PL");
+  legend_reso->AddEntry(gr_reso_PLI, "PLI", "PL");
 
   TPaveText* label_reso = new TPaveText(0.25, 0.85, 0.47, 0.9, "brNDC");
   label_reso->SetFillColor(kWhite);
@@ -1895,6 +2058,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   label_algo->Draw("same");
   gr_reso_MC->Draw("Psame");
   gr_reso_DATA->Draw("Psame");
+  gr_reso_PLI->Draw("Psame");
 
   char canvasName_reso[500];
   sprintf(canvasName_reso, "%s/resolution%s_%s_ptPhot_%d_%d", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
@@ -2104,6 +2268,8 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_RatioReso_vs_pt->Write();
   gr_extrapPLIreso_vs_pt->Write();
   gr_extrapPLI_vs_pt->Write();
+  gr_DATAkfr_vs_pt->Write();
+  gr_extrapkfr_vs_pt->Write();
   
   
   graphFile->Close();

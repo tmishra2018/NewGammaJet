@@ -48,7 +48,7 @@ void saveCanvas(TCanvas* canvas, const std::string& name) {
 }
 
 
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile  , double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning);
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile  , double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning, bool isresolution);
 void draw_scalefactorVsEta( drawBase* db, double sfMC[], double sfDATA[], double sfMCerr[], double sfDATAerr[], int Npoint, TFile* outputFile);
 
 int main(int argc, char* argv[]) {
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
   // MC should already be normalized to a lumi of 1 pb-1
     TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-    db->set_lumi(1./*lumi->GetVal()*/);
+    db->set_lumi(lumi->GetVal());
     db->set_lumiNormalization();
 
   double alpha_cut = static_cast<TParameter<double>*>(dataFile->Get("analysis/alpha_cut"))->GetVal();
@@ -166,8 +166,8 @@ int main(int argc, char* argv[]) {
     std::string etaBin = etaBinning.getBinName(i);
     std::string etaBinTitle = etaBinning.getBinTitle(i);
 
-    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false); //bool for raw study
-    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false);
+    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false, false); //bool for raw study
+    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_data[i],SF_MC[i], SF_dataerr[i], SF_MCerr[i], false,true);
   }
   
   
@@ -175,20 +175,20 @@ int main(int argc, char* argv[]) {
 
   //special case
   std::string etaBinTitle = "|#eta| #leq 1.3";
-  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
-  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false);
+  draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false, false);
+  draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output, SF_dataspe, SF_MCspe, SF_dataerrspe, SF_MCerrspe, false, true);
   draw_scalefactorVsEta(  db, SF_MC, SF_data, SF_MCerr, SF_dataerr, s,output);
-  /*
+  
   
   for (size_t i = 0; i < sfine; i++) { //fixing 
     std::string etaBin = fineetaBinning.getBinName(i);
     std::string etaBinTitle = fineetaBinning.getBinTitle(i);
 
-    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true); //bool for raw study
-    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true);
+    draw_vs_pt_plots("response",   etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true, false); //bool for raw study
+    draw_vs_pt_plots("resolution", etaBin, etaBinTitle, fit_rms, db, false, alphaCut, output, SF_datafine[i],SF_MCfine[i], SF_dataerrfine[i], SF_MCerrfine[i],true, true);
   }
     draw_scalefactorVsEta(  db, SF_MCfine, SF_datafine, SF_MCerrfine, SF_dataerrfine, sfine,output);
-  */
+  
   output->Close();
   output_raw->Close();
 
@@ -415,15 +415,295 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
 
 
 
+void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix) {
+
+  std::string name_base = db->get_outputdir();
+  name_base += "/" + prefix;
+
+
+  if (etaRegion != "")
+    name_base += "_" + etaRegion;
+
+  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+  c1->cd();
+
+  // Data / MC comparison
+  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  pad_hi->Draw();
+  pad_hi->SetLogx();
+  pad_hi->SetLeftMargin(0.12);
+  pad_hi->cd();
+  bool isResponse = prefix == "response";
+
+  double lowPadY1 = isResponse ? 0.86 : 0.6;
+  double lowPadY2 = isResponse ? 1.14 : 1.4;
+
+  
+  
+
+  float factor = isResponse ? 0.05 : 0.2;
+
+
+   
+  ratio->SetName("response_ratio");
+  ratio->SetMarkerStyle(20);
+  ratio->SetMarkerSize(1.5);
+  ratio->SetMarkerColor(BALANCING);
+  ratio->SetLineColor(BALANCING);
+  std::cout<<" N point for JER SF "<<ratio->GetN()<<std::endl;
+  TF1* ratioFit = new TF1("ratioFit", "pol0", xMin, xMax);
+  ratioFit->SetParameter(0, 1.);
+  ratioFit->SetLineColor(TColor::GetColor("#C02942"));
+  ratioFit->SetLineWidth(1.0);
+  ratio->Fit(ratioFit, "RQNF EX0");
+
+  TH1D* errors = new TH1D("errors", "errors", xMax - xMin, xMin, xMax);
+  //std::cout<<" value of the fit for debugging : "<<ratioFit->GetParameter(0)<<" error : "<<ratioFit->GetParError(0)<<std::endl;
+  if(ratioFit->GetParError(0) != 0. ) (TVirtualFitter::GetFitter())->GetConfidenceIntervals(errors, 0.68);
+  errors->SetStats(false);
+  //errors->SetFillColor(TColor::GetColor("#556270"));
+  errors->SetFillColor(TColor::GetColor("#ECD078"));
+  errors->SetFillStyle(1001);
+
+  double fitValue = ratioFit->GetParameter(0);
+  double fitError = ratioFit->GetParError(0);
+
+  //  TString str = TString::Format("Fit: [0] =\\num{%.4f \\pm %.4f} & \\num{%.4f \\pm %.4f}", fitValue, fitError, 1. / fitValue, 1. / fitValue * fitError / fitValue);
+  TString str = TString::Format("Fit: [0] = %.4f #pm %.4f", fitValue, fitError);
+  std::cout << str << std::endl;
+
+  float height = 0.81 - 0.77;
+  float labelYPos = isResponse ? 0.77 : 0.37;
+
+  TPaveText* fitlabel = new TPaveText(0.43, labelYPos, 0.78, labelYPos + height, "brNDC");
+  fitlabel->SetTextSize(0.08);
+  fitlabel->SetFillColor(0);
+  fitlabel->SetTextFont(42);
+  //TString fitLabelText = TString::Format("#font[42]{Fit: %.4f #pm %.4f + (%.2e #pm %.2e)x}", fitValue, fitError, ratioFit->GetParameter(1), ratioFit->GetParError(1));
+  TString fitLabelText = TString::Format("Fit: %.4f #pm %.4f", fitValue, fitError);
+  fitlabel->AddText(fitLabelText);
+  
+  
+  TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 100, xMin, xMax, 100, 0., 2.);
+
+  h2_axes_lo_resp->SetXTitle("Photon p_{T} [GeV/c]");
+  h2_axes_lo_resp->SetYTitle("Data / MC ");
+  h2_axes_lo_resp->GetXaxis()->SetTitleOffset(1.);
+  h2_axes_lo_resp->GetYaxis()->SetTitleOffset(0.8);
+  h2_axes_lo_resp->GetXaxis()->SetTickLength(0.06);
+  h2_axes_lo_resp->GetXaxis()->SetMoreLogLabels();
+ // h2_axes_lo_resp->GetXaxis()->SetLabelSize(0.08);
+ // h2_axes_lo_resp->GetYaxis()->SetLabelSize(0.07);
+  h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.05);
+//  h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
+  h2_axes_lo_resp->GetYaxis()->SetNdivisions(13,true);
+  h2_axes_lo_resp->GetYaxis()->SetTitleOffset(1.2);
+  h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.045);
+  h2_axes_lo_resp->GetXaxis()->SetNoExponent();  
+
+  
+  h2_axes_lo_resp->Draw();
+  ratio->Draw("P same");
+  errors->Draw("e3 same");
+  ratioFit->Draw("same");
+  fitlabel->Draw("same");
+  ratio->Draw("P same");
+
+  gPad->RedrawAxis();
+
+  
+
+ 
+
+  //float labelTextSize = 0.035;
+  TPaveText* label_algo = db->get_labelAlgo(2);
+
+  float legendY1 = 0.15;
+  float legendY2 = 0.38;
+
+  if (prefix == "resolution") {
+    legendY1 = 0.60;
+    legendY2 = 0.83;
+  }
+
+  TLegend* legend = new TLegend(0.50, legendY1, 0.90, legendY2, legendTitle.c_str());
+  legend->SetFillColor(kWhite);
+  legend->SetBorderSize(0);
+  legend->SetFillStyle(0);
+  legend->SetTextSize(0.038);
+  legend->SetTextFont(42);
+
+  TString label = TString::Format("%s (data)", methodName.c_str());
+
+  label = TString::Format("%s (MC)", methodName.c_str());
+
+  float cmsTextSize = 0.043;
+  TPaveText* label_cms = db->get_labelCMS(1);
+  label_cms->SetTextSize(cmsTextSize);
+
+  TPaveText* label_sqrt = db->get_labelSqrt(1);
+  legend->Draw("same");
+  label_cms->Draw("same");
+  label_sqrt->Draw("same");
+  label_algo->Draw("same");
+
+
+  
+
+  gPad->RedrawAxis();
+
+  name_base += "_" + suffix;
+  name_base += "JERSF_vspt_";
+  saveCanvas(c1, name_base);
+
+  delete c1;
+  delete h2_axes_lo_resp;
+  delete ratioFit;
+  delete errors;
+  delete fitlabel;
+  delete label_algo;
+  delete legend;
+  delete label_cms;
+  delete label_sqrt;
+}
+
+
+void drawGraphsextrap(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix) {
+
+  std::string name_base = db->get_outputdir();
+  name_base += "/" + prefix;
+
+
+  if (etaRegion != "")
+    name_base += "_" + etaRegion;
+
+  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+  c1->cd();
+
+  // Data / MC comparison
+  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  pad_hi->Draw();
+  pad_hi->SetLogx();
+  pad_hi->SetLeftMargin(0.12);
+  pad_hi->cd();
+  bool isResponse = prefix == "response";
+
+  double lowPadY1 = isResponse ? 0.86 : 0.6;
+  double lowPadY2 = isResponse ? 1.14 : 1.4;
+
+  
+  
+
+  float factor = isResponse ? 0.05 : 0.2;
+
+
+   
+  ratio->SetName("response_ratio");
+  ratio->SetMarkerStyle(20);
+  ratio->SetMarkerSize(1.5);
+  ratio->SetMarkerColor(BALANCING);
+  ratio->SetLineColor(BALANCING);
+  std::cout<<" N point for JER SF "<<ratio->GetN()<<std::endl;
+  
+
+  
+
+  
+
+  //  TString str = TString::Format("Fit: [0] =\\num{%.4f \\pm %.4f} & \\num{%.4f \\pm %.4f}", fitValue, fitError, 1. / fitValue, 1. / fitValue * fitError / fitValue);
+
+
+
+  float height = 0.81 - 0.77;
+  float labelYPos = isResponse ? 0.77 : 0.37;
+
+  
+  
+  
+  TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 100, xMin, xMax, 100, 0., 2.);
+
+  h2_axes_lo_resp->SetXTitle("Photon p_{T} [GeV/c]");
+  h2_axes_lo_resp->SetYTitle("Kfsr ");
+  h2_axes_lo_resp->GetXaxis()->SetTitleOffset(1.);
+  h2_axes_lo_resp->GetYaxis()->SetTitleOffset(0.8);
+  h2_axes_lo_resp->GetXaxis()->SetTickLength(0.06);
+  h2_axes_lo_resp->GetXaxis()->SetMoreLogLabels();
+ // h2_axes_lo_resp->GetXaxis()->SetLabelSize(0.08);
+ // h2_axes_lo_resp->GetYaxis()->SetLabelSize(0.07);
+  h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.05);
+//  h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
+  h2_axes_lo_resp->GetYaxis()->SetNdivisions(13,true);
+  h2_axes_lo_resp->GetYaxis()->SetTitleOffset(1.2);
+  h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.045);
+  h2_axes_lo_resp->GetXaxis()->SetNoExponent();  
+
+  
+  h2_axes_lo_resp->Draw();
+  ratio->Draw("P same");
+
+  ratio->Draw("P same");
+
+  gPad->RedrawAxis();
+
+  
+
+ 
+
+  //float labelTextSize = 0.035;
+  TPaveText* label_algo = db->get_labelAlgo(2);
+
+  float legendY1 = 0.15;
+  float legendY2 = 0.38;
+
+  if (prefix == "resolution") {
+    legendY1 = 0.60;
+    legendY2 = 0.83;
+  }
+
+  TLegend* legend = new TLegend(0.50, legendY1, 0.90, legendY2, legendTitle.c_str());
+  legend->SetFillColor(kWhite);
+  legend->SetBorderSize(0);
+  legend->SetFillStyle(0);
+  legend->SetTextSize(0.038);
+  legend->SetTextFont(42);
+
+  TString label = TString::Format("%s (data)", methodName.c_str());
+
+  label = TString::Format("%s (MC)", methodName.c_str());
+
+  float cmsTextSize = 0.043;
+  TPaveText* label_cms = db->get_labelCMS(1);
+  label_cms->SetTextSize(cmsTextSize);
+
+  TPaveText* label_sqrt = db->get_labelSqrt(1);
+  legend->Draw("same");
+  label_cms->Draw("same");
+  label_sqrt->Draw("same");
+  label_algo->Draw("same");
+
+
+  
+
+  gPad->RedrawAxis();
+
+  name_base += "_" + suffix;
+  name_base += "KFSR_vspt";
+  saveCanvas(c1, name_base);
+
+  delete c1;
+  delete h2_axes_lo_resp;
+
+
+  delete label_algo;
+  delete legend;
+  delete label_cms;
+  delete label_sqrt;
+}
 
 
 
 
-
-
-
-
-void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile, double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning) {
+void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion, const std::string& etaRegion_str, const std::string& FIT_RMS, drawBase* db, bool rawJets, const std::string& alphaCut, TFile* outputFile, double & sf_data, double & sf_mc,  double & sf_dataerr,  double & sf_mcerr, bool isfinebinning, bool isresolution) {
 
   //  std::string output = db->get_outputdir();
   //  TFile * outputFile = TFile::Open(TString::Format("%s/plots.root", output.c_str()).Data(), "update");
@@ -457,6 +737,24 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   else if (etaRegion == "eta3135") fullEtaRegion = "eta31_35";
   else if (etaRegion == "eta3538") fullEtaRegion = "eta35_38";
   else if (etaRegion == "eta3852") fullEtaRegion = "eta38_52";
+  
+  else if (etaRegion == "eta0005") fullEtaRegion = "eta00_05";
+  else if (etaRegion == "eta0508") fullEtaRegion = "eta05_08";
+  else if (etaRegion == "eta0811") fullEtaRegion = "eta08_11";
+  else if (etaRegion == "eta1113") fullEtaRegion = "eta11_13";
+  else if (etaRegion == "eta1317") fullEtaRegion = "eta13_17";
+  else if (etaRegion == "eta1719") fullEtaRegion = "eta17_19";
+  else if (etaRegion == "eta1920") fullEtaRegion = "eta19_20";
+  else if (etaRegion == "eta2023") fullEtaRegion = "eta20_23";
+  else if (etaRegion == "eta2325") fullEtaRegion = "eta23_25";
+  else if (etaRegion == "eta2529") fullEtaRegion = "eta25_29";
+  else if (etaRegion == "eta2930") fullEtaRegion = "eta29_30";
+  else if (etaRegion == "eta3031") fullEtaRegion = "eta30_31";
+  else if (etaRegion == "eta3152") fullEtaRegion = "eta31_52";
+  
+  else if (etaRegion == "eta3051") fullEtaRegion = "eta30_51";
+  else if (etaRegion == "eta2329") fullEtaRegion = "eta23_29";
+  else if (etaRegion == "eta1720") fullEtaRegion = "eta17_20";  
   else fullEtaRegion = "eta_unknown";
 
   if (resp_reso != "response" && resp_reso != "resolution") {
@@ -608,8 +906,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   std::string responseEXTRAP_name = "gr_DATA" + resp_reso_short + "_vs_pt";
   
   
-    
-    
+  
   TGraphErrors* gr_responseEXTRAP_vs_pt = (TGraphErrors*)file_extrap->Get(responseEXTRAP_name.c_str());
   gr_responseEXTRAP_vs_pt->SetMarkerStyle(22);
   gr_responseEXTRAP_vs_pt->SetMarkerSize(markerSize);
@@ -620,6 +917,38 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   //  gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove second point also
 
   std::string responseEXTRAPMC_name = "gr_extrap" + resp_reso_short + "_vs_pt";
+    
+  TGraphErrors* gr_responseKFSR_vs_pt = new TGraphErrors(0);
+  if(isfinebinning && isresolution){
+  gr_responseKFSR_vs_pt = (TGraphErrors*)file_extrap->Get("gr_DATAkfr_vs_pt");
+  gr_responseKFSR_vs_pt->SetMarkerStyle(22);
+  gr_responseKFSR_vs_pt->SetMarkerSize(markerSize);
+  gr_responseKFSR_vs_pt->SetMarkerColor(46);
+  gr_responseKFSR_vs_pt->SetName(TString::Format("%s_PtBalchs_KFSR_DATA_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_responseKFSR_vs_pt->SetTitle(TString::Format("%s_PtBalchs_KFSR_DATA_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  }
+  
+  TGraphErrors* gr_MC_responseKFSR_vs_pt = new TGraphErrors(0);
+  if(isfinebinning && isresolution){
+  gr_MC_responseKFSR_vs_pt = (TGraphErrors*)file_extrap->Get("gr_extrapkfr_vs_pt");
+  gr_MC_responseKFSR_vs_pt->SetMarkerStyle(22);
+  gr_MC_responseKFSR_vs_pt->SetMarkerSize(markerSize);
+  gr_MC_responseKFSR_vs_pt->SetMarkerColor(46);
+  gr_MC_responseKFSR_vs_pt->SetName(TString::Format("%s_PtBalchs_KFSR_MC_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  gr_MC_responseKFSR_vs_pt->SetTitle(TString::Format("%s_PtBalchs_KFSR_MC_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  }
+  
+  TGraphErrors* gr_EXTRAP_vs_pt = (TGraphErrors*)file_extrap->Get(responseEXTRAP_name.c_str());
+  gr_EXTRAP_vs_pt->SetMarkerStyle(22);
+  gr_EXTRAP_vs_pt->SetMarkerSize(markerSize);
+  gr_EXTRAP_vs_pt->SetMarkerColor(46);
+  gr_EXTRAP_vs_pt->SetName(TString::Format("%s_PtBalchs_KFSR_a%s_%s", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
+  
+  //
+  //  gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove first point (cant extrapolate at such low pt)
+  //  gr_responseEXTRAP_vs_pt->RemovePoint(0); //remove second point also
+
+  //std::string responseEXTRAPMC_name = "gr_extrap" + resp_reso_short + "_vs_pt";
 
    /* TF1* reso_mc_Fit = new TF1("reso_mc", "[0]", 40., 3000.);
     reso_mc_Fit->SetParameter(1,0.);
@@ -754,6 +1083,11 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     H_count_vs_pt_mpf->Write();
     H_count_vs_pt->Write();
     H_countMC_vs_pt->Write();
+    
+    }
+    if(isfinebinning && isresolution){
+      gr_responseKFSR_vs_pt    -> Write();
+      gr_MC_responseKFSR_vs_pt -> Write();
     }
   }
   
@@ -762,7 +1096,10 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   drawGraphs(gr_responseEXTRAP_vs_pt, gr_responseEXTRAPMC_vs_pt, xMin, xMax, "p_{T} Balance extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_extrap", rawJets);
   drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
   //  drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
-
+  drawGraphsratio(gr_dataMC_EXTRAP, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso_extrap");
+ if(isresolution) drawGraphsratio(gr_dataMC_BALANCING, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso"); 
+ if(isfinebinning && isresolution){ drawGraphsextrap(gr_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_data");}
+ if(isfinebinning && isresolution){ drawGraphsextrap(gr_MC_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_MC");}
   file_noextrap->Close();
   file_extrap->Close();
 }
@@ -852,7 +1189,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   gr_sf->SetMarkerStyle(34);
   gr_sf->SetMarkerColor(kBlue);
   
-  gr_sf->SetName("   ");
+  gr_sf->SetName(graph_name.c_str());
   gr_sf->GetXaxis()->SetTitle("#eta");
   gr_sf->GetYaxis()->SetTitle("Resolution Scale Factor");
   

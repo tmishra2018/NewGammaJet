@@ -72,6 +72,13 @@ int main(int argc, char* argv[]) {
 	TH1F *hbFrac[etaBinningSize];
 	TH1F *hgluFrac[etaBinningSize];
 	TH1F *hundefFrac[etaBinningSize];
+	
+	TH1F *hudFrac_0013;
+	TH1F *hsFrac_0013;
+	TH1F *hcFrac_0013;
+	TH1F *hbFrac_0013;
+	TH1F *hgluFrac_0013;
+	TH1F *hundefFrac_0013;
 
 	for(size_t j = 0; j<ptBinningSize; j++) {
 		currentBin = ptBinning.getBinValue(j);
@@ -150,28 +157,83 @@ int main(int argc, char* argv[]) {
                         hundefFrac[i]->SetBinError(j+1,undeffractionerr);
 
 		}//loop on pt bins
+		
+		//eta 0013 
+		
+		histoName = TString::Format("flavFraction_ud_a%s_%s",  alphaCut.c_str(), "eta0013");
+		hudFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+		histoName = TString::Format("flavFraction_s_a%s_%s", alphaCut.c_str(), "eta0013");
+		hsFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+		histoName = TString::Format("flavFraction_c_a%s_%s", alphaCut.c_str(), "eta0013");
+		hcFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+		histoName = TString::Format("flavFraction_b_a%s_%s", alphaCut.c_str(), "eta0013");
+		hbFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+		histoName = TString::Format("flavFraction_glu_a%s_%s", alphaCut.c_str(), "eta0013");
+		hgluFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+		histoName = TString::Format("flavFraction_Undefined_a%s_%s", alphaCut.c_str(), "eta0013");
+		hundefFrac_0013 = new TH1F(histoName,histoName,ptBinningSize,ptphot_bins);
+
+		for(size_t j = 0; j<ptBinningSize; j++) {
+                histoName_tmp=TString::Format("fSumEntries_%s", etaBinning.getBinName(i).c_str());
+			currentBin = ptBinning.getBinValue(j);
+			histoName_tmp.Append(TString::Format("_ptPhot_%i",int(currentBin.first)));
+			histoName_tmp.Append(TString::Format("_%i", int(currentBin.second)));
+			h_tmp=(TH1F*)inputfile->Get("analysis/flavorcomposition/"+histoName_tmp);
+
+			totalevts=h_tmp->GetEntries();
+			if(totalevts>0.) {
+				udfraction = (h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))/totalevts;
+				udfractionerr = sqrt(pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))/totalevts,2)+pow(((h_tmp->GetBinContent(h_tmp->FindBin(1)) + h_tmp->GetBinContent(h_tmp->FindBin(2)))*sqrt(totalevts))/pow(totalevts,2),2));
+				sfraction = (h_tmp->GetBinContent(h_tmp->FindBin(3)))/totalevts;
+				sfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(3)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(3)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+				cfraction = (h_tmp->GetBinContent(h_tmp->FindBin(4)))/totalevts;
+                                cfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(4)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(4)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+				bfraction = (h_tmp->GetBinContent(h_tmp->FindBin(5)))/totalevts;
+                                bfractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(5)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(5)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+				glufraction = (h_tmp->GetBinContent(h_tmp->FindBin(21)))/totalevts;
+                                glufractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(21)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(21)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+				undeffraction = (h_tmp->GetBinContent(h_tmp->FindBin(0)))/totalevts;
+                                undeffractionerr = sqrt( pow(sqrt(h_tmp->GetBinContent(h_tmp->FindBin(0)))/totalevts,2) + pow((h_tmp->GetBinContent(h_tmp->FindBin(0)))*sqrt(totalevts)/pow(totalevts,2) ,2) );
+
+			}
+			hudFrac_0013->SetBinContent(j+1,udfraction);
+                        hudFrac_0013->SetBinError(j+1,udfractionerr);
+			hsFrac_0013->SetBinContent(j+1,sfraction);
+                        hsFrac_0013->SetBinError(j+1,sfractionerr);
+			hcFrac_0013->SetBinContent(j+1,cfraction);
+                        hcFrac_0013->SetBinError(j+1,cfractionerr);
+			hbFrac_0013->SetBinContent(j+1,bfraction);
+                        hbFrac_0013->SetBinError(j+1,bfractionerr);
+			hgluFrac_0013->SetBinContent(j+1,glufraction);
+                        hgluFrac_0013->SetBinError(j+1,glufractionerr);
+			hundefFrac_0013->SetBinContent(j+1,undeffraction);
+                        hundefFrac_0013->SetBinError(j+1,undeffractionerr);
+                       }
+		//fin 
+		
+		
 
 
- hudFrac[i]->SetMarkerStyle(20);
- hsFrac[i]->SetMarkerStyle(21);
- hcFrac[i]->SetMarkerStyle(22);
- hbFrac[i]->SetMarkerStyle(23);
- hgluFrac[i]->SetMarkerStyle(33);
- hundefFrac[i]->SetMarkerStyle(34);
+ hudFrac_0013->SetMarkerStyle(20);
+ hsFrac_0013->SetMarkerStyle(21);
+ hcFrac_0013->SetMarkerStyle(22);
+ hbFrac_0013->SetMarkerStyle(23);
+ hgluFrac_0013->SetMarkerStyle(33);
+ hundefFrac_0013->SetMarkerStyle(34);
 
- hudFrac[i]->SetMarkerColor(1);
- hsFrac[i]->SetMarkerColor(2);
- hcFrac[i]->SetMarkerColor(8);
- hbFrac[i]->SetMarkerColor(4);
- hgluFrac[i]->SetMarkerColor(6);
- hundefFrac[i]->SetMarkerColor(92);
+ hudFrac_0013->SetMarkerColor(1);
+ hsFrac_0013->SetMarkerColor(2);
+ hcFrac_0013->SetMarkerColor(8);
+ hbFrac_0013->SetMarkerColor(4);
+ hgluFrac_0013->SetMarkerColor(6);
+ hundefFrac_0013->SetMarkerColor(92);
 
- hudFrac[i]->SetLineColor(1);
- hsFrac[i]->SetLineColor(2);
- hcFrac[i]->SetLineColor(8);
- hbFrac[i]->SetLineColor(4);
- hgluFrac[i]->SetLineColor(6);
- hundefFrac[i]->SetLineColor(92);
+ hudFrac_0013->SetLineColor(1);
+ hsFrac_0013->SetLineColor(2);
+ hcFrac_0013->SetLineColor(8);
+ hbFrac_0013->SetLineColor(4);
+ hgluFrac_0013->SetLineColor(6);
+ hundefFrac_0013->SetLineColor(92);
         }
 
 
@@ -207,6 +269,23 @@ hundefFrac[i]->Draw("pesame");
 legend->Draw("same");
      c->SaveAs(PlotsoutputDir+"FlavorComposition_eta_"+etaBinning.getBinName(i)+"_alpha"+alphaCut+"_FlavorComposition.pdf");
 }
+
+hudFrac_0013->SetMinimum(0.);
+hudFrac_0013->SetMaximum(1.);
+hudFrac_0013->SetStats(false);
+hudFrac_0013->SetTitle("");
+hudFrac_0013->SetXTitle("p_{T}(#gamma)");
+hudFrac_0013->SetYTitle("fraction");
+hudFrac_0013->Draw("pe");
+hsFrac_0013->Draw("pesame");
+hcFrac_0013->Draw("pesame");
+hbFrac_0013->Draw("pesame");
+hgluFrac_0013->Draw("pesame");
+hundefFrac_0013->Draw("pesame");
+legend->Draw("same");
+     c->SaveAs(PlotsoutputDir+"FlavorComposition_eta_0013_alpha"+alphaCut+"_FlavorComposition.pdf");
+
+
      c->Destructor();
 
 TFile out(outputDir+"/"+type+"_alpha"+alphaCut+"_FlavorComposition.root","recreate");
@@ -242,6 +321,36 @@ hbFrac[i]->Write();
 hgluFrac[i]->Write();
 hundefFrac[i]->Write();
 }
+
+out.cd("MC");
+gDirectory->mkdir("eta_0013");
+gDirectory->cd("eta_0013");
+
+histoName = TString::Format("flavFraction_ud_a%s",  alphaCut.c_str());
+hudFrac_0013->SetName(histoName);                
+hudFrac_0013->SetTitle(histoName);
+histoName = TString::Format("flavFraction_s_a%s",  alphaCut.c_str());
+hsFrac_0013->SetName(histoName);
+hsFrac_0013->SetTitle(histoName);
+histoName = TString::Format("flavFraction_c_a%s",  alphaCut.c_str());
+hcFrac_0013->SetName(histoName);
+hcFrac_0013->SetTitle(histoName);
+histoName = TString::Format("flavFraction_b_a%s",  alphaCut.c_str());
+hbFrac_0013->SetName(histoName);
+hbFrac_0013->SetTitle(histoName);
+histoName = TString::Format("flavFraction_glu_a%s",  alphaCut.c_str());
+hgluFrac_0013->SetName(histoName);
+hgluFrac_0013->SetTitle(histoName);
+histoName = TString::Format("flavFraction_Undefined_a%s",  alphaCut.c_str());
+hundefFrac_0013->SetName(histoName);
+hundefFrac_0013->SetTitle(histoName);
+hudFrac_0013->Write();
+hsFrac_0013->Write();
+hcFrac_0013->Write();
+hbFrac_0013->Write();
+hgluFrac_0013->Write();
+hundefFrac_0013->Write();
+
 out.Close();
 }
 

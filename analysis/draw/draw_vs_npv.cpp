@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
   }
   
   db->setFolder("analysis");
-  std::string outputDir = "PhotonJetPlots_" + db->get_fullSuffix() + "/vs_npv";
+  std::string outputDir = "PhotonJetPlots_" + db->get_fullSuffix() + "_LUMI/vs_npv";
   db->set_outputdir(outputDir);
   
   bool log = true;
@@ -171,11 +171,11 @@ int main(int argc, char* argv[]) {
   }
   // Special case eta < 1.3
   
-  db->set_legendTitle("|#eta| < 1.3");
-  db->drawHisto_vs_vertex(vertexBins, "resp_balancing_eta0013", "Balancing Response", "", "Events", log);
+ // db->set_legendTitle("|#eta| < 1.3");
+ // db->drawHisto_vs_vertex(vertexBins, "resp_balancing_eta0013", "Balancing Response", "", "Events", log);
   //db->drawHisto_vs_pt(ptBins, "resp_balancing_raw_eta013", "Balancing Response (raw jets)", "", "Events", log);
   
-  db->drawHisto_vs_vertex(vertexBins, "resp_mpf_eta0013", "MPF Response", "", "Events", log);
+ // db->drawHisto_vs_vertex(vertexBins, "resp_mpf_eta0013", "MPF Response", "", "Events", log);
   //db->drawHisto_vs_vertex(ptBins, "resp_mpf_raw_eta013", "MPF Response (raw ME_{T})", "", "Events", log);
   
   delete db;
