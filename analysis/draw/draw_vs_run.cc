@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
     
     c->cd();
     
-    leg=new TLegend(0.2,0.7,0.8,0.9);
+    leg=new TLegend(0.2,0.2,0.8,0.3);
     leg->SetFillColor(0);
     //  leg->SetTextFont(42);                                                                                                                                                    
     leg->SetBorderSize(0);                                                                                                                                                   
@@ -135,20 +135,27 @@ int main(int argc, char* argv[]) {
   //h2_axes->GetXaxis()->SetNoExponent();
     h2_axes->GetXaxis()->SetLabelSize(0.015);
     
-    TLine* BCD_iov = new TLine(9.99,0.8,10.01,1 ) ;
+    TLine* BCD_iov = new TLine(4,0.8,4,1 ) ;
     BCD_iov->SetVertical();
     BCD_iov->SetLineStyle (9);
     BCD_iov->SetLineColor(kBlue);
     
-    TLine* EF_iov = new TLine(18,0.8,18,1 ) ;
+    TLine* EF_iov = new TLine(13,0.8,13,1 ) ;
     EF_iov->SetVertical();
     EF_iov->SetLineStyle (9);
     EF_iov->SetLineColor(kBlue);
     
-    TLine* FG_iov = new TLine(23,0.8,23,1 ) ;
+    TLine* FG_iov = new TLine(18,0.8,18,1 ) ;
     FG_iov->SetVertical();
     FG_iov->SetLineStyle (9);
     FG_iov->SetLineColor(kBlue);
+    
+    TLine* E_iov = new TLine(26,0.8,26,1 ) ;
+    E_iov->SetVertical();
+    E_iov->SetLineStyle (9);
+    E_iov->SetLineColor(kBlue);
+    
+    
     
     
     // Balancing && MPF
@@ -224,10 +231,10 @@ int main(int argc, char* argv[]) {
       
     }// for run
     
-    
+    if(ii > 0){
     std::cout<< "Drawing graph  "<<gr_response_vs_run[ii]->GetN()<< std::endl; 
     leg->AddEntry(gr_response_vs_run[ii] ,Form("HLT%d ", HLTnumber ) ,"p");
-    
+    }
     }
   
  
@@ -259,10 +266,11 @@ int main(int argc, char* argv[]) {
 	//gr_response_vs_run[ii] -> GetYaxis()-> SetTitleOffset(1.4);  
 	//gr_response_vs_run[ii] -> GetYaxis()->SetRangeUser(0.8, 0.95);  
 	//gr_response_vs_run[ii] -> GetXaxis()->SetRangeUser(297045, 300575);  
-	gr_response_vs_run[ii] -> Draw("ZPSAME");
+	if(ii > 0) gr_response_vs_run[ii] -> Draw("ZPSAME");
 	BCD_iov->Draw("DSAME");
 	EF_iov->Draw("DSAME");
 	FG_iov->Draw("DSAME");
+	E_iov->Draw("DSAME");
       
     }
     leg -> Draw("P") ;
