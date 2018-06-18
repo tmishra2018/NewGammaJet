@@ -63,11 +63,11 @@ class ExtrapBinning {
      
       
       size_t extrapBin = 0 ;//(size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
-      if(alpha < 0.3) extrapBin = 5 ;
-      if(alpha < 0.25) extrapBin = 4 ;
-      if(alpha < 0.20) extrapBin = 3 ;
-      if(alpha < 0.15) extrapBin = 2 ;
-      if(alpha < 0.1) extrapBin = 1 ;
+      if(alpha < 0.3 && alpha >=0.25) extrapBin = 5 ;
+      if(alpha < 0.25 && alpha >=0.2) extrapBin = 4 ;
+      if(alpha < 0.20 && alpha >=0.15) extrapBin = 3 ;
+      if(alpha < 0.15 && alpha >=0.1) extrapBin = 2 ;
+      if(alpha < 0.1 && alpha >=0.05) extrapBin = 1 ;
       if(alpha < 0.05)   extrapBin = 0 ;
       
       

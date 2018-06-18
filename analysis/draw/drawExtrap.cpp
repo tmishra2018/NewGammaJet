@@ -161,7 +161,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-   /* x[0]=0.025;
+    x[0]=0.025;
     x_err[0]=0.;
     
     x[1]=0.075;
@@ -177,8 +177,8 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     x_err[4]=0.0;
     
     x[5]=0.275;
-    x_err[5]=0.0;*/
-    x[0]=0.1;
+    x_err[5]=0.0;
+   /* x[0]=0.1;
     x_err[0]=0.0;
     
     x[1]=0.15;
@@ -191,7 +191,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     x_err[3]=0.0;
     
     x[4]=0.3;
-    x_err[4]=0.0;
+    x_err[4]=0.0;*/
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -1272,7 +1272,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-   /* x[0]=0.025;
+    x[0]=0.025;
     x_err[0]=0.;
     
     x[1]=0.075;
@@ -1288,7 +1288,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     x_err[4]=0.0;
     
     x[5]=0.275;
-    x_err[5]=0.0;*/
+    x_err[5]=0.0;
     /*
     x[0]=0.0;
     x_err[0]=0.;
@@ -1306,10 +1306,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     x_err[4]=0.0;
     
     x[5]=0.3;
-    x_err[5]=0.0;
-    */
+    x_err[5]=0.0;*/
     
-    x[0]=0.1;
+    
+   /* x[0]=0.1;
     x_err[0]=0.0;
     
     x[1]=0.15;
@@ -1322,7 +1322,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     x_err[3]=0.0;
     
     x[4]=0.3;
-    x_err[4]=0.0;
+    x_err[4]=0.0;*/
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -1408,7 +1408,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
     std::string fitFunct_name;
-    fitFunct_name = "[0] + x*[1] ";//"sqrt(pow([0],2)  + x*x*pow([1],2))";
+    fitFunct_name = "sqrt(pow([0],2)  + x*x*pow([1],2))";
 
 
     // MC Balancing
@@ -1452,7 +1452,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     gr_resp_MPFDATA->Fit(fit_resp_MPFDATA, "RQ");
     
     //PLI 
-    const std::string lineFunction_PLI = "[0] + x*[1] ";//"sqrt(pow([0],2)  + x*x*pow([1],2))";
+    const std::string lineFunction_PLI = "sqrt(pow([0],2)  + x*x*pow([1],2))";
     
     TF1* fit_PLI = new TF1("fit_PLI", lineFunction.c_str());
     fit_PLI->SetRange(0., xMax_fit);
@@ -1863,7 +1863,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_reso_PLI->SetLineColor(8);
   gr_reso_PLI->SetLineWidth(1.);
   
-  TF1* fit_extrapToZero_sqrt_PLI = new TF1("fit_extrapToZero_sqrt_PLI", "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/);
+  TF1* fit_extrapToZero_sqrt_PLI = new TF1("fit_extrapToZero_sqrt_PLI", "sqrt(pow([0],2) + x*x*[1])");
   fit_extrapToZero_sqrt_PLI->SetRange(0., xMax_fit);
   fit_extrapToZero_sqrt_PLI->SetParameter(0, 1.);
  // fit_extrapToZero_sqrt_PLI->SetParameter(1, 0.);
@@ -1930,7 +1930,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   //  fit_extrapToZero_sqrt->FixParameter(1, q);
   //  fit_extrapToZero_sqrt->SetParameter(2, m);
   
-  TF1* fit_extrapToZero_sqrt = new TF1("fit_extrapToZero_sqrt",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/);
+  TF1* fit_extrapToZero_sqrt = new TF1("fit_extrapToZero_sqrt",  "sqrt(pow([0],2) + x*x*[1])");
   fit_extrapToZero_sqrt->SetRange(0., xMax_fit);
   fit_extrapToZero_sqrt->SetParameter(0, 1.);
  // fit_extrapToZero_sqrt->SetParameter(1, 0.);
@@ -1989,14 +1989,14 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_extrapkfr_vs_pt->SetPoint(iPtBin, ptPhotReco_thisBin, fit_extrapToZero_sqrt->GetParameter(1));
   gr_extrapkfr_vs_pt->SetPointError(iPtBin, ptPhotReco_err_thisBin, fit_extrapToZero_sqrt->GetParError(1));
   // MPF
-  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/, 0, xMax_fit);
+  TF1* fit_reso_MPFDATA = new TF1("fit_reso_MPFDATA",  "sqrt(pow([0],2) + x*x*[1])", 0, xMax_fit);
   fit_reso_MPFDATA->SetLineColor(MC_color);
   fit_reso_MPFDATA->SetLineWidth(1.);
   //  fit_reso_MPFDATA->SetParameter(0, fit_reso_genMPF->GetParameter(0));
   fit_reso_MPFDATA->SetParameter(0, 1);
   gr_reso_MPFDATA->Fit(fit_reso_MPFDATA, "QR");
 
-  TF1* fit_reso_MPF = new TF1("fit_reso_MPF",  "[0] + x*[1] "/*"sqrt(pow([0],2) + x*x*[1])"*/, 0, xMax_fit);
+  TF1* fit_reso_MPF = new TF1("fit_reso_MPF", "sqrt(pow([0],2) + x*x*[1])", 0, xMax_fit);
   fit_reso_MPF->SetLineColor(MC_color);
   fit_reso_MPF->SetLineWidth(1.);
   //  fit_reso_MPF->SetParameter(0, fit_reso_genMPF->GetParameter(0));

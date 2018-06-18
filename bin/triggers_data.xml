@@ -2,7 +2,7 @@
 <triggers>
   <runs from="0" to="400000">
     <path>
-      <name>HLT_Photon33_v.*</name>
+      <name>HLT_Photon30_R9Id90_HE10_IsoM_v.*</name>
       <pt from="40" to="60" />
       <weight value="1" />
     </path>
@@ -28,12 +28,7 @@
     </path>
     <path>
       <name>HLT_Photon165_R9Id90_HE10_IsoM_v.*</name>
-      <pt from="175" to="210" />
-      <weight value="1" />
-    </path>
-    <path>
-      <name>HLT_Photon200_v.*</name>
-      <pt from="210" to="5000" />
+      <pt from="175" to="5000" />
       <weight value="1" />
     </path>
   </runs>

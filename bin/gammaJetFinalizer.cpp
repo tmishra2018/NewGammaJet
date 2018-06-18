@@ -1114,8 +1114,8 @@ void GammaJetFinalizer::runAnalysis() {
     
     
     // time dependence studies
-
-    if(!mIsMC){
+    bool dotimedep  = false ;
+    if(!mIsMC && dotimedep){
        if(PhotonCorr.Pt() >= 175.) {
     run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
     run_responseMpfHLT165[etaBin][runBinning]->Fill(respMPF,eventWeight);
@@ -1465,7 +1465,7 @@ void GammaJetFinalizer::runAnalysis() {
       
     }// if secondJetOK
   //  if(skip_event_Hcalveto) continue ;
-    if (fullinfo.pTAK4_j2 > 0.) { //extrapolation if second jet is present -> nor for exclusive alpha binning
+   // if (/*fullinfo.pTAK4_j2 > 0.*/) { //extrapolation if second jet is present -> nor for exclusive alpha binning
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1487,116 +1487,26 @@ void GammaJetFinalizer::runAnalysis() {
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
-          extrap_responseBalancing[etaBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
-          extrap_responseBalancing_finebin[etafineBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          extrap_responseBalancing_finebin[etafineBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI[etaBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_Eta013[ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
 
 	  
 	   //bin 9 0 to 0.25 :
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.2*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  //bin 9 0 to 0.20 :
-
-	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.15*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  
-	  //bin 9 0 to 0.15 :
-	  
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.1*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  //bin 9 0 to 0.1 :
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.05 */){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
 	  
 	
          
@@ -1659,13 +1569,13 @@ void GammaJetFinalizer::runAnalysis() {
 	
       } while (false);
       
-    }else{
+   // }else{
     
     // put back bin zero of extrap here
     
     
     
-    } 
+   // } 
      
   }
 
@@ -2036,8 +1946,8 @@ void GammaJetFinalizer::computePUWeight() {
         if(fullinfo.Pt_photon >= 85 && fullinfo.Pt_photon < 100)            mPUWeight = reweighter75->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 100 && fullinfo.Pt_photon < 130)           mPUWeight = reweighter90->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 130 && fullinfo.Pt_photon < 175)           mPUWeight = reweighter120->weight(fullinfo.trueInteraction);  
-        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 210 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
-        if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
+        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 5000 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
+      //  if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
 
         //  std::cout<<analysis.ntrue_interactions<<std::endl;  
         //  std::cout<<mPUWeight<<std::endl;
@@ -2148,7 +2058,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
 
                 //   int passedtriggerresult ;
 
-                if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
+           //     if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
               //   weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,6);
                  return TRIGGER_OK;}
@@ -2164,7 +2074,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,2);
                  return TRIGGER_OK;}
-                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)){
+                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,1);
                  return TRIGGER_OK;}
 
@@ -2212,13 +2122,13 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
 
-                if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+              //  if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed5 == 1. &&   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed4 == 1. &&   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed3 == 1. &&   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed2 == 1. &&   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
 
                 /* 
 
