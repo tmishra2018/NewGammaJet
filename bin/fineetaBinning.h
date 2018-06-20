@@ -117,15 +117,11 @@ class fineEtaBinning {
       
       
       
-      bin.bin = std::make_pair(2.853,2.964);
-      bin.name = "eta2930";
-      bin.title = "2.9 #leq |#eta| < 3.0";
+      bin.bin = std::make_pair(2.853,5.191);
+      bin.name = "eta2951";
+      bin.title = "2.9 #leq |#eta| < 5.1";
       mEtaBins.push_back(bin);
-      
-      bin.bin = std::make_pair(2.964,5.191);
-      bin.name = "eta3051";
-      bin.title = "3.0 #leq |#eta| < 5.1";
-      mEtaBins.push_back(bin);
+     
      
      // if(mJER_bining){
      

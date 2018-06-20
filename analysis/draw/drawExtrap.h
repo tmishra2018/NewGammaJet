@@ -9,7 +9,7 @@
 
 #include "ptBinning.h"
 #include "etaBinning.h"
-#include "extrapBinning.h"
+#include "extrapBinning_exclusif.h"
 #include "fineetaBinning.h"
 
 
@@ -36,8 +36,8 @@ public:
     EXCLUDE_FIRST_POINT_ = exclfirstpoint;
   };
 
-  void drawResponseExtrap(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
-  void drawResponseExtrapfine(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
+  void drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<float> alphaMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
+  void drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vector<float> alphaMeanVec, const std::string& etaRegion, const std::string& etaRegionTitle, bool rawJets);
 
 private:
 

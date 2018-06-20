@@ -20,11 +20,11 @@ drawExtrap::drawExtrap(const std::string& analysisType, const std::string& recoT
   EXCLUDE_FIRST_POINT_ = false;
   
   if(recoType == "PFlow") std::cout<<"recoType PFlow" << std::endl;
-  mExtrapBinning.initialize(mPtBinning, recoType);
+  mExtrapBinning.initialize();
 }
 
 
-void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
+void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<float> alphaMeanVec, const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
   
   int MC_color = MPF_COLOR;
   
@@ -161,22 +161,22 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-    x[0]=0.025;
+    x[0]=alphaMeanVec.at(0);
     x_err[0]=0.;
     
-    x[1]=0.075;
+    x[1]=alphaMeanVec.at(1);
     x_err[1]=0.0;
     
-    x[2]=0.125;
+    x[2]=alphaMeanVec.at(2);
     x_err[2]=0.0;
     
-    x[3]=0.175;
+    x[3]=alphaMeanVec.at(3);
     x_err[3]=0.0;
     
-    x[4]=0.225;
+    x[4]=alphaMeanVec.at(4);
     x_err[4]=0.0;
     
-    x[5]=0.275;
+    x[5]=alphaMeanVec.at(5);
     x_err[5]=0.0;
    /* x[0]=0.1;
     x_err[0]=0.0;
@@ -239,7 +239,14 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
     
+    int is_empty = 0;
+    for(int i = 1; i < nPoints ; i++){
+          if(y_resp_DATA[i]== -1){
+             is_empty++;
+          }      
+    }
     
+    if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
     //draw response histograms:
     TGraphErrors* gr_resp_DATA = new TGraphErrors(nPoints, x, y_resp_DATA, x_err, y_resp_err_DATA);
     gr_resp_DATA->SetMarkerStyle(20);
@@ -1124,7 +1131,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
 
 
-void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
+void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vector<float> alphaMeanVec, const std::string& etaRegion, const std::string& etaRegion_str, bool rawJets) {
   
   int MC_color = MPF_COLOR;
   
@@ -1272,22 +1279,22 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-    x[0]=0.025;
+    x[0]=alphaMeanVec.at(0);
     x_err[0]=0.;
     
-    x[1]=0.075;
+    x[1]=alphaMeanVec.at(1);
     x_err[1]=0.0;
     
-    x[2]=0.125;
+    x[2]=alphaMeanVec.at(2);
     x_err[2]=0.0;
     
-    x[3]=0.175;
+    x[3]=alphaMeanVec.at(3);
     x_err[3]=0.0;
     
-    x[4]=0.225;
+    x[4]=alphaMeanVec.at(4);
     x_err[4]=0.0;
     
-    x[5]=0.275;
+    x[5]=alphaMeanVec.at(5);
     x_err[5]=0.0;
     /*
     x[0]=0.0;
@@ -1369,6 +1376,17 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
      //PLI
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI_fine%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
+    
+    int is_empty = 0;
+    for(int i = 1; i < nPoints ; i++){
+          if(y_resp_DATA[i]== -1){
+             is_empty++;
+          }      
+    }
+    
+    if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+    
+    
     
     
     //draw response histograms:
@@ -2467,6 +2485,14 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
       rmsFactor = 0.95;
     } else if (FIT_RMS_ == "RMS99") {
       rmsFactor = 0.99;
+    }else if (FIT_RMS_ == "RMS96") {
+      rmsFactor = 0.96;
+    }else if (FIT_RMS_ == "RMS97") {
+      rmsFactor = 0.97;
+    } else if (FIT_RMS_ == "RMS98") {
+      rmsFactor = 0.98;
+    }else if (FIT_RMS_ == "RMS100") {
+      rmsFactor = 1.;
     }else if (FIT_RMS_ == "RMS985") {
       rmsFactor = 0.985;
     } else {

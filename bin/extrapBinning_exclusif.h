@@ -11,40 +11,9 @@ class ExtrapBinning {
   public:
     ExtrapBinning() {}
 
-    void initialize(PtBinning ptBinning, const std::string& recoType) {
+    void initialize() {
       
-      /*size_t s = ptBinning.size();
-      for (size_t i = 0; i < s; i++) {
-
-	//        std::pair<float, float> bin = ptBinning.getBinValue(i);
-        float minPt = 0.;
-        float ptStep = 0.;
-
-	/*
-	//old binning
-        // In percent 
-          if (bin.first <= 80.) {
-            minPt = 8.;
-            ptStep = 3.;
-          } else if (bin.first <= 350) {
-            minPt = 5.;
-            ptStep = 2.5;
-          } else {
-            minPt = 2.;
-            ptStep = 2.;
-          }
-
-        // In percent -- federico
-	  minPt = 0.0;
-	  ptStep = 3.0;
-
-        minPt /= 100.;
-        ptStep /= 100.;
-        float maxPt = minPt + ptStep;
-
-	mMapping.push_back(std::make_pair(minPt, maxPt));
-
-      }*///end ciclo su ptBin
+      
       mMapping.push_back(std::make_pair(0.,0.05));
       mMapping.push_back(std::make_pair(0.05,0.1));
       mMapping.push_back(std::make_pair(0.1,0.15));
@@ -82,6 +51,9 @@ class ExtrapBinning {
       return mMapping[bin];
     }
 
+    std::vector<std::pair<float, float> > getBinning(){
+      return mMapping;
+    }
   private:
     PtBinning mPtBinning;
     static const int mSize = 6;

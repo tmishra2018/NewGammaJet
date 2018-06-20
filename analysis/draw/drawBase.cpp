@@ -374,6 +374,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     bool hasData = (lastHistos_data_.size() > 0);
     bool hasMC = (lastHistos_mc_.size() > 0);
 
+   /// choose of the rms of the distribution
+
     Float_t meanTruncFraction = 0.985;
     Float_t rmsTruncFraction = 0.985;
 

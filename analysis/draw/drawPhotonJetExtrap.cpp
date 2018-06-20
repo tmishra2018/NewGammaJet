@@ -41,8 +41,12 @@ int main(int argc, char* argv[]) {
     resoTypes.push_back("RMS");
     resoTypes.push_back("RMS70");
     resoTypes.push_back("RMS95");
+    resoTypes.push_back("RMS96");
+    resoTypes.push_back("RMS97");
+    resoTypes.push_back("RMS98");
     resoTypes.push_back("RMS99");
     resoTypes.push_back("RMS985");
+    resoTypes.push_back("RMS100");
     TCLAP::ValuesConstraint<std::string> allowedResoTypes(resoTypes);
     
     TCLAP::ValueArg<std::string> resoArg("", "reso-algo", "algo for resolution calculation", false, "RMS985", &allowedResoTypes, cmd);
@@ -132,18 +136,34 @@ int main(int argc, char* argv[]) {
       ptMean.push_back(Mean);
     }
 
-
+    
+    TH1D *alpha_ev = (TH1D*)dataFile->Get("analysis/alpha_passedID");
+    ExtrapBinning extrapBinning;
+    extrapBinning.initialize();
+    size_t extrapBinningSize = extrapBinning.size();
+    std::vector<std::pair<float, float> > extrapBins = extrapBinning.getBinning();
+    std::vector<float> alphaMean;
+    for( size_t i = 0 ; i< extrapBinningSize ; i++){ 
+      std::pair<float, float> currentBin = extrapBinning.getBinValue(i);
+      alpha_ev ->GetXaxis()->SetRangeUser(currentBin.first, currentBin.second);
+      double Mean = alpha_ev->GetMean();
+      std::cout<< "Bin " << currentBin.first<< "-"<<currentBin.second<<" -> Mean  "<< Mean << std::endl; 
+      alphaMean.push_back(Mean);
+    }
+    
+    
+    
     EtaBinning etaBinning;
     size_t etaBinningSize = etaBinning.size();
 
     for (size_t i = 0; i < etaBinningSize; i++) {
       db->set_legendTitle(etaBinning.getBinTitle(i)); 
 
-      db->drawResponseExtrap(ptMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), false); // bool for raw quantities
+      db->drawResponseExtrap(ptMean, alphaMean, etaBinning.getBinName(i), etaBinning.getBinTitle(i), false); // bool for raw quantities
     }
     //special case
     db->set_legendTitle("|#eta| < 1.3");
-    db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
+    db->drawResponseExtrap(ptMean, alphaMean, "eta0013", "|#eta| < 1.3", false);
     
     fineEtaBinning fineetaBinning;
     size_t fineetaBinningSize = fineetaBinning.size();
@@ -151,7 +171,7 @@ int main(int argc, char* argv[]) {
     for (size_t i = 0; i < fineetaBinningSize; i++) {
       db->set_legendTitle(fineetaBinning.getBinTitle(i)); 
 
-      db->drawResponseExtrapfine(ptMean, fineetaBinning.getBinName(i), fineetaBinning.getBinTitle(i), false); // bool for raw quantities
+      db->drawResponseExtrapfine(ptMean, alphaMean, fineetaBinning.getBinName(i), fineetaBinning.getBinTitle(i), false); // bool for raw quantities
     }
     
     

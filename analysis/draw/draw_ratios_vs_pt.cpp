@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
   ss << ((int) (alpha_cut * 100));
   std::string alphaCut = ss.str();
 
-  std::string fit_rms = "RMS985";
+  std::string fit_rms = "RMS985";//"RMS985";
   std::string outputDir = "PhotonJetPlots_" + db->get_fullSuffix() + "_vs_pt";
   // std::string outputDir = "Plot_vs_pt";
   db->set_outputdir(outputDir);
@@ -751,7 +751,8 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   else if (etaRegion == "eta2930") fullEtaRegion = "eta29_30";
   else if (etaRegion == "eta3031") fullEtaRegion = "eta30_31";
   else if (etaRegion == "eta3152") fullEtaRegion = "eta31_52";
-  
+
+  else if (etaRegion == "eta2951") fullEtaRegion = "eta29_51";  
   else if (etaRegion == "eta3051") fullEtaRegion = "eta30_51";
   else if (etaRegion == "eta2329") fullEtaRegion = "eta23_29";
   else if (etaRegion == "eta1720") fullEtaRegion = "eta17_20";  

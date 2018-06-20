@@ -187,7 +187,7 @@ void GammaJetFinalizer::runAnalysis() {
         }
 
         // Initialization
-        mExtrapBinning.initialize(mPtBinning, (mJetType == PF) ? "PFlow" : "PUPPI");
+        mExtrapBinning.initialize(/*mPtBinning, (mJetType == PF) ? "PFlow" : "PUPPI"*/);
 
 
 
@@ -1497,15 +1497,14 @@ void GammaJetFinalizer::runAnalysis() {
           extrap_responseMPF_finebin[etafineBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
           if (mIsMC){
+          
+           if(fullinfo.pTAK4_j1 <= 10. ) std::cout<<" Pt 1jet gen "<<fullinfo.pTAK4_j1GEN<<std::endl;
 	    extrap_PLI[etaBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    extrap_PLI_fine[etafineBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
-
-	  
-	   //bin 9 0 to 0.25 :
 
 	  
 	
