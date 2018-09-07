@@ -1484,27 +1484,119 @@ void GammaJetFinalizer::runAnalysis() {
 	  // Ugly code to make inclusive extrapolation bin for response and PLI
 	  
 	  //bin 9 0 to 0.3 :
+       //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+            extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
-          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          extrap_responseBalancing[etaBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
-          extrap_responseBalancing_finebin[etafineBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          extrap_responseBalancing_finebin[etafineBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 
           if (mIsMC){
-          
-           if(fullinfo.pTAK4_j1 <= 10. ) std::cout<<" Pt 1jet gen "<<fullinfo.pTAK4_j1GEN<<std::endl;
-	    extrap_PLI[etaBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
+
+	  
+	   //bin 9 0 to 0.25 :
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.2*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    }
+	  }}
+	  
+	  
+	  //bin 9 0 to 0.20 :
+
+	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.15*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    }
+	  }}
+	  
+	  
+	  
+	  //bin 9 0 to 0.15 :
+	  
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.1*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    }
+	  }}
+	  
+	  //bin 9 0 to 0.1 :
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.05 */){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    }
+}}
 
 	  
 	

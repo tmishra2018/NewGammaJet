@@ -18,7 +18,7 @@
 #include "HLTptBinning.h"
 #include "vertexBinning.h"
 #include "runBinning.h"
-#include "extrapBinning_exclusif.h"
+#include "extrapBinning.h"
 #include "triggers.h"
 #include "GaussianProfile.h"
 #include "fineetaBinning.h"
