@@ -29,9 +29,11 @@ class ExtrapBinning {
      // std::pair<float, float> mapping = mMapping[ptBin]; // mPtBinning.getBinValue(ptBin);
 
       double alpha = ptSecondJet / ptPhoton;
+      
+      if( ptSecondJet == 0.  ) alpha = 2.3  / ptPhoton ;
      
       
-      size_t extrapBin = 0 ;//(size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
+      size_t extrapBin = -1 ;//(size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
       if(alpha < 0.3 && alpha >=0.25) extrapBin = 5 ;
       if(alpha < 0.25 && alpha >=0.2) extrapBin = 4 ;
       if(alpha < 0.20 && alpha >=0.15) extrapBin = 3 ;

@@ -178,6 +178,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
     
     x[5]=alphaMeanVec.at(5);
     x_err[5]=0.0;
+    
    /* x[0]=0.1;
     x_err[0]=0.0;
     
@@ -1269,31 +1270,31 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
 
     char projName[100];
     sprintf(projName, "projection_%d", iPtBin);
-
     float ptPhotReco_thisBin =  ptMeanVec.at(iPtBin);
     float ptPhotReco_err_thisBin = 0;
 
     // npoints in alpha : scan in alpha
-    int nPoints = mExtrapBinning.size();
+    int nPoints = mExtrapBinning.size() ; 
     std::cout<<"binning size : "<<nPoints<<std::endl;
     float x[nPoints];
     float x_err[nPoints];
-    getXPoints(iPtBin, x, x_err);
+   // getXPoints(iPtBin, x, x_err);
+   // std::cout<<" test vector out of range size vec alpha mean : "<<alphaMeanVec.size() <<std::endl; 
     x[0]=alphaMeanVec.at(0);
     x_err[0]=0.;
     
     x[1]=alphaMeanVec.at(1);
     x_err[1]=0.0;
-    
+   // std::cout<<" test vector out of range "<<std::endl;
     x[2]=alphaMeanVec.at(2);
     x_err[2]=0.0;
-    
+        
     x[3]=alphaMeanVec.at(3);
     x_err[3]=0.0;
     
     x[4]=alphaMeanVec.at(4);
     x_err[4]=0.0;
-    
+
     x[5]=alphaMeanVec.at(5);
     x_err[5]=0.0;
     /*
@@ -1384,7 +1385,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
           }      
     }
     
-    if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+ //   if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
     
     
     
@@ -1472,7 +1473,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
     //PLI 
     const std::string lineFunction_PLI = "sqrt(pow([0],2)  + x*x*pow([1],2))";
     
-    TF1* fit_PLI = new TF1("fit_PLI", lineFunction.c_str());
+    TF1* fit_PLI = new TF1("fit_PLI", lineFunction_PLI.c_str());
     fit_PLI->SetRange(0., xMax_fit);
     //    fit_resp_MPFDATA->SetParameter(0, fit_resp_genMPF->GetParameter(0));
     fit_PLI->SetParameter(1, 0);
@@ -2430,7 +2431,7 @@ void drawExtrap::getYPointsVector(TFile *file, const std::string& yHistoName, In
 
 void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints, Float_t* y_resp, Float_t* y_resp_err,  Float_t* y_reso, Float_t* y_reso_err) const {
 
-  for (int i = 0; i < nPoints; ++i) {
+  for (int i = 0; i < nPoints ; ++i) {
 
     TString fullName = TString::Format("%s_%d", yHistoName, i);
     TH1* h1_r = (TH1*) file->Get(fullName);
