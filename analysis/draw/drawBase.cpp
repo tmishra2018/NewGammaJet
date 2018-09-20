@@ -653,7 +653,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     // ratioFit->SetParameter(1, 0.);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(2);
-  //  TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
+    TFitResultPtr fitres = gr_resp_ratio->Fit(ratioFit, "RQS");
     // std::cout << "-> ChiSquare: " << constline->GetChisquare() << "   NDF: " << constline->GetNDF() << std::endl;
     
     // Print covariance matrix && correlation matrix
@@ -682,7 +682,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     fitlabel->SetFillColor(0);
     TString fitLabelText = TString::Format("[0]: %.3f #pm %.3f", fitValue, fitError);
     fitlabel->AddText(fitLabelText);
-   // fitlabel->Draw("same");
+    fitlabel->Draw("same");
 
     //    std::cout << "Fit value  " << fitValue << " #pm " << fitError << std::endl;
 

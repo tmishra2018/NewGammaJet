@@ -1465,7 +1465,7 @@ void GammaJetFinalizer::runAnalysis() {
       
     }// if secondJetOK
   //  if(skip_event_Hcalveto) continue ;
-   // if (/*fullinfo.pTAK4_j2 > 0.*/) { //extrapolation if second jet is present -> nor for exclusive alpha binning
+    if (fullinfo.pTAK4_j2 > 0.) { //extrapolation if second jet is present -> nor for exclusive alpha binning
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
@@ -1660,7 +1660,7 @@ void GammaJetFinalizer::runAnalysis() {
 	
       } while (false);
       
-   // }else{
+    }//else{
     
     // put back bin zero of extrap here
     
@@ -2145,11 +2145,11 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 double triggpassed4 = triggHLT4;//1.;//
                 double triggpassed5 = triggHLT5;//1.;//
                 double triggpassed6 = triggHLT6;//1.;//
-               // double triggpassed7 = triggHLT7;
+             //   double triggpassed7 = triggHLT7;
 
                 //   int passedtriggerresult ;
 
-           //     if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
+                if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
               //   weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,6);
                  return TRIGGER_OK;}
@@ -2194,7 +2194,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 double passed4 = HLT4;
                 double passed5 = HLT5;
                 double passed6 = HLT6;
-                double passed7 = HLT7;
+               // double passed7 = HLT7;
 
                 double triggpassed1 = triggHLT1;//1.;//
                 double triggpassed2 = triggHLT2;//1.;//
@@ -2213,7 +2213,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
 
-              //  if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                //if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed5 == 1. &&   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed4 == 1. &&   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;

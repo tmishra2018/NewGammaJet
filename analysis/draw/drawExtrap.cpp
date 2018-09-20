@@ -1377,10 +1377,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI_fine%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
     
-    for(int i = 0; i < nPoints ; i++){
+    /*for(int i = 0; i < nPoints ; i++){
        std::cout<<" testing reso before "<<y_resp_DATA[i]<<std::endl;
     
-    }
+    }*/
     
     int is_empty_data = 0;
     /*for(int i = 1; i < nPoints ; i++){
@@ -1430,10 +1430,10 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     }
     
     
-    for(int i = 0; i < nPoints ; i++){
+    /*for(int i = 0; i < nPoints ; i++){
        std::cout<<" testing reso after "<<y_resp_DATA[i]<<std::endl;
     
-    }
+    }*/
     
     //draw response histograms:
     TGraphErrors* gr_resp_DATA = new TGraphErrors(nPoints, x, y_resp_DATA, x_err, y_resp_err_DATA);
