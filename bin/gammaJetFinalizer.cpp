@@ -1470,7 +1470,7 @@ void GammaJetFinalizer::runAnalysis() {
       do {
 	
         int extrapBin = mExtrapBinning.getBin(fullinfo.Pt_photon, fullinfo.pTAK4_j2, ptBin);
-        
+        std::cout<<" diplay  the extrap bin : "<<extrapBin<<std::endl;
         
 	if(mIsMC) extrapGenBin = mExtrapBinning.getBin(fullinfo.Pt_photonGEN, fullinfo.pTAK4_j2GEN, ptBin);
 	
@@ -1487,15 +1487,19 @@ void GammaJetFinalizer::runAnalysis() {
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 ){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+	  std::cout<<" end filling 1 "<<std::endl;
             extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            std::cout<<" end filling 2 "<<std::endl;
             extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
+	  std::cout<<" end filling  4"<<std::endl;
           extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          std::cout<<" end filling 5 "<<std::endl;
           extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
           extrap_responseBalancing_finebin[etafineBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF_finebin[etafineBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-
+          std::cout<<" end filling  "<<std::endl;
           if (mIsMC){
           
            if(fullinfo.pTAK4_j1 <= 10. ) std::cout<<" Pt 1jet gen "<<fullinfo.pTAK4_j1GEN<<std::endl;
