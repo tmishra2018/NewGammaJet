@@ -930,22 +930,7 @@ void GammaJetFinalizer::runAnalysis() {
 #endif
     
     double dataMCRatio = 1;
-   /* if( mIsMC){
-      dataMCRatio = 1;
-    }else{
-      int bin = h_test-> FindBin( fullinfo.Energy_photon );
-      int NBins = h_test->GetNbinsX();
-      if(bin >NBins){
-	dataMCRatio = h_test -> GetBinContent( NBins );
-      }else{
-	dataMCRatio = h_test -> GetBinContent( bin );
-      }
-    }*/
-    //std::cout<< "photon --> pt = " << photon.pt <<" eta = "<< photon.eta << " phi = "<< photon.phi<<" e = "<< photon.e <<std::endl;
-    //std::cout<< "MET --> pt = " << MET.pt <<" eta = "<< MET.eta << " phi = "<< MET.phi<<" e = "<< MET.e <<std::endl;
-    //std::cout<< "MET et = " << MET.et <<std::endl;
-
-    //std::cout<< "SF = " << dataMCRatio <<std::endl;
+   
 
     TLorentzVector PhotonCorr;
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
@@ -1285,11 +1270,11 @@ void GammaJetFinalizer::runAnalysis() {
 	
         Profile_Pt_gamma_vs_Nvtx   -> Fill(fullinfo.nVtx, PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         
-// 	// to be changed with SuperCluster pT
+
  	if (fabs(fullinfo.etaAK4_j1) <1.305) { //only the special case now
  	  Profile_photon_SCPt_vs_Pt -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
  	  h_photon_SCPt_vs_Pt         -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
- 	  // if(fullinfo.nVtx > mu && fullinfo.nVtx > 20) std::cout<<"after alpha cut NPV : "<< fullinfo.nVtx << " rho : "<< fullinfo.rho <<" mu "<<mu<<std::endl;
+
 	}
 	
 	//fill N vertices as a function of eta/pT
@@ -1299,9 +1284,7 @@ void GammaJetFinalizer::runAnalysis() {
           vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
         }
 
-	//double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
-	//	if(TotEne > 1 || TotEne < 0) continue;
-	//std::cout<< "Tot En = "<< TotEne << std::endl;
+	
 
 	//fill jet energy composition histo vectors
 	ChHadronFraction[etaBin][ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
@@ -1617,25 +1600,7 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_responseBalancingGenPhot[etaBinGen][ptBinGen][extrapGenBin]  ->Fill(respGenPhot, eventWeight);
 	  }
 	  
-	  /*
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.05 ){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing, eventWeight);
-            extrap_responseMPFEta013[ptBin][0]->Fill(respMPF, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}*/
+	 
 	  
 	  
         } while (false);

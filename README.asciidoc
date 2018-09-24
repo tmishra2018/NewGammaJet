@@ -23,7 +23,7 @@ export SCRAM_ARCH=slc6_amd64_gcc530
 cmsrel CMSSW_8_0_25
 cd CMSSW_8_0_25/src
 git clone https://github.com/lattaud/NewGammaJet.git JetMETCorrections/GammaJetFilter/
-scram b -j 10
+scram b -j 8
 
 ----
 === STEP 1
@@ -31,14 +31,14 @@ scram b -j 10
 ==== Merging 
 
 In order to produce the plots for the MC outputs from the previous steps. We have to merge and add the weight of the different files.
-The weight that to be applied at MC is defined as
+The weight that has to be applied on MC events is defined as
 evtWeightTot = xsec / sum_of_generatorWeights
 This has to be done  in a separate step because it's necessary to run once over the full dataset in order to calculate the sum of generator weights.
 In the output of DijetTreeAnalyser we stored an histogram and a TTree filled using generator weights, in order to extract the sum of weights at the end with Integral().
 The cross section is given from the outside, you can get it using DAS or MCM.
 
 ----
-python mergeAndAddWeights.py -i [list_to_merge.txt] -o [output_directory] --xsec [number_from_DAS]
+python mergeAndAddWeights.py -i [list_to_merge.txt] -o [output_directory] --xsec [number_from_DAS] --JEC [JEC_NAME]
 ----
 
 The merging will update the tree "analysis" and  the TTree "puvariable"  with a new branch called "evtWeightTot".
@@ -114,9 +114,7 @@ The prescale is saved in the miniAOD and saved in the ntuples from step 1.
 
 You have a similar file for MC, named 'triggers_mc.xml'. On this file, you have no run range, only a list of HLT path.
 This list is used in order to know with HLT the event should have fired if it was data.
-2012 note:
-You can also specify multiple HLT path for one pt bin if there were multiple active triggers during the data taking period.
-In this case, you'll need to provide a weight for each trigger (of course, the sum of the weight must be 1). Each trigger will be choose randolmy in order to respect the probabilities.
+
 ****
 
 
@@ -138,6 +136,7 @@ PhotonJet_Test_MC_PFlowAK4chs.root
 
 PhotonJet_Test_Data_PFlowAK4chs.root
 
+To modifify Eta, Pt, alpha extrapolation binning go in the bin directory and play with the different header .
 These final are used to produce the final plots. The code to do this is in +analysis/draw+.
 The first time that you used this code you need to compile it. 
 Go in that directory and compile with 
@@ -268,7 +267,15 @@ The last drawer produces in the directory "PhotonJetPlots...../vs_pt/" a root fi
 So you will have a plots.root for each alpha cut, these for files have to be added (simple hadd) 
 and send to Mikko in order to perform the global fit.
 
+To perform all the steps in an automated way you should use the script : Produce_Combination_File_and_plots.py 
+make a directory for your iteration of JEC analysis
+$mkdir TEST_JEC_Version_whatever 
+$mkdir TEST_JEC_Version_whatever/each_IOV
+$cp Produce_Combination_File_and_plots.py TEST_JEC_Version_whatever/each_IOV/.
+$cd TEST_JEC_Version_whatever/each_IOV/
+$python Produce_Combination_File_and_plots.py --Pu_profile which_PU_profile --Input_data Test_Data --Input_mc Test_MC --output output_suffix --IOV IOVsuffix
 
+this should produce all the relevant plots and the combination file need for the global fit
 === Any other business
 
 Others drawers could be found in the 'draw' directory.
