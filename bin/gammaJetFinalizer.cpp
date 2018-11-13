@@ -158,7 +158,7 @@ void GammaJetFinalizer::runAnalysis() {
 
 
                 // Trigger
-                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc.xml", cmsswBase.c_str()).Data();
+                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc2017.xml", cmsswBase.c_str()).Data();
                 std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
                 mMCTriggers      = new MCTriggers( TriggerFile.c_str() ) ;
                 
@@ -169,7 +169,7 @@ void GammaJetFinalizer::runAnalysis() {
                 parsePrescalefromJson();
                 //Trigger
                 static std::string cmsswBase = getenv("CMSSW_BASE");
-                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_data.xml", cmsswBase.c_str()).Data();
+                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_data2017.xml", cmsswBase.c_str()).Data();
                 std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
                 mTriggers      = new Triggers( TriggerFile.c_str() ) ;
 
@@ -1099,7 +1099,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     
     // time dependence studies
-    bool dotimedep  = false ;
+    bool dotimedep  = true ;
     if(!mIsMC && dotimedep){
        if(PhotonCorr.Pt() >= 175.) {
     run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
@@ -2002,8 +2002,8 @@ void GammaJetFinalizer::computePUWeight() {
         if(fullinfo.Pt_photon >= 85 && fullinfo.Pt_photon < 100)            mPUWeight = reweighter75->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 100 && fullinfo.Pt_photon < 130)           mPUWeight = reweighter90->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 130 && fullinfo.Pt_photon < 175)           mPUWeight = reweighter120->weight(fullinfo.trueInteraction);  
-        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 5000 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
-      //  if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
+        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 210 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
+        if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
 
         //  std::cout<<analysis.ntrue_interactions<<std::endl;  
         //  std::cout<<mPUWeight<<std::endl;
@@ -2110,7 +2110,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 double triggpassed4 = triggHLT4;//1.;//
                 double triggpassed5 = triggHLT5;//1.;//
                 double triggpassed6 = triggHLT6;//1.;//
-             //   double triggpassed7 = triggHLT7;
+               // double triggpassed7 = triggHLT7;
 
                 //   int passedtriggerresult ;
 
@@ -2130,7 +2130,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,2);
                  return TRIGGER_OK;}
-                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
+                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,1);
                  return TRIGGER_OK;}
 
@@ -2159,7 +2159,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 double passed4 = HLT4;
                 double passed5 = HLT5;
                 double passed6 = HLT6;
-               // double passed7 = HLT7;
+                double passed7 = HLT7;
 
                 double triggpassed1 = triggHLT1;//1.;//
                 double triggpassed2 = triggHLT2;//1.;//
@@ -2178,13 +2178,13 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
 
-                //if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed5 == 1. &&   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed4 == 1. &&   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed3 == 1. &&   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed2 == 1. &&   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
 
                 /* 
 

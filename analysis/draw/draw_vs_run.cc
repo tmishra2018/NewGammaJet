@@ -254,7 +254,10 @@ int main(int argc, char* argv[]) {
       gr_response_vs_run[ii] -> SetMarkerSize(1);
       }
       
-      
+      gr_response_vs_run[5] -> SetLineColor(1);
+      gr_response_vs_run[5] -> SetMarkerColor(1);
+      gr_response_vs_run[5] -> SetMarkerStyle(8);
+      gr_response_vs_run[5] -> SetMarkerSize(1);
       
       
       

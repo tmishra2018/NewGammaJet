@@ -49,7 +49,7 @@ class PtBinning {
     std::vector<std::pair<float, float> > mPtBins;
 
     void fillPtBins() { //2016
-     
+     /*
       mPtBins.push_back(std::make_pair(40., 60.));
       mPtBins.push_back(std::make_pair(60., 85.));
       mPtBins.push_back(std::make_pair(85., 105.));
@@ -61,8 +61,8 @@ class PtBinning {
       mPtBins.push_back(std::make_pair(400., 500.));
       mPtBins.push_back(std::make_pair(500., 700.));
       mPtBins.push_back(std::make_pair(700., 3000.));
-         
-     /* mPtBins.push_back(std::make_pair(40., 50.));
+      */   
+      mPtBins.push_back(std::make_pair(40., 50.));
       mPtBins.push_back(std::make_pair(50., 60.));
       mPtBins.push_back(std::make_pair(60., 85.));
       mPtBins.push_back(std::make_pair(85., 105.));
@@ -75,6 +75,6 @@ class PtBinning {
       mPtBins.push_back(std::make_pair(500., 700.));
       mPtBins.push_back(std::make_pair(700., 1000.));
       mPtBins.push_back(std::make_pair(1000.,3000.));      
-      */
+      
     } 
 };

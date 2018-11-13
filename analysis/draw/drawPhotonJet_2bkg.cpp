@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
   
   
   // HLT plots
-  /*
+  
   db->setFolder("analysis/HLT_CH_iso");
 
   /*for (size_t i = 0; i < etaBinningSize; i++) {
@@ -219,7 +219,7 @@ int main(int argc, char* argv[]) {
     TString responseName = TString::Format("ChHadronisoHLT_%s", etaBinning.getBinName(i).c_str());
     db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Charge hadron isolation", "", "Events", true);
     
-  }*//*
+  }*/
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "ChHadronisoHLT_eta0013", "Charge hadron isolation", "", "Events", true);
   
@@ -357,7 +357,7 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
   
-  */
+  
   // fine binning eta plots
   
   db->setFolder("analysis/fine_eta_binning/balancing");

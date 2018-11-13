@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <triggers>
   <path>
-    <name weight="1">HLT_Photon30_R9Id90_HE10_IsoM_v.*</name>
+    <name weight="1">HLT_Photon33_v.*</name>
     <pt from="40" to="60" />
   </path>
   <path>
