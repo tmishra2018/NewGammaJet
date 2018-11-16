@@ -158,7 +158,7 @@ void GammaJetFinalizer::runAnalysis() {
 
 
                 // Trigger
-                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc2017.xml", cmsswBase.c_str()).Data();
+                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_mc.xml", cmsswBase.c_str()).Data();
                 std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
                 mMCTriggers      = new MCTriggers( TriggerFile.c_str() ) ;
                 
@@ -169,7 +169,7 @@ void GammaJetFinalizer::runAnalysis() {
                 parsePrescalefromJson();
                 //Trigger
                 static std::string cmsswBase = getenv("CMSSW_BASE");
-                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_data2017.xml", cmsswBase.c_str()).Data();
+                std::string TriggerFile = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/bin/triggers_data.xml", cmsswBase.c_str()).Data();
                 std::cout<< "Trigger File "<< TriggerFile.c_str() << std::endl;
                 mTriggers      = new Triggers( TriggerFile.c_str() ) ;
 
@@ -829,7 +829,7 @@ void GammaJetFinalizer::runAnalysis() {
 
     if (evtWeightSum == 0.)
       evtWeightSum = 1.;
-    double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum : 1.;//triggerWeight;
+    double eventWeight = (mIsMC) ? mPUWeight * generatorWeight * evtWeightSum * ComputePreScaleForMC(fullinfo.Pt_photon) : 1.;//triggerWeight;
       
     if(mVerbose){
       if( mIsMC){
@@ -1099,7 +1099,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     
     // time dependence studies
-    bool dotimedep  = true ;
+    bool dotimedep  = false ;
     if(!mIsMC && dotimedep){
        if(PhotonCorr.Pt() >= 175.) {
     run_responseBalancingHLT165[etaBin][runBinning]->Fill(respBalancing,eventWeight);
@@ -2114,7 +2114,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
 
                 //   int passedtriggerresult ;
 
-                if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
+              //  if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
               //   weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,6);
                  return TRIGGER_OK;}
@@ -2130,7 +2130,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,2);
                  return TRIGGER_OK;}
-                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)){
+                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,1);
                  return TRIGGER_OK;}
 
@@ -2178,13 +2178,13 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
 
-                if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+             //   if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&   passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed5 == 1. &&   passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed4 == 1. &&   passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed3 == 1. &&   passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (triggpassed2 == 1. &&   passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                if (triggpassed1 == 1. &&   passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
 
                 /* 
 
@@ -2201,7 +2201,20 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
         }
         return TRIGGER_NOT_FOUND;
 }
+double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
+	double preScale;
+	
+	// Without prescale=1 for Pt_photon<189
+	if 	(Pt_photon<55) 	{ return 0.00019551029287792672; }
+	else if (Pt_photon<81) 	{ preScale=0.000952875; }
+	else if (Pt_photon<97) 	{ preScale=0.0046139; }
+	else if (Pt_photon<130) { preScale=0.00920684; }
+	else if (Pt_photon<189) { preScale=0.0207623; }
+	else 			{ preScale=1.; }
+
+	return preScale;
+}
 int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
 
         if (! mIsMC) {

@@ -1193,7 +1193,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   gr_sf->SetName(graph_name.c_str());
   gr_sf->GetXaxis()->SetTitle("#eta");
   gr_sf->GetYaxis()->SetTitle("Resolution Scale Factor");
-  
+  gr_sf->GetYaxis()->SetRangeUser(0.8,2.);
   
   if (outputFile) {
     outputFile->cd();
