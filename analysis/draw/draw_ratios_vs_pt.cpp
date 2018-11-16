@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
   // MC should already be normalized to a lumi of 1 pb-1
     TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-    db->set_lumi(lumi->GetVal());
+    db->set_lumi(36700 /*lumi->GetVal()*/);
     db->set_lumiNormalization();
 
   double alpha_cut = static_cast<TParameter<double>*>(dataFile->Get("analysis/alpha_cut"))->GetVal();
@@ -1115,6 +1115,84 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     double Scalefactorerr [Npoint] = {0.};
     double x[Npoint] = {0.};
     
+    double x_dijet[13] = {0.};
+    double x_8Tev[7] = {0.};
+     double x_dijet_err[13] = {0.};
+    double x_8Tev_err[7] = {0.};
+    
+    double Scalefactor_8Tev [7]    = {0.}; 
+    double Scalefactorerr_8Tev [7] = {0.};
+    
+    double Scalefactor_dijet [13]    = {0.}; 
+    double Scalefactorerr_dijet [13] = {0.};
+    
+    x_8Tev[0] = 0.25;
+    x_8Tev[1] = 0.8;
+    x_8Tev[2] = 1.4;
+    x_8Tev[3] = 2.0;
+    x_8Tev[4] = 2.55;
+    x_8Tev[5] = 3.0;
+    x_8Tev[6] = 3.8;
+    
+    Scalefactor_8Tev[0] = 1.079;
+    Scalefactor_8Tev[1] = 1.099;
+    Scalefactor_8Tev[2] = 1.121;
+    Scalefactor_8Tev[3] = 1.208;
+    Scalefactor_8Tev[4] = 1.254;
+    Scalefactor_8Tev[5] = 1.395;
+    Scalefactor_8Tev[6] = 1.056;
+    
+    Scalefactorerr_8Tev[0] = 0.026;
+    Scalefactorerr_8Tev[1] = 0.028;
+    Scalefactorerr_8Tev[2] = 0.029;
+    Scalefactorerr_8Tev[3] = 0.046;
+    Scalefactorerr_8Tev[4] = 0.063;
+    Scalefactorerr_8Tev[5] = 0.191;
+    Scalefactorerr_8Tev[6] = 0.191;
+    
+    x_dijet[0] = 0.25;
+    x_dijet[1] = 0.62;
+    x_dijet[2] = 1.05;
+    x_dijet[3] = 1.2;
+    x_dijet[4] = 1.5;
+    x_dijet[5] = 1.85;
+    x_dijet[6] = 2.00;
+    x_dijet[7] = 2.15;
+    x_dijet[8] = 2.4;
+    x_dijet[9] = 2.72;
+    x_dijet[10] = 2.9;
+    x_dijet[11] = 3.00;
+    x_dijet[12] = 4.;
+    
+    Scalefactor_dijet[0] = 1.1595;
+    Scalefactor_dijet[1] = 1.1948;
+    Scalefactor_dijet[2] = 1.1464;
+    Scalefactor_dijet[3] = 1.1609;
+    Scalefactor_dijet[4] = 1.1278;
+    Scalefactor_dijet[5] = 1.1000;
+    Scalefactor_dijet[6] = 1.1426;
+    Scalefactor_dijet[7] = 1.1512;
+    Scalefactor_dijet[8] = 1.2963;
+    Scalefactor_dijet[9] = 1.3418;
+    Scalefactor_dijet[10] = 1.7788;
+    Scalefactor_dijet[11] = 1.1869;
+    Scalefactor_dijet[12] = 1.1922;
+    
+    Scalefactorerr_dijet[0] = 0.0645;
+    Scalefactorerr_dijet[1] = 0.0652;
+    Scalefactorerr_dijet[2] = 0.0632;
+    Scalefactorerr_dijet[3] = 0.1025;
+    Scalefactorerr_dijet[4] = 0.0986;
+    Scalefactorerr_dijet[5] = 0.1079;
+    Scalefactorerr_dijet[6] = 0.1214;
+    Scalefactorerr_dijet[7] = 0.1140;
+    Scalefactorerr_dijet[8] = 0.2371;
+    Scalefactorerr_dijet[9] = 0.2091;
+    Scalefactorerr_dijet[10] = 0.2008;
+    Scalefactorerr_dijet[11] = 0.1243;
+    Scalefactorerr_dijet[12] = 0.1488;
+    
+    
     
       fineEtaBinning fineetaBinning;
       EtaBinning     etaBinning;
@@ -1122,12 +1200,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     if(Npoint <= 7 ){
     name_base += "wide_eta_binning_";
     graph_name += "wide_eta_binning_"; 
-   /* x[0] = 0.4;
-    x[1] = 1.05;
-    x[2] = 1.6;
-    x[3] = 2.2;
-    x[4] = 2.7;
-    x[5] = 3.1;*/
+   
     for(size_t i = 0 ; i < etaBinning.size() ; ++i){
      
      x[i] = etaBinning.getBinValue(i).first + ( etaBinning.getBinValue(i).second - etaBinning.getBinValue(i).first)/2. ;
@@ -1182,13 +1255,30 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   graph_name += "Scale_factor_res_vs_ETA";
   name_base  +="Scale_factor_res_vs_ETA.pdf";
   TGraphErrors* gr_sf = new TGraphErrors(Npoint, x, Scalefactor , x_err, Scalefactorerr);
-    
+  TGraphErrors* gr_dijet = new TGraphErrors(13, x_dijet, Scalefactor_dijet , x_dijet_err, Scalefactorerr_dijet);
+  TGraphErrors* gr_8Tev = new TGraphErrors(7, x_8Tev, Scalefactor_8Tev , x_8Tev_err, Scalefactorerr_8Tev);
+  TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 13, 0., 5.2, 10, 0.8, 1.6); 
+  h2_axes_lo_resp->SetXTitle("#eta"); 
   gr_sf->SetTitle(graph_name.c_str());
   gr_sf->SetLineWidth(2);
   gr_sf->SetLineColor(4);
   gr_sf->SetMarkerSize(1);
   gr_sf->SetMarkerStyle(34);
   gr_sf->SetMarkerColor(kBlue);
+  
+  gr_dijet->SetTitle("Dijet");
+  gr_dijet->SetLineWidth(2);
+  gr_dijet->SetLineColor(kGreen +1);
+  gr_dijet->SetMarkerSize(1);
+  gr_dijet->SetMarkerStyle(34);
+  gr_dijet->SetMarkerColor(kGreen +1);
+  
+  gr_8Tev->SetTitle("8TEV");
+  gr_8Tev->SetLineWidth(2);
+  gr_8Tev->SetLineColor(1);
+  gr_8Tev->SetMarkerSize(1);
+  gr_8Tev->SetMarkerStyle(34);
+  gr_8Tev->SetMarkerColor(1);
   
   gr_sf->SetName(graph_name.c_str());
   gr_sf->GetXaxis()->SetTitle("#eta");
@@ -1208,10 +1298,18 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   TPaveText* label_sqrt = db->get_labelSqrt(1);
 
   
-  
+  TLegend *leg = new TLegend(0.15,.7, .5, .9);
+  leg->AddEntry(gr_sf,"#gamma + jet","P");
+  leg->AddEntry(gr_dijet,"dijet","P");
+  leg->AddEntry(gr_8Tev,"8TeV","P");
 
   TCanvas *screen_1 = new TCanvas("screen1", "screen1", 800, 800);
-  gr_sf->Draw("APE");
+  h2_axes_lo_resp->Draw("same");
+  
+  gr_dijet->Draw("P same");
+  gr_8Tev->Draw("P same");
+  gr_sf->Draw("P same");
+  leg->Draw("same");
   //box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
   //boxcms->DrawLatex(0.12,0.91,"CMS");
   //boxprel->DrawLatex(0.24,0.935,"Preliminary");

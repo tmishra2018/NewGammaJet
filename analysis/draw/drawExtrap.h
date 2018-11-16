@@ -45,7 +45,7 @@ private:
                              Float_t& DATAResp, Float_t& DATAResp_err, Float_t& extrapResp, Float_t& extrapResp_err, Float_t& trueResp, Float_t& trueResp_err, Float_t& intrResp, Float_t& intrResp_err,
                              Float_t& imbalanceResp, Float_t& imbalanceResp_err, const std::string& recoGen) const;
   void getXPoints(int ptBin, Float_t* x, Float_t* x_err) const;
-  void getYPoints(TFile * file, const char* yHistoName, Int_t nPoints, Float_t* y_resp, Float_t* y_resp_err,  Float_t* y_reso, Float_t* y_reso_err) const;
+  void getYPoints(TFile * file, const char* yHistoName, Int_t nPoints, Float_t* y_resp, Float_t* y_resp_err,  Float_t* y_reso, Float_t* y_reso_err, Float_t* y_nevents) const;
   void getYPointsVector(TFile *file, const std::string& yHistoName, Int_t nPoints, std::vector<Float_t>& y_resp, std::vector<Float_t>& y_resp_err, std::vector<Float_t>& y_reso, std::vector<Float_t>& y_reso_err) const;
 
   bool NOQ_;

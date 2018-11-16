@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
   // Read luminosity
   double dLumi=1;
   TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-  dLumi = lumi->GetVal();   
+  dLumi = 36700 ;//lumi->GetVal();   
   std::cout<< "Lumi "<< dLumi << std::endl;  
   db->set_lumi(dLumi);
   

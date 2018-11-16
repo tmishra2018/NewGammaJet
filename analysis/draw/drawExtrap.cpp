@@ -161,23 +161,13 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-    x[0]=alphaMeanVec.at(0);
-    x_err[0]=0.;
     
-    x[1]=alphaMeanVec.at(1);
-    x_err[1]=0.0;
+    for (int il = 0 ; il < nPoints ; il++){
+    x[il]=alphaMeanVec.at(il);
+    x_err[il]=0.;
     
-    x[2]=alphaMeanVec.at(2);
-    x_err[2]=0.0;
+    }
     
-    x[3]=alphaMeanVec.at(3);
-    x_err[3]=0.0;
-    
-    x[4]=alphaMeanVec.at(4);
-    x_err[4]=0.0;
-    
-    x[5]=alphaMeanVec.at(5);
-    x_err[5]=0.0;
     
    /* x[0]=0.1;
     x_err[0]=0.0;
@@ -224,21 +214,28 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
 
     Float_t y_reso_MPFMC[nPoints];
     Float_t y_reso_MPFMC_err[nPoints];
+    
+    Float_t y_Nevents[nPoints];
+    Float_t y_Nevents_MC[nPoints];
+    Float_t y_NeventsMPF[nPoints];
+    Float_t y_Nevents_MCMPF[nPoints];
+    
+     Float_t y_NeventsPLI[nPoints];
 
     TString yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_balancing%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     
     // infinite loop for amc at NLO start
-    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_DATA, y_resp_err_DATA,  y_reso_DATA, y_reso_err_DATA);
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MC, y_resp_MC_err,  y_reso_MC, y_reso_MC_err);
+    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_DATA, y_resp_err_DATA,  y_reso_DATA, y_reso_err_DATA,y_Nevents);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MC, y_resp_MC_err,  y_reso_MC, y_reso_MC_err,y_Nevents_MC);
     // infinite loop for amc at NLO stop
     yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_mpf%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
-    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_MPFDATA, y_resp_err_MPFDATA,  y_reso_MPFDATA, y_reso_err_MPFDATA);
+    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_MPFDATA, y_resp_err_MPFDATA,  y_reso_MPFDATA, y_reso_err_MPFDATA,y_NeventsMPF);
     
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MPFMC, y_resp_MPFMC_err,  y_reso_MPFMC, y_reso_MPFMC_err);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MPFMC, y_resp_MPFMC_err,  y_reso_MPFMC, y_reso_MPFMC_err,y_Nevents_MCMPF);
 
      //PLI
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err,y_NeventsPLI);
     
     int is_empty = 0;
     for(int i = 1; i < nPoints ; i++){
@@ -247,7 +244,64 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
           }      
     }
     
-    if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+    if(iPtBin < 3){
+    	 x[0]= (alphaMeanVec.at(0)*y_Nevents[0]+alphaMeanVec.at(1)*y_Nevents[1]+alphaMeanVec.at(3)*y_Nevents[3])/(y_Nevents[0]+y_Nevents[1]); // (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+    	 y_resp_DATA[0] = (y_resp_DATA[0]*y_Nevents[0] + y_resp_DATA[1]*y_Nevents[1] + y_resp_DATA[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_resp_MC[0] = (y_resp_MC[0]*y_Nevents_MC[0] + y_resp_MC[1]*y_Nevents_MC[1] + y_resp_MC[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_reso_DATA[0] = (y_reso_DATA[0]*y_Nevents[0] + y_reso_DATA[1]*y_Nevents[1] + y_reso_DATA[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_reso_MC[0] = (y_reso_MC[0]*y_Nevents_MC[0] + y_reso_MC[1]*y_Nevents_MC[1] + y_reso_MC[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_resp_err_DATA[0] = (y_resp_err_DATA[0]*y_Nevents[0] + y_resp_err_DATA[1]*y_Nevents[1] + y_resp_err_DATA[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_resp_MC_err[0] = (y_resp_MC_err[0]*y_Nevents_MC[0] + y_resp_MC_err[1]*y_Nevents_MC[1] + y_resp_MC_err[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_reso_err_DATA[0] = (y_reso_err_DATA[0]*y_Nevents[0] + y_reso_err_DATA[1]*y_Nevents[1] + y_reso_err_DATA[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_reso_MC_err[0] = (y_reso_MC_err[0]*y_Nevents_MC[0] + y_reso_MC_err[1]*y_Nevents_MC[1] + y_reso_MC_err[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_PLI[0] = (y_PLI[0]*y_Nevents_MC[0] + y_PLI[1]*y_Nevents_MC[1] + y_PLI[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;   	 
+    	 y_PLI_err[0] = (y_PLI_err[0]*y_Nevents[0] + y_PLI_err[1]*y_Nevents[1] + y_PLI_err[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 
+    	 y_reso_PLI[0] = (y_reso_PLI[0]*y_Nevents_MC[0] + y_reso_PLI[1]*y_Nevents_MC[1] + y_reso_PLI[2]*y_Nevents_MC[2])/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;   	 
+    	 y_reso_PLI_err[0] = (y_reso_PLI_err[0]*y_Nevents[0] + y_reso_PLI_err[1]*y_Nevents[1] + y_reso_PLI_err[2]*y_Nevents[2])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 
+    	 
+    	 y_resp_DATA[1] = -1 ;
+    	 y_resp_MC[1] = -1 ;
+    	 
+    	 y_reso_DATA[1] = -1 ;
+    	 y_reso_MC[1] = -1 ;
+    	 
+    	 y_resp_err_DATA[1] = 100000000 ;
+    	 y_resp_MC_err[1] = 1000000000 ;
+    	 
+    	 y_reso_err_DATA[0] = 100000000 ;
+    	 y_reso_MC_err[0] = 10000000 ;
+    	 
+    	 y_PLI[1] = -1;   	 
+    	 y_PLI_err[1] = -1;
+    	 
+    	 y_reso_PLI[1] = 10000000 ;   	 
+    	 y_reso_PLI_err[1] = 1000000;
+    	 
+    	  y_resp_DATA[2] = -1 ;
+    	 y_resp_MC[2] = -1 ;
+    	 
+    	 y_reso_DATA[2] = -1 ;
+    	 y_reso_MC[2] = -1 ;
+    	 
+    	 y_resp_err_DATA[2] = 100000000 ;
+    	 y_resp_MC_err[2] = 1000000000 ;
+    	 
+    	 y_reso_err_DATA[2] = 100000000 ;
+    	 y_reso_MC_err[2] = 10000000 ;
+    	 
+    	 y_PLI[2] = -1;   	 
+    	 y_PLI_err[2] = -1;
+    	 
+    	 y_reso_PLI[2] = 10000000 ;   	 
+    	 y_reso_PLI_err[2] = 1000000;
+    	 
+    }
     //draw response histograms:
     TGraphErrors* gr_resp_DATA = new TGraphErrors(nPoints, x, y_resp_DATA, x_err, y_resp_err_DATA);
     gr_resp_DATA->SetMarkerStyle(20);
@@ -1279,24 +1333,14 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
     float x[nPoints];
     float x_err[nPoints];
    // getXPoints(iPtBin, x, x_err);
-   // std::cout<<" test vector out of range size vec alpha mean : "<<alphaMeanVec.size() <<std::endl; 
-    x[0]=alphaMeanVec.at(0);
-    x_err[0]=0.;
+    // std::cout<<" test vector out of range size vec alpha mean : "<<alphaMeanVec.size() <<std::endl; 
+    for (int il = 0 ; il < nPoints ; il++){
+    x[il]=alphaMeanVec.at(il);
+    x_err[il]=0.;
     
-    x[1]=alphaMeanVec.at(1);
-    x_err[1]=0.0;
-   // std::cout<<" test vector out of range "<<std::endl;
-    x[2]=alphaMeanVec.at(2);
-    x_err[2]=0.0;
-        
-    x[3]=alphaMeanVec.at(3);
-    x_err[3]=0.0;
+    }
     
-    x[4]=alphaMeanVec.at(4);
-    x_err[4]=0.0;
-
-    x[5]=alphaMeanVec.at(5);
-    x_err[5]=0.0;
+   
     /*
     x[0]=0.0;
     x_err[0]=0.;
@@ -1362,21 +1406,28 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
 
     Float_t y_reso_MPFMC[nPoints];
     Float_t y_reso_MPFMC_err[nPoints];
+    Float_t y_Nevents[nPoints];
+    Float_t y_Nevents_MC[nPoints];
+    Float_t y_NeventsMPF[nPoints];
+    Float_t y_Nevents_MCMPF[nPoints];
+    
+     Float_t y_NeventsPLI[nPoints];
+
 
     TString yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_balancing_fine_bining%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
     
     // infinite loop for amc at NLO start
-    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_DATA, y_resp_err_DATA,  y_reso_DATA, y_reso_err_DATA);
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MC, y_resp_MC_err,  y_reso_MC, y_reso_MC_err);
+    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_DATA, y_resp_err_DATA,  y_reso_DATA, y_reso_err_DATA,y_Nevents);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MC, y_resp_MC_err,  y_reso_MC, y_reso_MC_err,y_Nevents_MC);
     // infinite loop for amc at NLO stop
     yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_resp_mpf_fine_bining%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
-    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_MPFDATA, y_resp_err_MPFDATA,  y_reso_MPFDATA, y_reso_err_MPFDATA);
+    getYPoints(get_dataFile(0), yHistoName, nPoints, y_resp_MPFDATA, y_resp_err_MPFDATA,  y_reso_MPFDATA, y_reso_err_MPFDATA,y_NeventsMPF);
     
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MPFMC, y_resp_MPFMC_err,  y_reso_MPFMC, y_reso_MPFMC_err);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_resp_MPFMC, y_resp_MPFMC_err,  y_reso_MPFMC, y_reso_MPFMC_err,y_Nevents_MCMPF);
 
      //PLI
      yHistoName = TString::Format("analysis/extrapolation/extrap_ptPhot_%d_%d/extrap_PLI_fine%s_%s", (int) currentBin.first, (int) currentBin.second, rawPostfix.c_str(), etaRegion.c_str());
-    getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err);
+    getYPoints(get_mcFile(0), yHistoName, nPoints, y_PLI, y_PLI_err,  y_reso_PLI, y_reso_PLI_err,y_NeventsPLI);
     
     int is_empty = 0;
     for(int i = 1; i < nPoints ; i++){
@@ -1385,7 +1436,51 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
           }      
     }
     
- //   if(is_empty!=0) x[0]= (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+    
+    	 
+    	 if(iPtBin < 3){
+    	 x[0]= (alphaMeanVec.at(0)*y_Nevents[0]+alphaMeanVec.at(1)*y_Nevents[1])/(y_Nevents[0]+y_Nevents[1]); // (mExtrapBinning.getBinValue(is_empty).second) / 2. ;
+    	 y_resp_DATA[0] = (y_resp_DATA[0]*y_Nevents[0] + y_resp_DATA[1]*y_Nevents[1] )/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_resp_MC[0] = (y_resp_MC[0]*y_Nevents_MC[0] + y_resp_MC[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_reso_DATA[0] = (y_reso_DATA[0]*y_Nevents[0] + y_reso_DATA[1]*y_Nevents[1] )/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_reso_MC[0] = (y_reso_MC[0]*y_Nevents_MC[0] + y_reso_MC[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_resp_err_DATA[0] = (y_resp_err_DATA[0]*y_Nevents[0] + y_resp_err_DATA[1]*y_Nevents[1] )/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_resp_MC_err[0] = (y_resp_MC_err[0]*y_Nevents_MC[0] + y_resp_MC_err[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_reso_err_DATA[0] = (y_reso_err_DATA[0]*y_Nevents[0] + y_reso_err_DATA[1]*y_Nevents[1] )/(y_Nevents[0]+y_Nevents[1]) ;
+    	 y_reso_MC_err[0] = (y_reso_MC_err[0]*y_Nevents_MC[0] + y_reso_MC_err[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 y_PLI[0] = (y_PLI[0]*y_Nevents_MC[0] + y_PLI[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;   	 
+    	 y_PLI_err[0] = (y_PLI_err[0]*y_Nevents[0] + y_PLI_err[1]*y_Nevents[1])/(y_Nevents[0]+y_Nevents[1]) ;
+    	 
+    	 y_reso_PLI[0] = (y_reso_PLI[0]*y_Nevents_MC[0] + y_reso_PLI[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;   	 
+    	 y_reso_PLI_err[0] = (y_reso_PLI_err[0]*y_Nevents_MC[0] + y_reso_PLI_err[1]*y_Nevents_MC[1] )/(y_Nevents_MC[0]+y_Nevents_MC[1]) ;
+    	 
+    	 
+    	 y_resp_DATA[1] = -1 ;
+    	 y_resp_MC[1] = -1 ;
+    	 
+    	 y_reso_DATA[1] = -1 ;
+    	 y_reso_MC[1] = -1 ;
+    	 
+    	 y_resp_err_DATA[1] = 100000000 ;
+    	 y_resp_MC_err[1] = 1000000000 ;
+    	 
+    	 y_reso_err_DATA[1] = 100000000 ;
+    	 y_reso_MC_err[1] = 10000000 ;
+    	 
+    	 y_PLI[1] = -1;   	 
+    	 y_PLI_err[1] = -1;
+    	 
+    	 y_reso_PLI[1] = 10000000 ;   	 
+    	 y_reso_PLI_err[1] = 1000000;
+    	 
+    	 
+    	 
+    }
+    	 
     
     
     
@@ -2429,7 +2524,7 @@ void drawExtrap::getYPointsVector(TFile *file, const std::string& yHistoName, In
   } //for
 }
 
-void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints, Float_t* y_resp, Float_t* y_resp_err,  Float_t* y_reso, Float_t* y_reso_err) const {
+void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints, Float_t* y_resp, Float_t* y_resp_err,  Float_t* y_reso, Float_t* y_reso_err, Float_t* y_nevents) const {
 
   for (int i = 0; i < nPoints ; ++i) {
 
@@ -2448,7 +2543,7 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
       y_resp[i] = -1.;
       y_resp_err[i] = 1000000000.;
       y_reso[i] = -1.;
-      y_reso_err[i] = 0.;
+      y_reso_err[i] = 100000000.;
 
       continue;
     }
@@ -2477,7 +2572,7 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
 
       y_reso[i] = sigma / mu;
       y_reso_err[i] = sqrt(sigma_err * sigma_err / (mu * mu) + sigma * sigma * mu_err * mu_err / (mu * mu * mu * mu));
-
+      y_nevents[i] = h1_r->Integral();
       continue;
 
     } else if (FIT_RMS_ == "RMS70") {
@@ -2514,6 +2609,7 @@ void drawExtrap::getYPoints(TFile * file, const char* yHistoName, Int_t nPoints,
 
     y_reso[i] = rms / mean;
     y_reso_err[i] = sqrt(rms_err * rms_err / (mean * mean) + rms * rms * mean_err * mean_err / (mean * mean * mean * mean));
+    y_nevents[i] = h1_r->Integral();
   } //for
 
 } //getYPoints
