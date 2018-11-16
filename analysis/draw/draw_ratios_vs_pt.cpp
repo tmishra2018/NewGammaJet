@@ -1115,6 +1115,8 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     double Scalefactorerr [Npoint] = {0.};
     double x[Npoint] = {0.};
     
+    double Scalefactor_incl [Npoint]    = {0.}; 
+    double Scalefactorerr_incl [Npoint] = {0.};
     
       fineEtaBinning fineetaBinning;
       EtaBinning     etaBinning;
