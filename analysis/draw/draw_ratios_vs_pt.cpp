@@ -1123,6 +1123,9 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     double Scalefactor_8Tev [7]    = {0.}; 
     double Scalefactorerr_8Tev [7] = {0.};
     
+    double Scalefactor_Inclusive [9]    = {0.}; 
+    double Scalefactorerr_Inclusive [9] = {0.};
+    
     double Scalefactor_dijet [13]    = {0.}; 
     double Scalefactorerr_dijet [13] = {0.};
     
@@ -1133,6 +1136,28 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     x_8Tev[4] = 2.55;
     x_8Tev[5] = 3.0;
     x_8Tev[6] = 3.8;
+    
+    Scalefactor_Inclusive[0] = 1.07511;
+    Scalefactor_Inclusive[1] = 1.09778;
+    Scalefactor_Inclusive[2] = 1.08546;
+    Scalefactor_Inclusive[3] = 1.06259;
+    Scalefactor_Inclusive[4] = 1.08822;
+    Scalefactor_Inclusive[5] = 1.13356;
+    Scalefactor_Inclusive[6] = 1.14635;
+    Scalefactor_Inclusive[7] = 1.29959;
+    Scalefactor_Inclusive[8] = 1.47173;
+    
+    Scalefactorerr_Inclusive[0] = 0.00971429;
+    Scalefactorerr_Inclusive[1] = 0.0143128;
+    Scalefactorerr_Inclusive[2] = 0.0126786;
+    Scalefactorerr_Inclusive[3] = 0.0186246;
+    Scalefactorerr_Inclusive[4] = 0.0141006;
+    Scalefactorerr_Inclusive[5] = 0.0238381;
+    Scalefactorerr_Inclusive[6] = 0.0319001;
+    Scalefactorerr_Inclusive[7] = 0.048968;
+    Scalefactorerr_Inclusive[8] = 0.133652;
+    
+    
     
     Scalefactor_8Tev[0] = 1.079;
     Scalefactor_8Tev[1] = 1.099;
@@ -1255,6 +1280,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   graph_name += "Scale_factor_res_vs_ETA";
   name_base  +="Scale_factor_res_vs_ETA.pdf";
   TGraphErrors* gr_sf = new TGraphErrors(Npoint, x, Scalefactor , x_err, Scalefactorerr);
+  TGraphErrors* gr_incl = new TGraphErrors(Npoint, x, Scalefactor_Inclusive , x_err, Scalefactorerr_Inclusive);
   TGraphErrors* gr_dijet = new TGraphErrors(13, x_dijet, Scalefactor_dijet , x_dijet_err, Scalefactorerr_dijet);
   TGraphErrors* gr_8Tev = new TGraphErrors(7, x_8Tev, Scalefactor_8Tev , x_8Tev_err, Scalefactorerr_8Tev);
   TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 13, 0., 5.2, 10, 0.8, 1.6); 
@@ -1265,6 +1291,13 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   gr_sf->SetMarkerSize(1);
   gr_sf->SetMarkerStyle(34);
   gr_sf->SetMarkerColor(kBlue);
+  
+  gr_incl->SetTitle("Iclusive");
+  gr_incl->SetLineWidth(2);
+  gr_incl->SetLineColor(kRed);
+  gr_incl->SetMarkerSize(1);
+  gr_incl->SetMarkerStyle(34);
+  gr_incl->SetMarkerColor(kRed);
   
   gr_dijet->SetTitle("Dijet");
   gr_dijet->SetLineWidth(2);
@@ -1299,9 +1332,11 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
 
   
   TLegend *leg = new TLegend(0.15,.7, .5, .9);
-  leg->AddEntry(gr_sf,"#gamma + jet","P");
+  leg->AddEntry(gr_sf,"Exclusive","P");
+  leg->AddEntry(gr_incl,"Inclusive","P");
   leg->AddEntry(gr_dijet,"dijet","P");
   leg->AddEntry(gr_8Tev,"8TeV","P");
+  
 
   TCanvas *screen_1 = new TCanvas("screen1", "screen1", 800, 800);
   h2_axes_lo_resp->Draw("same");
@@ -1309,6 +1344,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   gr_dijet->Draw("P same");
   gr_8Tev->Draw("P same");
   gr_sf->Draw("P same");
+  gr_incl->Draw("P same");
   leg->Draw("same");
   //box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
   //boxcms->DrawLatex(0.12,0.91,"CMS");
