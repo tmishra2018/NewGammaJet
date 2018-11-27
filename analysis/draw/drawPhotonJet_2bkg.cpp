@@ -117,6 +117,7 @@ int main(int argc, char* argv[]) {
   db->set_rebin(1);
 
   // Data/MC comparison
+  db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_NoCut", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("EtaPhoton", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton", "Photon Phi", " ", "Events" , false);
@@ -210,16 +211,10 @@ int main(int argc, char* argv[]) {
   
   
   // HLT plots
-  
+  /*
   db->setFolder("analysis/HLT_CH_iso");
 
-  /*for (size_t i = 0; i < etaBinningSize; i++) {
-    db->set_legendTitle(etaBinning.getBinTitle(i));
-    
-    TString responseName = TString::Format("ChHadronisoHLT_%s", etaBinning.getBinName(i).c_str());
-    db->drawHisto_vs_pt(hltptBins, hltptMean, responseName.Data(), "Charge hadron isolation", "", "Events", true);
-    
-  }*/
+  
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "ChHadronisoHLT_eta0013", "Charge hadron isolation", "", "Events", true);
   
@@ -356,7 +351,7 @@ int main(int argc, char* argv[]) {
   }
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(hltptBins, hltptMean, "alphaHLT_eta0013", "#alpha", "", "Events", false);
-  
+  */
   
   // fine binning eta plots
   
@@ -430,7 +425,7 @@ int main(int argc, char* argv[]) {
   
   db->setFolder("analysis");
   db->set_shapeNormalization();
-  db->drawHisto("ptPhoton_175_3000", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
+ // db->drawHisto("ptPhoton_175_3000", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_130_175", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_105_130", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("ptPhoton_85_105", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);

@@ -4396,13 +4396,13 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     ratioFit->SetParLimits(1, -5, 5);
     ratioFit->SetLineColor(46);
     ratioFit->SetLineWidth(1);
-    //data_clone->Fit(ratioFit, "QR");
+    data_clone->Fit(ratioFit, "QR");
 
     TF1* constantFit = new TF1("linearFit", "pol0", fitMin, fitMax);
     constantFit->SetLineColor(TColor::GetColor("#C02942"));
     constantFit->SetLineWidth(1.0);
     //constantFit->SetLineStyle(kDashed);
-    data_clone->Fit(constantFit, "QENFMI");
+   // data_clone->Fit(constantFit, "QENFMI");
     
     TH1D* errors = new TH1D("errors", "errors", 500, data_clone->GetXaxis()->GetXmin(), data_clone->GetXaxis()->GetXmax());
     //TH1D* errors = new TH1D("errors", "errors", 100, fitMin, fitMax);
@@ -4435,7 +4435,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     data_clone->Draw("e");
 
     errors->Draw("e3 same");
-    //ratioFit->Draw("same");
+    ratioFit->Draw("same");
     constantFit->Draw("same");
 
     data_clone->Draw("e same");

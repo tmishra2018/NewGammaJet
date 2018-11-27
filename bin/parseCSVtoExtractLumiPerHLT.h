@@ -16,6 +16,9 @@ map<int, map<int, double> > m_90;
 map<int, map<int, double> > m_120;
 map<int, map<int, double> > m_175;
 
+
+
+
 double getLUMItot(int run, int ls) {
 
   return m_LUMI[run][ls];
@@ -31,6 +34,8 @@ double getPrescaleperHLT(int run, int ls, int HLT) {
   if(HLT==6)return m_175[run][ls];
   return -999;
 }
+
+
 
 int parsePrescalefromJson(string filename="/afs/cern.ch/work/h/hlattaud/private/Ploting_area/CMSSW_8_0_25/src/JetMETCorrections/GammaJetFilter/bin/LUMdataHLT2016_runBCDEFGH_NoHLT.csv") {
 
