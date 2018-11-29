@@ -430,7 +430,10 @@ void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::s
   c1->cd();
 
   // Data / MC comparison
-  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  TPad* pad_hi ;
+  
+   if(is_reso) pad_hi = new TPad("pad_hi", "", 0., 0., 0.99, 0.99);
+   if(!is_reso)pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
   pad_hi->Draw();
   pad_hi->SetLogx();
   pad_hi->SetLeftMargin(0.12);
@@ -583,7 +586,7 @@ void drawGraphsextrap(TGraphErrors* ratio, double xMin, double xMax, const std::
   c1->cd();
 
   // Data / MC comparison
-  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  TPad* pad_hi = new TPad("pad_hi", "", 0., 0., 0.99, 0.99);
   pad_hi->Draw();
   pad_hi->SetLogx();
   pad_hi->SetLeftMargin(0.12);
