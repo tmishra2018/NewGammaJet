@@ -33,8 +33,8 @@ void setGraphStyle(TGraphErrors* graph, int markerStyle, int markerColor, int ma
 }
 
 bool SAVE_EPS = false;
-bool SAVE_PDF = false;
-bool SAVE_PNG = true;
+bool SAVE_PDF = true;
+bool SAVE_PNG = false;
 bool SAVE_ROOT = false;
 void saveCanvas(TCanvas* canvas, const std::string& name) {
   if (SAVE_EPS)
@@ -415,7 +415,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
 
 
 
-void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix) {
+void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix, bool is_reso) {
 
   std::string name_base = db->get_outputdir();
   name_base += "/" + prefix;
@@ -424,7 +424,9 @@ void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::s
   if (etaRegion != "")
     name_base += "_" + etaRegion;
 
-  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+  TCanvas* c1;
+  if(is_reso)c1 = new TCanvas("c1", "c1", 600, 600);
+  if(!is_reso)c1 = new TCanvas("c1", "c1", 600, 600);
   c1->cd();
 
   // Data / MC comparison
@@ -577,7 +579,7 @@ void drawGraphsextrap(TGraphErrors* ratio, double xMin, double xMax, const std::
   if (etaRegion != "")
     name_base += "_" + etaRegion;
 
-  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+  TCanvas* c1 = new TCanvas("c1", "c1", 600, 600);
   c1->cd();
 
   // Data / MC comparison
@@ -1097,8 +1099,8 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   drawGraphs(gr_responseEXTRAP_vs_pt, gr_responseEXTRAPMC_vs_pt, xMin, xMax, "p_{T} Balance extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_extrap", rawJets);
   drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
   //  drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
-  drawGraphsratio(gr_dataMC_EXTRAP, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso_extrap");
- if(isresolution) drawGraphsratio(gr_dataMC_BALANCING, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso"); 
+  drawGraphsratio(gr_dataMC_EXTRAP, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso_extrap",false);
+ if(isresolution) drawGraphsratio(gr_dataMC_BALANCING, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso",true); 
  if(isfinebinning && isresolution){ drawGraphsextrap(gr_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_data");}
  if(isfinebinning && isresolution){ drawGraphsextrap(gr_MC_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_MC");}
   file_noextrap->Close();
@@ -1137,25 +1139,25 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
     x_8Tev[5] = 3.0;
     x_8Tev[6] = 3.8;
     
-    Scalefactor_Inclusive[0] = 1.07511;
-    Scalefactor_Inclusive[1] = 1.09778;
-    Scalefactor_Inclusive[2] = 1.08546;
-    Scalefactor_Inclusive[3] = 1.06259;
-    Scalefactor_Inclusive[4] = 1.08822;
-    Scalefactor_Inclusive[5] = 1.13356;
-    Scalefactor_Inclusive[6] = 1.14635;
-    Scalefactor_Inclusive[7] = 1.29959;
-    Scalefactor_Inclusive[8] = 1.47173;
+    Scalefactor_Inclusive[0] = 1.08805;
+    Scalefactor_Inclusive[1] = 1.11608;
+    Scalefactor_Inclusive[2] = 1.08734;
+    Scalefactor_Inclusive[3] = 1.07240;
+    Scalefactor_Inclusive[4] = 1.09135;
+    Scalefactor_Inclusive[5] = 1.17125;
+    Scalefactor_Inclusive[6] = 1.20625;
+    Scalefactor_Inclusive[7] = 1.34833;
+    Scalefactor_Inclusive[8] = 1.23307;
     
-    Scalefactorerr_Inclusive[0] = 0.00971429;
-    Scalefactorerr_Inclusive[1] = 0.0143128;
-    Scalefactorerr_Inclusive[2] = 0.0126786;
-    Scalefactorerr_Inclusive[3] = 0.0186246;
-    Scalefactorerr_Inclusive[4] = 0.0141006;
-    Scalefactorerr_Inclusive[5] = 0.0238381;
-    Scalefactorerr_Inclusive[6] = 0.0319001;
-    Scalefactorerr_Inclusive[7] = 0.048968;
-    Scalefactorerr_Inclusive[8] = 0.133652;
+    Scalefactorerr_Inclusive[0] = 0.00980642;
+    Scalefactorerr_Inclusive[1] = 0.0145673;
+    Scalefactorerr_Inclusive[2] = 0.0128014;
+    Scalefactorerr_Inclusive[3] = 0.0187545;
+    Scalefactorerr_Inclusive[4] = 0.0136836;
+    Scalefactorerr_Inclusive[5] = 0.0247154;
+    Scalefactorerr_Inclusive[6] = 0.0322593;
+    Scalefactorerr_Inclusive[7] = 0.0510161;
+    Scalefactorerr_Inclusive[8] = 0.0986307;
     
     
     
