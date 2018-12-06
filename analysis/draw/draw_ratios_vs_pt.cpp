@@ -33,8 +33,8 @@ void setGraphStyle(TGraphErrors* graph, int markerStyle, int markerColor, int ma
 }
 
 bool SAVE_EPS = false;
-bool SAVE_PDF = false;
-bool SAVE_PNG = true;
+bool SAVE_PDF = true;
+bool SAVE_PNG = false;
 bool SAVE_ROOT = false;
 void saveCanvas(TCanvas* canvas, const std::string& name) {
   if (SAVE_EPS)
@@ -415,7 +415,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
 
 
 
-void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix) {
+void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::string& methodName, drawBase* db, const std::string& etaRegion, const std::string& legendTitle, const std::string& prefix, const std::string& suffix, bool is_reso) {
 
   std::string name_base = db->get_outputdir();
   name_base += "/" + prefix;
@@ -424,11 +424,16 @@ void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::s
   if (etaRegion != "")
     name_base += "_" + etaRegion;
 
-  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+   TCanvas* c1;
+  if(is_reso)c1 = new TCanvas("c1", "c1", 600, 600);
+  if(!is_reso)c1 = new TCanvas("c1", "c1", 600, 800);
   c1->cd();
 
   // Data / MC comparison
-  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  TPad* pad_hi ;
+  
+  if(is_reso) pad_hi = new TPad("pad_hi", "", 0., 0., 0.99, 0.99);
+  if(!is_reso)pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
   pad_hi->Draw();
   pad_hi->SetLogx();
   pad_hi->SetLeftMargin(0.12);
@@ -577,11 +582,11 @@ void drawGraphsextrap(TGraphErrors* ratio, double xMin, double xMax, const std::
   if (etaRegion != "")
     name_base += "_" + etaRegion;
 
-  TCanvas* c1 = new TCanvas("c1", "c1", 600, 800);
+  TCanvas* c1 = new TCanvas("c1", "c1", 600, 600);
   c1->cd();
 
   // Data / MC comparison
-  TPad* pad_hi = new TPad("pad_hi", "", 0., 0.33, 0.99, 0.99);
+  TPad* pad_hi = new TPad("pad_hi", "", 0., 0., 0.99, 0.99);
   pad_hi->Draw();
   pad_hi->SetLogx();
   pad_hi->SetLeftMargin(0.12);
@@ -1097,8 +1102,8 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   drawGraphs(gr_responseEXTRAP_vs_pt, gr_responseEXTRAPMC_vs_pt, xMin, xMax, "p_{T} Balance extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_extrap", rawJets);
   drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
   //  drawGraphs(gr_responseMPFExtrap_vs_pt, gr_responseMPFExtrapMC_vs_pt, xMin, xMax, "MPF extrap.", db, etaRegion, legendTitle, resp_reso, "mpf_extrap", rawJets);
-  drawGraphsratio(gr_dataMC_EXTRAP, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso_extrap");
- if(isresolution) drawGraphsratio(gr_dataMC_BALANCING, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso"); 
+  drawGraphsratio(gr_dataMC_EXTRAP, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso_extrap",true);
+ if(isresolution) drawGraphsratio(gr_dataMC_BALANCING, xMin, xMax, "p_{T} Balance #sigma extrap.", db, etaRegion, legendTitle, resp_reso, "balancing_reso",true); 
  if(isfinebinning && isresolution){ drawGraphsextrap(gr_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_data");}
  if(isfinebinning && isresolution){ drawGraphsextrap(gr_MC_responseKFSR_vs_pt, xMin, xMax, "Kfsr", db, etaRegion, legendTitle, resp_reso, "balancing_Kfsr_MC");}
   file_noextrap->Close();

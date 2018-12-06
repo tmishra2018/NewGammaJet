@@ -782,7 +782,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   if (noMC) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
   
@@ -962,7 +962,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   if (outputGraphs_) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
   
@@ -1098,11 +1098,11 @@ void drawBase::drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, 
   std::string canvName = outputdir_ + "/" + name + "_vs_pt";
   
   if (noMC) {
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
   
-  std::string canvName_fit_png = canvName + "_FITLINE.png";
+  std::string canvName_fit_png = canvName + "_FITLINE.pdf";
   c1->SaveAs(canvName_fit_png.c_str());
  
   delete h2_axes;
@@ -1525,13 +1525,13 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
   if (noMC) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
 
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
-  std::string canvName_fit_png = canvName + "_FITLINE.png";
+  std::string canvName_fit_png = canvName + "_FITLINE.pdf";
   c1->SaveAs(canvName_fit_png.c_str());
 
   //gStyle->SetPadTickX(0);
@@ -1708,7 +1708,7 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
   if (outputGraphs_) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
   
@@ -1840,7 +1840,7 @@ void drawBase::drawHisto2D_fromHistos(std::vector<TH2*> dataHistos, std::vector<
     std::string canvasName = outputdir_ + "/" + name+"_Data";
     if (outputGraphs_) {
       std::cout << "Saved " << canvasName << std::endl;
-      std::string canvasName_png = canvasName + ".png";
+      std::string canvasName_png = canvasName + ".pdf";
       cData->SaveAs(canvasName_png.c_str());
     } 
   }
@@ -1869,7 +1869,7 @@ void drawBase::drawHisto2D_fromHistos(std::vector<TH2*> dataHistos, std::vector<
     std::string canvasName = outputdir_ + "/" + name+"_MC";
     if (outputGraphs_) {
       std::cout << "Saved " << canvasName << std::endl;
-      std::string canvasName_png = canvasName + ".png";
+      std::string canvasName_png = canvasName + ".pdf";
       cMC->SaveAs(canvasName_png.c_str());
     }
   }
@@ -2530,7 +2530,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     std::cout << "Saved " << canvasName << std::endl;
     //    std::string canvasName_eps = canvasName + ".eps";
     //    c1->SaveAs(canvasName_eps.c_str());
-    std::string canvasName_png = canvasName + ".png";
+    std::string canvasName_png = canvasName + ".pdf";
     //    std::string canvasName_root = canvasName + ".root";
     c1->SaveAs(canvasName_png.c_str());
     //c1->SaveAs(canvasName_root.c_str());
@@ -2668,7 +2668,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       std::string canvasName_log = canvasName + "_log";
       //      std::string canvasName_eps = canvasName_log + ".eps";
       //      c1->SaveAs(canvasName_eps.c_str());
-      std::string canvasName_png = canvasName_log + ".png";
+      std::string canvasName_png = canvasName_log + ".pdf";
       c1->SaveAs(canvasName_png.c_str());
       std::string canvasName_pdf = canvasName_log + ".pdf";
       if (pdf_aussi_) {
@@ -2840,7 +2840,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       std::string canvasName = outputdir_ + "/" + name;
       //      std::string canvasName_eps = canvasName + ".eps";
       //      c1->SaveAs(canvasName_eps.c_str());
-      std::string canvasName_png = canvasName + ".png";
+      std::string canvasName_png = canvasName + ".pdf";
       c1->SaveAs(canvasName_png.c_str());
       std::string canvasName_pdf = canvasName + ".pdf";
       if (pdf_aussi_) {
@@ -3263,7 +3263,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     if (outputGraphs_) {
       //      std::string canvasName_eps = canvasName + ".eps";
-      std::string canvasName_png = canvasName + ".png";
+      std::string canvasName_png = canvasName + ".pdf";
       std::string canvasName_pdf = canvasName + ".pdf";
       //    c1->SaveAs(canvasName_eps.c_str());
       c1->SaveAs(canvasName_png.c_str());
@@ -3513,7 +3513,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         canvasName += "_stack";
       }
       //      std::string canvasName_eps = canvasName + ".eps";
-      std::string canvasName_png = canvasName + ".png";
+      std::string canvasName_png = canvasName + ".pdf";
       //  c1->SaveAs(canvasName_eps.c_str());
       c1->SaveAs(canvasName_png.c_str());
     }
@@ -3592,7 +3592,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
 
     if (outputGraphs_) {
       //      std::string name_eps = outputdir_ + "/" + name + ".eps";
-      std::string name_png = outputdir_ + "/" + name + ".png";
+      std::string name_png = outputdir_ + "/" + name + ".pdf";
       //  c1->SaveAs(name_eps.c_str());
       c1->SaveAs(name_png.c_str());
     }
@@ -4919,13 +4919,13 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   if (noMC) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
 
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
-  std::string canvName_fit_png = canvName + "_FITLINE.png";
+  std::string canvName_fit_png = canvName + "_FITLINE.pdf";
   c1->SaveAs(canvName_fit_png.c_str());
 
   // ----------------------------------------------------
@@ -5112,7 +5112,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   if (outputGraphs_) {
     //    std::string canvName_eps = canvName + ".eps";
     //    c1->SaveAs(canvName_eps.c_str());
-    std::string canvName_png = canvName + ".png";
+    std::string canvName_png = canvName + ".pdf";
     c1->SaveAs(canvName_png.c_str());
   }
 

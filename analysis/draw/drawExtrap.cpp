@@ -490,7 +490,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     char canvasName_resp_png[500];
 
     sprintf(canvasName_resp_pdf, "%s/response%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/response%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/response%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
   
     if (OUTPUT_GRAPHS) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -560,7 +560,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     gr_Ratio->Draw("Psame");
     
     if (OUTPUT_GRAPHS) {
-      sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+      sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
       c1_resp->SaveAs(canvasName_resp_png);
     }
     
@@ -608,7 +608,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     std::string MPF = "MPF";
 
     sprintf(canvasName_resp_pdf, "%s/response%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/response%s%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/response%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
 
     if (OUTPUT_GRAPHS || ptMin == 155) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -675,7 +675,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     gr_RatioMPF->Draw("Psame");
     
     if (OUTPUT_GRAPHS) {
-      sprintf(canvasName_resp_png, "%s/dataMC_ratioMPF_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+      sprintf(canvasName_resp_png, "%s/dataMC_ratioMPF_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
       c1_resp->SaveAs(canvasName_resp_png);
     }
 
@@ -724,7 +724,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     std::string pli = "PLI";
 
     sprintf(canvasName_resp_pdf, "%s/PLI%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/PLI%s%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/PLI%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
 
     if (OUTPUT_GRAPHS || ptMin == 155) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -949,7 +949,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   sprintf(canvasName_reso, "%s/resolution%s_%s_ptPhot_%d_%d", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
   std::string canvasName_reso_str(canvasName_reso);
   std::string canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  std::string canvasName_reso_png = canvasName_reso_str + ".png";
+  std::string canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS || ptMin == 155) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -997,7 +997,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   
   canvasName_reso_str = canvasName_reso;
   canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  canvasName_reso_png = canvasName_reso_str + ".png";
+  canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -1048,7 +1048,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   
   canvasName_reso_str = canvasName_reso;
   canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  canvasName_reso_png = canvasName_reso_str + ".png";
+  canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -1120,7 +1120,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
   if (OUTPUT_GRAPHS || ptMin == 155) {
     char output_name[500];
-    sprintf(output_name, "%s/reso_dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(output_name, "%s/reso_dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
     c1_reso->SaveAs(output_name);
   }
 
@@ -1656,7 +1656,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     char canvasName_resp_png[500];
 
     sprintf(canvasName_resp_pdf, "%s/response%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/response%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/response%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
   
     if (OUTPUT_GRAPHS) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -1726,7 +1726,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     gr_Ratio->Draw("Psame");
     
     if (OUTPUT_GRAPHS) {
-      sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+      sprintf(canvasName_resp_png, "%s/dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
       c1_resp->SaveAs(canvasName_resp_png);
     }
     
@@ -1774,7 +1774,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     std::string MPF = "MPF";
 
     sprintf(canvasName_resp_pdf, "%s/response%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/response%s%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/response%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), MPF.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
 
     if (OUTPUT_GRAPHS || ptMin == 155) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -1841,7 +1841,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     gr_RatioMPF->Draw("Psame");
     
     if (OUTPUT_GRAPHS) {
-      sprintf(canvasName_resp_png, "%s/dataMC_ratioMPF_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+      sprintf(canvasName_resp_png, "%s/dataMC_ratioMPF_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
       c1_resp->SaveAs(canvasName_resp_png);
     }
 
@@ -1890,7 +1890,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     std::string pli = "PLI";
 
     sprintf(canvasName_resp_pdf, "%s/PLI%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
-    sprintf(canvasName_resp_png, "%s/PLI%s%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(canvasName_resp_png, "%s/PLI%s%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), pli.c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
 
     if (OUTPUT_GRAPHS || ptMin == 155) {
       //      c1_resp->SaveAs(canvasName_resp_pdf);
@@ -2133,7 +2133,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   sprintf(canvasName_reso, "%s/resolution%s_%s_ptPhot_%d_%d", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
   std::string canvasName_reso_str(canvasName_reso);
   std::string canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  std::string canvasName_reso_png = canvasName_reso_str + ".png";
+  std::string canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS || ptMin == 155) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -2181,7 +2181,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   
   canvasName_reso_str = canvasName_reso;
   canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  canvasName_reso_png = canvasName_reso_str + ".png";
+  canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -2232,7 +2232,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   
   canvasName_reso_str = canvasName_reso;
   canvasName_reso_pdf = canvasName_reso_str + ".pdf";
-  canvasName_reso_png = canvasName_reso_str + ".png";
+  canvasName_reso_png = canvasName_reso_str + ".pdf";
   if (OUTPUT_GRAPHS) {
     //    c1_reso->SaveAs(canvasName_reso_pdf.c_str());
     c1_reso->SaveAs(canvasName_reso_png.c_str());
@@ -2304,7 +2304,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
 
   if (OUTPUT_GRAPHS || ptMin == 155) {
     char output_name[500];
-    sprintf(output_name, "%s/reso_dataMC_ratio_%s_%s_ptPhot_%d_%d.png", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
+    sprintf(output_name, "%s/reso_dataMC_ratio_%s_%s_ptPhot_%d_%d.pdf", get_outputdir().c_str(), rawPostfix.c_str(), etaRegion.c_str(), (int)ptMin, (int)ptMax);
     c1_reso->SaveAs(output_name);
   }
 
