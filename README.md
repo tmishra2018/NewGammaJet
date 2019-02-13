@@ -59,7 +59,7 @@ python mergeData.py -i [list_to_merge.txt] -o [output_directory] --lumi_tot [int
 ```
 
 #### Step 1 conclusion
-You should now have a root file for each MC dataset and one for each data dataset, with a prefix `+PhotonJet_2ndLevel_+`.
+You should now have a root file for each MC dataset and one for each data dataset, with a prefix `PhotonJet_2ndLevel_`.
 Copy those files somewhere else. A good place could be the folder in your working area, these are massive files.
 
 
