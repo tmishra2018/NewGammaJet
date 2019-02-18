@@ -110,50 +110,50 @@ void GammaJetFinalizer::runAnalysis() {
 
                 static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
 
-                //HLTphoton30   
+                //HLTphoton33   
 
-                static std::string puMC30 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-                static std::string puData30 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton30%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC30 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+                static std::string puData30 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
 
                 //HLTphoton50
 
 
-                static std::string puMC50 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData50 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC50 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData50 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
 
                 //HLTphoton75 
 
 
-                static std::string puMC75 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData75 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC75 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData75 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
 
 
                 //HLTphoton90 
 
 
-                static std::string puMC90 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();  
-                static std::string puData90 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC90 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
+                static std::string puData90 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
 
                 //HLTphoton120 
 
 
-                static std::string puMC120 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData120 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC120 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData120 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
 
                 //HLTphoton165
 
 
-                static std::string puMC165 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData165 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC165 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData165 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
 
-		static std::string puMC200 = TString::Format("%s/computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_pythia_flat_fall17_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData200 = TString::Format("%s/pu_truth_data2016_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+		static std::string puMC200 = TString::Format("%s/computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_2017_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData200 = TString::Format("%s/pu_truth_data2017_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter200 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData200, puMC200));
 
 
@@ -165,7 +165,7 @@ void GammaJetFinalizer::runAnalysis() {
         } else {
                 // Get PU
                 parsePileUpJSON2();
-                parserootPileUpfromJson();
+               // parserootPileUpfromJson();
                 parsePrescalefromJson();
                 //Trigger
                 static std::string cmsswBase = getenv("CMSSW_BASE");
@@ -888,7 +888,7 @@ void GammaJetFinalizer::runAnalysis() {
     if(mIsMC){
       mu = fullinfo.trueInteraction ;
     } else {
-      mu = getAvgPUfromlatest( fullinfo.run, fullinfo.lumi );
+      mu = -99;//getAvgPUfromlatest( fullinfo.run, fullinfo.lumi );
     }
    // if(mu!=0.)  std::cout<<"test n true interaction : "<<mu<<std::endl;
     
@@ -2042,8 +2042,8 @@ void GammaJetFinalizer::computePUWeight() {
         if(fullinfo.Pt_photon >= 85 && fullinfo.Pt_photon < 100)            mPUWeight = reweighter75->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 100 && fullinfo.Pt_photon < 130)           mPUWeight = reweighter90->weight(fullinfo.trueInteraction);  
         if(fullinfo.Pt_photon >= 130 && fullinfo.Pt_photon < 175)           mPUWeight = reweighter120->weight(fullinfo.trueInteraction);  
-        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 5000 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
-       // if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
+        if(fullinfo.Pt_photon >= 175 && fullinfo.Pt_photon < 210 )          mPUWeight = reweighter165->weight(fullinfo.trueInteraction);
+        if(fullinfo.Pt_photon >= 210 && fullinfo.Pt_photon < 5000 )         mPUWeight = reweighter200->weight(fullinfo.trueInteraction);
 
         //  std::cout<<analysis.ntrue_interactions<<std::endl;  
         //  std::cout<<mPUWeight<<std::endl;
@@ -2154,7 +2154,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
 
                 //   int passedtriggerresult ;
 
-              //  if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
+                if (  passed7 == 1. && boost::regex_match("HLT_Photon200_v.*"                  , mandatoryTrigger->first)) return TRIGGER_OK;
                 if (triggpassed6 == 1. &&  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
               //   weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,6);
                  return TRIGGER_OK;}
@@ -2170,7 +2170,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 if (triggpassed2 == 1. &&  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,2);
                  return TRIGGER_OK;}
-                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->first)){
+                if (triggpassed1 == 1. &&  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->first)){
                  //weight = getPrescaleperHLT(fullinfo.run, fullinfo.lumi,1);
                  return TRIGGER_OK;}
 
@@ -2217,14 +2217,14 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H4 = "HLT_Photon75_R9Id90_HE10_IsoM_v.*";
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
-		return TRIGGER_OK;
-             //   if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+		// return TRIGGER_OK;
+                if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed6 == 1. && */  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed5 == 1. && */  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed4 == 1. && */  passed4 == 1. && boost::regex_match("HLT_Photon90_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed3 == 1. && */  passed3 == 1. && boost::regex_match("HLT_Photon75_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed2 == 1. && */  passed2 == 1. && boost::regex_match("HLT_Photon50_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
-                if (/*triggpassed1 == 1. && */  passed1 == 1. && boost::regex_match("HLT_Photon30_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
+                if (/*triggpassed1 == 1. && */  passed1 == 1. && boost::regex_match("HLT_Photon33_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
 
                 /* 
 
@@ -2244,7 +2244,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
 double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
 	double preScale =1.;
-	
+	// TODO redefine for 2018
 	// Without prescale=1 for Pt_photon<189
 	return preScale;
 	if 	(Pt_photon<60) 	{ preScale= 0.00271716; }
