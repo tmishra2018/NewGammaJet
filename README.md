@@ -80,7 +80,7 @@ For example you can create a list as `files_GJet_plus_QCD.list` which contains t
 2) Execute `generate_mc_pileup.c`. You have to compile with `Makefile`, and then
 type the command followed by the list name (only central name).
 ```
-./generate_mc_pileup.exe GJet_plus_QCD
+./generate_mc_pileup.exe files_GJet_plus_QCD
 ```
 
 #### Data
@@ -89,7 +89,10 @@ At this script must be passed the json file for which you want to calculate the 
 ```
 python ComputePU_perHLT.py --Cert_json [your processed Json file from crab report] --whichrun [suffix of the data you running on] 
 ```
-This script will download the `pileuplatest.txt` file and then create one PU root file per HLT with a name begining by `pu_truth_data2016_100bins_HLTphoton`. 
+This script will download the `pileuplatest.txt` file and then create one PU root file per HLT with a name begining by `pu_truth_data2016_100bins_HLTphoton`.  For example:
+```
+python ComputePU_perHLT.py --Cert_json /afs/cern.ch/work/l/ltortero/JEC-task/CMSSW_9_4_10/src/CMSDIJET/DijetRootTreeMaker/prod/crab/CERN_crab/crab_Run2017E-17Nov2017-v1_V3/results/processedLumis.json --whichrun E
+```
 
 ### Step 3: Trigger selection
 #### Data
@@ -187,6 +190,12 @@ You have to run all analysis (from Finalizer to this last drawer) for different 
 The last drawer produces in the directory "PhotonJetPlots...../vs_pt/" a root file named plots.root.
 So you will have a plots.root for each alpha cut, these for files have to be added (simple hadd) 
 and send to Mikko in order to perform the global fit.
+
+##### Macro
+You may use `Produce_Combination_File_and_plots.py` which do the whole plotting step (step 4). For example:
+```
+python Produce_Combination_File_and_plots.py --output=TMP_TEST_3 --IOV=0 --Pu_profile=B --Input_data=/eos/user/l/ltortero/JEC-task/Step3_outputs/2017/PhotonJet_2ndLevel_DATA_RUN_B_2019-02-13.root --Input_mc=/eos/user/l/ltortero/JEC-task/Step3_outputs/2017/PhotonJet_2ndLevel_MC_1_2019-02-13.root
+```
 
 #### Any other business
 
