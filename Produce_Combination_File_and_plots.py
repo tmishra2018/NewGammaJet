@@ -23,8 +23,6 @@ today.strftime('%d-%m-%Y')
 
 List_alpha = [0.3,0.25,0.20,0.15,0.1]
 List_alpha_name = ['0_3','0_25','0_20','0_15','0_1']
-List_alpha = [0.3]
-List_alpha_name = ['0_3']
 i_alpha = 0
 cmdFinal = "hadd -f Gjet_combinationfile_"+output+"_"+IOV+".root"
 
