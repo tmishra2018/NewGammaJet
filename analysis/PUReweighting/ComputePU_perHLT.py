@@ -21,7 +21,7 @@ if not os.path.exists(Cert_json):
 print("\tDownloading the latest pileup file")
 cmd_1="rm pileup_latest.txt"
 #cmd_2="wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PileUp/pileup_latest.txt"
-cmd_2="cp /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PileUp/pileup_latest.txt ."
+cmd_2="cp /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PileUp/pileup_latest.txt ."
 print(cmd_2)
 
 os.system(cmd_1)
@@ -52,14 +52,14 @@ for iHLT in HLT_list:
 	
 	YourOutput="PUdataHLTphoton"+HLT_prefix_list[i_HLT]+Runsuffix
 	print("\tRunning brilcalc for"+HLT_prefix_list[i_HLT])
-	cmd1="brilcalc lumi -i "+Cert_json+" --hltpath "+iHLT+" --normtag /cvmfs/cms-bril.cern.ch/cms-lumi-pog/Normtags/normtag_PHYSICS.json --byls --minBiasXsec 69200 -o "+outputdirectory+"/"+YourOutput+".csv"
+	cmd1="brilcalc lumi -i "+Cert_json+" --hltpath "+iHLT+" --normtag /cvmfs/cms-bril.cern.ch/cms-lumi-pog/Normtags/normtag_BRIL.json --byls --minBiasXsec 69200 -o "+outputdirectory+"/"+YourOutput+".csv"
 	print(cmd1)
 	os.system(cmd1)
 	print("\tRunning pileupReCalc_HLTpaths.py for"+HLT_prefix_list[i_HLT])
 	cmd2="pileupReCalc_HLTpaths.py -i "+outputdirectory+"/"+YourOutput+".csv --inputLumiJSON pileup_latest.txt -o "+outputdirectory+"/"+YourOutput+".txt --runperiod Run2"
 	print(cmd2)
 	os.system(cmd2)
-	outputROOT = "pu_truth_data2016_100bins_HLTphoton"+HLT_prefix_list[i_HLT]+Runsuffix+".root"
+	outputROOT = "pu_truth_data2018_100bins_HLTphoton"+HLT_prefix_list[i_HLT]+Runsuffix+".root"
 	print("\tRunning pileupCalc "+HLT_prefix_list[i_HLT])
 	cmd3= "pileupCalc.py -i "+Cert_json+" --inputLumiJSON "+outputdirectory+"/"+YourOutput+".txt --calcMode true --minBiasXsec 69200 --maxPileupBin 100 --numPileupBins 100 "+outputROOT
 	print(cmd3)
