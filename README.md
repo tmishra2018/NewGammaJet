@@ -25,6 +25,10 @@ scram b -j 8
 
 ## Instructions (13 TeV)
 ### STEP 1: merging
+First get the different files to merge. It's the files named `*reduced_skim.root` that came as the output of [DijetTreeAnalyser](https://github.com/lucastorterotot/DijetRootTreeAnalyzer). You can construct the list, for example, with
+```
+find /eos/user/l/ltortero/JEC-task/HT_Condor_output/DijetRootTreeAnalyzer/lists_2018/Run2018C-17Sep2018-v1/ -iname \*_reduced_skim\* > list_to_merge.txt
+```
 #### MC
 
 In order to produce the plots for the MC outputs from the previous steps, one has to merge and add the weight of the different files.
@@ -34,6 +38,10 @@ In the output of [DijetTreeAnalyser](https://github.com/lucastorterotot/DijetRoo
 The cross section is given from the outside, you can get it using [DAS](https://cmsweb.cern.ch/das/) or MCM.
 ```
 python mergeAndAddWeights.py -i [list_to_merge.txt] -o [output_directory] --xsec [number_from_DAS]
+```
+For example:
+```
+python mergeAndAddWeights.py -i GJet_Pt-15To6000_RunIIAutumn18MiniAOD-102X.txt -o /eos/user/l/ltortero/JEC-task/Step3_outputs/2018/ --xsec 283000.0
 ```
 The merging will update the tree `analysis` and  the TTree `puvariable`  with a new branch called `evtWeightTot`.
 This number is used in the following steps to fill histograms, to draw plots and perform PUreweighting. 
@@ -50,7 +58,7 @@ crab report -d crab_folder
 ```
 2) Execute `brilcalc`
 ```
-brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -u /pb -i lumi_summary.json
+brilcalc lumi --normtag /cvmfs/cms-bril.cern.ch/cms-lumi-pog/Normtags/normtag_BRIL.json -u /pb -i lumi_summary.json
 ```
 
 In the end you can merge the output for the data with the command:
@@ -89,7 +97,7 @@ At this script must be passed the json file for which you want to calculate the 
 ```
 python ComputePU_perHLT.py --Cert_json [your processed Json file from crab report] --whichrun [suffix of the data you running on] 
 ```
-This script will download the `pileuplatest.txt` file and then create one PU root file per HLT with a name begining by `pu_truth_data2016_100bins_HLTphoton`.  For example:
+This script will download the `pileuplatest.txt` file and then create one PU root file per HLT with a name begining by `pu_truth_data2018_100bins_HLTphoton`.  For example:
 ```
 python ComputePU_perHLT.py --Cert_json /afs/cern.ch/work/l/ltortero/JEC-task/CMSSW_9_4_10/src/CMSDIJET/DijetRootTreeMaker/prod/crab/CERN_crab/crab_Run2017E-17Nov2017-v1_V3/results/processedLumis.json --whichrun E
 ```
