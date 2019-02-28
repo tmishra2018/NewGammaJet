@@ -600,8 +600,8 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
   
   TH2* h2_axes_lo_resp = NULL;
   TLine* line_one = new TLine(ptPhotMin, 1., ptPhotMax, 1.);
-  TLine* line_plus_resp = new TLine(ptPhotMin, 1.05, ptPhotMax, 1.05);
-  TLine* line_minus_resp = new TLine(ptPhotMin, 0.95, ptPhotMax, 0.95);
+  TLine* line_plus_resp = new TLine(ptPhotMin, 1.20, ptPhotMax, 1.20);
+  TLine* line_minus_resp = new TLine(ptPhotMin, 0.80, ptPhotMax, 0.80);
   
   if (!noDATA && !noMC &&  !isHLT) {  //ugly will have to fix (cloning the TCanvas?)
     
@@ -622,7 +622,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7, kTRUE);
-    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.80,1.20);
     h2_axes_lo_resp->Draw("");
     
     line_one->Draw("same");
@@ -813,7 +813,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
-    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.80,1.20);
     
     h2_axes_lo_reso->Draw("");
 
@@ -1337,8 +1337,8 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
   TH2* h2_axes_lo_resp = NULL;
 
   TLine* line_one = new TLine(etaMin, 1., etaMax, 1.);
-  TLine* line_plus_resp = new TLine(etaMin, 1.05, etaMax, 1.05);
-  TLine* line_minus_resp = new TLine(etaMin, 0.95, etaMax, 0.95);
+  TLine* line_plus_resp = new TLine(etaMin, 1.20, etaMax, 1.20);
+  TLine* line_minus_resp = new TLine(etaMin, 0.80, etaMax, 0.80);
 
   if (!noDATA && !noMC) {  //ugly will have to fix (cloning the TCanvas?)
 
@@ -1359,7 +1359,7 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7, kTRUE);
-    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.80,1.20);
     h2_axes_lo_resp->Draw("");
 
     line_one->Draw("same");
@@ -1556,7 +1556,7 @@ void drawBase::drawHisto_vs_eta(std::vector<EtaBin> etaBins, const std::string& 
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
-    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.80,1.20);
     h2_axes_lo_reso->Draw("");
 
     line_one->Draw("same");
@@ -2772,11 +2772,11 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo->GetYaxis()->SetNdivisions(7, kTRUE);
-    h2_axes_lo->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo->GetYaxis()->SetRangeUser(0.80,1.20);
 
     TLine* line_one = new TLine(xMin, 1., xMax, 1.);
-    TLine* line_plus = new TLine(xMin, 1.05, xMax, 1.05);
-    TLine* line_minus = new TLine(xMin, 0.95, xMax, 0.95);
+    TLine* line_plus = new TLine(xMin, 1.20, xMax, 1.20);
+    TLine* line_minus = new TLine(xMin, 0.80, xMax, 0.80);
 
     line_plus -> SetLineWidth(2);
     line_plus -> SetLineStyle(2);    
@@ -4713,8 +4713,8 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   TH2* h2_axes_lo_resp = NULL;
 
   TLine* line_one = new TLine(npvMin, 1., npvMax, 1.);
-  TLine* line_plus_resp = new TLine(npvMin, 1.05, npvMax, 1.05);
-  TLine* line_minus_resp = new TLine(npvMin, 0.95, npvMax, 0.95);
+  TLine* line_plus_resp = new TLine(npvMin, 1.20, npvMax, 1.20);
+  TLine* line_minus_resp = new TLine(npvMin, 0.80, npvMax, 0.80);
 
   if (!noDATA && !noMC) {  //ugly will have to fix (cloning the TCanvas?)
 
@@ -4734,7 +4734,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_resp->GetYaxis()->SetNdivisions(7,true);
-    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.80,1.20);
     h2_axes_lo_resp->Draw();
 
     line_one->Draw("same");
@@ -4750,7 +4750,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     gr_resp_ratio = this->get_graphRatio(gr_response_vs_pt, gr_responseMC_vs_pt);
     gr_resp_ratio->SetName("response_ratio");
     gr_resp_ratio->SetMarkerStyle(20);
-    gr_resp_ratio->SetMarkerSize(1.5);
+    gr_resp_ratio->SetMarkerSize(1.0);
     gr_resp_ratio->SetMarkerColor(BALANCING_COLOR);
     gr_resp_ratio->SetLineColor(BALANCING_COLOR);
 
@@ -4865,7 +4865,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     */
 
     gr_responseMC_vs_pt->SetMarkerStyle(24);
-    gr_responseMC_vs_pt->SetMarkerSize(1.5);
+    gr_responseMC_vs_pt->SetMarkerSize(1.0);
     gr_responseMC_vs_pt->SetMarkerColor(MPF_COLOR);
     gr_responseMC_vs_pt->SetLineColor(MPF_COLOR);
     gr_responseMC_vs_pt->Draw("Psame");
@@ -4880,7 +4880,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       gr_response_vs_pt->SetMarkerSize(1);
     } else {
       gr_response_vs_pt->SetMarkerStyle(20);
-      gr_response_vs_pt->SetMarkerSize(1.5);
+      gr_response_vs_pt->SetMarkerSize(1.0);
       gr_response_vs_pt->SetMarkerColor(MPF_COLOR);
       gr_response_vs_pt->SetLineColor(MPF_COLOR);
     }
@@ -4950,7 +4950,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo_reso->GetXaxis()->SetTitleSize(0.09);
     h2_axes_lo_reso->GetYaxis()->SetTitleSize(0.08);
     h2_axes_lo_reso->GetYaxis()->SetNdivisions(5, kTRUE);
-    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.95,1.05);
+    h2_axes_lo_reso->GetYaxis()->SetRangeUser(0.80,1.20);
     h2_axes_lo_reso->Draw("");
 
     line_one->Draw("same");
