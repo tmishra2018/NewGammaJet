@@ -35,34 +35,34 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_DATAResp_vs_pt->SetName("gr_DATAResp_vs_pt");
   gr_DATAResp_vs_pt->SetMarkerStyle(25);
   gr_DATAResp_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAResp_vs_pt->SetMarkerSize(1.5);
+  gr_DATAResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors* gr_DATARespMPF_vs_pt = new TGraphErrors(0);
   gr_DATARespMPF_vs_pt->SetName("gr_DATARespMPF_vs_pt");
   gr_DATARespMPF_vs_pt->SetMarkerStyle(25);
   gr_DATARespMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_DATARespMPF_vs_pt->SetMarkerSize(1.5);
+  gr_DATARespMPF_vs_pt->SetMarkerSize(1.0);
   //MC
   TGraphErrors* gr_extrapResp_vs_pt = new TGraphErrors(0);
   gr_extrapResp_vs_pt->SetName("gr_extrapResp_vs_pt");
   gr_extrapResp_vs_pt->SetMarkerStyle(25);
   gr_extrapResp_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapResp_vs_pt->SetMarkerSize(1.5);
+  gr_extrapResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors*  gr_extrapRespMPF_vs_pt = new TGraphErrors(0);
   gr_extrapRespMPF_vs_pt->SetName("gr_extrapRespMPF_vs_pt");
   gr_extrapRespMPF_vs_pt->SetMarkerStyle(25);
   gr_extrapRespMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapRespMPF_vs_pt->SetMarkerSize(1.5);
+  gr_extrapRespMPF_vs_pt->SetMarkerSize(1.0);
   // DATA / MC ratio 
   TGraphErrors* gr_RatioResp_vs_pt = new TGraphErrors(0);
   gr_RatioResp_vs_pt->SetName("gr_RatioResp_vs_pt");
   gr_RatioResp_vs_pt->SetMarkerStyle(25);
   gr_RatioResp_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioResp_vs_pt->SetMarkerSize(1.5);
+  gr_RatioResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors* gr_RatioMPFResp_vs_pt = new TGraphErrors(0);
   gr_RatioMPFResp_vs_pt->SetName("gr_RatioMPFResp_vs_pt");
   gr_RatioMPFResp_vs_pt->SetMarkerStyle(25);
   gr_RatioMPFResp_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioMPFResp_vs_pt->SetMarkerSize(1.5);
+  gr_RatioMPFResp_vs_pt->SetMarkerSize(1.0);
 
 
   // Particle Level Imbalance
@@ -70,7 +70,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_extrapPLI_vs_pt->SetName("gr_extrapPLI_vs_pt");
   gr_extrapPLI_vs_pt->SetMarkerStyle(25);
   gr_extrapPLI_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapPLI_vs_pt->SetMarkerSize(1.5);
+  gr_extrapPLI_vs_pt->SetMarkerSize(1.0);
   
   
   
@@ -78,7 +78,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_extrapPLIreso_vs_pt->SetName("gr_extrapPLIreso_vs_pt");
   gr_extrapPLIreso_vs_pt->SetMarkerStyle(25);
   gr_extrapPLIreso_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapPLIreso_vs_pt->SetMarkerSize(1.5);
+  gr_extrapPLIreso_vs_pt->SetMarkerSize(1.0);
 
 
   // Resolution
@@ -87,18 +87,18 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_DATAReso_vs_pt->SetName("gr_DATAReso_vs_pt");
   gr_DATAReso_vs_pt->SetMarkerStyle(25);
   gr_DATAReso_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAReso_vs_pt->SetMarkerSize(1.5);
+  gr_DATAReso_vs_pt->SetMarkerSize(1.0);
   TGraphErrors* gr_DATAResoMPF_vs_pt = new TGraphErrors(0);
   gr_DATAResoMPF_vs_pt->SetName("gr_DATAResoMPF_vs_pt");
   gr_DATAResoMPF_vs_pt->SetMarkerStyle(25);
   gr_DATAResoMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAResoMPF_vs_pt->SetMarkerSize(1.5);
+  gr_DATAResoMPF_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_DATAReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
   gr_DATAReso_vs_pt_PLI_not_sub->SetName("gr_DATAReso_vs_pt_PLI_not_sub");
   gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
   gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
-  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.0);
   
   
   //MC
@@ -106,26 +106,26 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   gr_extrapReso_vs_pt->SetName("gr_extrapReso_vs_pt");
   gr_extrapReso_vs_pt->SetMarkerStyle(25);
   gr_extrapReso_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapReso_vs_pt->SetMarkerSize(1.5);
+  gr_extrapReso_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_extrapReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
   gr_extrapReso_vs_pt_PLI_not_sub->SetName("gr_extrapReso_vs_pt_PLI_not_sub");
   gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
   gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
-  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.0);
   
   
   TGraphErrors* gr_extrapResoMPF_vs_pt = new TGraphErrors(0);
   gr_extrapResoMPF_vs_pt->SetName("gr_extrapResoMPF_vs_pt");
   gr_extrapResoMPF_vs_pt->SetMarkerStyle(25);
   gr_extrapResoMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapResoMPF_vs_pt->SetMarkerSize(1.5);
+  gr_extrapResoMPF_vs_pt->SetMarkerSize(1.0);
   //DATA/MC ratio
   TGraphErrors* gr_RatioReso_vs_pt = new TGraphErrors(0);
   gr_RatioReso_vs_pt->SetName("gr_MCRatioReso_vs_pt");
   gr_RatioReso_vs_pt->SetMarkerStyle(25);
   gr_RatioReso_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioReso_vs_pt->SetMarkerSize(1.5);
+  gr_RatioReso_vs_pt->SetMarkerSize(1.0);
 
   std::string suffix = get_fullSuffix();
   std::string graphFileName = "PhotonJetExtrapGraphs_" + suffix + "_" + etaRegion + ((rawJets) ? "RAW" : "") + "_" + FIT_RMS_;
@@ -451,7 +451,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
 
     //TLatex* label_CMStop = this->get_labelCMStop();
 
-    float markerSize = 1.4;
+    float markerSize = 0.9;
     gr_resp_MC->SetMarkerSize(markerSize);
     gr_resp_DATA->SetMarkerSize(markerSize);
     gr_resp_MPFDATA->SetMarkerSize(markerSize);
@@ -525,7 +525,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95,1.05 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -640,7 +640,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95, 1.05 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -1097,7 +1097,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
   c1_reso = new TCanvas("c1_reso", "c1_reso", 600, 600);
   c1_reso->Clear();
   c1_reso->cd();
-  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95, 1.05 );//yMin_axis, yMax_resp);
+  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
   h2_axes_resp->SetYTitle("Data/MC");
   h2_axes_resp->Draw();
 
@@ -1178,34 +1178,34 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_DATAResp_vs_pt->SetName("gr_DATAResp_vs_pt");
   gr_DATAResp_vs_pt->SetMarkerStyle(25);
   gr_DATAResp_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAResp_vs_pt->SetMarkerSize(1.5);
+  gr_DATAResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors* gr_DATARespMPF_vs_pt = new TGraphErrors(0);
   gr_DATARespMPF_vs_pt->SetName("gr_DATARespMPF_vs_pt");
   gr_DATARespMPF_vs_pt->SetMarkerStyle(25);
   gr_DATARespMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_DATARespMPF_vs_pt->SetMarkerSize(1.5);
+  gr_DATARespMPF_vs_pt->SetMarkerSize(1.0);
   //MC
   TGraphErrors* gr_extrapResp_vs_pt = new TGraphErrors(0);
   gr_extrapResp_vs_pt->SetName("gr_extrapResp_vs_pt");
   gr_extrapResp_vs_pt->SetMarkerStyle(25);
   gr_extrapResp_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapResp_vs_pt->SetMarkerSize(1.5);
+  gr_extrapResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors*  gr_extrapRespMPF_vs_pt = new TGraphErrors(0);
   gr_extrapRespMPF_vs_pt->SetName("gr_extrapRespMPF_vs_pt");
   gr_extrapRespMPF_vs_pt->SetMarkerStyle(25);
   gr_extrapRespMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapRespMPF_vs_pt->SetMarkerSize(1.5);
+  gr_extrapRespMPF_vs_pt->SetMarkerSize(1.0);
   // DATA / MC ratio 
   TGraphErrors* gr_RatioResp_vs_pt = new TGraphErrors(0);
   gr_RatioResp_vs_pt->SetName("gr_RatioResp_vs_pt");
   gr_RatioResp_vs_pt->SetMarkerStyle(25);
   gr_RatioResp_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioResp_vs_pt->SetMarkerSize(1.5);
+  gr_RatioResp_vs_pt->SetMarkerSize(1.0);
   TGraphErrors* gr_RatioMPFResp_vs_pt = new TGraphErrors(0);
   gr_RatioMPFResp_vs_pt->SetName("gr_RatioMPFResp_vs_pt");
   gr_RatioMPFResp_vs_pt->SetMarkerStyle(25);
   gr_RatioMPFResp_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioMPFResp_vs_pt->SetMarkerSize(1.5);
+  gr_RatioMPFResp_vs_pt->SetMarkerSize(1.0);
 
 
   // Particle Level Imbalance
@@ -1213,7 +1213,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_extrapPLI_vs_pt->SetName("gr_extrapPLI_vs_pt");
   gr_extrapPLI_vs_pt->SetMarkerStyle(25);
   gr_extrapPLI_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapPLI_vs_pt->SetMarkerSize(1.5);
+  gr_extrapPLI_vs_pt->SetMarkerSize(1.0);
   
   
   
@@ -1221,7 +1221,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_extrapPLIreso_vs_pt->SetName("gr_extrapPLIreso_vs_pt");
   gr_extrapPLIreso_vs_pt->SetMarkerStyle(25);
   gr_extrapPLIreso_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapPLIreso_vs_pt->SetMarkerSize(1.5);
+  gr_extrapPLIreso_vs_pt->SetMarkerSize(1.0);
 
 
   // Resolution
@@ -1230,56 +1230,56 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   gr_DATAReso_vs_pt->SetName("gr_DATAReso_vs_pt");
   gr_DATAReso_vs_pt->SetMarkerStyle(25);
   gr_DATAReso_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAReso_vs_pt->SetMarkerSize(1.5);
+  gr_DATAReso_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_DATAkfr_vs_pt = new TGraphErrors(0);
   gr_DATAkfr_vs_pt->SetName("gr_DATAkfr_vs_pt");
   gr_DATAkfr_vs_pt->SetMarkerStyle(25);
   gr_DATAkfr_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAkfr_vs_pt->SetMarkerSize(1.5);
+  gr_DATAkfr_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_DATAReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
   gr_DATAReso_vs_pt_PLI_not_sub->SetName("gr_DATAReso_vs_pt_PLI_not_sub");
   gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
   gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
-  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  gr_DATAReso_vs_pt_PLI_not_sub->SetMarkerSize(1.0);
   
   TGraphErrors* gr_DATAResoMPF_vs_pt = new TGraphErrors(0);
   gr_DATAResoMPF_vs_pt->SetName("gr_DATAResoMPF_vs_pt");
   gr_DATAResoMPF_vs_pt->SetMarkerStyle(25);
   gr_DATAResoMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_DATAResoMPF_vs_pt->SetMarkerSize(1.5);
+  gr_DATAResoMPF_vs_pt->SetMarkerSize(1.0);
   //MC
   TGraphErrors* gr_extrapkfr_vs_pt = new TGraphErrors(0);
   gr_extrapkfr_vs_pt->SetName("gr_extrapkfr_vs_pt");
   gr_extrapkfr_vs_pt->SetMarkerStyle(25);
   gr_extrapkfr_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapkfr_vs_pt->SetMarkerSize(1.5);
+  gr_extrapkfr_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_extrapReso_vs_pt = new TGraphErrors(0);
   gr_extrapReso_vs_pt->SetName("gr_extrapReso_vs_pt");
   gr_extrapReso_vs_pt->SetMarkerStyle(25);
   gr_extrapReso_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapReso_vs_pt->SetMarkerSize(1.5);
+  gr_extrapReso_vs_pt->SetMarkerSize(1.0);
   
   TGraphErrors* gr_extrapReso_vs_pt_PLI_not_sub = new TGraphErrors(0);
   gr_extrapReso_vs_pt_PLI_not_sub->SetName("gr_extrapReso_vs_pt_PLI_not_sub");
   gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerStyle(25);
   gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerColor(kBlack);
-  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.5);
+  gr_extrapReso_vs_pt_PLI_not_sub->SetMarkerSize(1.0);
   
   
   TGraphErrors* gr_extrapResoMPF_vs_pt = new TGraphErrors(0);
   gr_extrapResoMPF_vs_pt->SetName("gr_extrapResoMPF_vs_pt");
   gr_extrapResoMPF_vs_pt->SetMarkerStyle(25);
   gr_extrapResoMPF_vs_pt->SetMarkerColor(kBlack);
-  gr_extrapResoMPF_vs_pt->SetMarkerSize(1.5);
+  gr_extrapResoMPF_vs_pt->SetMarkerSize(1.0);
   //DATA/MC ratio
   TGraphErrors* gr_RatioReso_vs_pt = new TGraphErrors(0);
   gr_RatioReso_vs_pt->SetName("gr_MCRatioReso_vs_pt");
   gr_RatioReso_vs_pt->SetMarkerStyle(25);
   gr_RatioReso_vs_pt->SetMarkerColor(kBlack);
-  gr_RatioReso_vs_pt->SetMarkerSize(1.5);
+  gr_RatioReso_vs_pt->SetMarkerSize(1.0);
 
   std::string suffix = get_fullSuffix();
   std::string graphFileName = "PhotonJetExtrapGraphs_fineetabin_" + suffix + "_" + etaRegion + ((rawJets) ? "RAW" : "") + "_" + FIT_RMS_;
@@ -1617,7 +1617,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
 
     //TLatex* label_CMStop = this->get_labelCMStop();
 
-    float markerSize = 1.4;
+    float markerSize = 0.9;
     gr_resp_MC->SetMarkerSize(markerSize);
     gr_resp_DATA->SetMarkerSize(markerSize);
     gr_resp_MPFDATA->SetMarkerSize(markerSize);
@@ -1691,7 +1691,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95,1.05 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -1806,7 +1806,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95, 1.05 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -2281,7 +2281,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
   c1_reso = new TCanvas("c1_reso", "c1_reso", 600, 600);
   c1_reso->Clear();
   c1_reso->cd();
-  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.95, 1.05 );//yMin_axis, yMax_resp);
+  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.80,1.20 );//yMin_axis, yMax_resp);
   h2_axes_resp->SetYTitle("Data/MC");
   h2_axes_resp->Draw();
 
