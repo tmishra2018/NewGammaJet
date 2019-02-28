@@ -175,7 +175,7 @@ int main(int argc, char* argv[]) {
  // db->set_rebin(5);
   db->setOutputGraphs(OUTPUT_GRAPHS);
 
-  TH1D *ptPhot = (TH1D*)dataFile->Get("analysis/ptPhoton_passedID");
+  TH1D *ptPhot = (TH1D*)dataFile->Get("analysis/ptPhoton");
   PtBinning ptBinning;
   size_t ptBinningSize = ptBinning.size();
   std::vector<std::pair<float, float> > ptBins = ptBinning.getBinning();
