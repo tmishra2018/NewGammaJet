@@ -248,7 +248,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
   h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
   h2_axes_lo_resp->GetYaxis()->SetNdivisions(7,true);
-  h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.95,1.05);
+  h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.80,1.20);
   h2_axes_lo_resp->Draw();
 
   float factor = isResponse ? 0.05 : 0.2;
