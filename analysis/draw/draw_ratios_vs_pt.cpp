@@ -266,7 +266,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   TGraphErrors* gr_resp_ratio = db->get_graphRatio(data, mc);
   gr_resp_ratio->SetName("response_ratio");
   gr_resp_ratio->SetMarkerStyle(20);
-  gr_resp_ratio->SetMarkerSize(1.5);
+  gr_resp_ratio->SetMarkerSize(1.0);
   gr_resp_ratio->SetMarkerColor(BALANCING);
   gr_resp_ratio->SetLineColor(BALANCING);
 
@@ -379,13 +379,13 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   label_algo->Draw("same");
 
   mc->SetMarkerStyle(24);
-  mc->SetMarkerSize(1.5);
+  mc->SetMarkerSize(1.0);
   mc->SetMarkerColor(MPF);
   mc->SetLineColor(MPF);
   mc->Draw("Psame");
 
   data->SetMarkerStyle(20);
-  data->SetMarkerSize(1.5);
+  data->SetMarkerSize(1.0);
   data->SetMarkerColor(MPF);
   data->SetLineColor(MPF);
 
@@ -452,7 +452,7 @@ void drawGraphsratio(TGraphErrors* ratio, double xMin, double xMax, const std::s
    
   ratio->SetName("response_ratio");
   ratio->SetMarkerStyle(20);
-  ratio->SetMarkerSize(1.5);
+  ratio->SetMarkerSize(1.0);
   ratio->SetMarkerColor(BALANCING);
   ratio->SetLineColor(BALANCING);
   std::cout<<" N point for JER SF "<<ratio->GetN()<<std::endl;
@@ -605,7 +605,7 @@ void drawGraphsextrap(TGraphErrors* ratio, double xMin, double xMax, const std::
    
   ratio->SetName("response_ratio");
   ratio->SetMarkerStyle(20);
-  ratio->SetMarkerSize(1.5);
+  ratio->SetMarkerSize(1.0);
   ratio->SetMarkerColor(BALANCING);
   ratio->SetLineColor(BALANCING);
   std::cout<<" N point for JER SF "<<ratio->GetN()<<std::endl;
@@ -806,7 +806,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   float xMin = ptPhot_binning[0].first;
   float xMax = ptPhot_binning[ptPhot_binning.size() - 1].second;
 
-  int markerSize = 1.85;
+  int markerSize = 1.25;
 
   std::string intrName = "gr_intr";
   if (resp_reso == "response"){
