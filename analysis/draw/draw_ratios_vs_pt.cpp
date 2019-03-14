@@ -736,7 +736,9 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   else if (etaRegion == "eta2223") fullEtaRegion = "eta22_23";
   else if (etaRegion == "eta2325") fullEtaRegion = "eta23_25";
   else if (etaRegion == "eta2526") fullEtaRegion = "eta25_26";
+  else if (etaRegion == "eta2527") fullEtaRegion = "eta25_27";
   else if (etaRegion == "eta2629") fullEtaRegion = "eta26_29";
+  else if (etaRegion == "eta2729") fullEtaRegion = "eta27_29";
   else if (etaRegion == "eta2930") fullEtaRegion = "eta29_30";
   else if (etaRegion == "eta3031") fullEtaRegion = "eta30_31";
   else if (etaRegion == "eta3135") fullEtaRegion = "eta31_35";
