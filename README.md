@@ -22,6 +22,7 @@ cd CMSSW_8_0_25/src
 git clone https://github.com/lucastorterotot/NewGammaJet.git JetMETCorrections/GammaJetFilter/
 scram b -j 8
 ```
+Use branch `inclusive_extrap` for JEC, `exclusive_extrap` for JER. For 2018, dedicated branches exist.
 
 ## Instructions (13 TeV)
 ### STEP 1: merging
