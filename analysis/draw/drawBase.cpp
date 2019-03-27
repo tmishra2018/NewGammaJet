@@ -393,7 +393,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     if(hasMC && !isHLT){
    // H_countMC_vs_pt->SetBins(iplot+1,currentBin.first,currentBin.second);
-    H_countMC_vs_pt->SetBinContent(iplot+1, lastHistos_mcHistoSum_->Integral());
+    H_countMC_vs_pt->SetBinContent(iplot+1, lastHistos_mcHistoSum_->GetEntries());
     }else{
     H_countMC_vs_pt->SetBinContent(iplot+1,0.);
     }
