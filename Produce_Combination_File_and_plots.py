@@ -37,16 +37,16 @@ for alpha in List_alpha:
 	mcname = "MC_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+"_"+Pu_profile
 	os.system(cmd2)
 	
-	cmd3 = "../../analysis/draw/drawPhotonJet_2bkg "+dataname+" "+mcname+" "+mcname+"  pf ak4 LUMI"
+	cmd3 = "./analysis/draw/drawPhotonJet_2bkg "+dataname+" "+mcname+" "+mcname+"  pf ak4 LUMI"
 	os.system(cmd3)
 	
-	cmd4 = "../../analysis/draw/drawPhotonJetExtrap --type pf --algo ak4 "+dataname+" "+mcname+" "+mcname  
+	cmd4 = "./analysis/draw/drawPhotonJetExtrap --type pf --algo ak4 "+dataname+" "+mcname+" "+mcname  
 	os.system(cmd4)
 	
-	cmd5 = "../../analysis/draw/draw_ratios_vs_pt "+dataname+" "+mcname+" "+mcname+"  pf ak4"
+	cmd5 = "./analysis/draw/draw_ratios_vs_pt "+dataname+" "+mcname+" "+mcname+"  pf ak4"
 	os.system(cmd5)
 	
-	cmd6 = "../../analysis/draw/drawFlavorFractions "+mcname+"  pf ak4"
+	cmd6 = "./analysis/draw/drawFlavorFractions "+mcname+"  pf ak4"
 	os.system(cmd6)
 	
 	cmdFinal +=" PhotonJetPlots_"+dataname+"_vs_"+mcname+"_PFlowAK4chs_LUMI_vs_pt/plots.root PhotonJetPlots_"+mcname+"_PFlowAK4chs_FlavorFractions/*.root"
