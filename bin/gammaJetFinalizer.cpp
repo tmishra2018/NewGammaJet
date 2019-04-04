@@ -165,7 +165,7 @@ void GammaJetFinalizer::runAnalysis() {
         } else {
                 // Get PU
                 parsePileUpJSON2();
-                parserootPileUpfromJson();
+                //parserootPileUpfromJson();
                 parsePrescalefromJson();
                 //Trigger
                 static std::string cmsswBase = getenv("CMSSW_BASE");
