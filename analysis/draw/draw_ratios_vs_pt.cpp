@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
   // MC should already be normalized to a lumi of 1 pb-1
     TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-    db->set_lumi(36700 /*lumi->GetVal()*/);
+    db->set_lumi(lumi->GetVal());
     db->set_lumiNormalization();
 
   double alpha_cut = static_cast<TParameter<double>*>(dataFile->Get("analysis/alpha_cut"))->GetVal();

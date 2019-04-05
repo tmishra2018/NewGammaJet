@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
     //Read luminosity
     if(dataFile) {
     TParameter<float>* lumi = static_cast<TParameter<float>*>(dataFile->Get("analysis/luminosity"));
-    dLumi =  36700 ;// lumi -> GetVal();
+    dLumi =   lumi -> GetVal();
     }
     std::cout<< "Lumi  "<< dLumi << std::endl;
 
