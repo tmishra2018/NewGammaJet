@@ -1339,7 +1339,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
 
   
   TLegend *leg = new TLegend(0.15,.7, .5, .9);
-  leg->AddEntry(gr_sf,"Exclusive","P");
+  // leg->AddEntry(gr_sf,"Exclusive","P");
   // leg->AddEntry(gr_incl,"Inclusive","P");
   // leg->AddEntry(gr_dijet,"dijet","P");
   // leg->AddEntry(gr_8Tev,"8TeV","P");
@@ -1352,7 +1352,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   // gr_8Tev->Draw("P same");
   gr_sf->Draw("P same");
   // gr_incl->Draw("P same");
-  leg->Draw("same");
+  // leg->Draw("same");
   //box->DrawLatex(0.95,0.91,"8.6 pb^{-1} (13 TeV)");
   //boxcms->DrawLatex(0.12,0.91,"CMS");
   //boxprel->DrawLatex(0.24,0.935,"Preliminary");
