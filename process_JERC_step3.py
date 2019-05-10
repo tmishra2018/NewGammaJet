@@ -113,7 +113,7 @@ def multithreadmap(process,X,ncores=8, **kwargs):
     """
     multithreading map of a function, default on 8 cpu cores.
     """
-    func = partial(process, X)
+    func = partial(process, **kwargs)
     p=mp.Pool(ncores)
     Xout = p.map(func,X)
     p.terminate()
@@ -139,11 +139,10 @@ else:
     print "Ouch, the directories are not as they are supposed to be. Did you followed the git installation instructions correctly?"
 
 
-def process(run_JERCs):
-    run,JERC = run_JERCs
-
-    #find_files_from_step2(run, JERC)
-    #merge_files_from_step2(run, JERC)
+def process(run_JERC):
+    run, JERC = run_JERC
+    find_files_from_step2(run, JERC)
+    merge_files_from_step2(run, JERC)
     
     make_pileup(run,JERC)
     
@@ -156,6 +155,4 @@ for step in steps:
     for run in step:
         for JERC in JERCs:
             run_JERCs.append((run,JERC))
-    #multithreadmap(process, run_JERCs)
-process(('MC','wo_L2Res'))
-process(('B','wo_L2Res'))
+    multithreadmap(process, run_JERCs)
