@@ -12,6 +12,9 @@ usage = "usage:  python mergeData.py --inputList list_of_files_to_merge.txt -o .
 
 parser = argparse.ArgumentParser(description='Process options.')
 
+parser.add_argument("-c", "--cleaning", type=bool, dest="cleaning", default="False",
+        help="remove corrupted files from list or not",
+	    )
 parser.add_argument("-i", "--inputList", type=str, dest="inputList", default="",
         help="input list of files to be merged",
 	    )
@@ -32,6 +35,7 @@ outputDir = args.outputDir
 #xsec = args.xsec
 lumi_tot = args.lumi_tot
 run = args.run
+cleaning = args.cleaning
 ###################
 #read input file
 ins = open(args.inputList,"r")
@@ -67,10 +71,22 @@ today.strftime('%d-%m-%Y')
 
 pwd = os.environ['PWD']
 
+bad_files = []
+
 if i < 550:
   filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
   print filename_out
-  os.system("hadd -f "+filename_out+"  "+files1 )
+  exitcode = os.system("hadd -f "+filename_out+"  "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+  while exitcode > 0 and cleaning:
+    print 'Error while merging, removing a file...'
+    bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
+    print bad_file
+    bad_files.append(bad_file)
+    if bad_file in files1:
+      files1 = files1.replace(bad_file,'')
+    else:
+      import pdb; pdb.set_trace()
+    exitcode = os.system("hadd -f "+filename_out+"  "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
 else:
   filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
   filename_out1 = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+"_Part1.root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part1.root" 
@@ -78,10 +94,39 @@ else:
   print filename_out1
   print filename_out2
   print filename_out
-  os.system("hadd "+filename_out1+" "+files1 )
-  os.system("hadd "+filename_out2+"  "+files2 )
+  exitcode = os.system("hadd "+filename_out1+" "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+  while exitcode > 0 and cleaning:
+    print 'Error while merging, removing a file...'
+    bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
+    print bad_file
+    bad_files.append(bad_file)
+    if bad_file in files1:
+      files1 = files1.replace(bad_file,'')
+    else:
+      import pdb; pdb.set_trace()
+    exitcode = os.system("hadd "+filename_out1+" "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+  exitcode = os.system("hadd "+filename_out2+" "+files2 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+  while exitcode > 0 and cleaning:
+    print 'Error while merging, removing a file...'
+    bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
+    print bad_file
+    bad_files.append(bad_file)
+    if bad_file in files2:
+      files2 = files2.replace(bad_file,'')
+    else:
+      import pdb; pdb.set_trace()
+    exitcode = os.system("hadd "+filename_out2+" "+files2 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
   os.system("hadd "+filename_out+"  "+filename_out1+" "+filename_out2 )
 
+all_files = os.popen("cat "+args.inputList).read()[:-1].split('\n')
+good_files = [f for f in all_files if f not in bad_files]
+
+if cleaning:
+  os.system("rm "+args.inputList)
+  for files in good_files:
+    os.system("echo "+files+" >> "+args.inputList)
+
+os.system("rm tmp_py_merge_files_from_step2_{}.out".format(inputList))
 #  command1 = "hadd "+filename_out1+" "+files1 
 #  command2 = "hadd "+filename_out2+" "+files2
 #  command3 = "hadd "+filename_out+"  "+filename_out1+" "+filename_out2
