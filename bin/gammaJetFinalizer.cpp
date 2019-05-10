@@ -1960,13 +1960,13 @@ double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
 	double preScale;
 	
-	// Without prescale=1 for Pt_photon<189
-	if 	(Pt_photon<55) 	{ return 0.00019551029287792672; }
-	else if (Pt_photon<81) 	{ preScale=0.000952875; }
-	else if (Pt_photon<97) 	{ preScale=0.0046139; }
-	else if (Pt_photon<130) { preScale=0.00920684; }
-	else if (Pt_photon<189) { preScale=0.0207623; }
-	else 			{ preScale=1.; }
+        if      (Pt_photon<60)  { preScale= 0.0000401153758676; }
+        else if (Pt_photon<85)  { preScale= 0.0039473720141; }
+        else if (Pt_photon<105) { preScale= 0.0156656382257; }
+        else if (Pt_photon<130) { preScale= 0.0312899931745; }
+        else if (Pt_photon<175) { preScale= 0.125036122867; }
+        else if (Pt_photon<230) { preScale= 0.250030962458; }
+        else                    { preScale= 1.; }
 
 	return preScale;
 }
