@@ -12,6 +12,9 @@ usage = "usage:  python mergeAndAddWeights.py --inputList list_of_files_to_merge
 
 parser = argparse.ArgumentParser(description='Process options.')
 
+parser.add_argument("-c", "--cleaning", type=bool, dest="cleaning", default="False",
+        help="remove corrupted files from list or not",
+	    )
 parser.add_argument("-i", "--inputList", type=str, dest="inputList", default="",
         help="input list of files to be merged",
 	    )
@@ -48,7 +51,26 @@ today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
 filename_out = outputDir+"/PhotonJet_2ndLevel_MC_"+str(jec)+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+str(today)+".root" 
-os.system("hadd -f "+filename_out+"  "+files )
+exitcode = os.system("hadd -f "+filename_out+"  "+files +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+while exitcode > 0 and cleaning:
+  print 'Error while merging, removing a file...'
+  bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
+  print bad_file
+  if bad_file in files:
+    files = files.replace(bad_file,'')
+  else:
+    import pdb; pdb.set_trace()
+  exitcode = os.system("hadd -f "+filename_out+"  "+files +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
+
+all_files = os.popen("cat "+args.inputList).read()[:-1].split('\n')
+good_files = [f for f in all_files if f not in bad_files]
+
+if cleaning:
+  os.system("rm "+args.inputList)
+  for files in good_files:
+    os.system("echo "+files+" >> "+args.inputList)
+
+os.system("rm tmp_py_merge_files_from_step2_{}.out".format(inputList))
 
 inputFile = TFile(filename_out,"UPDATE")
 h_sumOfWeights = inputFile.Get("h_sumW")
