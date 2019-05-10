@@ -35,6 +35,7 @@ inputList = args.inputList
 outputDir = args.outputDir
 xsec      = args.Xsec
 jec       = args.jec
+cleaning = args.cleaning
 ###################
 #read input file
 ins = open(args.inputList,"r")
