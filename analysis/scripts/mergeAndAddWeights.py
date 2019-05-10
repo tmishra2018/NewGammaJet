@@ -50,12 +50,15 @@ for line in ins:
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
+bad_files = []
+
 filename_out = outputDir+"/PhotonJet_2ndLevel_MC_"+str(jec)+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+name[5]+str(today)+".root" 
 exitcode = os.system("hadd -f "+filename_out+"  "+files +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
 while exitcode > 0 and cleaning:
   print 'Error while merging, removing a file...'
   bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
   print bad_file
+  bad_files.append(bad_file)
   if bad_file in files:
     files = files.replace(bad_file,'')
   else:
