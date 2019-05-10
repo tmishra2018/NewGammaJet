@@ -82,44 +82,62 @@ class fineEtaBinning {
       
       bin.bin = std::make_pair(0.522,0.783);
       bin.name = "eta0508";
-      bin.title = "0.5 #leq |#eta| < 0.8";
+      bin.title = "0.52 #leq |#eta| < 0.78";
       mEtaBins.push_back(bin);
 
       bin.bin = std::make_pair(0.783,1.131);
       bin.name = "eta0811";
-      bin.title = "0.8 #leq |#eta| < 1.1";
+      bin.title = "0.78 #leq |#eta| < 1.13";
       mEtaBins.push_back(bin);
 
       bin.bin = std::make_pair(1.131,1.305);
       bin.name = "eta1113";
-      bin.title = "1.1 #leq |#eta| < 1.3";
+      bin.title = "1.13 #leq |#eta| < 1.31";
       mEtaBins.push_back(bin);
 
       bin.bin = std::make_pair(1.305,1.740);
       bin.name = "eta1317";
-      bin.title = "1.3 #leq |#eta| < 1.7";
+      bin.title = "1.31 #leq |#eta| < 1.74";
       mEtaBins.push_back(bin);
 
-      bin.bin = std::make_pair(1.740,2.043);
-      bin.name = "eta1720";
-      bin.title = "1.7 #leq |#eta| < 2.0";
+      bin.bin = std::make_pair(1.740,1.930);
+      bin.name = "eta1719";
+      bin.title = "1.74 #leq |#eta| < 1.93";
+      mEtaBins.push_back(bin);
+
+      bin.bin = std::make_pair(1.930,2.043);
+      bin.name = "eta1920";
+      bin.title = "1.93 #leq |#eta| < 2.04";
       mEtaBins.push_back(bin);
           
       bin.bin = std::make_pair(2.043,2.322);
       bin.name = "eta2023";
-      bin.title = "2.0 #leq |#eta| < 2.3";
+      bin.title = "2.04 #leq |#eta| < 2.32";
       mEtaBins.push_back(bin);
       
-      bin.bin = std::make_pair(2.322,2.853);
-      bin.name = "eta2329";
-      bin.title = "2.3 #leq |#eta| < 2.9";
+      bin.bin = std::make_pair(2.322,2.5);
+      bin.name = "eta2325";
+      bin.title = "2.32 #leq |#eta| < 2.50";
       mEtaBins.push_back(bin);
       
+      bin.bin = std::make_pair(2.5,2.853);
+      bin.name = "eta2529";
+      bin.title = "2.50 #leq |#eta| < 2.85";
+      mEtaBins.push_back(bin);
       
+      bin.bin = std::make_pair(2.853,2.964);
+      bin.name = "eta2930";
+      bin.title = "2.85 #leq |#eta| < 2.96";
+      mEtaBins.push_back(bin);
       
-      bin.bin = std::make_pair(2.853,5.191);
-      bin.name = "eta2951";
-      bin.title = "2.9 #leq |#eta| < 5.1";
+      bin.bin = std::make_pair(2.964,3.139);
+      bin.name = "eta3031";
+      bin.title = "2.96 #leq |#eta| < 3.14";
+      mEtaBins.push_back(bin);
+      
+      bin.bin = std::make_pair(3.139,5.191);
+      bin.name = "eta3152";
+      bin.title = "3.14 #leq |#eta| < 5.19";
       mEtaBins.push_back(bin);
      
      
