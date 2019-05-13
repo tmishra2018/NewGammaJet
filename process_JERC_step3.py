@@ -41,14 +41,14 @@ def print_log_started_step(run, JERC, step):
 def wait_for(runs, JERC, step, time='1m'):
     waiting = 0
     for run in runs:
-        command = 'if cat '+Step3_dir+'/tmp-process_logs.log | grep -q '+"'run "+run+' '+JERC+" "+step+" OK'"
+        command = 'if cat '+Step3_dir+'/tmp-process_logs.log | grep -q '+"'run "+run+' '+JERC+" "+step+"'"
         command += " ; then echo '0' ; else echo '1' ; fi"
         waiting += int(os.popen(command).read()[:-1])
     if not waiting == 0:
         command = 'echo '+"'waiting "+time+" for runs "
         for run in runs:
             command += run+' '
-        command += "from step "+step+"'"
+        command += JERC+" "+step+"'"
         os.system(command)
         os.system('sleep '+time)
         wait_for(runs, JERC, step, time=time)
