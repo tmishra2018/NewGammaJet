@@ -184,6 +184,7 @@ run_JERCs = []
 sorted_runs_for_multithreadmap = ['MC', 'C', 'B']
 sorted_runs_for_multithreadmap = [run for run in sorted_runs_for_multithreadmap if run in samples.keys()]
 sorted_runs_for_multithreadmap += [key for key in samples.keys() if not key in sorted_runs_for_multithreadmap]
+sorted_runs_for_multithreadmap += ['ABC', 'ABCD']
 for run in sorted_runs_for_multithreadmap:
     for JERC in JERCs:
         run_JERCs.append((run,JERC))
