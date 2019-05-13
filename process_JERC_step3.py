@@ -50,7 +50,7 @@ def find_files_from_step2(run, JERC):
         command += " -iname \*{}\*reduced_skim.root ".format(JERC)
         command += " > "+list_file
     if run in ['ABC', 'ABCD']:
-        command += ' ; rm '+list_file
+        command += ' ; rm -f '+list_file
         for letter in run :
             # find_files_from_step2(letter, JERC)
             command += ' ; cat '+"Step2_files_{}_{}.txt".format(letter,JERC)
