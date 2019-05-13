@@ -34,6 +34,17 @@ Step3_dir = "$CMSSW_BASE/src/JetMETCorrections/GammaJetFilter/"
 Step3_scripts_dir = Step3_dir+"/analysis/scripts/"
 Step3_PU_dir = Step3_dir+"/analysis/PUReweighting/"
 
+def wait_for(runs, step, time='1m'):
+    waiting = 0
+    for run in runs:
+        command = 'if cat '+Step3_dir+'/tmp-process_logs.log | grep -q '+"'run "+run+" "+step+" OK'"
+        command += " ; then echo '0' ; else echo '1' ; fi"
+        waiting += int(os.popen(command).read()[:-1])
+    if not waiting == 0:
+        os.system('echo '+"'waiting for "+time+"'")
+        os.system('sleep '+time)
+        wait_for(runs,step,time=time)
+
 def get_most_recent(directory):
     return os.popen('ls -t {}'.format(directory)).read().split('\n')[0]
 
@@ -50,6 +61,7 @@ def find_files_from_step2(run, JERC):
         command += " -iname \*{}\*reduced_skim.root ".format(JERC)
         command += " > "+list_file
     if run in ['ABC', 'ABCD']:
+        wait_for([letter for letter in run],'merged OK',time='10m')
         command += ' ; rm -f '+list_file
         for letter in run :
             # find_files_from_step2(letter, JERC)
@@ -79,6 +91,7 @@ def merge_files_from_step2(run, JERC, cleaning=True):
     command += str(lumi_or_xsec_pb)
     if not run == 'MC':
         command += " --run "+run
+        command += " && echo 'run "+run+" merging OK' >> "+Step3_dir+'/tmp-process_logs.log'
     print command
     os.system(command)
 
@@ -91,10 +104,14 @@ def make_pileup(run,JERC):
         command += ' ; python ComputePU_perHLT.py'
         command += ' --Cert_json '+Step1_outputs_crab_dir+'/crab_'+samples[run]+'/results/processedLumis.json'
         command += ' --whichrun '+run+'_'+JERC
+    if run == 'MC':
+        command += " && echo 'MC PU OK' >> "+Step3_dir+'/tmp-process_logs.log'
     print command
     os.system(command)
 
 def Produce_Combination_File_and_plots(run,JERC):
+    if not run == 'MC':
+        wait_for(['MC'],'PU OK')
     output = JERC
     IOV = run+'_'+JERC
     Pu_profile = run+'_'+JERC
@@ -149,10 +166,11 @@ def process(run_JERC):
     if not run == 'MC' :
         Produce_Combination_File_and_plots(run,JERC)
 
-steps = [['MC'], ['A', 'B', 'C'], ['ABC', 'D'],['ABCD']]
-for step in steps:
-    run_JERCs = []
-    for run in step:
-        for JERC in JERCs:
-            run_JERCs.append((run,JERC))
-    multithreadmap(process, run_JERCs)
+os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
+os.system('touch '+Step3_dir+'/tmp-process_logs.log')
+run_JERCs = []
+for run in samples.keys():
+    for JERC in JERCs:
+        run_JERCs.append((run,JERC))
+multithreadmap(process, run_JERCs)
+os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
