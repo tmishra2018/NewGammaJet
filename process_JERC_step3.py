@@ -45,7 +45,11 @@ def wait_for(runs, JERC, step, time='1m'):
         command += " ; then echo '0' ; else echo '1' ; fi"
         waiting += int(os.popen(command).read()[:-1])
     if not waiting == 0:
-        os.system('echo '+"'waiting for "+time+"'")
+        command = 'echo '+"'waiting "+time+" for runs "
+        for run in runs:
+            command += run+' '
+        command += "from step "+step+"'"
+        os.system(command)
         os.system('sleep '+time)
         wait_for(runs, JERC, step, time=time)
 
