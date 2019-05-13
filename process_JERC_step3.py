@@ -34,6 +34,10 @@ Step3_dir = "$CMSSW_BASE/src/JetMETCorrections/GammaJetFilter/"
 Step3_scripts_dir = Step3_dir+"/analysis/scripts/"
 Step3_PU_dir = Step3_dir+"/analysis/PUReweighting/"
 
+def print_log_started_step(run, JERC, step):
+    command = "echo 'run "+run+' '+JERC+" "+step+" started' >> "+Step3_dir+'/tmp-process_logs.log'
+    os.system(command)
+
 def wait_for(runs, JERC, step, time='1m'):
     waiting = 0
     for run in runs:
@@ -49,6 +53,7 @@ def get_most_recent(directory):
     return os.popen('ls -t {}'.format(directory)).read().split('\n')[0]
 
 def find_files_from_step2(run, JERC):
+    print_log_started_step(run, JERC, 'find files')
     list_file = "Step2_files_{}_{}.txt".format(run,JERC)
     command = 'cd '+Step3_scripts_dir
     if run in samples.keys():
@@ -70,6 +75,7 @@ def find_files_from_step2(run, JERC):
     os.system(command)
         
 def merge_files_from_step2(run, JERC, cleaning=True):
+    print_log_started_step(run, JERC, 'merge files')
     command = 'cd '+Step3_scripts_dir
     output_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2018/"+JERC+'/'
     if run in lumis_or_xsec_pb.keys():
@@ -96,6 +102,7 @@ def merge_files_from_step2(run, JERC, cleaning=True):
     os.system(command)
 
 def make_pileup(run,JERC):
+    print_log_started_step(run, JERC, 'make pileup')
     command = 'cd '+Step3_PU_dir
     if run == 'MC':
         command += ' ; echo '+get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/*_MC_*')+' > files_2018_MC_'+JERC+'.list'
@@ -110,6 +117,7 @@ def make_pileup(run,JERC):
     os.system(command)
 
 def Produce_Combination_File_and_plots(run,JERC):
+    print_log_started_step(run, JERC, 'make plots')
     if not run == 'MC':
         wait_for(['MC'], JERC, 'PU OK')
     output = JERC
@@ -169,7 +177,10 @@ def process(run_JERC):
 os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
 os.system('touch '+Step3_dir+'/tmp-process_logs.log')
 run_JERCs = []
-for run in samples.keys():
+sorted_runs_for_multithreadmap = ['MC', 'C', 'B']
+sorted_runs_for_multithreadmap = [run for run in sorted_runs_for_multithreadmap if run in samples.keys()]
+sorted_runs_for_multithreadmap += [key for key in samples.keys() if not key in sorted_runs_for_multithreadmap]
+for run in ['MC', 'C', 'B']+[key for key in samples.keys() if not key == 'MC']:
     for JERC in JERCs:
         run_JERCs.append((run,JERC))
 multithreadmap(process, run_JERCs)
