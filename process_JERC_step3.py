@@ -91,7 +91,7 @@ def merge_files_from_step2(run, JERC, cleaning=True):
     command += str(lumi_or_xsec_pb)
     if not run == 'MC':
         command += " --run "+run
-        command += " && echo 'run "+run+" merging OK' >> "+Step3_dir+'/tmp-process_logs.log'
+        command += " && echo 'run "+run+" merged OK' >> "+Step3_dir+'/tmp-process_logs.log'
     print command
     os.system(command)
 
