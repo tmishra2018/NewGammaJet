@@ -111,9 +111,18 @@ def make_pileup(run,JERC):
     if run == 'MC':
         command += ' ; echo '+get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/*_MC_*')+' > files_2018_MC_'+JERC+'.list'
         command += ' ; ./generate_mc_pileup.exe files_2018_MC_'+JERC
-    else:
+    if not run in samples.keys():
+        processedLumis = ''
+        for letter in run :
+            processedLumis += os.popen('cat '+Step1_outputs_crab_dir+'/crab_'+samples[letter]+'/results/processedLumis.json').read()[:-1]
+        processedLumis = processedLumis.replace('}{',', ')
+        command += " ; echo '"+processedLumis+"' > ./tmp_processedLumis_"+run+'_'+JERC+'.json'
+    if not run == 'MC':
         command += ' ; python ComputePU_perHLT.py'
-        command += ' --Cert_json '+Step1_outputs_crab_dir+'/crab_'+samples[run]+'/results/processedLumis.json'
+        if run in samples.keys():
+            command += ' --Cert_json '+Step1_outputs_crab_dir+'/crab_'+samples[run]+'/results/processedLumis.json'
+        else:
+            command += ' --Cert_json ./tmp_processedLumis_'+run+'_'+JERC+'.json'
         command += ' --whichrun '+run+'_'+JERC
     if run == 'MC':
         command += " && echo 'run MC "+JERC+" PU OK' >> "+Step3_dir+'/tmp-process_logs.log'
