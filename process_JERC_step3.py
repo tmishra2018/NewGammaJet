@@ -189,6 +189,19 @@ def process(run_JERC):
 
 os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
 os.system('touch '+Step3_dir+'/tmp-process_logs.log')
+
+
+done_run_JERCs = []
+# for run in ['A','B', 'MC']:
+#     for JERC in JERCs:
+#         done_run_JERCs.append((run,JERC))
+# for run in ['C']:
+#     for JERC in ['wo_L2Res', 'L2L3Res', 'JER']:
+#         done_run_JERCs.append((run,JERC))
+# for run in ['D']:
+#     for JERC in ['wo_L2Res', 'L2L3Res', 'only_L2Res']:
+#         done_run_JERCs.append((run,JERC))
+
 run_JERCs = []
 sorted_runs_for_multithreadmap = ['MC', 'C', 'B']
 sorted_runs_for_multithreadmap = [run for run in sorted_runs_for_multithreadmap if run in samples.keys()]
@@ -196,6 +209,9 @@ sorted_runs_for_multithreadmap += [key for key in samples.keys() if not key in s
 sorted_runs_for_multithreadmap += ['ABC', 'ABCD']
 for run in sorted_runs_for_multithreadmap:
     for JERC in JERCs:
-        run_JERCs.append((run,JERC))
+        if not (run,JERC) in done_run_JERCs:
+                run_JERCs.append((run,JERC))
+print run_JERCs
+os.system("sleep 10s")
 multithreadmap(process, run_JERCs)
 os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
