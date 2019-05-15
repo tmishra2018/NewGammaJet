@@ -548,7 +548,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -663,7 +663,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -1116,7 +1116,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, std::vector<fl
   c1_reso = new TCanvas("c1_reso", "c1_reso", 600, 600);
   c1_reso->Clear();
   c1_reso->cd();
-  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
   h2_axes_resp->SetYTitle("Data/MC");
   h2_axes_resp->Draw();
 
@@ -1741,7 +1741,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -1856,7 +1856,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
     
     c1_resp->Clear();
     c1_resp->cd();
-    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+    h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
     h2_axes_resp->SetXTitle(xTitle.c_str());
     h2_axes_resp->SetYTitle("Data/MC");
     h2_axes_resp->Draw();
@@ -2326,7 +2326,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, std::vecto
   c1_reso = new TCanvas("c1_reso", "c1_reso", 600, 600);
   c1_reso->Clear();
   c1_reso->cd();
-  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.8,2.0 );//yMin_axis, yMax_resp);
+  h2_axes_resp = new TH2D("axes_resp", "", 10, 0., xMax_axis, 10, 0.7,2.3 );//yMin_axis, yMax_resp);
   h2_axes_resp->SetYTitle("Data/MC");
   h2_axes_resp->Draw();
 

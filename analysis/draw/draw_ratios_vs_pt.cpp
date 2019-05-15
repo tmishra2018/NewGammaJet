@@ -248,7 +248,7 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   h2_axes_lo_resp->GetXaxis()->SetTitleSize(0.09);
   h2_axes_lo_resp->GetYaxis()->SetTitleSize(0.08);
   h2_axes_lo_resp->GetYaxis()->SetNdivisions(7,true);
-  h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.8,2.0);
+  h2_axes_lo_resp->GetYaxis()->SetRangeUser(0.7,2.3);
   h2_axes_lo_resp->Draw();
 
   float factor = isResponse ? 0.05 : 0.2;
@@ -328,10 +328,10 @@ void drawGraphs(TGraphErrors* data, TGraphErrors* mc, double xMin, double xMax, 
   float ymin, ymax;
   if (prefix == "response") {
     ymin = 0.7;
-    ymax = 1.3;
+    ymax = 1.4;
   } else {
     ymin = 0.;
-    ymax = 0.3;
+    ymax = 1.4;
   }
 
   TH2D* h2_axes = new TH2D("axes_again", "", 10, xMin, xMax, 10, ymin, ymax);
@@ -1000,7 +1000,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     ymax = 1.4;
   } else {
     ymin = 0.;
-    ymax = 0.3;
+    ymax = 1.4;
   }
 
   std::string plotVarName = (resp_reso == "response") ? "Response" : "Resolution";
@@ -1290,7 +1290,7 @@ void draw_scalefactorVsEta( drawBase* db, double  sfMC[], double sfDATA[], doubl
   TGraphErrors* gr_incl = new TGraphErrors(Npoint, x, Scalefactor_Inclusive , x_err, Scalefactorerr_Inclusive);
   TGraphErrors* gr_dijet = new TGraphErrors(13, x_dijet, Scalefactor_dijet , x_dijet_err, Scalefactorerr_dijet);
   TGraphErrors* gr_8Tev = new TGraphErrors(7, x_8Tev, Scalefactor_8Tev , x_8Tev_err, Scalefactorerr_8Tev);
-  TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 13, 0., 5.2, 10, 0.8, 2.0); 
+  TH2D* h2_axes_lo_resp = new TH2D("axes_lo_resp", "", 13, 0., 5.2, 10, 0.7,2.3); 
   h2_axes_lo_resp->SetXTitle("#eta"); 
   gr_sf->SetTitle(graph_name.c_str());
   gr_sf->SetLineWidth(2);

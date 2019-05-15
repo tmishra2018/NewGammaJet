@@ -436,7 +436,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
     }
   } else {
     ymin = 0.;
-    ymax = 0.3;
+    ymax = 1.4;
     if (db->get_recoType() == "calo" && !rawJets) ymax = 0.6;
   }
 
