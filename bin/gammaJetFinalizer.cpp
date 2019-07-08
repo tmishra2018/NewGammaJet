@@ -112,21 +112,21 @@ void GammaJetFinalizer::runAnalysis() {
 
                 //HLTphoton33   
 
-                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
                 static std::string puData30 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
 
                 //HLTphoton50
 
 
-                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
                 static std::string puData50 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
 
                 //HLTphoton75 
 
 
-                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
                 static std::string puData75 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
 
@@ -134,25 +134,25 @@ void GammaJetFinalizer::runAnalysis() {
                 //HLTphoton90 
 
 
-                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
+                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
                 static std::string puData90 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
 
                 //HLTphoton120 
 
 
-                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
                 static std::string puData120 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
 
                 //HLTphoton165
 
 
-                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
                 static std::string puData165 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
 
-		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
                 static std::string puData200 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter200 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData200, puMC200));
 
