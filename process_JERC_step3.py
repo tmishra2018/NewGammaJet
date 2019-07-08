@@ -133,6 +133,14 @@ def Produce_Combination_File_and_plots(run,JERC):
     print_log_started_step(run, JERC, 'make plots')
     if not run == 'MC':
         wait_for(['MC'], JERC, 'PU OK')
+        os.system("ln -sf computed_mc_files_2018_MC_{}_pu_truth_100bins.root {}/{}/computed_mc_files_2018_MC_for_{}_{}_pu_truth_100bins.root".format(
+            JERC,
+            Step3_dir,
+            Step3_PU_dir,
+            run,
+            JERC
+            )
+        )
     output = JERC
     IOV = run+'_'+JERC
     Pu_profile = run+'_'+JERC
