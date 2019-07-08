@@ -110,50 +110,50 @@ void GammaJetFinalizer::runAnalysis() {
 
                 static std::string puPrefix = TString::Format("%s/src/JetMETCorrections/GammaJetFilter/analysis/PUReweighting", cmsswBase.c_str()).Data();
 
-                //HLTphoton33   
+                //HLTphoton30   
 
-                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-                static std::string puData30 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+                static std::string puData30 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();  
                 reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
 
                 //HLTphoton50
 
 
-                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData50 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData50 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();
                 reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
 
                 //HLTphoton75 
 
 
-                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData75 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData75 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();   
                 reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
 
 
                 //HLTphoton90 
 
 
-                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
-                static std::string puData90 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
+                static std::string puData90 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();
                 reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
 
                 //HLTphoton120 
 
 
-                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData120 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData120 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();               
                 reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
 
                 //HLTphoton165
 
 
-                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
                 static std::string puData165 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
 
-		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData200 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData200 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();
                 reweighter200 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData200, puMC200));
 
 
@@ -165,7 +165,7 @@ void GammaJetFinalizer::runAnalysis() {
         } else {
                 // Get PU
                 parsePileUpJSON2();
-               // parserootPileUpfromJson();
+                //parserootPileUpfromJson();
                 parsePrescalefromJson();
                 //Trigger
                 static std::string cmsswBase = getenv("CMSSW_BASE");
@@ -267,71 +267,33 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_analysis_evtWeightTot = analysisDir.make<TH1F>("analysis_evtWeightTot", "analysis_evtWeightTot", 50, 0., 10.);
   TH1F* h_event_weight_used = analysisDir.make<TH1F>("event_weight_used", "event_weight_used", 150, 0., 150.);
 
-  TH1F* h_ptPhoton_NoCut = analysisDir.make<TH1F>("ptPhoton_NoCut", "ptPhoton NoCut", 50, 40., 1500.);
+  TH1F* h_ptPhoton_NoCut = analysisDir.make<TH1F>("ptPhoton_NoCut", "ptPhoton NoCut", 150, 0., 3000.);
 
-  TH1F* h_ptPhoton = analysisDir.make<TH1F>("ptPhoton", "ptPhoton", 50, 40., 2000.);
-  
-  // define spécial binning for pt photon plots.
-  
-  Double_t BINwidth[76];
-  
-  BINwidth[0] = 40 ;
-  BINwidth[1] = 45 ;
-  BINwidth[2] = 50 ;
-  BINwidth[3] = 55 ;
-  BINwidth[4] = 60 ;
-  BINwidth[5] = 66.25 ;
-  BINwidth[6] = 72.5 ;
-  BINwidth[7] = 78.75 ;
-  BINwidth[8] = 85 ;
-  BINwidth[9] = 90 ;
-  BINwidth[10] = 95 ;
-  BINwidth[11] = 100 ;
-  BINwidth[12] = 105 ;
-  BINwidth[13] = 111.25 ;
-  BINwidth[14] = 117.5 ;
-  BINwidth[15] = 123.75 ;
-  BINwidth[16] = 130 ;
-  BINwidth[17] = 141.25 ;
-  BINwidth[18] = 152.5 ;  
-  BINwidth[19] = 163.75 ;
-  BINwidth[20] = 175. ;
-
-  double bin_up = 175.;
-  for(int ibin = 0 ; ibin < 55 ; ibin ++){
-  	bin_up += 15. ;
-  	std::cout<<" bin edge "<< bin_up << std::endl;
-  	BINwidth[21 + ibin ] = bin_up;
-  
-  }
-  
-  h_ptPhoton->SetBins(75, BINwidth);
-  
-  
+  TH1F* h_ptPhoton = analysisDir.make<TH1F>("ptPhoton_175_3000", "ptPhoton_175_3000", 50, 175., 2000.);
   TH1F* h_ptPhoton_1 = analysisDir.make<TH1F>("ptPhoton_130_175", "ptPhoton_130_175", 50, 130., 175.);
   TH1F* h_ptPhoton_2 = analysisDir.make<TH1F>("ptPhoton_105_130", "ptPhoton_105_130", 50, 105., 130.);
   TH1F* h_ptPhoton_3 = analysisDir.make<TH1F>("ptPhoton_85_105", "ptPhoton_85_105", 50, 85., 105.);
   TH1F* h_ptPhoton_4 = analysisDir.make<TH1F>("ptPhoton_60_85", "ptPhoton_60_85", 50, 60., 85.);
   TH1F* h_ptPhoton_5 = analysisDir.make<TH1F>("ptPhoton_40_60", "ptPhoton_40_60", 50, 40., 60.);
-  TH1F* h_EtaPhoton = analysisDir.make<TH1F>("EtaPhoton", "EtaPhoton", 50, -5, 5.);
-  TH1F* h_PhiPhoton = analysisDir.make<TH1F>("PhiPhoton", "PhiPhoton", 50, -3.5, 3.5);
-  TH1F* h_ptFirstJet = analysisDir.make<TH1F>("ptFirstJet", "ptFirstJet", 50, 15., 1000.);
-  TH1F* h_EtaFirstJet = analysisDir.make<TH1F>("EtaFirstJet", "EtaFirstJet", 50, -5, 5.);
+  TH1F* h_EtaPhoton = analysisDir.make<TH1F>("EtaPhoton", "EtaPhoton", 60, -5, 5.);
+  TH1F* h_PhiPhoton = analysisDir.make<TH1F>("PhiPhoton", "PhiPhoton", 60, -3.5, 3.5);
+  TH1F* h_ptFirstJet = analysisDir.make<TH1F>("ptFirstJet", "ptFirstJet", 200, 0., 2000.);
+  TH1F* h_EtaFirstJet = analysisDir.make<TH1F>("EtaFirstJet", "EtaFirstJet", 60, -5, 5.);
   TH1F* h_PhiFirstJet = analysisDir.make<TH1F>("PhiFirstJet", "PhiFirstJet", 30, -3.5, 3.5);// put back 60 bins
   TH1F* h_ptSecondJet = analysisDir.make<TH1F>("ptSecondJet", "ptSecondJet", 20, 0., 200.);
   TH1F* h_EtaSecondJet = analysisDir.make<TH1F>("EtaSecondJet", "EtaSecondJet", 60, -5, 5.);
   TH1F* h_PhiSecondJet = analysisDir.make<TH1F>("PhiSecondJet", "PhiSecondJet", 60, -3.5, 3.5);
-  TH1F* h_MET = analysisDir.make<TH1F>("MET", "MET", 50, 0., 250.);
-  TH1F* h_alpha = analysisDir.make<TH1F>("alpha", "alpha", 50, 0., 2.);
+  TH1F* h_MET = analysisDir.make<TH1F>("MET", "MET", 150, 0., 300.);
+  TH1F* h_alpha = analysisDir.make<TH1F>("alpha", "alpha", 100, 0., 2.);
 
   TH1F* h_deltaPhi_NoCut = analysisDir.make<TH1F>("deltaPhi_NoCut", "deltaPhi before cut", 60, M_PI / 2, M_PI);
   TH1F* h_deltaPhi = analysisDir.make<TH1F>("deltaPhi", "deltaPhi", 60, M_PI / 2, M_PI);
   TH1F* h_deltaPhi_2ndJet = analysisDir.make<TH1F>("deltaPhi_2ndjet", "deltaPhi of 2nd jet", 60, M_PI / 2., M_PI);
   TH1F* h_deltaPhi_Photon_MET = analysisDir.make<TH1F>("deltaPhi_Photon_MEt", "deltaPhi MET", 60, M_PI / 2., M_PI);
 
-  TH1F* h_rho = analysisDir.make<TH1F>("rho", "rho", 50, 0, 50);
+  TH1F* h_rho = analysisDir.make<TH1F>("rho", "rho", 100, 0, 50);
   TH1F* h_hadTowOverEm = analysisDir.make<TH1F>("hadTowOverEm", "hadTowOverEm", 50, 0, 0.035);
-  TH1F* h_sigmaIetaIeta = analysisDir.make<TH1F>("sigmaIetaIeta", "sigmaIetaIeta", 50, 0, 0.011);
+  TH1F* h_sigmaIetaIeta = analysisDir.make<TH1F>("sigmaIetaIeta", "sigmaIetaIeta", 100, 0, 0.011);
   TH1F* h_chargedHadronsIsolation = analysisDir.make<TH1F>("chargedHadronsIsolation", "chargedHadronsIsolation", 50, 0, 2);
   TH1F* h_neutralHadronsIsolation = analysisDir.make<TH1F>("neutralHadronsIsolation", "neutralHadronsIsolation", 50, 0, 2);//100, 0, 100);
   TH1F* h_photonIsolation = analysisDir.make<TH1F>("photonIsolation", "photonIsolation", 50, 0, 3);
@@ -349,23 +311,23 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_ptPhoton_Binned = new TH1F("ptPhoton_Binned","ptPhoton", binnum, ptBins); 
   TH1F* h_ptPhoton_passedID_Binned = new TH1F("ptPhoton_passedID_Binned","ptPhoton_passedID", binnum, ptBins);  
 
-  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 50, 40., 2000.);
+  TH1F* h_ptPhoton_passedID = analysisDir.make<TH1F>("ptPhoton_passedID", "ptPhoton", 300, 0., 3000.);
   h_ptPhoton_passedID->Sumw2();
-  TH1F* h_EtaPhoton_passedID = analysisDir.make<TH1F>("EtaPhoton_passedID", "EtaPhoton", 50, -5, 5.);
-  TH1F* h_PhiPhoton_passedID = analysisDir.make<TH1F>("PhiPhoton_passedID", "PhiPhoton", 50, -3.5, 3.5);
-  TH1F* h_ptFirstJet_passedID = analysisDir.make<TH1F>("ptFirstJet_passedID", "ptFirstJet", 50, 0., 1500.);
-  TH1F* h_EtaFirstJet_passedID = analysisDir.make<TH1F>("EtaFirstJet_passedID", "EtaFirstJet", 50, -5, 5.);
-  TH1F* h_PhiFirstJet_passedID = analysisDir.make<TH1F>("PhiFirstJet_passedID", "PhiFirstJet", 50, -3.5, 3.5);
+  TH1F* h_EtaPhoton_passedID = analysisDir.make<TH1F>("EtaPhoton_passedID", "EtaPhoton", 60, -5, 5.);
+  TH1F* h_PhiPhoton_passedID = analysisDir.make<TH1F>("PhiPhoton_passedID", "PhiPhoton", 60, -3.5, 3.5);
+  TH1F* h_ptFirstJet_passedID = analysisDir.make<TH1F>("ptFirstJet_passedID", "ptFirstJet", 200, 0., 2000.);
+  TH1F* h_EtaFirstJet_passedID = analysisDir.make<TH1F>("EtaFirstJet_passedID", "EtaFirstJet", 100, -5, 5.);
+  TH1F* h_PhiFirstJet_passedID = analysisDir.make<TH1F>("PhiFirstJet_passedID", "PhiFirstJet", 60, -3.5, 3.5);
   TH1F* h_ptSecondJet_passedID = analysisDir.make<TH1F>("ptSecondJet_passedID", "ptSecondJet", 20, 0., 200.);
   TH1F* h_EtaSecondJet_passedID = analysisDir.make<TH1F>("EtaSecondJet_passedID", "EtaSecondJet", 60, -5, 5.);
   TH1F* h_PhiSecondJet_passedID = analysisDir.make<TH1F>("PhiSecondJet_passedID", "PhiSecondJet", 60, -3.5, 3.5);
-  TH2F* h_PtEtaSecondJet_passedID = analysisDir.make<TH2F>("PtEtaSecondJet_passedID", "Pt vs Eta SecondJet", 50, -5, 5, 50, 0, 1500);
+  TH2F* h_PtEtaSecondJet_passedID = analysisDir.make<TH2F>("PtEtaSecondJet_passedID", "Pt vs Eta SecondJet", 60, -5, 5, 400, 0, 4000);
 
   TH1F* h_ptSecondJet_2ndJetOK = analysisDir.make<TH1F>("ptSecondJet_2ndJetOK", "ptSecondJet", 20, 0., 200.);
   TH1F* h_EtaSecondJet_2ndJetOK = analysisDir.make<TH1F>("EtaSecondJet_2ndJetOK", "EtaSecondJet", 60, -5, 5.);
   TH1F* h_PhiSecondJet_2ndJetOK = analysisDir.make<TH1F>("PhiSecondJet_2ndJetOK", "PhiSecondJet", 60, -3.5, 3.5);
 
-  TH1F* h_MET_passedID = analysisDir.make<TH1F>("MET_passedID", "MET", 50, 0., 250.);
+  TH1F* h_MET_passedID = analysisDir.make<TH1F>("MET_passedID", "MET", 75, 0., 600.);
   TH1F* h_rawMET_passedID = analysisDir.make<TH1F>("rawMET_passedID", "raw MET", 75, 0., 300.);
   TH1F* h_alpha_passedID = analysisDir.make<TH1F>("alpha_passedID", "alpha", 100, 0., 2.);
   
@@ -871,11 +833,9 @@ void GammaJetFinalizer::runAnalysis() {
       
     if(mVerbose){
       if( mIsMC){
-        std::cout << "pt photon  "<< fullinfo.Pt_photon << std::endl; 
 	std::cout << "generatorWeight   "<< generatorWeight << std::endl; 
 	std::cout << "evtWeightTot   "<<evtWeightSum << std::endl; 
-	std::cout << "mPUWeight     "<< mPUWeight << std::endl;
-	std::cout << "prescale weight "<<ComputePreScaleForMC(fullinfo.Pt_photon)<<std::endl;
+	std::cout << "mPUWeight     "<< mPUWeight << std::endl; 
       }else{
 	std::cout<< "triggerWeight    "<< triggerWeight << std::endl;
       }
@@ -888,7 +848,7 @@ void GammaJetFinalizer::runAnalysis() {
     if(mIsMC){
       mu = fullinfo.trueInteraction ;
     } else {
-      mu = -99;//getAvgPUfromlatest( fullinfo.run, fullinfo.lumi );
+      mu = getAvgPUfromlatest( fullinfo.run, fullinfo.lumi );
     }
    // if(mu!=0.)  std::cout<<"test n true interaction : "<<mu<<std::endl;
     
@@ -970,7 +930,22 @@ void GammaJetFinalizer::runAnalysis() {
 #endif
     
     double dataMCRatio = 1;
-   
+   /* if( mIsMC){
+      dataMCRatio = 1;
+    }else{
+      int bin = h_test-> FindBin( fullinfo.Energy_photon );
+      int NBins = h_test->GetNbinsX();
+      if(bin >NBins){
+	dataMCRatio = h_test -> GetBinContent( NBins );
+      }else{
+	dataMCRatio = h_test -> GetBinContent( bin );
+      }
+    }*/
+    //std::cout<< "photon --> pt = " << photon.pt <<" eta = "<< photon.eta << " phi = "<< photon.phi<<" e = "<< photon.e <<std::endl;
+    //std::cout<< "MET --> pt = " << MET.pt <<" eta = "<< MET.eta << " phi = "<< MET.phi<<" e = "<< MET.e <<std::endl;
+    //std::cout<< "MET et = " << MET.et <<std::endl;
+
+    //std::cout<< "SF = " << dataMCRatio <<std::endl;
 
     TLorentzVector PhotonCorr;
     PhotonCorr.SetPtEtaPhiE( (fullinfo.Pt_photon/dataMCRatio), fullinfo.Eta_photon, fullinfo.Phi_photon, (fullinfo.Energy_photon/dataMCRatio)  );
@@ -1068,7 +1043,7 @@ void GammaJetFinalizer::runAnalysis() {
     h_nvertex_reweighted->Fill(fullinfo.nVtx, eventWeight);
     h_ntrue_interactions_reweighted->Fill(mu, eventWeight);
     
-    h_ptPhoton               ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
+   // h_ptPhoton               ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
     h_ptPhoton_Binned        ->Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
     h_EtaPhoton             ->Fill(fullinfo.Eta_photon, eventWeight);
     h_PhiPhoton             ->Fill(fullinfo.Phi_photon, eventWeight);
@@ -1310,11 +1285,11 @@ void GammaJetFinalizer::runAnalysis() {
 	
         Profile_Pt_gamma_vs_Nvtx   -> Fill(fullinfo.nVtx, PhotonCorr.Pt()/*fullinfo.Pt_photon*/, eventWeight);
         
-
+// 	// to be changed with SuperCluster pT
  	if (fabs(fullinfo.etaAK4_j1) <1.305) { //only the special case now
  	  Profile_photon_SCPt_vs_Pt -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
  	  h_photon_SCPt_vs_Pt         -> Fill(PhotonCorr.Pt()/*fullinfo.Pt_photon*/, fullinfo.Pt_photonSC, eventWeight);
-
+ 	  // if(fullinfo.nVtx > mu && fullinfo.nVtx > 20) std::cout<<"after alpha cut NPV : "<< fullinfo.nVtx << " rho : "<< fullinfo.rho <<" mu "<<mu<<std::endl;
 	}
 	
 	//fill N vertices as a function of eta/pT
@@ -1324,7 +1299,9 @@ void GammaJetFinalizer::runAnalysis() {
           vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
         }
 
-	
+	//double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
+	//	if(TotEne > 1 || TotEne < 0) continue;
+	//std::cout<< "Tot En = "<< TotEne << std::endl;
 
 	//fill jet energy composition histo vectors
 	ChHadronFraction[etaBin][ptBin]->Fill(fullinfo.chargedHadEnFrac_j1, eventWeight);
@@ -1398,7 +1375,7 @@ void GammaJetFinalizer::runAnalysis() {
          HLTalphaEta013[HLTptBin]->Fill(fullinfo.alpha, eventWeight);
          HLTjet_2ptEta013[HLTptBin]->Fill(fullinfo.pTAK4_j2, eventWeight);
        }
-  // if(PhotonCorr.Pt() >= 175.) h_ptPhoton ->Fill(PhotonCorr.Pt(), eventWeight);
+   if(PhotonCorr.Pt() >= 175.) h_ptPhoton ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 175. && PhotonCorr.Pt() >130.) h_ptPhoton_1->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 130. && PhotonCorr.Pt() >105.) h_ptPhoton_2 ->Fill(PhotonCorr.Pt(), eventWeight);
    if(PhotonCorr.Pt() < 105. && PhotonCorr.Pt() >85.) h_ptPhoton_3 ->Fill(PhotonCorr.Pt(), eventWeight);
@@ -1488,12 +1465,12 @@ void GammaJetFinalizer::runAnalysis() {
       
     }// if secondJetOK
   //  if(skip_event_Hcalveto) continue ;
-    if (fullinfo.pTAK4_j2 > 0.) { //extrapolation if second jet is present -> nor for exclusive alpha binning
+   // if (/*fullinfo.pTAK4_j2 > 0.*/) { //extrapolation if second jet is present -> nor for exclusive alpha binning
       if(mVerbose) std::cout << "Extrapolating... " << std::endl;
       do {
 	
         int extrapBin = mExtrapBinning.getBin(fullinfo.Pt_photon, fullinfo.pTAK4_j2, ptBin);
-        
+       // std::cout<<" diplay  the extrap bin : "<<extrapBin<<std::endl;
         
 	if(mIsMC) extrapGenBin = mExtrapBinning.getBin(fullinfo.Pt_photonGEN, fullinfo.pTAK4_j2GEN, ptBin);
 	
@@ -1507,119 +1484,31 @@ void GammaJetFinalizer::runAnalysis() {
 	  // Ugly code to make inclusive extrapolation bin for response and PLI
 	  
 	  //bin 9 0 to 0.3 :
-       //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 ){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	//  std::cout<<" end filling 1 "<<std::endl;
+            extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+       //     std::cout<<" end filling 2 "<<std::endl;
+            extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
 	  }
-          extrap_responseBalancing[etaBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	//  std::cout<<" end filling  4"<<std::endl;
+          extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+      //    std::cout<<" end filling 5 "<<std::endl;
+          extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
           
-          extrap_responseBalancing_finebin[etafineBin][ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-
+          extrap_responseBalancing_finebin[etafineBin][ptBin][extrapBin]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][extrapBin]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+      //    std::cout<<" end filling  "<<std::endl;
           if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+          
+           if(fullinfo.pTAK4_j1 <= 10. ) std::cout<<" Pt 1jet gen "<<fullinfo.pTAK4_j1GEN<<std::endl;
+	    extrap_PLI[etaBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_Eta013[ptBin][extrapBin]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
-
-	  
-	   //bin 9 0 to 0.25 :
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.2*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  //bin 9 0 to 0.20 :
-
-	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.15*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  
-	  //bin 9 0 to 0.15 :
-	  
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.1*/){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  //bin 9 0 to 0.1 :
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.05 */){
-	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
-            extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-            extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-	  }
-          extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
-          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
-          if (mIsMC){
-	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
-	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-}}
 
 	  
 	
@@ -1640,7 +1529,25 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_responseBalancingGenPhot[etaBinGen][ptBinGen][extrapGenBin]  ->Fill(respGenPhot, eventWeight);
 	  }
 	  
-	 
+	  /*
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.05 ){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing, eventWeight);
+            extrap_responseMPFEta013[ptBin][0]->Fill(respMPF, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][0]->Fill(respBalancing, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][0]->Fill(respMPF, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF, eventWeight);
+          
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    }
+	  }}*/
 	  
 	  
         } while (false);
@@ -1665,7 +1572,7 @@ void GammaJetFinalizer::runAnalysis() {
 	
       } while (false);
       
-    }//else{
+   // }else{
     
     // put back bin zero of extrap here
     
@@ -2049,7 +1956,20 @@ void GammaJetFinalizer::computePUWeight() {
         //  std::cout<<mPUWeight<<std::endl;
 }//end compute PUReweight
 
+double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
+	double preScale;
+	
+        if      (Pt_photon<60)  { preScale= 0.0000401153758676; }
+        else if (Pt_photon<85)  { preScale= 0.0039473720141; }
+        else if (Pt_photon<105) { preScale= 0.0156656382257; }
+        else if (Pt_photon<130) { preScale= 0.0312899931745; }
+        else if (Pt_photon<175) { preScale= 0.125036122867; }
+        else if (Pt_photon<230) { preScale= 0.250030962458; }
+        else                    { preScale= 1.; }
+
+	return preScale;
+}
 void GammaJetFinalizer::computePUWeight_NVtxBased(double ptPhot, int nvertex) {
 
         //  std::cout << "My PU reweighting   "<< nvertex<<std::endl;
@@ -2150,7 +2070,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 double triggpassed4 = triggHLT4;//1.;//
                 double triggpassed5 = triggHLT5;//1.;//
                 double triggpassed6 = triggHLT6;//1.;//
-               // double triggpassed7 = triggHLT7;
+                //double triggpassed7 = triggHLT7;
 
                 //   int passedtriggerresult ;
 
@@ -2217,7 +2137,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
                 std::string H4 = "HLT_Photon75_R9Id90_HE10_IsoM_v.*";
                 std::string H5 = "HLT_Photon50_R9Id90_HE10_IsoM_v.*";
                 std::string H6 = "HLT_Photon30_R9Id90_HE10_IsoM_v.*";
-		// return TRIGGER_OK;
+
                 if (passed7 == 1.  && boost::regex_match("HLT_Photon200_v.*"                , mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed6 == 1. && */  passed6 == 1. && boost::regex_match("HLT_Photon165_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
                 if (/*triggpassed5 == 1. && */  passed5 == 1. && boost::regex_match("HLT_Photon120_R9Id90_HE10_IsoM_v.*", mandatoryTrigger->at(0).name)) return TRIGGER_OK;
@@ -2241,31 +2161,7 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
         }
         return TRIGGER_NOT_FOUND;
 }
-double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
-	double preScale =1.;
-	// TODO redefine for 2018
-	// Without prescale=1 for Pt_photon<189
-	// return preScale;
-	if 	(Pt_photon<60) 	{ preScale= 0.0000401153758676; }
-	else if (Pt_photon<85) 	{ preScale= 0.0039473720141; }
-	else if (Pt_photon<105) { preScale= 0.0156656382257; }
-	else if (Pt_photon<130) { preScale= 0.0312899931745; }
-	else if (Pt_photon<175) { preScale= 0.125036122867; }
-	else if (Pt_photon<230) { preScale= 0.250030962458; }
-	else 			{ preScale= 1.; }
-	
-	/*
-	if 	(Pt_photon<60) 	{ preScale= 0.00209; }
-	else if (Pt_photon<85) 	{ preScale= 0.00955769; }
-	else if (Pt_photon<105) { preScale= 0.04606247; }
-	else if (Pt_photon<130) { preScale= 0.090614; }
-	else if (Pt_photon<175) { preScale= 0.255642; }
-	else 			{ preScale= 0.674888; }
-	*/
-    
-	return preScale;
-}
 int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
 
         if (! mIsMC) {
