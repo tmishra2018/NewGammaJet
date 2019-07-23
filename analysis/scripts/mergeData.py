@@ -38,33 +38,26 @@ run = args.run
 cleaning = args.cleaning
 ###################
 #read input file
-ins = open(args.inputList,"r")
-files1 = " "
-files2 = " "
+all_files = open(args.inputList,"r").readlines()
+all_files = [path[:-1] for path in all_files]
+splitted_files = []
+splitting_files_by = 500
 
-i = 0
+if len(all_files) <= splitting_files_by:
+  splitted_files = [all_files]
+else:
+  for k in range(int(1.*len(all_files)/splitting_files_by)):
+    splitted_files.append(all_files[int(k*splitting_files_by):int((k+1)*splitting_files_by)])
+  if not int((k+1)*splitting_files_by) == len(all_files)-1:
+    k+=1
+  splitted_files.append(all_files[int(k*splitting_files_by):])
 
-
-
-for line in ins:
-  if i < 550:
-    file = line.strip()
-    files1 += str(" "+file)
-   # pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-   # fullname = os.path.split(pathT2)[1]
-   # name = fullname.split("_")
-    i= i+1
-  if i >= 550:
-    file = line.strip()
-    files2 += str(" "+file)
-   # pathT2 = file.split("dcap://cmsrm-se01.roma1.infn.it/")[1]
-   # fullname = os.path.split(pathT2)[1]
-   # name = fullname.split("_")
-    i= i+1
-
-print i
-print files1
-print files2
+print "Will merge {} files, splitting by groups of {} so will use {} part{}.".format(
+  len(all_files),
+  splitting_files_by,
+  len(splitted_files),
+  "s" if len(splitted_files) > 1 else ""
+)
 
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
@@ -73,51 +66,45 @@ pwd = os.environ['PWD']
 
 bad_files = []
 
-ignored_cleaning_runs = ['ABC', 'ABCD']
+filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root"
+filename_out_parts = []
 
-if i < 550:
-  filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root" #+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
-  print filename_out
-  exitcode = os.system("hadd -f "+filename_out+"  "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-  while exitcode > 0 and cleaning and not (run in ignored_cleaning_runs):
+for k in range(len(splitted_files)):
+  part_num = k+1
+  print "Merging part {}.".format(part_num)
+  filename_out_part = "{}/PhotonJet_2ndLevel_DATA_RUN_{}_{}_Part{}.root".format(
+    outputDir,
+    run,
+    str(today),
+    part_num)
+  command = " ".join(
+    ["hadd -f {}".format(filename_out_part)]+splitted_files[k]+[" > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
+  exitcode = os.system(command)
+  bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
+  while exitcode > 0 and cleaning and bad_file in splitted_files[k]:
     print 'Error while merging, removing a file...'
-    bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
     print bad_file
     bad_files.append(bad_file)
-    if bad_file in files1:
-      files1 = files1.replace(bad_file,'')
-    exitcode = os.system("hadd -f "+filename_out+"  "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-else:
-  filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+".root" 
-  filename_out1 = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+"_Part1.root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part1.root" 
-  filename_out2 = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+"_Part2.root"#+name[0]+"_"+name[1]+"_"+name[2]+"_"+name[3]+"_"+name[4]+"_"+str(today)+"_Part2.root" 
-  print filename_out1
-  print filename_out2
-  print filename_out
-  exitcode = os.system("hadd -f "+filename_out1+" "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-  while exitcode > 0 and cleaning and not (run in ignored_cleaning_runs):
-    print 'Error while merging, removing a file...'
+    splitted_files[k] = splitted_files[k].replace(bad_file,'')
+    command = " ".join(
+      ["hadd -f {}".format(filename_out_part)]+splitted_files[k]+[" > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
+    exitcode = os.system(command)
     bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
-    print bad_file
-    bad_files.append(bad_file)
-    if bad_file in files1:
-      files1 = files1.replace(bad_file,'')
-    exitcode = os.system("hadd -f "+filename_out1+" "+files1 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-  exitcode = os.system("hadd -f "+filename_out2+" "+files2 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-  while exitcode > 0 and cleaning and not (run in ignored_cleaning_runs):
-    print 'Error while merging, removing a file...'
-    bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
-    print bad_file
-    bad_files.append(bad_file)
-    if bad_file in files2:
-      files2 = files2.replace(bad_file,'')
-    exitcode = os.system("hadd -f "+filename_out2+" "+files2 +" > tmp_py_merge_files_from_step2_{}.out".format(inputList))
-  os.system("hadd -f "+filename_out+"  "+filename_out1+" "+filename_out2 )
+  filename_out_parts.append(filename_out_part)
+if k > 0:
+  print "Merging parts together..."
+  os.system(
+    " ".join(["hadd -f {}".format(filename_out)]+filename_out_parts)
+  )
+  for file_part in filename_out_parts:
+    os.system("rm -f {} &".format(file_part))
+else :
+  os.system("mv {} {}".format(filename_out_parts[0], filename))
 
 all_files = os.popen("cat "+args.inputList).read()[:-1].split('\n')
 good_files = [f for f in all_files if f not in bad_files]
 
-if cleaning and not (run in ignored_cleaning_runs):
+if cleaning :
   os.system("rm "+args.inputList)
   for files in good_files:
     os.system("echo "+files+" >> "+args.inputList)
