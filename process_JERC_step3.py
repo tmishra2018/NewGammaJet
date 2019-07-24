@@ -133,8 +133,7 @@ def Produce_Combination_File_and_plots(run,JERC):
     print_log_started_step(run, JERC, 'make plots')
     if not run == 'MC':
         wait_for(['MC'], JERC, 'PU OK')
-        os.system("cd {}/{} ; ln -sf computed_mc_files_2018_MC_{}_pu_truth_100bins.root computed_mc_files_2018_MC_for_{}_{}_pu_truth_100bins.root".format(
-            Step3_dir,
+        os.system("cd {} ; ln -sf computed_mc_files_2018_MC_{}_pu_truth_100bins.root computed_mc_files_2018_MC_for_{}_{}_pu_truth_100bins.root".format(
             Step3_PU_dir,
             JERC,
             run,
