@@ -99,7 +99,7 @@ if k > 0:
   for file_part in filename_out_parts:
     os.system("rm -f {} &".format(file_part))
 else :
-  os.system("mv {} {}".format(filename_out_parts[0], filename))
+  os.system("mv {} {}".format(filename_out_parts[0], filename_out))
 
 all_files = os.popen("cat "+args.inputList).read()[:-1].split('\n')
 good_files = [f for f in all_files if f not in bad_files]
