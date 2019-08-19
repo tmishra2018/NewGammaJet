@@ -336,7 +336,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_neutralHadronsIsolation = analysisDir.make<TH1F>("neutralHadronsIsolation", "neutralHadronsIsolation", 50, 0, 2);//100, 0, 100);
   TH1F* h_photonIsolation = analysisDir.make<TH1F>("photonIsolation", "photonIsolation", 50, 0, 3);
   
-  TH2F* h_deltaPhi_vs_alpha = analysisDir.make<TH2F>("deltaPhi_vs_alpha", "deltaPhi_vs_alpha", 50, 0, 4, 50, 0, 0.5);
+  TH2F* h_deltaPhi_vs_alpha = analysisDir.make<TH2F>("deltaPhi_vs_alpha", "deltaPhi_vs_alpha", 50, 0, 4, 50, 0, 1.0);
   TH2F* h_eta_vs_phi = analysisDir.make<TH2F>("eta_phi", "eta_phi", 100, -5., 5., 100, -3.5, 3.5);
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
@@ -443,8 +443,8 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<TH1F*>      HLTNvertexEta013    = buildHLTPtVector<TH1F>(HLTDirNvertex, "NvertexHLT", "eta0013", 50, 0., 50.);
   
   TFileDirectory HLTDiralpha = analysisDir.mkdir("HLT_alpha");
-  std::vector<std::vector<TH1F*> > HLTalpha = buildEtaHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT",50, 0., 0.5);
-  std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 0.5);
+  std::vector<std::vector<TH1F*> > HLTalpha = buildEtaHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT",50, 0., 1.0);
+  std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 1.0);
   
   
   TFileDirectory HLTDirHCCalPrecleaning = analysisDir.mkdir("HLT_Hcalpreclean");
@@ -1506,8 +1506,70 @@ void GammaJetFinalizer::runAnalysis() {
 	  
 	  // Ugly code to make inclusive extrapolation bin for response and PLI
 	  
+	  //bin 9 0 to 1.0 :
+       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 1.0 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][7]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][7]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][7]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][7]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][7]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][7]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][7]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][7]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][7]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	  
+	  //bin 9 0 to 0.7 :
+       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.7 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][6]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][6]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][6]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][6]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][6]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][6]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][6]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][6]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][6]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	  
+	  //bin 9 0 to 0.5 :
+       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.5 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][5]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][5]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][5]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][5]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][5]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][5]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][5]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][5]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][5]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	  
 	  //bin 9 0 to 0.3 :
-       //bin 9 0 to 0.3 :
        // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
@@ -2405,7 +2467,7 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
                         TCLAP::ValueArg<std::string> algoArg("", "algo", "jet algo", true, "ak4", &allowedAlgoTypes, cmd);
                         TCLAP::ValueArg<float> chsArg("", "chs", "Use CHS branches", false, true, "bool", cmd);
                         // alpha cut
-                        TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 0.3)", false, 0.3, "float", cmd);
+                        TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 1.0)", false, 1.0, "float", cmd);
 
                         TCLAP::SwitchArg mcArg("", "mc", "MC?", cmd);
                         TCLAP::SwitchArg verboseArg("v", "verbose", "Enable verbose mode", cmd);

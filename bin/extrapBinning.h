@@ -50,7 +50,10 @@ class ExtrapBinning {
       mMapping.push_back(std::make_pair(0.,0.15));
       mMapping.push_back(std::make_pair(0.,0.2));
       mMapping.push_back(std::make_pair(0.,0.25));
-      mMapping.push_back(std::make_pair(0.,0.3));	
+      mMapping.push_back(std::make_pair(0.,0.3));
+      mMapping.push_back(std::make_pair(0.,0.5));
+      mMapping.push_back(std::make_pair(0.,0.7));
+      mMapping.push_back(std::make_pair(0.,1.0));	
     } //end initialize
 
     int getBin(float ptPhoton, float ptSecondJet, int ptBin) const {
@@ -63,6 +66,9 @@ class ExtrapBinning {
      
       
       size_t extrapBin = 0 ;//(size_t) floor((alpha - mapping.first) / (mapping.second - mapping.first));
+      if(alpha < 1.0) extrapBin = 7 ;
+      if(alpha < 0.7) extrapBin = 6 ;
+      if(alpha < 0.5) extrapBin = 5 ;
       if(alpha < 0.3) extrapBin = 4 ;
       if(alpha < 0.25) extrapBin = 3 ;
       if(alpha < 0.20) extrapBin = 2 ;
@@ -84,7 +90,7 @@ class ExtrapBinning {
 
   private:
     PtBinning mPtBinning;
-    static const int mSize = 5;
+    static const int mSize = 8;
 
     std::vector<std::pair<float, float> > mMapping; // first is minPt, second is maxPt
 };
