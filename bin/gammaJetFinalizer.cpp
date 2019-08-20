@@ -2027,6 +2027,7 @@ std::vector<std::vector<T*> > GammaJetFinalizer::buildExtrapolationVector(TFileD
 
                 std::vector<T*> subvector;
                 size_t extrapBinningSize = mExtrapBinning.size();
+
                 for (size_t p = 0; p < extrapBinningSize; p++) {
                         TString name = TString::Format("%s_%d", ss.str().c_str(), (int) p);
 
