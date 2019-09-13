@@ -82,6 +82,7 @@ def merge_files_from_step2(run, JERC, cleaning=True):
     print_log_started_step(run, JERC, 'merge files')
     command = 'cd '+Step3_scripts_dir
     output_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2018/"+JERC+'/'
+    os.system("mkdir -p {}".format(output_dir))
     if run in lumis_or_xsec_pb.keys():
         lumi_or_xsec_pb = lumis_or_xsec_pb[run]
     elif run in ['ABC','ABCD']:
