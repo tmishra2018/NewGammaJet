@@ -70,6 +70,9 @@ filename_out = outputDir+"/PhotonJet_2ndLevel_DATA_RUN_"+run+"_"+str(today)+".ro
 filename_out_parts = []
 
 for k in range(len(splitted_files)):
+  splitted_files[k] = ' '.join(splitted_files[k])
+
+for k in range(len(splitted_files)):
   part_num = k+1
   print "Merging part {}.".format(part_num)
   filename_out_part = "{}/PhotonJet_2ndLevel_DATA_RUN_{}_{}_Part{}.root".format(
@@ -78,7 +81,7 @@ for k in range(len(splitted_files)):
     str(today),
     part_num)
   command = " ".join(
-    ["hadd -f {}".format(filename_out_part)]+splitted_files[k]+[" > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
+    ["hadd -f {}".format(filename_out_part), splitted_files[k], " > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
   exitcode = os.system(command)
   bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
   while exitcode > 0 and cleaning and bad_file in splitted_files[k]:
@@ -87,7 +90,7 @@ for k in range(len(splitted_files)):
     bad_files.append(bad_file)
     splitted_files[k] = splitted_files[k].replace(bad_file,'')
     command = " ".join(
-      ["hadd -f {}".format(filename_out_part)]+splitted_files[k]+[" > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
+      ["hadd -f {}".format(filename_out_part), splitted_files[k], " > tmp_py_merge_files_from_step2_{}.out".format(inputList)])
     exitcode = os.system(command)
     bad_file = os.popen("cat tmp_py_merge_files_from_step2_{}.out".format(inputList)).read()[:-1].split('\n')[-1].split(':')[1][1:]
   filename_out_parts.append(filename_out_part)
