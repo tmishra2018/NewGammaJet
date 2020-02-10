@@ -108,10 +108,8 @@ def add_legend_entry(GraphError, label):
 for eta in etas:
     can, pad, padr = buildCanvas(eta)
     pad.cd()
-    FakeGraphErrors = GraphErrors['MC'][etas[0]].Clone()
-    for k in range(FakeGraphErrors.GetN()):
-        FakeGraphErrors.SetPointError(k, Double(0), Double(0))
-    FakeGraphErrors.SetPointError(k, Double(4000), Double(0))
+    FakeGraphErrors = GraphErrors['MC'][eta].Clone()
+    FakeGraphErrors.SetPointError(FakeGraphErrors.GetN()-1, Double(4000), Double(0))
     FakeGraphErrors.SetMarkerSize(0)
     FakeGraphErrors.SetLineWidth(0)
     FakeGraphErrors.SetTitle("")
@@ -145,7 +143,7 @@ for eta in etas:
     Xaxis.SetLabelSize(0)
 
     Yaxis = FakeGraphErrors.GetYaxis()
-    Yaxis.SetRangeUser(.8,1.2)
+    Yaxis.SetRangeUser(.75,1.1)
     Yaxis.SetTitle('$\,\! p_T$ \\text{balance}')
     Yaxis.SetTitleSize(.05)
 
