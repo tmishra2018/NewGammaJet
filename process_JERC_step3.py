@@ -36,6 +36,7 @@ Step3_PU_dir = Step3_dir+"/analysis/PUReweighting/"
 
 def print_log_started_step(run, JERC, step):
     command = "echo 'run "+run+' '+JERC+" "+step+" started' >> "+Step3_dir+'/tmp-process_logs.log'
+    print command
     os.system(command)
 
 def wait_for(runs, JERC, step, time='1m'):
@@ -69,13 +70,13 @@ def find_files_from_step2(run, JERC):
         command += ' -type f '
         command += " -iname \*{}\*reduced_skim.root ".format(JERC)
         command += " > "+list_file
-    if run in ['ABC', 'ABCD']:
-        wait_for([letter for letter in run], JERC, 'merged OK',time='10m')
-        command += ' ; rm -f '+list_file
-        for letter in run :
-            # find_files_from_step2(letter, JERC)
-            command += ' ; cat '+"Step2_files_{}_{}.txt".format(letter,JERC)
-            command += " >> "+list_file
+    # if run in ['ABC', 'ABCD']:
+    #     wait_for([letter for letter in run], JERC, 'merged OK',time='10m')
+    #     command += ' ; rm -f '+list_file
+    #     for letter in run :
+    #         # find_files_from_step2(letter, JERC)
+    #         command += ' ; cat '+"Step2_files_{}_{}.txt".format(letter,JERC)
+    #         command += " >> "+list_file
     os.system(command)
         
 def merge_files_from_step2(run, JERC, cleaning=True):
@@ -85,15 +86,20 @@ def merge_files_from_step2(run, JERC, cleaning=True):
     os.system("mkdir -p {}".format(output_dir))
     if run in lumis_or_xsec_pb.keys():
         lumi_or_xsec_pb = lumis_or_xsec_pb[run]
+        run_for_merge = run
+        run_for_outfile = run
     elif run in ['ABC','ABCD']:
+        wait_for([letter for letter in run], JERC, 'merged OK',time='10m')
         lumi_or_xsec_pb = 0
         for letter in run:
             lumi_or_xsec_pb += lumis_or_xsec_pb[letter]
+        run_for_merge = run[0]
+        run_for_outfile = "{}_{}".format(run_for_merge,run)
     if run == 'MC':
         command += ' ; python mergeAndAddWeights.py -c {} '.format(cleaning)
     else:
         command += ' ; python mergeData.py -c {} '.format(cleaning)
-    command += " -i Step2_files_{}_{}.txt".format(run,JERC)
+    command += " -i Step2_files_{}_{}.txt".format(run_for_merge,JERC)
     command += " -o "+output_dir
     if run == 'MC':
         command += " --xsec "
@@ -101,7 +107,7 @@ def merge_files_from_step2(run, JERC, cleaning=True):
         command += " --lumi_tot "
     command += str(lumi_or_xsec_pb)
     if not run == 'MC':
-        command += " --run "+run
+        command += " --run "+run_for_outfile
         command += " && echo 'run "+run+' '+JERC+" merged OK' >> "+Step3_dir+'/tmp-process_logs.log'
     print command
     os.system(command)
@@ -144,15 +150,22 @@ def Produce_Combination_File_and_plots(run,JERC):
     output = JERC
     IOV = run+'_'+JERC
     Pu_profile = run+'_'+JERC
-    Input_data = get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*')
+    Input_data = []
+    if not run in samples.keys():
+        Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_A_'+run+'_*'))
+        for r in run[1:]:
+            Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+r+'_*'))
+    else:
+        Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*'))
     Input_mc = get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_MC_*')
     command = 'cd '+Step3_dir
     command += ' ; python Produce_Combination_File_and_plots.py'
     command += ' --output='+output
     command += ' --IOV='+IOV
     command += ' --Pu_profile='+Pu_profile
-    command += ' --Input_data='+Input_data
+    command += ' --Input_data='+','.join(Input_data)
     command += ' --Input_mc='+Input_mc
+    print command
     os.system(command)
 
 def multithreadmap(process,X,ncores=8, **kwargs):
