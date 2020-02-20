@@ -1,6 +1,7 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+import tdrstyle
 
 runs = ['A', 'B', 'C', 'D']#, 'ABC', 'ABCD']
 
@@ -105,14 +106,45 @@ def add_legend_entry(GraphError, label):
     hfls[-1].Draw("same")
     legend.AddEntry(label, label)
     
+def remove_point(tgrapherror, n=0):
+    tgrapherror.SetPoint(n, Double(0), Double(0))
+    tgrapherror.SetPointError(n, Double(0), Double(0))
+    
+def remove_first_point(tgrapherror):
+    remove_point(tgrapherror, n=0)
+    
+def remove_second_point(tgrapherror):
+    remove_point(tgrapherror, n=1)
+
 for eta in etas:
     can, pad, padr = buildCanvas(eta)
     pad.cd()
     FakeGraphErrors = GraphErrors['MC'][eta].Clone()
     FakeGraphErrors.SetPointError(FakeGraphErrors.GetN()-1, Double(4000), Double(0))
+    y_err = 0
+    for run in ['MC']+runs:
+        if GraphErrors[run][eta].GetErrorY(0) > y_err:
+            y_err = GraphErrors[run][eta].GetErrorY(0)
+    if y_err > 0.03:
+        rm_first_point = True
+    else:
+        rm_first_point = False
+    y_err = 0
+    for run in ['MC']+runs:
+        if GraphErrors[run][eta].GetErrorY(1) > y_err:
+            y_err = GraphErrors[run][eta].GetErrorY(1)
+    if y_err > 0.03:
+        rm_second_point = True
+    else:
+        rm_second_point = False
+
     FakeGraphErrors.SetMarkerSize(0)
     FakeGraphErrors.SetLineWidth(0)
     FakeGraphErrors.SetTitle("")
+    if rm_first_point:
+        remove_first_point(FakeGraphErrors)
+    if rm_second_point:
+        remove_second_point(FakeGraphErrors)
     FakeGraphErrors.Draw("")
 
     legend = TLegend(.75,.6,.925,.9)
@@ -123,6 +155,10 @@ for eta in etas:
     GraphErrors['MC'][eta].SetMarkerStyle(24)
     GraphErrors['MC'][eta].SetMarkerSize(1)
     GraphErrors['MC'][eta].SetLineWidth(1)
+    if rm_first_point:
+        remove_first_point(GraphErrors['MC'][eta])
+    if rm_second_point:
+        remove_second_point(GraphErrors['MC'][eta])
     GraphErrors['MC'][eta].Draw("P same")
     add_legend_entry(GraphErrors['MC'][eta], 'MC')
     for run in runs:
@@ -130,8 +166,12 @@ for eta in etas:
         GraphErrors[run][eta].SetMarkerStyle(20)
         GraphErrors[run][eta].SetMarkerSize(1)
         GraphErrors[run][eta].SetLineWidth(1)
+        if rm_first_point:
+            remove_first_point(GraphErrors[run][eta])
+        if rm_second_point:
+            remove_second_point(GraphErrors[run][eta])
         GraphErrors[run][eta].Draw("P same")
-        add_legend_entry(GraphErrors[run][eta], 'Run 2018 {}'.format(run))
+        add_legend_entry(GraphErrors[run][eta], 'Run {}'.format(run))
 
     legend.Draw()
 
@@ -143,7 +183,7 @@ for eta in etas:
     Xaxis.SetLabelSize(0)
 
     Yaxis = FakeGraphErrors.GetYaxis()
-    Yaxis.SetRangeUser(.75,1.1)
+    Yaxis.SetRangeUser(.7,1.4)
     Yaxis.SetTitle('$\,\! p_T$ \\text{balance}')
     Yaxis.SetTitleSize(.05)
 
@@ -168,7 +208,7 @@ for eta in etas:
     pave3.SetFillColor(0)
     pave3.SetFillStyle(0)
     pave3.SetBorderSize(0)
-    pave3.AddText("Run 2018 59 fb{}^{-1} (13 TeV)")
+    pave3.AddText("2018 (13 TeV)")
     pave3.SetTextAlign(31)
     pave3.SetTextSize(0.045)
     pave3.Draw()
@@ -233,7 +273,7 @@ for eta in etas:
     ratioXaxis.SetTitleSize(.075)
 
     ratioYaxis = ratioFakeGraphErrors.GetYaxis()
-    ratioYaxis.SetRangeUser(.89,1.06)
+    ratioYaxis.SetRangeUser(.89,1.11)
     ratioYaxis.SetTitle('Data/MC')
     ratioYaxis.SetTitleSize(.075)
     ratioYaxis.SetTitleOffset(.55)
@@ -241,5 +281,5 @@ for eta in etas:
     ratioYaxis.SetNdivisions(5)
 
     padr.Update()
-    for ext in ['pdf', 'png', 'C', 'root']:
+    for ext in ['pdf', 'png', 'C', 'root', 'tex']:
         can.SaveAs("{}/pT_bal_per_runs_plots/resp_balancing_eta{}_all_runs.{}".format(root_files_base_dir,eta,ext))
