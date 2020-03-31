@@ -139,7 +139,7 @@ def make_pileup_data(run,JERC):
 def make_pileup_MC(JERC):
     run = "MC"
     print_log_started_step(run, JERC, 'make pileup')
-    files_list = "files_PUreweight_2017UL_MC_{}_{}".format(run, JERC)
+    files_list = "files_PUreweight_2017UL_{}_{}".format(run, JERC)
     cmds = []
     cmds.append('cd {}'.format(Step3_PU_dir))
     cmds.append("rm -f {list}".format(list = files_list))
@@ -162,7 +162,7 @@ def make_pileup_MC(JERC):
 def Produce_Combination_File_and_plots(run,JERC):
     print_log_started_step(run, JERC, 'make plots')
 
-    os.system("cd {} ; ln -sf computed_mc_files_2017UL_MC_{}_pu_truth_100bins.root computed_mc_files_2017UL_MC_for_{}_{}_pu_truth_100bins.root".format(
+    os.system("cd {} ; ln -sf computed_mc_files_PUreweight_2017UL_MC_{}_pu_truth_100bins.root computed_mc_files_2017UL_MC_for_{}_{}_pu_truth_100bins.root".format(
         Step3_PU_dir,
         JERC,
         run,
