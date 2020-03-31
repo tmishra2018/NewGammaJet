@@ -28,7 +28,7 @@ cmdFinal = "hadd -f Gjet_combinationfile_"+output+"_"+IOV+".root"
 
 for alpha in List_alpha:
 	
-	cmd1 = "gammaJetFinalizer -i "+Input_data+" -d DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+" --type pf --algo ak4  --runera "+Pu_profile+" --alpha "+str(alpha)
+	cmd1 = "gammaJetFinalizer --input-list "+Input_data+" -d DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+" --type pf --algo ak4  --runera "+Pu_profile+" --alpha "+str(alpha)
 	dataname = "DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+"_"+Pu_profile
 	os.system(cmd1)
 	
