@@ -4152,7 +4152,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
       label_sqrt->AddText(label_sqrt_text.c_str());
     } else {
       label_sqrt->SetTextAlign(31); // align right
-      label_sqrt->AddText("Run 2018 #sqrt{s} = 13 TeV");
+      label_sqrt->AddText("Run 2017 #sqrt{s} = 13 TeV");
     }
 
     return label_sqrt;
