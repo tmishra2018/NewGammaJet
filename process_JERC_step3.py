@@ -139,20 +139,21 @@ def make_pileup_data(run,JERC):
 def make_pileup_MC(JERC):
     run = "MC"
     print_log_started_step(run, JERC, 'make pileup')
+    files_list = "files_PUreweight_2017UL_MC_{}_{}".format(run, JERC)
     cmds = []
     cmds.append('cd {}'.format(Step3_PU_dir))
-    cmds.append("rm -f {list}".format(list = "files_2017UL_{}_{}".format(run, JERC)))
+    cmds.append("rm -f {list}".format(list = files_list))
     for mc_sample in xsec_pb.keys():
         cmds.append(
             "echo {merged_file} >> {list}.list".format(
                 merged_file = get_most_recent(
                     "{}/{}/*_MC_{}*".format(Step3_outputs_base_dir, JERC, "_".join([mc_sample, JERC]))
                     ),
-                list = "files_PUreweight_{}_{}".format(run, JERC),
+                list = files_list,
             )
         )
     cmds.append(
-        "./generate_mc_pileup.exe {list}".format(list = "files_PUreweight_{}_{}".format(run, JERC))
+        "./generate_mc_pileup.exe {list}".format(list = files_list)
     )
     command = " && ".join(cmds)
     print command
