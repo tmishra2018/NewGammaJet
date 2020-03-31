@@ -1957,18 +1957,18 @@ void GammaJetFinalizer::computePUWeight() {
 }//end compute PUReweight
 
 double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
+  
+  double preScale =1.;
 
-	double preScale;
-	
-        if      (Pt_photon<60)  { preScale= 0.0000401153758676; }
-        else if (Pt_photon<85)  { preScale= 0.0039473720141; }
-        else if (Pt_photon<105) { preScale= 0.0156656382257; }
-        else if (Pt_photon<130) { preScale= 0.0312899931745; }
-        else if (Pt_photon<175) { preScale= 0.125036122867; }
-        else if (Pt_photon<230) { preScale= 0.250030962458; }
-        else                    { preScale= 1.; }
+  if (Pt_photon<60) { preScale= 0.0003434860938821936; }
+  else if (Pt_photon<85) { preScale= 0.00740465688874224; }
+  else if (Pt_photon<105) { preScale= 0.03195516364518142; }
+  else if (Pt_photon<130) { preScale= 0.0636323095006467; }
+  else if (Pt_photon<175) { preScale= 0.18787162142132302; }
+  else if (Pt_photon<230) { preScale= 0.6823580953102895; }
 
-	return preScale;
+  return preScale;
+
 }
 void GammaJetFinalizer::computePUWeight_NVtxBased(double ptPhot, int nvertex) {
 
