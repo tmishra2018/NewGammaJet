@@ -3,7 +3,7 @@
 
 import tdrstyle
 
-runs = ['A', 'B', 'C', 'D']#, 'ABC', 'ABCD']
+runs = ['B', 'C', 'D', 'E', 'F']
 
 import os
 user = os.popen("echo $USER").readlines()[0]
@@ -38,10 +38,16 @@ for run in ['ABC', 'ABCD']:
     for r in run:
         lumis_runs[run] += lumis_runs[r]
 
-lumi_total = lumis_runs['ABCD']
+lumi_total = 0
+for run in runs:
+    lumi_total += lumis_runs[run]
 
 xsec_pb = {
-    'MC': 283000.0,
+    'HT-40To100' : 18700.0,
+    'HT-100To200' : 8640.0,
+    'HT-200To400' : 2185.0,
+    'HT-400To600' : 259.9,
+    'HT-600ToInf': 85.31,
 }
 
 etas = ['00_08', '08_13', '13_19', '19_25', '25_30', '30_32', '32_52', '00_13', '00_03', '03_05', '05_08', '08_10', '10_13', '13_15', '15_17', '17_19', '19_22', '22_23', '23_25', '25_27', '27_29', '29_30', '30_31', '31_35', '35_38', '38_52']
@@ -89,10 +95,11 @@ def buildCanvas(name):
 os.system("mkdir -p {}/pT_bal_per_runs_plots/".format(root_files_base_dir))
 
 colors = {
-    'A' : 1,
-    'B' : 2,
-    'C' : 4,
-    'D' : 6,
+    'B' : 1,
+    'C' : 2,
+    'D' : 4,
+    'E' : 6,
+    'F' : 7,
     'MC' : 3
 }
 FakeGraphErrors = GraphErrors['MC'][etas[0]].Clone()
