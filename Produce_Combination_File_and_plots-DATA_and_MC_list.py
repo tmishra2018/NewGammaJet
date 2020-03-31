@@ -21,15 +21,14 @@ IOV        = args.IOV
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
-List_alpha = [0.3,0.25,0.20,0.15,0.1]
-List_alpha_name = ['0_3','0_25','0_20','0_15','0_1']
+List_alpha = [1.0,0.7,0.5,0.3,0.25,0.20,0.15,0.1]
+List_alpha_name = ['1_0','0_7','0_5','0_3','0_25','0_20','0_15','0_1']
 i_alpha = 0
 cmdFinal = "hadd -f Gjet_combinationfile_"+output+"_"+IOV+".root"
-List_alpha = [List_alpha[0]]
-List_alpha_name = [List_alpha_name[0]]
+
 for alpha in List_alpha:
 	
-	cmd1 = "gammaJetFinalizer -i "+Input_data+" -d DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+" --type pf --algo ak4  --runera "+Pu_profile+" --alpha "+str(alpha)
+	cmd1 = "gammaJetFinalizer --input-list "+Input_data+" -d DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+" --type pf --algo ak4  --runera "+Pu_profile+" --alpha "+str(alpha)
 	dataname = "DATA_"+output+"_"+List_alpha_name[i_alpha]+"_"+str(today)+"_"+Pu_profile
 	os.system(cmd1)
 	
