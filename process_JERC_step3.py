@@ -24,6 +24,8 @@ samples = {
     'MC5': 'GJets_HT-600ToInf_RunIISummer19MiniAOD-106X',
 }
 
+merged_runs = ["BC", "DE", "BCDEF"]
+
 lumis_per_pb = {
     'Run2017B-09Aug2019_UL2017-v1' : 4823,
     'Run2017C-09Aug2019_UL2017-v1' : 9664,
@@ -136,6 +138,27 @@ def make_pileup_data(run,JERC):
     print command
     os.system(command)
 
+def make_pileup_data_merged(run,JERC):
+    print_log_started_step(run, JERC, 'make pileup')
+    cmds = []
+    cmds.append('cd {}'.format(Step3_PU_dir))
+
+    processedLumis = ''
+    for letter in run :
+        processedLumis += os.popen('cat '+Step1_outputs_crab_dir+'/crab_'+samples[letter]+'/results/processedLumis.json').read()[:-1]
+    processedLumis = processedLumis.replace('}{',', ')
+    cmds.append("echo '{}' > ./tmp_processedLumis_{}_{}.json".format(processedLumis, run, JERC))
+    cmds.append(
+        "python ComputePU_perHLT.py --Cert_json {Cert_json} --whichrun {whichrun}".format(
+            Cert_json = "./tmp_processedLumis_{}_{}.json".format(run, JERC),
+            whichrun = "_".join([run, JERC])
+        )
+    )
+
+    command = " && ".join(cmds)
+    print command
+    #os.system(command)
+
 def make_pileup_MC(JERC):
     run = "MC"
     print_log_started_step(run, JERC, 'make pileup')
@@ -173,7 +196,18 @@ def Produce_Combination_File_and_plots(run,JERC):
     output = JERC
     IOV = run+'_'+JERC
     Pu_profile = run+'_'+JERC
-    Input_data = get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*')
+    if len(run) == 1:
+        script = "Produce_Combination_File_and_plots-MC_list.py"
+        Input_data = get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*')
+    else:
+        script ="Produce_Combination_File_and_plots-DATA_and_MC_list.py"
+        Input_data = [get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_merged_*_for_{}_*".format(Step3_outputs_base_dir,JERC,mrun))]
+        for r in run[1:]:
+            Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*'))
+        os.system("cd {} && rm -f input_data_{}_{}.list".format(Step3_dir, run, JERC))
+        for file in Input_data:
+            os.system("cd {} && echo '{}' >> input_data_{}_{}.list".format(Step3_dir, file, run, JERC))
+        Input_data = '{}/input_data_{}_{}.list'.format(Step3_dir, run, JERC)
     Input_mc = []
     for mc_sample in [m for m in samples.keys() if 'MC' in m]:
         Input_mc.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_MC_{}*{}*'.format(samples[mc_sample], JERC)))
@@ -181,14 +215,44 @@ def Produce_Combination_File_and_plots(run,JERC):
     for file in Input_mc:
         os.system("cd {} && echo '{}' >> input_mc_{}_{}.list".format(Step3_dir, file, run, JERC))
     command = 'cd '+Step3_dir
-    command += ' ; python Produce_Combination_File_and_plots-MC_list.py'
+    command += ' ; python {}'.format(script)
     command += ' --output='+output
     command += ' --IOV='+IOV
     command += ' --Pu_profile='+Pu_profile
     command += ' --Input_data='+Input_data
     command += ' --Input_mc='+'{}/input_mc_{}_{}.list'.format(Step3_dir, run, JERC)
     print command
-    os.system(command)
+    #os.system(command)
+
+def get_copy_for_merge(mrun, JERC):
+    run_to_copy = mrun[0]
+    cmds = []
+    cmds.append("cd {}/{}".format(Step3_outputs_base_dir,JERC))
+    cmds.append(
+        "cp {} {}".format(
+            get_most_recent("PhotonJet_2ndLevel_DATA_RUN_{}_*".format(run_to_copy)),
+            get_most_recent(
+                "PhotonJet_2ndLevel_DATA_RUN_{}_*".format(run_to_copy)
+            ).replace(run_to_copy, "merged_{}_for_{}".format(run_to_copy, mrun))
+        )
+    )
+    command = " && ".join(cmds)
+    print(command)
+
+def set_lumi_for_merge(mrun, JERC):
+    lumi = 0
+    for run in mrun:
+        lumi += lumis_per_pb[samples[run]]
+    file = get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_*_for_merged_{}_*".format(Step3_outputs_base_dir,JERC,mrun))
+    set_lumi(file, lumi)
+
+def set_lumi(file, lumi):
+    from ROOT import TFile
+    tfile = TFile(file, "UPDATE")
+    _lumi = tfile.Get("totallumi")
+    _lumi.SetVal(lumi)
+    _lumi.Write()
+    tfile.Close()
 
 ##############################################################################
 ##############################################################################
@@ -250,5 +314,25 @@ for run_JERC in run_JERCs_data:
         make_pileup_data(run,JERC)
 
         Produce_Combination_File_and_plots(run,JERC)
+
+for merged_run in merged_runs:
+    done_jercs = {}
+    for mrun in merged_run:
+        done_jercs[mrun] = set()
+        for run_JERC in run_JERCs:
+            run, JERC = run_JERC
+            if mrun == run:
+                done_jercs[mrun].add(JERC)
+    todo_jercs = set([jerc for jerc in done_jercs[mrun]])
+    for mrun in merged_run:
+        todo_jercs = todo_jercs.intersection(done_jercs[mrun])
+
+    for JERC in todo_jercs:
+        get_copy_for_merge(mrun, JERC)
+        set_lumi_for_merge(mrun, JERC)
+
+        make_pileup_data_merged(mrun,JERC)
+
+        Produce_Combination_File_and_plots(mrun,JERC)
 
 os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
