@@ -157,7 +157,7 @@ def make_pileup_data_merged(run,JERC):
 
     command = " && ".join(cmds)
     print command
-    #os.system(command)
+    os.system(command)
 
 def make_pileup_MC(JERC):
     run = "MC"
@@ -201,9 +201,9 @@ def Produce_Combination_File_and_plots(run,JERC):
         Input_data = get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*')
     else:
         script ="Produce_Combination_File_and_plots-DATA_and_MC_list.py"
-        Input_data = [get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_merged_*_for_{}_*".format(Step3_outputs_base_dir,JERC,mrun))]
+        Input_data = [get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_merged_{}_for_{}_*".format(Step3_outputs_base_dir,JERC,run[0],run))]
         for r in run[1:]:
-            Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+run+'_*'))
+            Input_data.append(get_most_recent(Step3_outputs_base_dir+'/'+JERC+'/'+'PhotonJet_2ndLevel_DATA_RUN_'+r+'_*'))
         os.system("cd {} && rm -f input_data_{}_{}.list".format(Step3_dir, run, JERC))
         for file in Input_data:
             os.system("cd {} && echo '{}' >> input_data_{}_{}.list".format(Step3_dir, file, run, JERC))
@@ -222,28 +222,24 @@ def Produce_Combination_File_and_plots(run,JERC):
     command += ' --Input_data='+Input_data
     command += ' --Input_mc='+'{}/input_mc_{}_{}.list'.format(Step3_dir, run, JERC)
     print command
-    #os.system(command)
+    os.system(command)
 
 def get_copy_for_merge(mrun, JERC):
     run_to_copy = mrun[0]
-    cmds = []
-    cmds.append("cd {}/{}".format(Step3_outputs_base_dir,JERC))
-    cmds.append(
-        "cp {} {}".format(
-            get_most_recent("PhotonJet_2ndLevel_DATA_RUN_{}_*".format(run_to_copy)),
-            get_most_recent(
-                "PhotonJet_2ndLevel_DATA_RUN_{}_*".format(run_to_copy)
-            ).replace(run_to_copy, "merged_{}_for_{}".format(run_to_copy, mrun))
-        )
+    command = "cp {} {}".format(
+        get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_{}_*".format(Step3_outputs_base_dir,JERC,run_to_copy)),
+        get_most_recent(
+            "{}/{}/PhotonJet_2ndLevel_DATA_RUN_{}_*".format(Step3_outputs_base_dir,JERC,run_to_copy)
+        ).replace("_RUN_{}_".format(run_to_copy), "_RUN_merged_{}_for_{}_".format(run_to_copy, mrun))
     )
-    command = " && ".join(cmds)
     print(command)
+    os.system(command)
 
 def set_lumi_for_merge(mrun, JERC):
     lumi = 0
     for run in mrun:
         lumi += lumis_per_pb[samples[run]]
-    file = get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_*_for_merged_{}_*".format(Step3_outputs_base_dir,JERC,mrun))
+    file = get_most_recent("{}/{}/PhotonJet_2ndLevel_DATA_RUN_merged_*_for_{}_*".format(Step3_outputs_base_dir,JERC,mrun))
     set_lumi(file, lumi)
 
 def set_lumi(file, lumi):
@@ -328,11 +324,11 @@ for merged_run in merged_runs:
         todo_jercs = todo_jercs.intersection(done_jercs[mrun])
 
     for JERC in todo_jercs:
-        get_copy_for_merge(mrun, JERC)
-        set_lumi_for_merge(mrun, JERC)
+        get_copy_for_merge(merged_run, JERC)
+        set_lumi_for_merge(merged_run, JERC)
 
-        make_pileup_data_merged(mrun,JERC)
+        make_pileup_data_merged(merged_run,JERC)
 
-        Produce_Combination_File_and_plots(mrun,JERC)
+        Produce_Combination_File_and_plots(merged_run,JERC)
 
 os.system('rm -f '+Step3_dir+'/tmp-process_logs.log')
