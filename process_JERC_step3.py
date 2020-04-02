@@ -243,11 +243,11 @@ for MC_pileup_JERC in MC_pileup_JERCs:
 for run_JERC in run_JERCs_data:
     if run_JERC in run_JERCs:
         run, JERC = run_JERC
-        if run == "C":
-            find_files_from_step2(run, JERC)
-            merge_files_from_step2(run, JERC)
 
-            make_pileup_data(run,JERC)
+        find_files_from_step2(run, JERC)
+        merge_files_from_step2(run, JERC)
+
+        make_pileup_data(run,JERC)
 
         Produce_Combination_File_and_plots(run,JERC)
 
