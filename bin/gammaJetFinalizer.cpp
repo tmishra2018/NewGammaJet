@@ -2307,18 +2307,13 @@ int GammaJetFinalizer::checkTriggerfulltree(std::string& passedTrigger, double& 
 double GammaJetFinalizer::ComputePreScaleForMC(double Pt_photon) {
 
 	double preScale =1.;
-	// TODO redefine for 2017UL
-	// Without prescale=1 for Pt_photon<189
-	return preScale;
-
-	/*
-	if 	(Pt_photon<60) 	{ preScale= 0.00209; }
-	else if (Pt_photon<85) 	{ preScale= 0.00955769; }
-	else if (Pt_photon<105) { preScale= 0.04606247; }
-	else if (Pt_photon<130) { preScale= 0.090614; }
-	else if (Pt_photon<175) { preScale= 0.255642; }
-	else 			{ preScale= 0.674888; }
-	*/
+	
+	if 	(Pt_photon<60) 	{ preScale= 0.0003434860938821936; }
+	else if (Pt_photon<85) 	{ preScale= 0.00740465688874224; }
+	else if (Pt_photon<105) { preScale= 0.03195516364518142; }
+	else if (Pt_photon<130) { preScale= 0.0636323095006467; }
+	else if (Pt_photon<175) { preScale= 0.18787162142132302; }
+	else if (Pt_photon<230) { preScale= 0.6823580953102895; }
     
 	return preScale;
 }
