@@ -839,12 +839,12 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   responseBALANCING_name += "_" + etaRegion + "_data_vs_pt";
   responseBALANCINGcount_name+= "_" + etaRegion + "_RawNEvents_data_vs_pt";
   
-  TH1F* H_count_vs_pt   = NULL;
-  TH1F* H_countMC_vs_pt = NULL;
+  TH1D* H_count_vs_pt   = NULL;
+  TH1D* H_countMC_vs_pt = NULL;
   
   std::cout << responseBALANCING_name<<" " << responseBALANCINGcount_name << std::endl;
   if(resp_reso == "response"){
-  H_count_vs_pt =(TH1F*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
+  H_count_vs_pt =(TH1D*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
   H_count_vs_pt->SetName(TString::Format("%s_PtBalchs_DATA_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   }
 
@@ -860,7 +860,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   boost::replace_all(responseBALANCINGcountMC_name, "data", "mc");
   
   if(resp_reso == "response"){
-  H_countMC_vs_pt =(TH1F*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
+  H_countMC_vs_pt =(TH1D*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
   H_countMC_vs_pt->SetName(TString::Format("%s_PtBalchs_MC_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   }
 
@@ -883,14 +883,14 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   boost::replace_all(responseBALANCING_name, "balancing", "mpf");
   boost::replace_all(responseBALANCINGMC_name, "balancing", "mpf");
   
-  TH1F* H_count_vs_pt_mpf   = NULL;
-  TH1F* H_countMC_vs_pt_mpf = NULL;
+  TH1D* H_count_vs_pt_mpf   = NULL;
+  TH1D* H_countMC_vs_pt_mpf = NULL;
   
   if(resp_reso == "response"){
-  H_count_vs_pt_mpf =(TH1F*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
+  H_count_vs_pt_mpf =(TH1D*)file_noextrap->Get(responseBALANCINGcount_name.c_str());
   H_count_vs_pt_mpf->SetName(TString::Format("%s_MPFchs_DATA_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   
-  H_countMC_vs_pt_mpf =(TH1F*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
+  H_countMC_vs_pt_mpf =(TH1D*)file_noextrap->Get(responseBALANCINGcountMC_name.c_str());
   H_countMC_vs_pt_mpf->SetName(TString::Format("%s_MPFchs_MC_a%s_%s_RawNEvents_data_vs_pt", prefix.c_str(), alphaCut.c_str(), fullEtaRegion.c_str()));
   }
 
