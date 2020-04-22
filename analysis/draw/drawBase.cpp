@@ -386,7 +386,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     if(hasData && !isHLT){
    // H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
-    H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->Integral());
+    H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->GetEntries());
     }else{
     H_count_vs_pt->SetBinContent  (iplot+1,0.);
      }
