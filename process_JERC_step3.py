@@ -12,51 +12,34 @@ parser.add_option("-d", "--dates", dest = "dates", default=None,
 (options,args) = parser.parse_args()
 
 samples = {
-    'B' : 'Run2017B-09Aug2019_UL2017-v1',
-    'C' : 'Run2017C-09Aug2019_UL2017-v1',
-    'D' : 'Run2017D-09Aug2019_UL2017-v1',
-    'E' : 'Run2017E-09Aug2019_UL2017-v1',
-    'F' : 'Run2017F-09Aug2019_UL2017-v1',
-    'MC1': 'GJets_HT-40To100_RunIISummer19MiniAOD-106X',
-    'MC2': 'GJets_HT-100To200_RunIISummer19MiniAOD-106X',
-    'MC3': 'GJets_HT-200To400_RunIISummer19MiniAOD-106X',
-    'MC4': 'GJets_HT-400To600_RunIISummer19MiniAOD-106X',
-    'MC5': 'GJets_HT-600ToInf_RunIISummer19MiniAOD-106X',
+    'A' : 'Run2018A-17Sep2018-v2',
+    'B' : 'Run2018B-17Sep2018-v1',
+    'C' : 'Run2018C-17Sep2018-v1',
+    'D' : 'Run2018D-PromptReco-v2',
+    'MC': 'GJet_Pt-15To6000_RunIIAutumn18MiniAOD-102X',
 }
 
-merged_runs = ["BC", "DE", "BCDEF"]
+merged_runs = ["ABC", "ABCD"]
 
-lumis_per_pb = {
-    'Run2017B-09Aug2019_UL2017-v1' : 4823,
-    'Run2017C-09Aug2019_UL2017-v1' : 9664,
-    'Run2017D-09Aug2019_UL2017-v1' : 4252,
-    'Run2017E-09Aug2019_UL2017-v1' : 9278,
-    'Run2017F-09Aug2019_UL2017-v1' : 13540,
-}
+lumis_per_pb = {}
 # recomputed with brilcalc :
 lumis_per_pb = {
-    'Run2017B-09Aug2019_UL2017-v1' : 4793.961426839,
-    'Run2017C-09Aug2019_UL2017-v1' : 9631.214820913,
-    'Run2017D-09Aug2019_UL2017-v1' : 4247.682053046,
-    'Run2017E-09Aug2019_UL2017-v1' : 9313.642401775,
-    'Run2017F-09Aug2019_UL2017-v1' : 13539.378417564,
+    'Run2018A-17Sep2018-v2' : 13654.355526985,
+    'Run2018B-17Sep2018-v1' : 7057.825158567,
+    'Run2018C-17Sep2018-v1' : 6894.770971269,
+    'Run2018D-PromptReco-v2' : 31066.589629726,
 }
 
 xsec_pb = {
-    'GJets_HT-40To100_RunIISummer19MiniAOD-106X' : 18700.0,
-    'GJets_HT-100To200_RunIISummer19MiniAOD-106X' : 8640.0,
-    'GJets_HT-200To400_RunIISummer19MiniAOD-106X' : 2185.0,
-    'GJets_HT-400To600_RunIISummer19MiniAOD-106X' : 259.9,
-    'GJets_HT-600ToInf_RunIISummer19MiniAOD-106X': 85.31,
+    'GJet_Pt-15To6000_RunIIAutumn18MiniAOD-102X' : 283000.0,
 }
 
-L1Offset_approaches = ["ComplexL1", "SimpleL1"]
 JECs = ['wo_L2Res', 'only_L2Res', 'L2L3Res']
 JERs = ['JER']
 
-Step1_outputs_crab_dir = "/afs/cern.ch/work/${USER:0:1}/$USER/JEC-task/CMSSW_10_6_3/src/CMSDIJET/DijetRootTreeMaker/prod/crab/CERN_crab/prod_2020-03-24/"
-Step2_outputs_base_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/HT_Condor_output/DijetRootTreeAnalyzer/lists_2017UL/"#+dirlist+'/'+datetime.date.today().isoformat()+'/'
-Step3_outputs_base_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2017UL/"
+Step1_outputs_crab_dir = "/afs/cern.ch/work/${USER:0:1}/$USER/JEC-task/CMSSW_10_2_5/src/CMSDIJET/DijetRootTreeMaker/prod/crab/CERN_crab/old_crab_jobs/2019-02-28/"
+Step2_outputs_base_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/HT_Condor_output/DijetRootTreeAnalyzer/lists_2018/"#+dirlist+'/'+datetime.date.today().isoformat()+'/'
+Step3_outputs_base_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2018/"
 
 ##############################################################################
 ###################### Do not change the following lines #####################
@@ -97,7 +80,7 @@ def find_files_from_step2(run, JERC):
 def merge_files_from_step2(run, JERC, cleaning=True):
     print_log_started_step(run, JERC, 'merge files')
 
-    output_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2017UL/"+JERC+'/'
+    output_dir = "/eos/user/${USER:0:1}/$USER/JEC-task/Step3_outputs/2018/"+JERC+'/'
     command_mkdir = "mkdir -p {}".format(output_dir)
 
     command_cd = 'cd {}'.format(Step3_scripts_dir)
@@ -162,7 +145,7 @@ def make_pileup_data_merged(run,JERC):
 def make_pileup_MC(JERC):
     run = "MC"
     print_log_started_step(run, JERC, 'make pileup')
-    files_list = "files_PUreweight_2017UL_{}_{}".format(run, JERC)
+    files_list = "files_PUreweight_2018_{}_{}".format(run, JERC)
     cmds = []
     cmds.append('cd {}'.format(Step3_PU_dir))
     cmds.append("rm -f {list}".format(list = files_list))
@@ -185,7 +168,7 @@ def make_pileup_MC(JERC):
 def Produce_Combination_File_and_plots(run,JERC):
     print_log_started_step(run, JERC, 'make plots')
 
-    os.system("cd {} ; ln -sf computed_mc_files_PUreweight_2017UL_MC_{}_pu_truth_100bins.root computed_mc_files_2017UL_MC_for_{}_{}_pu_truth_100bins.root".format(
+    os.system("cd {} ; ln -sf computed_mc_files_PUreweight_2018_MC_{}_pu_truth_100bins.root computed_mc_files_2018_MC_for_{}_{}_pu_truth_100bins.root".format(
         Step3_PU_dir,
         JERC,
         run,
@@ -276,14 +259,12 @@ run_JERCs_MC = []
 run_JERCs_data = []
 MC_pileup_JERCs = set()
 
-for L1Offset_approach in L1Offset_approaches:
-    for JERC in JERCs:
-        L1Offset_JERC = '_'.join([L1Offset_approach, JERC])
-        for run in samples.keys():
-            if samples[run] in lumis_per_pb.keys():
-                run_JERCs_data.append((run, L1Offset_JERC))
-            elif samples[run] in xsec_pb.keys():
-                run_JERCs_MC.append((run, L1Offset_JERC))
+for JERC in JERCs:
+    for run in samples.keys():
+        if samples[run] in lumis_per_pb.keys():
+            run_JERCs_data.append((run, JERC))
+        elif samples[run] in xsec_pb.keys():
+            run_JERCs_MC.append((run, JERC))
 
 run_JERCs = run_JERCs_MC + run_JERCs_data
 
