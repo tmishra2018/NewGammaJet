@@ -175,15 +175,6 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     
     x[4]=0.3;
     x_err[4]=0.0;
-    
-    x[5]=0.5;
-    x_err[5]=0.0;
-    
-    x[6]=0.7;
-    x_err[6]=0.0;
-    
-    x[7]=1.0;
-    x_err[7]=0.0;
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -320,7 +311,7 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     Float_t lastX = x[nPoints - 1];
     Float_t xMax_fit = lastX + 2. / 100.;
     Float_t xMax_axis;
-    xMax_axis = 1.0 ; // 30. / 100.;
+    xMax_axis = 30. / 100.;
   
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
@@ -1339,15 +1330,6 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     
     x[4]=0.3;
     x_err[4]=0.0;
-    
-    x[5]=0.5;
-    x_err[5]=0.0;
-    
-    x[6]=0.7;
-    x_err[6]=0.0;
-    
-    x[7]=1.0;
-    x_err[7]=0.0;
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -1485,7 +1467,7 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     Float_t lastX = x[nPoints - 1];
     Float_t xMax_fit = lastX + 2. / 100.;
     Float_t xMax_axis;
-    xMax_axis = 1.0 ; // 30. / 100.;
+    xMax_axis = 30. / 100.;
   
     std::string xTitle = "p_{T}^{2^{nd} Jet} / p_{T}^{#gamma}";
 
