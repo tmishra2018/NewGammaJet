@@ -337,12 +337,12 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     if(i == binnum -1) PtBins4h[i+1] = ptBins.at(i).second ; 
   }
   
-  TH1F* H_count_vs_pt = new TH1F("h2", "Count_vs_pt", binnum, PtBins4h);
+  TH1D* H_count_vs_pt = new TH1D("h2", "Count_vs_pt", binnum, PtBins4h);
   H_count_vs_pt->SetName("count_data");
   H_count_vs_pt->SetName("Count_vs_pt");
   
-  TH1F* H_countMC_vs_pt = new TH1F("h1", "CountMC_vs_pt", binnum, PtBins4h);
-   H_count_vs_pt->SetName("count_mc");
+  TH1D* H_countMC_vs_pt = new TH1D("h1", "CountMC_vs_pt", binnum, PtBins4h);
+  H_count_vs_pt->SetName("count_mc");
   H_countMC_vs_pt->SetName("CountMC_vs_pt");
   std::string histoName = name;
 
@@ -386,7 +386,7 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     
     if(hasData && !isHLT){
    // H_count_vs_pt  ->SetBins(iplot+1,currentBin.first,currentBin.second);
-    H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->Integral());
+    H_count_vs_pt->SetBinContent  (iplot+1, lastHistos_data_[0]->GetEntries());
     }else{
     H_count_vs_pt->SetBinContent  (iplot+1,0.);
      }
