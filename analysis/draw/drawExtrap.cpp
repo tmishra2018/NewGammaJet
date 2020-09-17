@@ -161,29 +161,46 @@ void drawExtrap::drawResponseExtrap(std::vector<float> ptMeanVec, const std::str
     float x[nPoints];
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
-     x[0]=0.1;
+
+    x[0]=0.001;
     x_err[0]=0.0;
     
-    x[1]=0.15;
+    x[1]=0.05;
     x_err[1]=0.0;
     
-    x[2]=0.2;
+    x[2]=0.1;
     x_err[2]=0.0;
     
-    x[3]=0.25;
+    x[3]=0.15;
     x_err[3]=0.0;
     
-    x[4]=0.3;
+    x[4]=0.20;
     x_err[4]=0.0;
     
-    x[5]=0.5;
+    x[5]=0.25;
     x_err[5]=0.0;
     
-    x[6]=0.7;
+    x[6]=0.3;
     x_err[6]=0.0;
     
-    x[7]=1.0;
+    x[7]=0.4;
     x_err[7]=0.0;
+    
+    x[8]=0.5;
+    x_err[8]=0.0;
+    
+    x[9]=0.6;
+    x_err[9]=0.0;
+    
+    x[10]=0.8;
+    x_err[10]=0.0;
+    
+    x[11]=1.0;
+    x_err[11]=0.0;
+    
+    x[12]=1.2;
+    x_err[12]=0.0;
+    
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 
@@ -1325,29 +1342,44 @@ void drawExtrap::drawResponseExtrapfine(std::vector<float> ptMeanVec, const std:
     float x_err[nPoints];
     getXPoints(iPtBin, x, x_err);
    
-     x[0]=0.1;
+    x[0]=0.001;
     x_err[0]=0.0;
     
-    x[1]=0.15;
+    x[1]=0.05;
     x_err[1]=0.0;
     
-    x[2]=0.2;
+    x[2]=0.1;
     x_err[2]=0.0;
     
-    x[3]=0.25;
+    x[3]=0.15;
     x_err[3]=0.0;
     
-    x[4]=0.3;
+    x[4]=0.20;
     x_err[4]=0.0;
     
-    x[5]=0.5;
+    x[5]=0.25;
     x_err[5]=0.0;
     
-    x[6]=0.7;
+    x[6]=0.3;
     x_err[6]=0.0;
     
-    x[7]=1.0;
+    x[7]=0.4;
     x_err[7]=0.0;
+    
+    x[8]=0.5;
+    x_err[8]=0.0;
+    
+    x[9]=0.6;
+    x_err[9]=0.0;
+    
+    x[10]=0.8;
+    x_err[10]=0.0;
+    
+    x[11]=1.0;
+    x_err[11]=0.0;
+    
+    x[12]=1.2;
+    x_err[12]=0.0;
     Float_t y_resp_DATA[nPoints];
     Float_t y_resp_err_DATA[nPoints];
 

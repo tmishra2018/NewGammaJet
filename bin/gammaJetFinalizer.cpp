@@ -112,48 +112,48 @@ void GammaJetFinalizer::runAnalysis() {
 
                 //HLTphoton33   
 
-                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
-                static std::string puData30 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC30 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();    
+                static std::string puData30 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton33%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter30 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData30, puMC30));
 
                 //HLTphoton50
 
 
-                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData50 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC50 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData50 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton50%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter50 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData50, puMC50));
 
                 //HLTphoton75 
 
 
-                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData75 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC75 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData75 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton75%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter75 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData75, puMC75));
 
 
                 //HLTphoton90 
 
 
-                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
-                static std::string puData90 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC90 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();  
+                static std::string puData90 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton90%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter90 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData90, puMC90));
 
                 //HLTphoton120 
 
 
-                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
-                static std::string puData120 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC120 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();
+                static std::string puData120 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton120%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter120 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData120, puMC120));
 
                 //HLTphoton165
 
 
-                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData165 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+                static std::string puMC165 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData165 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton165%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter165 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData165, puMC165));
 
-		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
-                static std::string puData200 = TString::Format("%s/pu_truth_data2018_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
+		static std::string puMC200 = TString::Format("%s/computed_mc_files_2018UL_MC_for_%s_pu_truth_100bins.root", puPrefix.c_str(), mRunera.c_str()).Data();//computed_mc_files_2018UL_MC_pu_truth_100bins.root", puPrefix.c_str()).Data();   
+                static std::string puData200 = TString::Format("%s/pu_truth_data2018UL_100bins_HLTphoton200%s.root", puPrefix.c_str(), mRunera.c_str()).Data();                                                           
                 reweighter200 = boost::shared_ptr<PUReweighter>(new PUReweighter(puData200, puMC200));
 
 
@@ -336,7 +336,7 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_neutralHadronsIsolation = analysisDir.make<TH1F>("neutralHadronsIsolation", "neutralHadronsIsolation", 50, 0, 2);//100, 0, 100);
   TH1F* h_photonIsolation = analysisDir.make<TH1F>("photonIsolation", "photonIsolation", 50, 0, 3);
   
-  TH2F* h_deltaPhi_vs_alpha = analysisDir.make<TH2F>("deltaPhi_vs_alpha", "deltaPhi_vs_alpha", 50, 0, 4, 50, 0, 1.0);
+  TH2F* h_deltaPhi_vs_alpha = analysisDir.make<TH2F>("deltaPhi_vs_alpha", "deltaPhi_vs_alpha", 50, 0, 4, 50, 0, 1.2);
   TH2F* h_eta_vs_phi = analysisDir.make<TH2F>("eta_phi", "eta_phi", 100, -5., 5., 100, -3.5, 3.5);
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
@@ -443,8 +443,8 @@ void GammaJetFinalizer::runAnalysis() {
   std::vector<TH1F*>      HLTNvertexEta013    = buildHLTPtVector<TH1F>(HLTDirNvertex, "NvertexHLT", "eta0013", 50, 0., 50.);
   
   TFileDirectory HLTDiralpha = analysisDir.mkdir("HLT_alpha");
-  std::vector<std::vector<TH1F*> > HLTalpha = buildEtaHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT",50, 0., 1.0);
-  std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 1.0);
+  std::vector<std::vector<TH1F*> > HLTalpha = buildEtaHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT",50, 0., 1.2);
+  std::vector<TH1F*>      HLTalphaEta013    = buildHLTPtVector<TH1F>(HLTDiralpha, "alphaHLT", "eta0013", 50, 0., 1.2);
   
   
   TFileDirectory HLTDirHCCalPrecleaning = analysisDir.mkdir("HLT_Hcalpreclean");
@@ -1505,10 +1505,108 @@ void GammaJetFinalizer::runAnalysis() {
           }	  
 	  
 	  // Ugly code to make inclusive extrapolation bin for response and PLI
-	  
-	  //bin 9 0 to 1.0 :
-       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
+	
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 1.2 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][12]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][12]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][12]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][12]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][12]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][12]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][12]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][12]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][12]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	
 	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 1.0 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][11]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][11]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][11]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][11]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][11]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][11]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][11]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][11]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][11]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	
+
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.8 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][10]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][10]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][10]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][10]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][10]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][10]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][10]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][10]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][10]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.6 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][9]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][9]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][9]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][9]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][9]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][9]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][9]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][9]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][9]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.5 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
+            extrap_responseBalancingEta013[ptBin][8]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+            extrap_responseMPFEta013[ptBin][8]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+	  }
+          extrap_responseBalancing[etaBin][ptBin][8]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF[etaBin][ptBin][8]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+          
+          extrap_responseBalancing_finebin[etafineBin][ptBin][8]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
+          extrap_responseMPF_finebin[etafineBin][ptBin][8]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
+
+          if (mIsMC){
+	    extrap_PLI[etaBin][ptBin][8]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    extrap_PLI_fine[etafineBin][ptBin][8]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
+	    extrap_PLI_Eta013[ptBin][8]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
+	    
+	    }}}
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.4 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][7]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][7]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1526,10 +1624,9 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_PLI_Eta013[ptBin][7]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
-	  
-	  //bin 9 0 to 0.7 :
-       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.7 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][6]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][6]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1547,10 +1644,9 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_PLI_Eta013[ptBin][6]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
-	  
-	  //bin 9 0 to 0.5 :
-       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.5 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][5]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][5]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1568,10 +1664,9 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_PLI_Eta013[ptBin][5]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
-	  
-	  //bin 9 0 to 0.3 :
-       // /*if(fullinfo.pTAK4_j2/fullinfo.Pt_photon > 0.2) */ std::cout<<" value of alpha extrap : "<<fullinfo.pTAK4_j2/fullinfo.Pt_photon<<" extrapBin "<<extrapBin<<std::endl;
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.3 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
+	    
+
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.20 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][4]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][4]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1589,11 +1684,9 @@ void GammaJetFinalizer::runAnalysis() {
 	    extrap_PLI_Eta013[ptBin][4]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    
 	    }}}
+	    
 
-	  
-	   //bin 9 0 to 0.25 :
-
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.25/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.2*/){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.15 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1603,19 +1696,17 @@ void GammaJetFinalizer::runAnalysis() {
           
           extrap_responseBalancing_finebin[etafineBin][ptBin][3]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF_finebin[etafineBin][ptBin][3]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
+
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    extrap_PLI_fine[etafineBin][ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][3]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  //bin 9 0 to 0.20 :
+	    
+	    }}}
+	    
 
-	  if((fullinfo.pTAK4_j2/ fullinfo.Pt_photon) < 0.2 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.15*/){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.1 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1625,23 +1716,17 @@ void GammaJetFinalizer::runAnalysis() {
           
           extrap_responseBalancing_finebin[etafineBin][ptBin][2]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF_finebin[etafineBin][ptBin][2]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
+
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
 	    extrap_PLI_fine[etafineBin][ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][2]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  
-	  
-	  //bin 9 0 to 0.15 :
-	  
+	    
+	    }}}
+	    
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.15/* && (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.1*/){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.05 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1651,20 +1736,17 @@ void GammaJetFinalizer::runAnalysis() {
           
           extrap_responseBalancing_finebin[etafineBin][ptBin][1]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF_finebin[etafineBin][ptBin][1]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
+
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
 	    extrap_PLI_fine[etafineBin][ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][1]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-	  }}
-	  
-	  //bin 9 0 to 0.1 :
+	    
+	    }}}
+	    
 
-	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon) < 0.1 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.05 */){
+	  if((fullinfo.pTAK4_j2/fullinfo.Pt_photon ) < 0.001 /*&& (fullinfo.pTAK4_j2/fullinfo.Pt_photon) >= 0.25*/){
 	  if (fabs(fullinfo.etaAK4_j1) < 1.305) {
             extrap_responseBalancingEta013[ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
             extrap_responseMPFEta013[ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
@@ -1674,18 +1756,14 @@ void GammaJetFinalizer::runAnalysis() {
           
           extrap_responseBalancing_finebin[etafineBin][ptBin][0]->Fill(respBalancing/*fullinfo.Rbalancing*/, eventWeight);
           extrap_responseMPF_finebin[etafineBin][ptBin][0]->Fill(respMPF/* fullinfo.RMPF*/, eventWeight);
-          
+
           if (mIsMC){
 	    extrap_PLI[etaBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    extrap_PLI_fine[etafineBin][ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
 	    if(fabs(fullinfo.etaAK4_j1) < 1.305){
 	    extrap_PLI_Eta013[ptBin][0]->Fill((fullinfo.pTAK4_j1GEN)/(PhotonGen.Pt()), eventWeight);
-	    }
-}}
-
-	  
-	
-         
+	    
+	    }}}
 	    
 
 	  if (mIsMC && ptBinGen >= 0 && etaBinGen >= 0 && extrapGenBin >= 0) {
@@ -2468,7 +2546,7 @@ int GammaJetFinalizer::checkTrigger(std::string& passedTrigger, float& weight) {
                         TCLAP::ValueArg<std::string> algoArg("", "algo", "jet algo", true, "ak4", &allowedAlgoTypes, cmd);
                         TCLAP::ValueArg<float> chsArg("", "chs", "Use CHS branches", false, true, "bool", cmd);
                         // alpha cut
-                        TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 1.0)", false, 1.0, "float", cmd);
+                        TCLAP::ValueArg<float> alphaCutArg("", "alpha", "P_t^{second jet} / p_t^{photon} cut (default: 1.2)", false, 1.2, "float", cmd);
 
                         TCLAP::SwitchArg mcArg("", "mc", "MC?", cmd);
                         TCLAP::SwitchArg verboseArg("v", "verbose", "Enable verbose mode", cmd);
