@@ -21,8 +21,8 @@ IOV        = args.IOV
 today = datetime.date.today()
 today.strftime('%d-%m-%Y')
 
-List_alpha = [0.3,0.25,0.20,0.15,0.1]
-List_alpha_name = ['0_3','0_25','0_20','0_15','0_1']
+List_alpha = [1.2,1.0,0.8,0.6,0.5,0.4,0.3,0.25,0.20,0.15,0.1,0.05,0.001]
+List_alpha_name = ['1_2','1_0','0_8','0_6','0_5','0_4','0_3','0_25','0_20','0_15','0_1','0_05','0_001']
 i_alpha = 0
 cmdFinal = "hadd -f Gjet_combinationfile_"+output+"_"+IOV+".root"
 
