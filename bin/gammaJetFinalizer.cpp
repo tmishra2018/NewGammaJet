@@ -341,7 +341,8 @@ void GammaJetFinalizer::runAnalysis() {
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
 
-  double ptBins[] = {40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 700, 1000, 3000};
+  //double ptBins[] = {40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 700, 1000, 3000};
+  double ptBins[] = {40, 50, 60, 85, 105, 130, 175, 230, 300, 400, 500, 600, 700, 850, 1000, 1200, 1450, 1750, 3000};
   int  binnum = sizeof(ptBins)/sizeof(double) -1;
   double etaBins[] = {0, 1.305, 1.93, 2.5, 2.964, 3.2, 5.191};
   int  binnumEta = sizeof(etaBins)/sizeof(double) -1;

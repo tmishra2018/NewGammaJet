@@ -50,12 +50,31 @@ class HLTPtBinning {
 
     void fillPtBins() { //HLT binning 
          
-      mPtBins.push_back(std::make_pair(40., 60.));
+     /* mPtBins.push_back(std::make_pair(40., 60.));
       mPtBins.push_back(std::make_pair(60., 85.));
       mPtBins.push_back(std::make_pair(85., 105.));
       mPtBins.push_back(std::make_pair(105., 130.));
       mPtBins.push_back(std::make_pair(130., 175.));
-      mPtBins.push_back(std::make_pair(175., 3000.));     
+      mPtBins.push_back(std::make_pair(175., 3000.));     */
+      mPtBins.push_back(std::make_pair(40., 50.));
+      mPtBins.push_back(std::make_pair(50., 60.));
+      mPtBins.push_back(std::make_pair(60., 85.));
+      mPtBins.push_back(std::make_pair(85., 105.));
+      mPtBins.push_back(std::make_pair(105., 130.));
+      mPtBins.push_back(std::make_pair(130., 175.));
+      mPtBins.push_back(std::make_pair(175., 230.));
+      mPtBins.push_back(std::make_pair(230., 300.));
+      mPtBins.push_back(std::make_pair(300., 400.));
+      mPtBins.push_back(std::make_pair(400., 500.));
+      mPtBins.push_back(std::make_pair(500., 600.));
+      mPtBins.push_back(std::make_pair(600., 700.));
+      mPtBins.push_back(std::make_pair(700., 850.));
+      mPtBins.push_back(std::make_pair(850., 1000.));
+      mPtBins.push_back(std::make_pair(1000., 1200.));
+      mPtBins.push_back(std::make_pair(1200., 1450.));
+      mPtBins.push_back(std::make_pair(1450., 1750.));
+      mPtBins.push_back(std::make_pair(1750., 3000.));
+
       
     } 
 };
